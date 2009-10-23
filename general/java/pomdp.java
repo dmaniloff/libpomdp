@@ -81,6 +81,7 @@ public class pomdp {
     public double[] tao(double b[], int a, int o) {
 	double[] b1, b2;
 	b1 = LinearAlgebra.times(T[a],b);
+	System.out.println(DoubleArray.toString(O[a])+"o is"+o+"and a is"+a);
 	b2 = LinearAlgebra.times(b1,DoubleArray.getColumnCopy(O[a],o));
 	double sum = DoubleArray.sum(b2);
 	if (sum > 0) b2 = LinearAlgebra.divide(b2,sum);

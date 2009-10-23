@@ -15,7 +15,7 @@ JCLASSPATH=../../external/jmatharray.jar:../../general/java:.
 # source files
 SOURCES=AndOrTree.java orNode.java andNode.java heuristic.java
 
-AndOrTree.class: AndOrTree.java orNode.java andNode.java heuristic.java
+default:
 	$(JC) -classpath $(JCLASSPATH) $(SOURCES)
 
 clean:

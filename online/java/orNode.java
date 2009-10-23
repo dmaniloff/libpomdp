@@ -40,4 +40,12 @@ public class orNode {
 	this.parent = parent;
 	this.children = null;
     }
+
+    /// constructor for root node
+    public orNode(double belief[]) {
+	this.belief = belief;
+	this.obs = -1;
+	this.parent = null;
+	this.children = null;
+    }
 }

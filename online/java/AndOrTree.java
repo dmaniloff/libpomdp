@@ -48,8 +48,8 @@ public class AndOrTree {
     }
 
     /// initializer
-    public void initialize(orNode root) {
-	this.root = root;
+    public void initialize(double belief[]) {
+	this.root = new orNode(belief);
 	//this.fringe = new PriorityQueue<orNode>();
  	//this.fringe.add(root);
     }
@@ -64,7 +64,7 @@ public class AndOrTree {
 	// iterate through them
 	int action = 1;
 	for(andNode a : en.children) {
-	    // create new AND node
+	    // create new AND node - BUG HERE!!!!!!!!!!!!!
 	    a = new andNode(action,en);
 	    //  allocate space for the children OR nodes (do we have to do this here?)
 	    a.children = new orNode[problem.getnrObs()];
@@ -101,7 +101,7 @@ public class AndOrTree {
     private double getOfflineLower(orNode o) {
 	double maxV = Double.NEGATIVE_INFINITY;
 	double dotProd = 0;
-	for (double[] alphaV : offlineLower.v) {
+	for (double alphaV[] : offlineLower.v) {
 	    // compute dot product
 	    dotProd = DoubleArray.sum(LinearAlgebra.times(alphaV, o.belief));
 	    // keep the max - maybe doing this outside the loop is faster
@@ -114,7 +114,7 @@ public class AndOrTree {
     private double getOfflineUpper(orNode o) {
 	double maxV = Double.NEGATIVE_INFINITY;
 	double dotProd = 0;
-	for (double[] alphaV : offlineUpper.v) {
+	for (double alphaV[] : offlineUpper.v) {
 	    // compute dot product
 	    dotProd = DoubleArray.sum(LinearAlgebra.times(alphaV, o.belief));
 	    // keep the max
@@ -161,4 +161,8 @@ public class AndOrTree {
 	return DoubleArray.min(maxUba,o.u);
     }
 
+
+    public orNode getroot() {
+	return root;
+    }
 }     // AndOrTree

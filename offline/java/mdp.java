@@ -40,9 +40,14 @@ public class mdp {
 	// parameters
 	int max_iter = 1000;
 	double epsilon = 0.00001;
+
 	// pre-allocate arrays - Vmdp.v in this part case is 1D
+	this.Vmdp = new valueFunction();
+	this.Qmdp = new valueFunction();
+
 	this.Vmdp.v = new double[1][problem.getnrSta()];
 	this.Vmdp.v[0] = DoubleArray.fill(problem.getnrSta(),0.0);
+
 	double oldVmdp[];
 	double gTaV[];
 	double delta[];
@@ -61,7 +66,7 @@ public class mdp {
 		gTaV = LinearAlgebra.times(LinearAlgebra.times(problem.getT()[a], oldVmdp),
 					   problem.getGamma());
 		this.Qmdp.v[a] = LinearAlgebra.plus(problem.getR()[a], gTaV);
-		this.Qmdp.a[a] = a;
+		this.Qmdp.a[a] = a; // remember actions here start from 0!!
 	    }
 
 	    // update Vmdp
