@@ -5,11 +5,16 @@ libpomdp is a set of pomdp algorithms implemented in Java and
 Matlab. As the software evolves, the idea is that it becomes pure
 Java.
 
+At the moment the code is built to interface with the Matlab
+implementation of [1]. Another dependency is jmatharray.jar from [3].
+
 Copyright (c) 2009, Diego Maniloff.
+
 
 Contents:
 * Directories
 * Implemented algorithms
+* Documentation
 * References
 
 Directories
@@ -24,6 +29,17 @@ online/          - implementation of online algs
 Implemented algorithms
 ======================
 
+Documentation
+=============
+
 References
 ==========
-[1] Spaan, M. T.J, and N. Vlassis. "Perseus: Randomized point-based value iteration for POMDPs." Journal of Artificial Intelligence Research 24 (2005): 195-220.
+[1] Spaan, M. T.J, and N. Vlassis. "Perseus: Randomized point-based
+value iteration for POMDPs." Journal of Artificial Intelligence
+Research 24 (2005): 195-220.
+
+[2] Ross, S., J. Pineau, S. Paquet, and B. Chaib-draa. "Online
+planning algorithms for POMDPs." Journal of Artificial Intelligence
+Research 32 (2008): 663-704.
+
+[3] jmatharray: http://jmathtools.berlios.de

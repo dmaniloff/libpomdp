@@ -2,9 +2,9 @@
  * libpomdp
  * ========
  * File: orNode.java
- * Author: Diego Maniloff
  * Description: class for an OR node in the tree
- * Copyright (c) 2009, Diego Maniloff.  
+ * Copyright (c) 2009, Diego Maniloff  
+ * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
 
 public class orNode {

@@ -2,10 +2,10 @@
  * libpomdp
  * ========
  * File: heuristic.java
- * Author: Diego Maniloff
  * Description: interface to define different online heuristic search
  *              methods
- * Copyright (c) 2009, Diego Maniloff.  
+ * Copyright (c) 2009, Diego Maniloff
+ * W3: http://www.cs.uic.edu/~dmanilof 
  --------------------------------------------------------------------------- */
 
 interface heuristic {

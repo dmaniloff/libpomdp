@@ -2,12 +2,12 @@
  * libpomdp
  * ========
  * File: pomdp.java
- * Author: Diego Maniloff
  * Description: class to represent a pomdp problem specification
  *              and to compute certain useful functions
  *              At the moment this class is instantiated from Matlab
  *              using the parameters from a .POMDP parser.
- * Copyright (c) 2009, Diego Maniloff.  
+ * Copyright (c) 2009, Diego Maniloff
+ * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
 
 // imports
@@ -34,8 +34,8 @@ public class pomdp {
     // transition model: a x s' x s
     private double T[][][];
 
-    // reward model: s x a
-    private double R[][];
+    // reward model: a x s
+    public double R[][];
 
     // discount factor
     private double gamma;
@@ -44,21 +44,28 @@ public class pomdp {
     // methods
     // ------------------------------------------------------------------------
 
-    // constructor receives cell2mat(problem.observationS)
-    // and cell2mat(problem.transitionS)
-    public pomdp(double O[][], double T[][], int nrSta, int nrAct, int nrObs, double gamma) {
+    // constructor receives:
+    // cell2mat(problem.observationS)
+    // cell2mat(problem.transitionS)
+    // cell2mat(problem.rewardS)
+    public pomdp(double O[][], 
+		 double T[][], 
+		 double R[][],
+		 int nrSta, int nrAct, int nrObs, double gamma) {
 	// allocate space for the pomdp models
 	this.nrSta = nrSta;
 	this.nrAct = nrAct;
 	this.nrObs = nrObs;
 	this.O = new double [nrAct][nrSta][nrObs];
 	this.T = new double [nrAct][nrSta][nrSta];
+	this.R = new double [nrAct][nrSta];
 	this.gamma = gamma;
 	// copy the model matrices
 	int i;
 	for(i = 0; i < nrAct; i++) {
 	    this.O[i] = DoubleArray.getColumnsRangeCopy(O, i*nrSta, i*nrSta + nrSta-1);
 	    this.T[i] = DoubleArray.getColumnsRangeCopy(T, i*nrSta, i*nrSta + nrSta-1);
+	    this.R[i] = DoubleArray.getColumnCopy(R, i); 
 	}
     }
 
