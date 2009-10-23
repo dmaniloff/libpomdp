@@ -1,1 +1,22 @@
-Test comment.
+libpomdp
+========
+
+libpomdp is a set of pomdp algorithms implemented in Java and
+Matlab. As the software evolves, the idea is that it becomes pure
+Java.
+
+Copyright (c) 2009, Diego Maniloff.
+
+Contents:
+* Directories
+* Implemented algorithms
+* References
+
+Directories
+===========
+
+README           - this file
+external/        - external dependencies
+general/         - general components for both offline and online algorithms
+offline/         - implementation of offline algs
+online/          - implementation of online algs
