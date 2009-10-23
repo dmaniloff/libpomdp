@@ -10,12 +10,12 @@ JC=/usr/bin/javac
 RM=/bin/rm
 
 # classpath
-JCLASSPATH=../../external/jmatharray.jar:../../general/java:.
+JCLASSPATH=../../external/jmatharray.jar:.
 
 # source files
-SOURCES=AndOrTree.java orNode.java andNode.java heuristic.java
+SOURCES=pomdp.java valueFunction.java
 
-AndOrTree.class: AndOrTree.java orNode.java andNode.java heuristic.java
+pomdp.class: pomdp.java valueFunction.java
 	$(JC) -classpath $(JCLASSPATH) $(SOURCES)
 
 clean:
