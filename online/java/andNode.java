@@ -24,10 +24,14 @@ public class andNode {
     /// children
     public orNode children[];
 
-    /// constructor
-    public andNode(int action, orNode parent) {
+    /// initializer
+    public void init(int action, orNode parent) {
 	this.act = action;
 	this.parent = parent;
-	this.children = null;
+    }
+
+    // get parent
+    public orNode getParent() {
+	return parent;
     }
 }

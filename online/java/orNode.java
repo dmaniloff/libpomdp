@@ -33,8 +33,8 @@ public class orNode {
     /// AND children nodes indexed by action #
     public andNode children[];
 
-    /// constructor
-    public orNode(double belief[], int observation, andNode parent) {
+    /// initializer
+    public void init(double belief[], int observation, andNode parent) {
 	this.belief = belief;
 	this.obs = observation;
 	this.parent = parent;
@@ -42,10 +42,12 @@ public class orNode {
     }
 
     /// constructor for root node
-    public orNode(double belief[]) {
-	this.belief = belief;
-	this.obs = -1;
-	this.parent = null;
-	this.children = null;
-    }
+    /* 
+     * public orNode(double belief[]) {
+     * 	this.belief = belief;
+     * 	this.obs = -1;
+     * 	this.parent = null;
+     * 	this.children = null;
+     * }
+     */
 }

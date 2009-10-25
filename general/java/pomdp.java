@@ -61,11 +61,11 @@ public class pomdp {
 	this.R = new double [nrAct][nrSta];
 	this.gamma = gamma;
 	// copy the model matrices
-	int i;
-	for(i = 0; i < nrAct; i++) {
-	    this.O[i] = DoubleArray.getColumnsRangeCopy(O, i*nrSta, i*nrSta + nrSta-1);
-	    this.T[i] = DoubleArray.getColumnsRangeCopy(T, i*nrSta, i*nrSta + nrSta-1);
-	    this.R[i] = DoubleArray.getColumnCopy(R, i); 
+	int a;
+	for(a = 0; a < nrAct; a++) {
+	    this.O[a] = DoubleArray.getColumnsRangeCopy(O, a*nrSta, a*nrSta + nrSta-1);
+	    this.T[a] = DoubleArray.getColumnsRangeCopy(T, a*nrSta, a*nrSta + nrSta-1);
+	    this.R[a] = DoubleArray.getColumnCopy(R, a); 
 	}
     }
 
@@ -81,9 +81,10 @@ public class pomdp {
     public double[] tao(double b[], int a, int o) {
 	double[] b1, b2;
 	b1 = LinearAlgebra.times(T[a],b);
-	System.out.println(DoubleArray.toString(O[a])+"o is"+o+"and a is"+a);
+	//System.out.println(DoubleArray.toString(O[a])+"o is"+o+"and a is"+a);
 	b2 = LinearAlgebra.times(b1,DoubleArray.getColumnCopy(O[a],o));
 	double sum = DoubleArray.sum(b2);
+	// normalization
 	if (sum > 0) b2 = LinearAlgebra.divide(b2,sum);
 	return b2;
     }
