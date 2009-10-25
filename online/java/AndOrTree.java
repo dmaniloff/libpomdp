@@ -51,11 +51,12 @@ public class AndOrTree {
     public void initialize(double belief[]) {
 	this.root = new orNode();
 	this.root.init(belief, -1, null);
+	this.root.l = getOfflineLower(this.root);
 	//this.fringe = new PriorityQueue<orNode>();
  	//this.fringe.add(root);
     }
 
-    // expand routine - return a list of orNode using Generics
+    /// expand routine - return a |A||O| list of orNode using Generics
     public List<orNode> expand(orNode en){
 	// allocate return list
 	List<orNode> nodes = new ArrayList<orNode>();
@@ -70,9 +71,8 @@ public class AndOrTree {
 	action = 0;
 	for(andNode a : en.children) {
 	    // initialize this node
-	    a.act = 5;
 	    a.init(action,en);
-	    //  allocate space for the children OR nodes (do we have to do this here?)
+	    // allocate space for the children OR nodes (do we have to do this here?)
 	    a.children = new orNode[problem.getnrObs()];
 	    for(observation=0; observation<problem.getnrObs(); observation++)
 		a.children[observation] = new orNode();
@@ -108,7 +108,21 @@ public class AndOrTree {
 	return nodes;
     } // expand
 
-    // return dot product of a belief point and a value function
+    
+    /// update the ancestors of a given orNode
+    public void updateAncestors(orNode n) {
+	while(!problem.equalB(n.belief,this.root.belief)) {
+	    // update the andNode that is parent of n
+	    n.getParent().l = ANDpropagateL(n.getParent());
+	    // update the orNode that is parent of the parent
+	    n.getParent().getParent().l = 
+		ORpropagateL(n.getParent().getParent());
+	    // iterate
+	    n = n.getParent().getParent();
+	}
+    } // updateAncestors
+
+    /// return dot product of a belief point and a value function
     private double getOfflineLower(orNode o) {
 	double maxV = Double.NEGATIVE_INFINITY;
 	double dotProd = 0;
@@ -121,7 +135,7 @@ public class AndOrTree {
 	return maxV;
     }
 
-    // return dot product of a belief point and a value function - can we merge these two functions?
+    /// return dot product of a belief point and a value function - can we merge these two functions?
     private double getOfflineUpper(orNode o) {
 	double maxV = Double.NEGATIVE_INFINITY;
 	double dotProd = 0;
@@ -173,8 +187,8 @@ public class AndOrTree {
 	return DoubleArray.min(maxUba,o.u);
     }
 
-
     public orNode getroot() {
 	return root;
     }
+
 }     // AndOrTree

@@ -41,6 +41,11 @@ public class orNode {
 	this.children = null;
     }
 
+    // getParent
+    public andNode getParent() {
+	return parent;
+    }
+    
     /// constructor for root node
     /* 
      * public orNode(double belief[]) {
