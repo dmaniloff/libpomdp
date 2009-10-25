@@ -78,6 +78,13 @@ public class pomdp {
 	return Poba[o];
     }
 
+    // P(o|b,a) in vector form for all o's
+    public double[] P_Oba(double b[], int a) {
+	double Tb[]   = LinearAlgebra.times(T[a],b);
+	double Poba[] = LinearAlgebra.times(DoubleArray.transpose(O[a]),Tb);
+	return Poba;
+    }
+
     // tao(b,a,o)
     public double[] tao(double b[], int a, int o) {
 	double[] b1, b2;

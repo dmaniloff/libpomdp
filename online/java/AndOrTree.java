@@ -33,16 +33,18 @@ public class AndOrTree {
     private orNode root;
 
     // fringe of the tree - do we need one??
-    private PriorityQueue<orNode> fringe;
+    // prio queue or simple list
+    //private PriorityQueue<orNode> fringe;
+    private List<orNode> fringe;
 
     // ------------------------------------------------------------------------
     // methods
     // ------------------------------------------------------------------------
 
     /// constructor
-    public AndOrTree(pomdp prob, /* heuristic h, */ valueFunction L, valueFunction U) {
+    public AndOrTree(pomdp prob, heuristic h, valueFunction L, valueFunction U) {
 	this.problem = prob;
-	//this.H = h;
+	this.H = h;
 	this.offlineLower = L;
 	this.offlineUpper = U;
     }
@@ -52,12 +54,17 @@ public class AndOrTree {
 	this.root = new orNode();
 	this.root.init(belief, -1, null);
 	this.root.l = getOfflineLower(this.root);
+	this.root.u = getOfflineUpper(this.root);
 	//this.fringe = new PriorityQueue<orNode>();
- 	//this.fringe.add(root);
+	this.fringe = new ArrayList<orNode>();
+ 	// add root node to the fringe
+	this.fringe.add(root);
     }
 
     /// expand routine - return a |A||O| list of orNode using Generics
     public List<orNode> expand(orNode en){
+	// should add a check here to make sure en is in the fringe
+
 	// allocate return list
 	List<orNode> nodes = new ArrayList<orNode>();
 	// iterators
@@ -83,10 +90,14 @@ public class AndOrTree {
 		// initialize this node
 		o.init(problem.tao(en.belief,a.act,observation), observation, a);
 		o.l = getOfflineLower(o);
-		//o.u = getOfflineUpper(o);
-		//o.h = hOR(o); // H(b)
+		o.u = getOfflineUpper(o);
+		o.h = H.hOR(o);	// H(b)
 		//o.h_o = hOR_o(o); // H(b,a,o)
 		//o.hStar = this.H.hOR(o);
+		// add node to the fringe
+		fringe.add(o);
+		// get as bStar the index to itself
+		o.bStar = fringe.size() - 1;
 		// add newly created nodes to return list
 		nodes.add(o);
 		// iterate
@@ -95,7 +106,7 @@ public class AndOrTree {
 	    // update values in a
 	    // L(b,a) = R(b,a) + \gamma \sum_o P(o|b,a)L(tao(b,a,o))
 	    a.l = ANDpropagateL(a);
-	    //a.u = ANDpropagateU(en.belief, a); 
+	    a.u = ANDpropagateU(a); 
 	    //a.bestO = this.H.bestO(a);
 	    //a.h = hAND(a); // H(b,a)
 	    // iterate
@@ -103,7 +114,7 @@ public class AndOrTree {
 	}  
 	// update values in en
 	en.l = ORpropagateL(en);
-	//en.u = ORpropagateU(en);
+	en.u = ORpropagateU(en);
 	// return
 	return nodes;
     } // expand
@@ -114,9 +125,12 @@ public class AndOrTree {
 	while(!problem.equalB(n.belief,this.root.belief)) {
 	    // update the andNode that is parent of n
 	    n.getParent().l = ANDpropagateL(n.getParent());
+	    n.getParent().u = ANDpropagateU(n.getParent());
 	    // update the orNode that is parent of the parent
 	    n.getParent().getParent().l = 
 		ORpropagateL(n.getParent().getParent());
+	    n.getParent().getParent().u = 
+		ORpropagateU(n.getParent().getParent());
 	    // iterate
 	    n = n.getParent().getParent();
 	}
@@ -160,13 +174,13 @@ public class AndOrTree {
     }
 
     /// U(b,a) = R(b,a) + \gamma\sum P(o|b,a) U(tao(b,a,o))
-    private double ANDpropagateU(double b[], andNode a) {
+    private double ANDpropagateU(andNode a) {
 	int o;
 	double Uba = 0;
 	for(o = 0; o < problem.getnrObs(); o++) {
-	    Uba += problem.P_oba(o,b,a.act) * a.children[o].u;
+	    Uba += problem.P_oba(o,a.getParent().belief,a.act) * a.children[o].u;
 	}
-	return problem.Rba(b,a.act) + problem.getGamma() * Uba;
+	return problem.Rba(a.getParent().belief,a.act) + problem.getGamma() * Uba;
     }
 
     /// L(b) = max{max_a L(b,a),L(b)}

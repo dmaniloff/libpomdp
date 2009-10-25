@@ -27,6 +27,9 @@ public class orNode {
     /// H(b,a,o)
     public double h_o;
 
+    /// b*
+    public int bStar;
+
     /// the parent of an OR node is an AND node
     private andNode parent;
 

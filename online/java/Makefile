@@ -13,7 +13,7 @@ RM=/bin/rm
 JCLASSPATH=../../external/jmatharray.jar:../../general/java:.
 
 # source files
-SOURCES=AndOrTree.java orNode.java andNode.java heuristic.java
+SOURCES=AndOrTree.java orNode.java andNode.java heuristic.java aems2.java
 
 default:
 	$(JC) -classpath $(JCLASSPATH) $(SOURCES)

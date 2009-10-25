@@ -13,11 +13,10 @@ interface heuristic {
     /// H(b)
     public double hOR(orNode o);
 
-    /// H(b,a,o)
-    public double hOR_o(orNode o);
-
     /// H(b,a)
-    public double hAND(andNode a);
+    public double[] hOR_a(orNode o);
 
-}
-	
+    /// H(b,a,o)
+    public double[] hAND_o(andNode a);
+
+} // heuristic
