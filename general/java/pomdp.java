@@ -41,6 +41,9 @@ public class pomdp {
     // discount factor
     private double gamma;
 
+    // action names
+    private String actStr[];
+
     // ------------------------------------------------------------------------
     // methods
     // ------------------------------------------------------------------------
@@ -52,7 +55,9 @@ public class pomdp {
     public pomdp(double O[][], 
 		 double T[][], 
 		 double R[][],
-		 int nrSta, int nrAct, int nrObs, double gamma) {
+		 int nrSta, int nrAct, int nrObs, 
+		 double gamma,
+		 String actStr[]) {
 	// allocate space for the pomdp models
 	this.nrSta = nrSta;
 	this.nrAct = nrAct;
@@ -61,6 +66,7 @@ public class pomdp {
 	this.T = new double [nrAct][nrSta][nrSta];
 	this.R = new double [nrAct][nrSta];
 	this.gamma = gamma;
+	this.actStr = actStr;
 	// copy the model matrices
 	int a;
 	for(a = 0; a < nrAct; a++) {
@@ -138,5 +144,9 @@ public class pomdp {
 
     public double getGamma(){
 	return gamma;
+    }
+
+    public String[] getactStr(){
+	return actStr;
     }
 }

@@ -23,11 +23,17 @@ public class orNode {
 
     /// H(b)
     public double h;
+    
+    /// H(b,a) - randomized approximation of pi*
+    public double h_a[];
 
-    /// H*(b)
-    //public double hStar;
+    /// best action 
+    public int bestA;
+    
+    /// H*(b) 
+    public double hStar;
 
-    /// b*
+    /// b* - best node in the fringe of this subtree
     public orNode bStar;
 
     /// the parent of an OR node is an AND node
@@ -49,6 +55,10 @@ public class orNode {
 	return parent;
     }
     
+    public int getobs() {
+	return obs;
+    }
+
     /// constructor for root node
     /* 
      * public orNode(double belief[]) {

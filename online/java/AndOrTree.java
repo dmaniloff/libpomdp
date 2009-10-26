@@ -88,13 +88,13 @@ public class AndOrTree {
 	    observation = 0;
 	    for (orNode o : a.children) {
 		// initialize this node
-		o.init(problem.tao(en.belief,a.act,observation), observation, a);
+		o.init(problem.tao(en.belief,action,observation), observation, a);
 		o.l = getOfflineLower(o);
 		o.u = getOfflineUpper(o);
 		// H(b)
 		o.h = H.hOR(o);			
 		// H*(b)
-		//o.hStar = o.h;
+		o.hStar = o.h;
 		// add node to the fringe ??
 		fringe.add(o);
 		// get as bStar the index to itself
@@ -116,7 +116,8 @@ public class AndOrTree {
 	    // best observation
 	    a.bestO = H.bestO(a);
 	    // H*(b,a)
-	    a.hStar = H.hANDStar(a); 
+	    //a.hStar = H.hANDStar(a); 
+	    a.hStar = a.h_o[a.bestO] * a.children[a.bestO].hStar;
 	    // b*(b,a) - propagate ref of b*
 	    a.bStar = a.children[a.bestO].bStar;
 	    // iterate
@@ -126,9 +127,11 @@ public class AndOrTree {
 	en.l = ORpropagateL(en);
 	en.u = ORpropagateU(en);
 	// H(b,a)
-	en.h_a = hOR_a(en);
+	en.h_a = H.hOR_a(en);
 	// best action
 	en.bestA = H.bestA(en);
+	// value of best heuristic in the subtree of en
+	en.hStar = en.h_a[en.bestA] * en.children[en.bestA].hStar;
 	// update reference to best fringe node in the subtree of en
 	en.bStar = en.children[en.bestA].bStar;
 	// return
@@ -180,23 +183,27 @@ public class AndOrTree {
 
     /// L(b,a) = R(b,a) + \gamma \sum_o P(o|b,a) L(tao(b,a,o))
     private double ANDpropagateL(andNode a) {
-	int o;
+	//int o;
 	double Lba = 0;
-	for(o = 0; o < problem.getnrObs(); o++) {
+	//for(o = 0; o < problem.getnrObs(); o++) {
+	for(orNode o : a.children) {
 	    // how about storing P(o|b,a) at init time??
-	    Lba += problem.P_oba(o,a.getParent().belief,a.act) * a.children[o].l;
+	    //Lba += problem.P_oba(o,a.getParent().belief,a.getact()) * a.children[o].l;
+	    Lba += problem.P_oba(o.getobs(),a.getParent().belief,a.getact()) * o.l;
 	}
-	return problem.Rba(a.getParent().belief,a.act) + problem.getGamma() * Lba;
+	return problem.Rba(a.getParent().belief,a.getact()) + problem.getGamma() * Lba;
     }
 
     /// U(b,a) = R(b,a) + \gamma\sum P(o|b,a) U(tao(b,a,o))
     private double ANDpropagateU(andNode a) {
-	int o;
+	//int o;
 	double Uba = 0;
-	for(o = 0; o < problem.getnrObs(); o++) {
-	    Uba += problem.P_oba(o,a.getParent().belief,a.act) * a.children[o].u;
+	//for(o = 0; o < problem.getnrObs(); o++) {
+	for(orNode o : a.children) {
+	    //Uba += problem.P_oba(o,a.getParent().belief,a.getact()) * a.children[o].u;
+	    Uba += problem.P_oba(o.getobs(),a.getParent().belief,a.getact()) * o.u;
 	}
-	return problem.Rba(a.getParent().belief,a.act) + problem.getGamma() * Uba;
+	return problem.Rba(a.getParent().belief,a.getact()) + problem.getGamma() * Uba;
     }
 
     /// L(b) = max{max_a L(b,a),L(b)}
@@ -221,4 +228,62 @@ public class AndOrTree {
 	return root;
     }
 
+    /// output a dot-formatted file to print the tree
+    /// starting from a given orNode
+    public void printdot(orNode root) {
+	// print file headers
+	System.out.println("strict digraph T {");
+	// print node
+	orprint(root);
+	// print closing
+	System.out.println("}");
+    }
+
+    /// print orNode
+    private void orprint(orNode o) {
+	// print this node
+	System.out.println(o.hashCode() + "[label=\"" +
+			   "b=[" + DoubleArray.toString(o.belief) + "]\\n" +
+			   "U(b)=" + o.u + "\\n" +
+			   "L(b)=" + o.l + "\\n" +
+			   "H(b)=" + o.h + 
+			   "\"];");
+	// every or node has a reference to be best node in its subtree
+	System.out.println(o.hashCode() + "->" + o.bStar.hashCode() +
+			 "[label=\"b*\",weight=0,color=blue];");
+	// check it's not in the fringe before calling andprint
+	if (o.children == null) return;	
+	// print outgoing edges from this node
+	for(andNode a : o.children) {
+	    System.out.print(o.hashCode() + "->" + a.hashCode() +
+			     "[label=\"" + 
+			     "H(b,a)=" + o.h_a[a.getact()] + 
+			     "\"];");
+	}
+	System.out.println();
+	// recurse
+	for(andNode a : o.children) andprint(a);
+    }
+
+    /// print andNode
+    private void andprint(andNode a) {
+	// print this node
+	System.out.println(a.hashCode() + "[label=\"" + 
+			   "a=" + problem.getactStr()[a.getact()] + "\\n" + 	
+			   "U(b,a)=" + a.u +
+			   "\"];");
+	// print outgoing edges for this node
+	for(orNode o : a.children) {
+	    System.out.print(a.hashCode() + "->" + o.hashCode() + 
+			     "[label=\"" +
+			     "P(o|b,a)=" + problem.P_oba(o.getobs(),
+							 a.getParent().belief,
+							 a.getact()) + "\\n" +
+			     "H(b,a,o)=" + a.h_o[o.getobs()] + 
+			     "\"];");
+	}
+	System.out.println();
+	// recurse
+	for(orNode o : a.children) orprint(o);
+    }
 }     // AndOrTree

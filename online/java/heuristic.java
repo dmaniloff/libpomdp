@@ -17,7 +17,7 @@ interface heuristic {
     public double[] hOR_a(orNode o);
 
     /// H*(b,a)
-    public double hANDStar(andNode a);
+    //public double hANDStar(andNode a);
 
     /// H(b,a,o)
     public double[] hAND_o(andNode a);

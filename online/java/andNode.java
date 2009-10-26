@@ -10,7 +10,7 @@
 public class andNode {
     
     /// main property is the action the node represents
-    public int act;
+    private int act;
 
     /// lower bound of this node L(b,a)
     public double l;
@@ -45,5 +45,9 @@ public class andNode {
     // get parent
     public orNode getParent() {
 	return parent;
+    }
+
+    public int getact() {
+	return act;
     }
 }

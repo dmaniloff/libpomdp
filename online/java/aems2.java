@@ -65,7 +65,7 @@ public class aems2 implements heuristic {
     /// we will attach it to the andNode and compute
     /// the whole vector at once
     public double[] hAND_o(andNode a) {
-	return LinearAlgebra.times(problem.P_Oba(a.getParent().belief, a.act), 
+	return LinearAlgebra.times(problem.P_Oba(a.getParent().belief, a.getact()), 
 				   problem.getGamma());
     }
 
@@ -88,14 +88,14 @@ public class aems2 implements heuristic {
 	for(a=0; a<problem.getnrAct(); a++)
 	    h_astar[a] = o.children[a].hStar;
 	// element-wise product with H(b,a)
-	double HbaHbastar = LinearAlgebra.times(o.h_a, h_astar);
+	double HbaHbastar[] = LinearAlgebra.times(o.h_a, h_astar);
 	return argmax(HbaHbastar);
     }
 
-    /// H*(b,a)
-    public double hANDStar(andNode a) {
-	return	a.h_o[a.bestO] * a.children[a.bestO].hStar;
-    }
+    /// H*(b,a) - this fun should prob be generic to the tree....
+    //public double hANDStar(andNode a) {
+    //	return	a.h_o[a.bestO] * a.children[a.bestO].hStar;
+    //}
 
     /// general randomized argmax of a vector of doubles
     private int argmax(double v[]) {
@@ -110,7 +110,7 @@ public class aems2 implements heuristic {
 	for(a=0; a<v.length; a++) 
 	    if(v[a] == maxv) repi.add(new Integer(a));
 	// randomize among them if necessary
-	if (repi.size() > 1) System.out.println("will rand among uba, check!!");
+	if (repi.size() > 1) System.out.println("will rand, check!!");
 	r = g.nextInt(repi.size());
 	// return chosen index
 	return repi.get(r);
