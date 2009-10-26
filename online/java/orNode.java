@@ -24,11 +24,11 @@ public class orNode {
     /// H(b)
     public double h;
 
-    /// H(b,a,o)
-    public double h_o;
+    /// H*(b)
+    //public double hStar;
 
     /// b*
-    public int bStar;
+    public orNode bStar;
 
     /// the parent of an OR node is an AND node
     private andNode parent;

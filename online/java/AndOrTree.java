@@ -91,30 +91,46 @@ public class AndOrTree {
 		o.init(problem.tao(en.belief,a.act,observation), observation, a);
 		o.l = getOfflineLower(o);
 		o.u = getOfflineUpper(o);
-		o.h = H.hOR(o);	// H(b)
-		//o.h_o = hOR_o(o); // H(b,a,o)
-		//o.hStar = this.H.hOR(o);
-		// add node to the fringe
+		// H(b)
+		o.h = H.hOR(o);			
+		// H*(b)
+		//o.hStar = o.h;
+		// add node to the fringe ??
 		fringe.add(o);
 		// get as bStar the index to itself
-		o.bStar = fringe.size() - 1;
+		//o.bStar = fringe.size() - 1;
+		// bStar is a reference to itself since o is a fringe node
+		o.bStar = o;
 		// add newly created nodes to return list
 		nodes.add(o);
 		// iterate
 		observation++;
 	    }
-	    // update values in a
+	    // H(b,a,o)
+	    a.h_o = H.hAND_o(a); 
+	    // update values in a - consider using the already
+	    // computed P_Oba if necessary
 	    // L(b,a) = R(b,a) + \gamma \sum_o P(o|b,a)L(tao(b,a,o))
 	    a.l = ANDpropagateL(a);
 	    a.u = ANDpropagateU(a); 
-	    //a.bestO = this.H.bestO(a);
-	    //a.h = hAND(a); // H(b,a)
+	    // best observation
+	    a.bestO = H.bestO(a);
+	    // H*(b,a)
+	    a.hStar = H.hANDStar(a); 
+	    // b*(b,a) - propagate ref of b*
+	    a.bStar = a.children[a.bestO].bStar;
 	    // iterate
 	    action++;
 	}  
 	// update values in en
 	en.l = ORpropagateL(en);
 	en.u = ORpropagateU(en);
+	// H(b,a)
+	en.h_a = hOR_a(en);
+	// best action
+	en.bestA = H.bestA(en);
+	// update reference to best fringe node in the subtree of en
+	en.bStar = en.children[en.bestA].bStar;
 	// return
 	return nodes;
     } // expand

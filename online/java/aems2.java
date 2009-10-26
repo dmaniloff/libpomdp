@@ -69,4 +69,51 @@ public class aems2 implements heuristic {
 				   problem.getGamma());
     }
 
+    /// argmax_o H(b,a,o) H*(tao(b,a,o))
+    public int bestO(andNode a) {
+	double h_ostar[] = new double[problem.getnrObs()];
+	int o;
+	// copy hStar values of a's children
+	for(o=0; o<problem.getnrObs(); o++) 
+	    h_ostar[o] = a.children[o].hStar;
+	// element-wise product with H(b,a,o)
+	double HbaoHstar[] = LinearAlgebra.times(a.h_o,h_ostar);
+	return argmax(HbaoHstar);
+    }
+
+    /// argmax_a H(b,a) H*(b,a)
+    public int bestA(orNode o) {
+	double h_astar[] = new double[problem.getnrAct()];
+	int a;
+	for(a=0; a<problem.getnrAct(); a++)
+	    h_astar[a] = o.children[a].hStar;
+	// element-wise product with H(b,a)
+	double HbaHbastar = LinearAlgebra.times(o.h_a, h_astar);
+	return argmax(HbaHbastar);
+    }
+
+    /// H*(b,a)
+    public double hANDStar(andNode a) {
+	return	a.h_o[a.bestO] * a.children[a.bestO].hStar;
+    }
+
+    /// general randomized argmax of a vector of doubles
+    private int argmax(double v[]) {
+	// declarations
+	double maxv;
+	ArrayList<Integer> repi = new ArrayList<Integer>();
+	int a,r;
+	Random g = new Random();
+	// compute maximum
+	maxv = DoubleArray.max(v);
+	// locate repeated values
+	for(a=0; a<v.length; a++) 
+	    if(v[a] == maxv) repi.add(new Integer(a));
+	// randomize among them if necessary
+	if (repi.size() > 1) System.out.println("will rand among uba, check!!");
+	r = g.nextInt(repi.size());
+	// return chosen index
+	return repi.get(r);
+    }
+
 } // aems2

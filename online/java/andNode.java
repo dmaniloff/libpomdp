@@ -18,6 +18,18 @@ public class andNode {
     /// U(b,a)
     public double u;
 
+    /// H*(b,a)
+    public double hStar;
+
+    /// H(b,a,o)
+    public double[] h_o;
+
+    /// bestO
+    public int bestO;
+
+    /// b*(b,a) - ref to best node in this subtree
+    public orNode bStar;
+
     /// the parent of an AND node is an OR node
     private orNode parent;
 
