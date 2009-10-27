@@ -34,29 +34,35 @@ public class aems2 implements heuristic {
     /// at the orNode level
     public double[] hOR_a(orNode o) {
 	double UbA[] = new double[problem.getnrAct()];
-	double Hba[] = new double[problem.getnrAct()];
-	double maxUbA;
-	ArrayList<Integer> repi = new ArrayList<Integer>();
-	int a,r;
-	Random g = new Random();
+	double Hba[];
+	//double maxUbA;
+	//ArrayList<Integer> repi = new ArrayList<Integer>();
+	int a,argmax;
+	//	Random g = new Random();
 	// copy upper bounds to a separate array
 	for(a=0; a<problem.getnrAct(); a++) 
 	    UbA[a] = o.children[a].u;
 	// compute maximum upper bound
-	maxUbA = DoubleArray.max(UbA);
+	//maxUbA = DoubleArray.max(UbA);
 	// locate repeated values
-	for(a=0; a<problem.getnrAct(); a++) 
-	    if(UbA[a] == maxUbA) repi.add(new Integer(a));
+	//for(a=0; a<problem.getnrAct(); a++) 
+	//    if(UbA[a] == maxUbA) repi.add(new Integer(a));
 	// randomize among them if necessary
-	if (repi.size() > 1) System.out.println("will rand among uba, check!!");
-	r = g.nextInt(repi.size());
+	//if (repi.size() > 1) System.out.println("will rand among uba, check!!");
+	//r = g.nextInt(repi.size());
+	
+	argmax = argmax(UbA);
 	// set the chosen action's Hba value to 1
-	for(a=0; a<problem.getnrAct(); a++) {
-	    if(a==repi.get(r))
-		Hba[a] = 1.0;
-	    else
-		Hba[a] = 0.0;
-	}
+	Hba = DoubleArray.fill(problem.getnrAct(),0.0);
+	Hba[argmax] = 1.0;
+	/* 
+         * for(a=0; a<problem.getnrAct(); a++) {
+	 *     if(a==argmax)
+	 * 	Hba[a] = 1.0;
+	 *     else
+	 * 	Hba[a] = 0.0;
+	 * }
+         */
 	return Hba;
     }
 
@@ -98,12 +104,13 @@ public class aems2 implements heuristic {
     //}
 
     /// general randomized argmax of a vector of doubles
-    private int argmax(double v[]) {
+    /// public for debugging
+    public int argmax(double v[]) {
 	// declarations
 	double maxv;
 	ArrayList<Integer> repi = new ArrayList<Integer>();
 	int a,r;
-	Random g = new Random();
+	Random g = new Random(System.currentTimeMillis());
 	// compute maximum
 	maxv = DoubleArray.max(v);
 	// locate repeated values

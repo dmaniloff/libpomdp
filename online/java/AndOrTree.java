@@ -11,6 +11,7 @@
 
 // imports
 import java.util.*;
+import java.io.*;
 import org.math.array.*;
 
 public class AndOrTree {
@@ -126,6 +127,8 @@ public class AndOrTree {
 	// update values in en
 	en.l = ORpropagateL(en);
 	en.u = ORpropagateU(en);
+	// update H(b)
+	en.h = H.hOR(en);
 	// H(b,a)
 	en.h_a = H.hOR_a(en);
 	// best action
@@ -141,15 +144,36 @@ public class AndOrTree {
     
     /// update the ancestors of a given orNode
     public void updateAncestors(orNode n) {
-	while(!problem.equalB(n.belief,this.root.belief)) {
+	// 
+	andNode a;
+	orNode o;
+	// there could be repeated beliefs!!!
+	//while(!problem.equalB(n.belief,this.root.belief)) {
+	while(n.hashCode() != this.root.hashCode()) {  
+	    // get the AND parent node
+	    a = n.getParent();
 	    // update the andNode that is parent of n
-	    n.getParent().l = ANDpropagateL(n.getParent());
-	    n.getParent().u = ANDpropagateU(n.getParent());
+	    a.l = ANDpropagateL(a);
+	    a.u = ANDpropagateU(a);
+	    // best obs
+	    a.bestO = H.bestO(a);
+	    // H*(b,a)
+	    a.hStar = a.h_o[a.bestO] * a.children[a.bestO].hStar;
+	    // b*(b,a) - propagate ref of b*
+	    a.bStar = a.children[a.bestO].bStar;
+	    // get the OR parent of the parent
+	    o = a.getParent();
 	    // update the orNode that is parent of the parent
-	    n.getParent().getParent().l = 
-		ORpropagateL(n.getParent().getParent());
-	    n.getParent().getParent().u = 
-		ORpropagateU(n.getParent().getParent());
+	    o.l = ORpropagateL(o);
+	    o.u = ORpropagateU(o);
+	    // H(b,a)
+	    o.h_a = H.hOR_a(o);
+	    // best action
+	    o.bestA = H.bestA(o);
+	    // value of best heuristic in the subtree of en
+	    o.hStar = o.h_a[o.bestA] * o.children[o.bestA].hStar;
+	    // update reference to best fringe node in the subtree of en
+	    o.bStar = o.children[o.bestA].bStar;	    	   
 	    // iterate
 	    n = n.getParent().getParent();
 	}
@@ -231,59 +255,69 @@ public class AndOrTree {
     /// output a dot-formatted file to print the tree
     /// starting from a given orNode
     public void printdot(orNode root) {
+	PrintStream out = null;
+	try {
+	    out = new 
+		PrintStream("/Users/diego/Documents/MATLAB/pomdps/libpomdp/online/java/treegraph.dot");
+	}catch(Exception e) {
+	    System.err.println(e.toString());
+	}
+	//out = System.out;
 	// print file headers
-	System.out.println("strict digraph T {");
+	out.println("strict digraph T {");
 	// print node
-	orprint(root);
+	orprint(root,out);
 	// print closing
-	System.out.println("}");
+	out.println("}");
     }
 
     /// print orNode
-    private void orprint(orNode o) {
+    private void orprint(orNode o, PrintStream out) {
 	// print this node
-	System.out.println(o.hashCode() + "[label=\"" +
-			   "b=[" + DoubleArray.toString(o.belief) + "]\\n" +
-			   "U(b)=" + o.u + "\\n" +
-			   "L(b)=" + o.l + "\\n" +
-			   "H(b)=" + o.h + 
-			   "\"];");
+	out.format(o.hashCode() + "[label=\"" +
+		   "b=[" + DoubleArray.toString("%.2f",o.belief) + "]\\n" +
+		   "U(b)= %.2f\\n" +
+		   "L(b)= %.2f\\n" + 
+		   "H(b)= %.2f" +
+		   "\"];\n", o.u, o.l, o.h);
 	// every or node has a reference to be best node in its subtree
-	System.out.println(o.hashCode() + "->" + o.bStar.hashCode() +
-			 "[label=\"b*\",weight=0,color=blue];");
+	out.println(o.hashCode() + "->" + o.bStar.hashCode() +
+		    "[label=\"b*\",weight=0,color=blue];");
 	// check it's not in the fringe before calling andprint
 	if (o.children == null) return;	
 	// print outgoing edges from this node
 	for(andNode a : o.children) {
-	    System.out.print(o.hashCode() + "->" + a.hashCode() +
-			     "[label=\"" + 
-			     "H(b,a)=" + o.h_a[a.getact()] + 
-			     "\"];");
+	    out.print(o.hashCode() + "->" + a.hashCode() +
+		      "[label=\"" + 
+		      "H(b,a)=" + o.h_a[a.getact()] + 
+		      "\"];");
 	}
-	System.out.println();
+	out.println();
 	// recurse
-	for(andNode a : o.children) andprint(a);
+	for(andNode a : o.children) andprint(a, out);
     }
 
     /// print andNode
-    private void andprint(andNode a) {
+    private void andprint(andNode a, PrintStream out) {
 	// print this node
-	System.out.println(a.hashCode() + "[label=\"" + 
-			   "a=" + problem.getactStr()[a.getact()] + "\\n" + 	
-			   "U(b,a)=" + a.u +
-			   "\"];");
+	out.format(a.hashCode() + "[label=\"" + 
+		   "a=" + problem.getactStr()[a.getact()] + "\\n" + 	
+		   "U(b,a)= %.2f\\n" +
+		   "L(b,a)= %.2f" +
+		   "\"];\n", a.u, a.l);
 	// print outgoing edges for this node
 	for(orNode o : a.children) {
-	    System.out.print(a.hashCode() + "->" + o.hashCode() + 
-			     "[label=\"" +
-			     "P(o|b,a)=" + problem.P_oba(o.getobs(),
-							 a.getParent().belief,
-							 a.getact()) + "\\n" +
-			     "H(b,a,o)=" + a.h_o[o.getobs()] + 
-			     "\"];");
+	    out.format(a.hashCode() + "->" + o.hashCode() + 
+		       "[label=\"" +
+		       "o=" + problem.getobsStr()[o.getobs()] + "\\n" +
+		       "P(o|b,a)= %.2f\\n" + 
+		       "H(b,a,o)= %.2f" +  
+		       "\"];\n",
+		       problem.P_oba(o.getobs(), a.getParent().belief,a.getact()),
+		       a.h_o[o.getobs()]);
 	}
-	System.out.println();
+	out.println();
 	// recurse
-	for(orNode o : a.children) orprint(o);
+	for(orNode o : a.children) orprint(o,out);
     }
 }     // AndOrTree

@@ -44,6 +44,9 @@ public class pomdp {
     // action names
     private String actStr[];
 
+    // observation names
+    private String obsStr[];
+
     // ------------------------------------------------------------------------
     // methods
     // ------------------------------------------------------------------------
@@ -57,7 +60,8 @@ public class pomdp {
 		 double R[][],
 		 int nrSta, int nrAct, int nrObs, 
 		 double gamma,
-		 String actStr[]) {
+		 String actStr[],
+		 String obsStr[]) {
 	// allocate space for the pomdp models
 	this.nrSta = nrSta;
 	this.nrAct = nrAct;
@@ -67,6 +71,7 @@ public class pomdp {
 	this.R = new double [nrAct][nrSta];
 	this.gamma = gamma;
 	this.actStr = actStr;
+	this.obsStr = obsStr;
 	// copy the model matrices
 	int a;
 	for(a = 0; a < nrAct; a++) {
@@ -142,11 +147,15 @@ public class pomdp {
 	return nrObs;
     }
 
-    public double getGamma(){
+    public double getGamma() {
 	return gamma;
     }
 
-    public String[] getactStr(){
+    public String[] getactStr() {
 	return actStr;
     }
-}
+
+    public String[] getobsStr() {
+	return obsStr;
+    }
+} // pomdp
