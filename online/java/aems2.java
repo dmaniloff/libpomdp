@@ -67,12 +67,13 @@ public class aems2 implements heuristic {
     }
 
     /// H(b,a,o)
-    /// given that H(b,a,o) in AEMS2 = P(o|b,a)
+    /// given that H(b,a,o) in AEMS2 = \gamma * P(o|b,a)
     /// we will attach it to the andNode and compute
     /// the whole vector at once
     public double[] hAND_o(andNode a) {
-	return LinearAlgebra.times(problem.P_Oba(a.getParent().belief, a.getact()), 
-				   problem.getGamma());
+	//return LinearAlgebra.times(problem.P_Oba(a.getParent().belief, a.getact()), 
+	//			   problem.getGamma());
+	return LinearAlgebra.times(a.poba, problem.getGamma());
     }
 
     /// argmax_o H(b,a,o) H*(tao(b,a,o))

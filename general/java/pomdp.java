@@ -75,7 +75,7 @@ public class pomdp {
 	// copy the model matrices
 	int a;
 	for(a = 0; a < nrAct; a++) {
-	    this.O[a] = DoubleArray.getColumnsRangeCopy(O, a*nrSta, a*nrSta + nrSta-1);
+	    this.O[a] = DoubleArray.getColumnsRangeCopy(O, a*nrObs, a*nrObs + nrObs-1);
 	    this.T[a] = DoubleArray.getColumnsRangeCopy(T, a*nrSta, a*nrSta + nrSta-1);
 	    this.R[a] = DoubleArray.getColumnCopy(R, a); 
 	}
@@ -98,6 +98,8 @@ public class pomdp {
 
     // tao(b,a,o)
     public double[] tao(double b[], int a, int o) {
+	// get current time
+	long start = System.currentTimeMillis();
 	double[] b1, b2;
 	b1 = LinearAlgebra.times(T[a],b);
 	//System.out.println(DoubleArray.toString(O[a])+"o is"+o+"and a is"+a);
@@ -105,6 +107,7 @@ public class pomdp {
 	double sum = DoubleArray.sum(b2);
 	// normalization
 	if (sum > 0) b2 = LinearAlgebra.divide(b2,sum);
+	//System.out.format("tao took: %tL\n", System.currentTimeMillis()-start);
 	return b2;
     }
 

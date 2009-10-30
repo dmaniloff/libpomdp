@@ -108,11 +108,12 @@ public class AndOrTree {
 		//nodes.add(o);
 		// iterate
 		observation++;
-	    }
+	    } // orNode loop
+	    // P(o|b,a) in vector form for all children nodes of a
+	    a.poba = problem.P_Oba(en.belief,action);
 	    // H(b,a,o)
 	    a.h_o = H.hAND_o(a); 
-	    // update values in a - consider using the already
-	    // computed P_Oba if necessary
+	    // update values in a
 	    // L(b,a) = R(b,a) + \gamma \sum_o P(o|b,a)L(tao(b,a,o))
 	    a.l = ANDpropagateL(a);
 	    a.u = ANDpropagateU(a); 
@@ -125,7 +126,7 @@ public class AndOrTree {
 	    a.bStar = a.children[a.bestO].bStar;
 	    // iterate
 	    action++;
-	}  
+	}  // andNode loop
 	// update values in en
 	en.l = ORpropagateL(en);
 	en.u = ORpropagateU(en);
@@ -148,7 +149,6 @@ public class AndOrTree {
     
     /// update the ancestors of a given orNode
     public void updateAncestors(orNode n) {
-	// 
 	andNode a;
 	orNode o;
 	// there could be repeated beliefs!!!
@@ -220,7 +220,8 @@ public class AndOrTree {
 	for(orNode o : a.children) {
 	    // how about storing P(o|b,a) at init time??
 	    //Lba += problem.P_oba(o,a.getParent().belief,a.getact()) * a.children[o].l;
-	    Lba += problem.P_oba(o.getobs(),a.getParent().belief,a.getact()) * o.l;
+	    //Lba += problem.P_oba(o.getobs(),a.getParent().belief,a.getact()) * o.l;
+	    Lba += a.poba[o.getobs()] * o.l;
 	}
 	return problem.Rba(a.getParent().belief,a.getact()) + problem.getGamma() * Lba;
     }
@@ -232,7 +233,8 @@ public class AndOrTree {
 	//for(o = 0; o < problem.getnrObs(); o++) {
 	for(orNode o : a.children) {
 	    //Uba += problem.P_oba(o,a.getParent().belief,a.getact()) * a.children[o].u;
-	    Uba += problem.P_oba(o.getobs(),a.getParent().belief,a.getact()) * o.u;
+	    //Uba += problem.P_oba(o.getobs(),a.getParent().belief,a.getact()) * o.u;
+	    Uba += a.poba[o.getobs()] * o.u;
 	}
 	return problem.Rba(a.getParent().belief,a.getact()) + problem.getGamma() * Uba;
     }

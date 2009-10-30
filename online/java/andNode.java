@@ -12,17 +12,20 @@ public class andNode {
     /// main property is the action the node represents
     private int act;
 
-    /// lower bound of this node L(b,a)
+    /// L(b,a)
     public double l;
 
     /// U(b,a)
     public double u;
 
+    /// P(o|b,a) in vector form for all its children
+    public double poba[];
+
     /// H*(b,a)
     public double hStar;
 
     /// H(b,a,o)
-    public double[] h_o;
+    public double h_o[];
 
     /// bestO
     public int bestO;
