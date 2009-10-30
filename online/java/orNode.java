@@ -36,6 +36,9 @@ public class orNode {
     /// b* - best node in the fringe of this subtree
     public orNode bStar;
 
+    /// size of the subtree rooted at this node, excluding itself
+    public int subTreeSize;
+
     /// the parent of an OR node is an AND node
     private andNode parent;
 
@@ -48,6 +51,10 @@ public class orNode {
 	this.obs = observation;
 	this.parent = parent;
 	this.children = null;
+	// best reference upon creation is to itself
+	this.bStar = this;
+	// size of the subtree rooted here
+	this.subTreeSize = 0;
     }
 
     // getParent
@@ -55,17 +62,14 @@ public class orNode {
 	return parent;
     }
     
+    // disconnect - kill the parent of this node
+    public void disconnect() {
+	this.parent = null;
+	this.obs = -1;
+    }
+
     public int getobs() {
 	return obs;
     }
 
-    /// constructor for root node
-    /* 
-     * public orNode(double belief[]) {
-     * 	this.belief = belief;
-     * 	this.obs = -1;
-     * 	this.parent = null;
-     * 	this.children = null;
-     * }
-     */
-}
+} // orNode

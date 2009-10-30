@@ -117,7 +117,7 @@ public class aems2 implements heuristic {
 	for(a=0; a<v.length; a++) 
 	    if(v[a] == maxv) repi.add(new Integer(a));
 	// randomize among them if necessary
-	if (repi.size() > 1) System.out.println("will rand, check!!");
+	//if (repi.size() > 1) System.out.println("will rand, check!!");
 	r = g.nextInt(repi.size());
 	// return chosen index
 	return repi.get(r);

@@ -114,18 +114,19 @@ public class pomdp {
 				 times(b,DoubleArray.getRowCopy(R,a)));
     }
 
-
-    /// compare two belief vectors to a given accuracy
-    public boolean equalB(double[] b1, double[] b2) {
-	double acc = 0.00001;
-	double diff[];
-	diff = LinearAlgebra.minus(b1,b2);
-	return (DoubleArray.max(DoubleArray.f(diff,abs)) <= acc);
-    }
-    
-    // define absolute value function to apply to vectors
-    private Function abs = new Function() { 
-	    public double f(double x) { return Math.abs(x); }};
+    /// compare two belief vectors to a given accuracy - used??
+    /* 
+     * public boolean equalB(double[] b1, double[] b2) {
+     * 	double acc = 0.00001;
+     * 	double diff[];
+     * 	diff = LinearAlgebra.minus(b1,b2);
+     * 	return (DoubleArray.max(DoubleArray.f(diff,abs)) <= acc);
+     * }
+     * 
+     * // define absolute value function to apply to vectors
+     * private Function abs = new Function() { 
+     * 	    public double f(double x) { return Math.abs(x); }};
+     */
 
     public double[][][] getT() {
 	return T;
@@ -158,4 +159,6 @@ public class pomdp {
     public String[] getobsStr() {
 	return obsStr;
     }
+
 } // pomdp
+

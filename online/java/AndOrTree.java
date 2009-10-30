@@ -36,7 +36,7 @@ public class AndOrTree {
     // fringe of the tree - do we need one??
     // prio queue or simple list
     //private PriorityQueue<orNode> fringe;
-    private List<orNode> fringe;
+    //private List<orNode> fringe;
 
     // ------------------------------------------------------------------------
     // methods
@@ -51,23 +51,25 @@ public class AndOrTree {
     }
 
     /// initializer
-    public void initialize(double belief[]) {
+    public void init(double belief[]) {
 	this.root = new orNode();
 	this.root.init(belief, -1, null);
 	this.root.l = getOfflineLower(this.root);
 	this.root.u = getOfflineUpper(this.root);
+	//this.root.bStar = this.root;
 	//this.fringe = new PriorityQueue<orNode>();
-	this.fringe = new ArrayList<orNode>();
+	//this.fringe = new ArrayList<orNode>();
  	// add root node to the fringe
-	this.fringe.add(root);
+	//this.fringe.add(root);
     }
 
     /// expand routine - return a |A||O| list of orNode using Generics
-    public List<orNode> expand(orNode en){
-	// should add a check here to make sure en is in the fringe
+    /// that contains the nodes of a one-step expation from en
+    public void expand(orNode en){
+	// should add a check here to make sure en is in the fringe??   
 
 	// allocate return list
-	List<orNode> nodes = new ArrayList<orNode>();
+	//List<orNode> nodes = new ArrayList<orNode>();
 	// iterators
 	int action, observation;
 	// allocate space for the children AND nodes (do we have to do this here?)
@@ -97,13 +99,13 @@ public class AndOrTree {
 		// H*(b)
 		o.hStar = o.h;
 		// add node to the fringe ??
-		fringe.add(o);
+		//fringe.add(o);
 		// get as bStar the index to itself
 		//o.bStar = fringe.size() - 1;
 		// bStar is a reference to itself since o is a fringe node
 		o.bStar = o;
 		// add newly created nodes to return list
-		nodes.add(o);
+		//nodes.add(o);
 		// iterate
 		observation++;
 	    }
@@ -137,8 +139,10 @@ public class AndOrTree {
 	en.hStar = en.h_a[en.bestA] * en.children[en.bestA].hStar;
 	// update reference to best fringe node in the subtree of en
 	en.bStar = en.children[en.bestA].bStar;
+	// the number of nodes under en increases by |A||O|
+	en.subTreeSize += problem.getnrAct() * problem.getnrObs();
 	// return
-	return nodes;
+	//return nodes;
     } // expand
 
     
@@ -148,6 +152,7 @@ public class AndOrTree {
 	andNode a;
 	orNode o;
 	// there could be repeated beliefs!!!
+	// make sure that using the hashCode here makes sense...
 	//while(!problem.equalB(n.belief,this.root.belief)) {
 	while(n.hashCode() != this.root.hashCode()) {  
 	    // get the AND parent node
@@ -173,7 +178,9 @@ public class AndOrTree {
 	    // value of best heuristic in the subtree of en
 	    o.hStar = o.h_a[o.bestA] * o.children[o.bestA].hStar;
 	    // update reference to best fringe node in the subtree of en
-	    o.bStar = o.children[o.bestA].bStar;	    	   
+	    o.bStar = o.children[o.bestA].bStar;
+	    // this orNode now has a larger subtree underneath
+	    o.subTreeSize += n.subTreeSize;
 	    // iterate
 	    n = n.getParent().getParent();
 	}
@@ -251,6 +258,39 @@ public class AndOrTree {
     public orNode getroot() {
 	return root;
     }
+
+    /// if I understood the gc's behaviour
+    /// correctly, moving the root of the tree
+    /// and setting the new root's parent to null
+    /// automagically deletes all the useless subtrees
+    public void moveTree(orNode newroot) {
+	this.root = newroot;
+	//BUG HERE
+	//this.root.init(newroot.belief, -1, null);
+	this.root.disconnect();
+    }
+    
+    /* 
+     * /// free or node's parent
+     * private void orfreeE(orNode o, int excepted) {
+     * 	// clear refs to parent andNode
+     * 	o.parent = null;
+     * 	// make sure this is not the excepted node
+     * 	if (o.hashCode() == excepted) return;
+     * 	// call andfree on children
+     * 	for(andNode a : o.children)
+     * 	    andfreeE(a, excepted);
+     * }
+     * 
+     * /// free and node's parent
+     * private void andfreeE(andNode a, int excepted) {
+     * 	// clear ref to parent orNode
+     * 	a.parent = null;
+     * 	// call orfree on children
+     * 	for(orNode o : a.children)
+     * 	    orfreeE(o, excepted);
+     * }
+     */
 
     /// output a dot-formatted file to print the tree
     /// starting from a given orNode
