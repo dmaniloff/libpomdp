@@ -355,7 +355,8 @@ public class AndOrTree {
 		       "P(o|b,a)= %.2f\\n" + 
 		       "H(b,a,o)= %.2f" +  
 		       "\"];\n",
-		       problem.P_oba(o.getobs(), a.getParent().belief,a.getact()),
+		       //problem.P_oba(o.getobs(), a.getParent().belief,a.getact()),
+		       a.poba[o.getobs()],
 		       a.h_o[o.getobs()]);
 	}
 	out.println();
