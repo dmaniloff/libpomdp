@@ -11,4 +11,11 @@
 public class valueFunction {
     public double v[][];
     public int a[];
-}
+    
+    // constructor
+    public valueFunction(double v[][], int a[]) {
+	this.v = v;
+	this.a = a;
+    }
+
+} // valueFunction

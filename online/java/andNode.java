@@ -19,13 +19,13 @@ public class andNode {
     public double u;
 
     /// P(o|b,a) in vector form for all its children
-    public double poba[];
+    //    public double poba[];
 
     /// H*(b,a)
     public double hStar;
 
     /// H(b,a,o)
-    public double h_o[];
+    // public double h_o[];
 
     /// bestO
     public int bestO;

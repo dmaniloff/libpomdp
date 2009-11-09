@@ -2,7 +2,10 @@
  * libpomdp
  * ========
  * File: orNode.java
- * Description: class for an OR node in the tree
+ * Description: class for an OR node in the AND-OR tree
+ *              all of the values associated with a heuristic are simple
+ *              placeholders to be filled by a method that implements
+ *              the heuristic interface
  * Copyright (c) 2009, Diego Maniloff  
  * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
@@ -10,7 +13,7 @@
 public class orNode {
     
     /// first property of an OR node is its belief state
-    public double belief[];
+    public belState belief;
 
     /// observation that leads to this node
     private int obs;
@@ -22,10 +25,13 @@ public class orNode {
     public double u;
 
     /// H(b)
-    public double h;
+    public double h_b;
     
     /// H(b,a) - randomized approximation of pi*
-    public double h_a[];
+    public double h_ba[];
+
+    /// H(b,a,o)
+    public double h_bao;
 
     /// best action 
     public int bestA;
@@ -46,13 +52,13 @@ public class orNode {
     public andNode children[];
 
     /// initializer
-    public void init(double belief[], int observation, andNode parent) {
-	this.belief = belief;
-	this.obs = observation;
-	this.parent = parent;
-	this.children = null;
+    public void init(belState belief, int observation, andNode parent) {
+	this.belief      = belief;
+	this.obs         = observation;
+	this.parent      = parent;
+	this.children    = null;
 	// best reference upon creation is to itself
-	this.bStar = this;
+	this.bStar       = this;
 	// size of the subtree rooted here
 	this.subTreeSize = 0;
     }
@@ -65,7 +71,7 @@ public class orNode {
     // disconnect - kill the parent of this node
     public void disconnect() {
 	this.parent = null;
-	this.obs = -1;
+	this.obs    = -1;
     }
 
     public int getobs() {

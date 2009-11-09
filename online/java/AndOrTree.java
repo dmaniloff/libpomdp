@@ -33,11 +33,6 @@ public class AndOrTree {
     // root of the tree
     private orNode root;
 
-    // fringe of the tree - do we need one??
-    // prio queue or simple list
-    //private PriorityQueue<orNode> fringe;
-    //private List<orNode> fringe;
-
     // ------------------------------------------------------------------------
     // methods
     // ------------------------------------------------------------------------
@@ -51,25 +46,23 @@ public class AndOrTree {
     }
 
     /// initializer
-    public void init(double belief[]) {
+    public void init(belState belief) {
 	this.root = new orNode();
 	this.root.init(belief, -1, null);
 	this.root.l = getOfflineLower(this.root);
 	this.root.u = getOfflineUpper(this.root);
-	//this.root.bStar = this.root;
-	//this.fringe = new PriorityQueue<orNode>();
-	//this.fringe = new ArrayList<orNode>();
- 	// add root node to the fringe
-	//this.fringe.add(root);
     }
 
-    /// expand routine - return a |A||O| list of orNode using Generics
-    /// that contains the nodes of a one-step expation from en
+    /**
+     * expand(orNode en):
+     * one-step expansion of |A||O| orNodes
+     */
     public void expand(orNode en){
-	// should add a check here to make sure en is in the fringe??   
-
-	// allocate return list
-	//List<orNode> nodes = new ArrayList<orNode>();
+	// make sure this node hasn't been expanded before
+	if (en.children != null) { 
+	    System.err.println("node cannot be expanded");
+	    return;
+	}
 	// iterators
 	int action, observation;
 	// allocate space for the children AND nodes (do we have to do this here?)
@@ -91,28 +84,28 @@ public class AndOrTree {
 	    observation = 0;
 	    for (orNode o : a.children) {
 		// initialize this node
+		// the belief property contains bPoint and poba
 		o.init(problem.tao(en.belief,action,observation), observation, a);
 		o.l = getOfflineLower(o);
 		o.u = getOfflineUpper(o);
 		// H(b)
-		o.h = H.hOR(o);			
-		// H*(b)
-		o.hStar = o.h;
-		// add node to the fringe ??
-		//fringe.add(o);
-		// get as bStar the index to itself
-		//o.bStar = fringe.size() - 1;
+		o.h_b = H.h_b(o);
+		// H(b,a,o)	
+		o.h_bao = H.h_bao(o);		
+		// H*(b) will be H(b) upon creation
+		o.hStar = o.h_b;
 		// bStar is a reference to itself since o is a fringe node
 		o.bStar = o;
-		// add newly created nodes to return list
-		//nodes.add(o);
 		// iterate
 		observation++;
 	    } // orNode loop
+	    
 	    // P(o|b,a) in vector form for all children nodes of a
-	    a.poba = problem.P_Oba(en.belief,action);
+	    // no need to re-compute!
+	    // a.poba = problem.P_Oba(en.belief,action);
 	    // H(b,a,o)
-	    a.h_o = H.hAND_o(a); 
+	    // a.h_o = H.hAND_o(a); 
+
 	    // update values in a
 	    // L(b,a) = R(b,a) + \gamma \sum_o P(o|b,a)L(tao(b,a,o))
 	    a.l = ANDpropagateL(a);
@@ -120,8 +113,8 @@ public class AndOrTree {
 	    // best observation
 	    a.bestO = H.bestO(a);
 	    // H*(b,a)
-	    //a.hStar = H.hANDStar(a); 
-	    a.hStar = a.h_o[a.bestO] * a.children[a.bestO].hStar;
+	    a.hStar = H.hANDStar(a); 
+	    //a.hStar = a.children[a.bestO].h_bao * a.children[a.bestO].hStar;
 	    // b*(b,a) - propagate ref of b*
 	    a.bStar = a.children[a.bestO].bStar;
 	    // iterate
@@ -131,13 +124,16 @@ public class AndOrTree {
 	en.l = ORpropagateL(en);
 	en.u = ORpropagateU(en);
 	// update H(b)
-	en.h = H.hOR(en);
+	en.h_b = H.h_b(en);
 	// H(b,a)
-	en.h_a = H.hOR_a(en);
+	en.h_ba = H.h_ba(en);
 	// best action
+	// a_b = argmax_a {H(b,a) * H*(b,a)}
 	en.bestA = H.bestA(en);
 	// value of best heuristic in the subtree of en
-	en.hStar = en.h_a[en.bestA] * en.children[en.bestA].hStar;
+	// H*(b) = H(b,a_b) * H*(b,a_b)
+	//en.hStar = en.h_ba[en.bestA] * en.children[en.bestA].hStar;
+	en.hStar = H.hORStar(en);
 	// update reference to best fringe node in the subtree of en
 	en.bStar = en.children[en.bestA].bStar;
 	// the number of nodes under en increases by |A||O|
@@ -147,10 +143,13 @@ public class AndOrTree {
     } // expand
 
     
-    /// update the ancestors of a given orNode
+    /**
+     * updateAncestors(orNode n):
+     * update the ancestors of a given orNode
+     */
     public void updateAncestors(orNode n) {
 	andNode a;
-	orNode o;
+	orNode  o;
 	// there could be repeated beliefs!!!
 	// make sure that using the hashCode here makes sense...
 	//while(!problem.equalB(n.belief,this.root.belief)) {
@@ -163,7 +162,8 @@ public class AndOrTree {
 	    // best obs
 	    a.bestO = H.bestO(a);
 	    // H*(b,a)
-	    a.hStar = a.h_o[a.bestO] * a.children[a.bestO].hStar;
+	    //a.hStar = a.h_o[a.bestO] * a.children[a.bestO].hStar;
+	    a.hStar = H.hANDStar(a);
 	    // b*(b,a) - propagate ref of b*
 	    a.bStar = a.children[a.bestO].bStar;
 	    // get the OR parent of the parent
@@ -172,11 +172,11 @@ public class AndOrTree {
 	    o.l = ORpropagateL(o);
 	    o.u = ORpropagateU(o);
 	    // H(b,a)
-	    o.h_a = H.hOR_a(o);
+	    o.h_ba = H.h_ba(o);
 	    // best action
 	    o.bestA = H.bestA(o);
 	    // value of best heuristic in the subtree of en
-	    o.hStar = o.h_a[o.bestA] * o.children[o.bestA].hStar;
+	    o.hStar = o.h_ba[o.bestA] * o.children[o.bestA].hStar;
 	    // update reference to best fringe node in the subtree of en
 	    o.bStar = o.children[o.bestA].bStar;
 	    // this orNode now has a larger subtree underneath
@@ -192,7 +192,8 @@ public class AndOrTree {
 	double dotProd = 0;
 	for (double alphaV[] : offlineLower.v) {
 	    // compute dot product
-	    dotProd = DoubleArray.sum(LinearAlgebra.times(alphaV, o.belief));
+	    dotProd = 
+		DoubleArray.sum(LinearAlgebra.times(alphaV, o.belief.bPoint));
 	    // keep the max - maybe doing this outside the loop is faster
 	    maxV = DoubleArray.max(dotProd,maxV);
 	}
@@ -205,7 +206,8 @@ public class AndOrTree {
 	double dotProd = 0;
 	for (double alphaV[] : offlineUpper.v) {
 	    // compute dot product
-	    dotProd = DoubleArray.sum(LinearAlgebra.times(alphaV, o.belief));
+	    dotProd = 
+		DoubleArray.sum(LinearAlgebra.times(alphaV, o.belief.bPoint));
 	    // keep the max
 	    maxV = DoubleArray.max(dotProd,maxV);
 	}
@@ -221,7 +223,8 @@ public class AndOrTree {
 	    // how about storing P(o|b,a) at init time??
 	    //Lba += problem.P_oba(o,a.getParent().belief,a.getact()) * a.children[o].l;
 	    //Lba += problem.P_oba(o.getobs(),a.getParent().belief,a.getact()) * o.l;
-	    Lba += a.poba[o.getobs()] * o.l;
+	    //Lba += a.poba[o.getobs()] * o.l;
+	    Lba += o.belief.poba * o.l;
 	}
 	return problem.Rba(a.getParent().belief,a.getact()) + problem.getGamma() * Lba;
     }
@@ -234,7 +237,8 @@ public class AndOrTree {
 	for(orNode o : a.children) {
 	    //Uba += problem.P_oba(o,a.getParent().belief,a.getact()) * a.children[o].u;
 	    //Uba += problem.P_oba(o.getobs(),a.getParent().belief,a.getact()) * o.u;
-	    Uba += a.poba[o.getobs()] * o.u;
+	    //Uba += a.poba[o.getobs()] * o.u;
+	    Uba += o.belief.poba * o.u;
 	}
 	return problem.Rba(a.getParent().belief,a.getact()) + problem.getGamma() * Uba;
     }
@@ -317,11 +321,11 @@ public class AndOrTree {
     private void orprint(orNode o, PrintStream out) {
 	// print this node
 	out.format(o.hashCode() + "[label=\"" +
-		   "b=[" + DoubleArray.toString("%.2f",o.belief) + "]\\n" +
+		   "b=[" + DoubleArray.toString("%.2f",o.belief.bPoint) + "]\\n" +
 		   "U(b)= %.2f\\n" +
 		   "L(b)= %.2f\\n" + 
 		   "H(b)= %.2f" +
-		   "\"];\n", o.u, o.l, o.h);
+		   "\"];\n", o.u, o.l, o.h_b);
 	// every or node has a reference to be best node in its subtree
 	out.println(o.hashCode() + "->" + o.bStar.hashCode() +
 		    "[label=\"b*\",weight=0,color=blue];");
@@ -331,7 +335,7 @@ public class AndOrTree {
 	for(andNode a : o.children) {
 	    out.print(o.hashCode() + "->" + a.hashCode() +
 		      "[label=\"" + 
-		      "H(b,a)=" + o.h_a[a.getact()] + 
+		      "H(b,a)=" + o.h_ba[a.getact()] + 
 		      "\"];");
 	}
 	out.println();
@@ -356,8 +360,9 @@ public class AndOrTree {
 		       "H(b,a,o)= %.2f" +  
 		       "\"];\n",
 		       //problem.P_oba(o.getobs(), a.getParent().belief,a.getact()),
-		       a.poba[o.getobs()],
-		       a.h_o[o.getobs()]);
+		       //a.poba[o.getobs()],
+		       o.belief.poba,
+		       o.h_bao);
 	}
 	out.println();
 	// recurse

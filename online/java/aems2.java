@@ -22,9 +22,9 @@ public class aems2 implements heuristic {
     public aems2 (pomdp prob) {
 	this.problem = prob;
     }
-
+   
     /// H(b)
-    public double hOR(orNode o) {
+    public double h_b(orNode o) {
 	return o.u - o.l;
     }
 
@@ -32,77 +32,65 @@ public class aems2 implements heuristic {
     /// given that this value depends on the
     /// other branches as well we compute it
     /// at the orNode level
-    public double[] hOR_a(orNode o) {
+    public double[] h_ba(orNode o) {
 	double UbA[] = new double[problem.getnrAct()];
 	double Hba[];
-	//double maxUbA;
-	//ArrayList<Integer> repi = new ArrayList<Integer>();
 	int a,argmax;
-	//	Random g = new Random();
 	// copy upper bounds to a separate array
-	for(a=0; a<problem.getnrAct(); a++) 
+	for(a=0; a<problem.getnrAct(); a++) {
 	    UbA[a] = o.children[a].u;
+	}
 	// compute maximum upper bound
-	//maxUbA = DoubleArray.max(UbA);
-	// locate repeated values
-	//for(a=0; a<problem.getnrAct(); a++) 
-	//    if(UbA[a] == maxUbA) repi.add(new Integer(a));
-	// randomize among them if necessary
-	//if (repi.size() > 1) System.out.println("will rand among uba, check!!");
-	//r = g.nextInt(repi.size());
-	
 	argmax = argmax(UbA);
 	// set the chosen action's Hba value to 1
 	Hba = DoubleArray.fill(problem.getnrAct(),0.0);
 	Hba[argmax] = 1.0;
-	/* 
-         * for(a=0; a<problem.getnrAct(); a++) {
-	 *     if(a==argmax)
-	 * 	Hba[a] = 1.0;
-	 *     else
-	 * 	Hba[a] = 0.0;
-	 * }
-         */
+	// return
 	return Hba;
     }
 
-    /// H(b,a,o)
-    /// given that H(b,a,o) in AEMS2 = \gamma * P(o|b,a)
-    /// we will attach it to the andNode and compute
-    /// the whole vector at once
-    public double[] hAND_o(andNode a) {
-	//return LinearAlgebra.times(problem.P_Oba(a.getParent().belief, a.getact()), 
-	//			   problem.getGamma());
-	return LinearAlgebra.times(a.poba, problem.getGamma());
+    /// H(b,a,o) = \gamma * P(o|b,a)
+    public double h_bao(orNode o) {
+	return problem.getGamma() * o.belief.poba;
     }
 
-    /// argmax_o H(b,a,o) H*(tao(b,a,o))
+    /// H*(b,a) = \max_o {H(b,a,o) * H*(tao(b,a,o))}
+    public double hANDStar(andNode a) {
+    	//return	a.h_o[a.bestO] * a.children[a.bestO].hStar;
+	return  a.children[a.bestO].h_bao * a.children[a.bestO].hStar;
+    }
+
+    // H*(b) = H(b,a_b) * H*(b,a_b)
+    public double hORStar(orNode o) {
+	return o.h_ba[o.bestA] * o.children[o.bestA].hStar;
+    }
+
+    /// o_ba = argmax_o H(b,a,o) H*(tao(b,a,o))
     public int bestO(andNode a) {
-	double h_ostar[] = new double[problem.getnrObs()];
+	double HbaoHostar[] = new double[problem.getnrObs()];
 	int o;
-	// copy hStar values of a's children
-	for(o=0; o<problem.getnrObs(); o++) 
-	    h_ostar[o] = a.children[o].hStar;
+	// gather H(b,a,o) * H*(tao(b,a,o))
+	for(o=0; o<problem.getnrObs(); o++) {
+	    //h_ostar[o]    = a.children[o].hStar;
+	    HbaoHostar[o] = a.children[o].h_bao * a.children[o].hStar;
+	}
 	// element-wise product with H(b,a,o)
-	double HbaoHstar[] = LinearAlgebra.times(a.h_o,h_ostar);
-	return argmax(HbaoHstar);
+	//double HbaoHostar[] = LinearAlgebra.times(a.h_o,h_ostar);
+	return argmax(HbaoHostar);
     }
 
-    /// argmax_a H(b,a) H*(b,a)
+    /// a_b = argmax_a H(b,a) H*(b,a)
     public int bestA(orNode o) {
 	double h_astar[] = new double[problem.getnrAct()];
 	int a;
 	for(a=0; a<problem.getnrAct(); a++)
 	    h_astar[a] = o.children[a].hStar;
 	// element-wise product with H(b,a)
-	double HbaHbastar[] = LinearAlgebra.times(o.h_a, h_astar);
+	double HbaHbastar[] = LinearAlgebra.times(o.h_ba, h_astar);
 	return argmax(HbaHbastar);
     }
 
-    /// H*(b,a) - this fun should prob be generic to the tree....
-    //public double hANDStar(andNode a) {
-    //	return	a.h_o[a.bestO] * a.children[a.bestO].hStar;
-    //}
+   
 
     /// general randomized argmax of a vector of doubles
     /// public for debugging

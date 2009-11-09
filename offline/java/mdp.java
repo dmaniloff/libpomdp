@@ -4,6 +4,7 @@
  * File: mdp.java
  * Description: offline upper bounds based on the underlying
  *              fully observable MDP (Vmdp and Qmdp)
+ *              ONLY IN USE WITH FLAT REPS FOR NOW
  * Copyright (c) 2009, Diego Maniloff 
  * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
@@ -17,7 +18,7 @@ public class mdp {
     // ------------------------------------------------------------------------
 
     // pomdp problem specification
-    public pomdp problem;
+    public pomdpFlat problem;
 
     // Vmdp approximation
     private valueFunction Vmdp;
@@ -30,7 +31,7 @@ public class mdp {
     // ------------------------------------------------------------------------
 
     /// constructor
-    public mdp(pomdp prob) {
+    public mdp(pomdpFlat prob) {
 	this.problem = prob;
 	compute();
     }
@@ -38,14 +39,12 @@ public class mdp {
     /// approximation using the underlying FOMDP
     public void compute() {
 	// parameters
-	int max_iter = 1000;
+	int max_iter   = 1000;
 	double epsilon = 0.00001;
 
 	// pre-allocate arrays - Vmdp.v in this part case is 1D
-	this.Vmdp = new valueFunction();
-	this.Qmdp = new valueFunction();
-
-	this.Vmdp.v = new double[1][problem.getnrSta()];
+	this.Vmdp = new valueFunction(new double[1][problem.getnrSta()], null);
+	this.Qmdp = new valueFunction(new double[problem.getnrAct()][problem.getnrSta()], null);
 	this.Vmdp.v[0] = DoubleArray.fill(problem.getnrSta(),0.0);
 
 	double oldVmdp[];

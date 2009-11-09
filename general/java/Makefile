@@ -10,12 +10,12 @@ JC=/usr/bin/javac
 RM=/bin/rm
 
 # classpath
-JCLASSPATH=../../external/jmatharray.jar:.
+JCLASSPATH=../../external/jmatharray.jar:../../external/symPerseusClasses:.
 
 # source files
-SOURCES=pomdp.java valueFunction.java
+SOURCES=pomdp.java pomdpFlat.java pomdpAdd.java valueFunction.java belState.java belStateDD.java belStateFlat.java
 
-pomdp.class: pomdp.java valueFunction.java
+default:
 	$(JC) -classpath $(JCLASSPATH) $(SOURCES)
 
 clean:

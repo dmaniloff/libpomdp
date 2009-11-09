@@ -10,17 +10,21 @@
 
 interface heuristic {
 
-    /// H(b)
-    public double hOR(orNode o);
+    /// H(b): heuristic for the orNode
+    public double h_b(orNode o);
 
-    /// H(b,a)
-    public double[] hOR_a(orNode o);
+    /// H(b,a): edge between orNode and andNode
+    /// easier to compute at the orNode level
+    public double[] h_ba(orNode o);
+
+    /// H(b,a,o): edge between andNode anr orNode
+    public double h_bao(orNode o);
 
     /// H*(b,a)
-    //public double hANDStar(andNode a);
+    public double hANDStar(andNode a);
 
-    /// H(b,a,o)
-    public double[] hAND_o(andNode a);
+    /// H*(b)
+    public double hORStar(orNode o);
 
     /// argmax_o H(b,a,o) H*(tao(b,a,o))
     public int bestO(andNode a);
