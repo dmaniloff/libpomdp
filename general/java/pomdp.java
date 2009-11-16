@@ -10,6 +10,8 @@
 interface pomdp {
 
     /// P(o|b,a) in vector form for all o's
+    // does not seem to be necessary anymore since we
+    // are reusing computation from tao(b,a,o)
     //public double[] P_Oba(belState b, int a);
 
     /// tao(b,a,o)
@@ -18,23 +20,32 @@ interface pomdp {
     /// R(b,a)
     public double Rba(belState b, int a);
 
-    //public double[][][] getT();
+    /// T(s,a,s'): s x s' matrix
+    /// will generally be used by mdp.java
+    public double[][] getT(int a);
 
-    //public double[][] getR();
+    /// R(s,a): 1 x s vector
+    public double[] getR(int a);
 
+    /// nrSta: total # of states
     public int getnrSta();
 
-    /// nrAct
+    /// nrAct: # of actions
     public int getnrAct();
 
-    /// nrObs
+    /// nrObs: total # of observations
     public int getnrObs();
 
     /// \gamma
     public double getGamma();
 
-    public String[] getactStr();
+    /// initial belief state
+    public belState getInit();
 
-    public String[] getobsStr();
+    /// action names
+    public String getactStr(int a);
+
+    /// observation names
+    public String getobsStr(int o);
 
 } // pomdp

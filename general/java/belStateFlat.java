@@ -10,6 +10,7 @@
 public class belStateFlat extends belState{
 
     // constructor
+    // in case this is the initial belief, poba = 0.0
     public belStateFlat(double[] bPoint, double poba) {
 	this.bPoint = bPoint;
 	this.poba   = poba;

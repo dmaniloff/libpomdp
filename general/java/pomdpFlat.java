@@ -50,7 +50,7 @@ public class pomdpFlat implements pomdp {
     private String obsStr[];
 
     // starting belief
-    private double init[];
+    private belStateFlat initBelief;
 
     // ------------------------------------------------------------------------
     // methods
@@ -75,7 +75,8 @@ public class pomdpFlat implements pomdp {
 	this.gamma  = gamma;
 	this.actStr = actStr;
 	this.obsStr = obsStr;
-	this.init = init;
+	// set initial belief state
+	this.initBelief = new belStateFlat(init, 0.0);
 	// copy the model matrices
 	int a;
 	for(a = 0; a < nrAct; a++) {
@@ -103,21 +104,23 @@ public class pomdpFlat implements pomdp {
     /// tao(b,a,o)
     public belState tao(belState b, int a, int o) {
 	double b1[], b2[];
+	belState bPrime;
 	b1 = b.bPoint;
 	b2 = LinearAlgebra.times(T[a], b1);
 	b2 = LinearAlgebra.times(b2, DoubleArray.getColumnCopy(O[a],o));
 	double poba = DoubleArray.sum(b2);
 	// make sure we can normalize
 	if (poba < 0.00001) {
-	    //System.err.println("Zero prob observation - resetting to init");
-	    b2 = init;
-	    // make this branch not selectable by the heuristic
-	    poba = 0.0;
+	    System.err.println("Zero prob observation - resetting to init");
+	    // this branch will have poba = 0.0
+	    bPrime = initBelief;
+	} else {
+	    // safe to normalize now
+	    b2 = LinearAlgebra.divide(b2,DoubleArray.sum(b2));    
+	    bPrime = new belStateFlat(b2, poba);
 	}
-	// safe to normalize now
-	b2 = LinearAlgebra.divide(b2,DoubleArray.sum(b2));
 	// return
-	return new belStateFlat(b2, poba);
+	return bPrime;
     }
 
     /// R(b,a)
@@ -140,12 +143,14 @@ public class pomdpFlat implements pomdp {
      * 	    public double f(double x) { return Math.abs(x); }};
      */
 
-    public double[][][] getT() {
-    	return T;
+    public double[][] getT(int a) {
+	// this is used by mdp.java and there
+	// we need an s x s' matrix T_a
+    	return DoubleArray.transpose(T[a]);
     }
 
-    public double[][] getR() {
-    	return R;
+    public double[] getR(int a) {
+    	return R[a];
     }
 
     public int getnrSta() {
@@ -164,16 +169,16 @@ public class pomdpFlat implements pomdp {
 	return gamma;
     }
 
-    public String[] getactStr() {
-	return actStr;
+    public String getactStr(int a) {
+	return actStr[a];
     }
 
-    public String[] getobsStr() {
-	return obsStr;
+    public String getobsStr(int o) {	
+	return obsStr[o];
     }
 
-    public double[] getInit() {
-	return init;
+    public belState getInit() {
+	return initBelief;
     }
 
 } // flatpomdp

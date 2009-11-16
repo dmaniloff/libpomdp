@@ -1,0 +1,65 @@
+// -------------------------------------------------------------------------- *
+// libpomdp
+// ========
+// File: tiger.95.SPUDD
+// Description: encoding of the tiger problem in SPUDD to be
+//              parsed by Poupart's parsePOMDP class, included in the
+//              Symbolic Perseus package - see README reference [5]
+// Copyright (c) 2009, Diego Maniloff 
+// W3: http://www.cs.uic.edu/~dmanilof
+//--------------------------------------------------------------------------- *
+
+// variables
+// ---------
+(variables 
+ (tiger-location tiger-left tiger-right))
+
+// observations
+// ------------
+(observations 
+ (growl growl-left growl-right))
+
+// initial belief state (has to be a product of marginals!)
+// --------------------------------------------------------
+init (tiger-location (tiger-left (0.5)) (tiger-right (0.5)))
+
+// actions
+// -------
+action listen
+    tiger-location (SAMEtiger-location)
+    observe
+        growl (tiger-location' (tiger-left  (growl' (growl-left  (0.85))
+						    (growl-right (0.15))))
+			       (tiger-right (growl' (growl-left  (0.15))
+						    (growl-right (0.85)))))
+    endobserve
+    cost (1)
+endaction
+
+action open-left
+    tiger-location (tiger-location' (tiger-left (0.5)) (tiger-right (0.5)))
+    observe
+        growl (growl' (growl-left  (0.5))
+		      (growl-right (0.5)))
+    endobserve
+    cost (tiger-location (tiger-left  (100))
+			 (tiger-right (-10)))
+endaction
+
+action open-right
+    tiger-location (tiger-location' (tiger-left (0.5)) (tiger-right (0.5)))
+    observe
+        growl (growl' (growl-left  (0.5))
+		      (growl-right (0.5)))
+    endobserve
+    cost (tiger-location (tiger-left  (-10))
+			 (tiger-right (100)))
+endaction
+
+// discount factor
+discount  0.95
+
+// tolerance ??
+tolerance 0.001
+					   
+						   

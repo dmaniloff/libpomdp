@@ -12,6 +12,7 @@
  --------------------------------------------------------------------------- */
 
 // imports
+import java.util.*;
 import org.math.array.*;
 
 public class pomdpAdd implements pomdp {
@@ -21,7 +22,7 @@ public class pomdpAdd implements pomdp {
     // ------------------------------------------------------------------------
 	
     // number of state variables
-    public int nrStaV;
+    private int nrStaV;
 
     // id of state variables
     public int staIds[];
@@ -32,8 +33,11 @@ public class pomdpAdd implements pomdp {
     // arity of state variables
     public int staArity[];
 
+    // total number of states
+    private int totnrSta;
+
     // number of observation variables
-    public int nrObsV;
+    private int nrObsV;
 
     // id of observation variables
     public int obsIds[];
@@ -43,36 +47,39 @@ public class pomdpAdd implements pomdp {
 
     // arity of observation variables
     public int obsArity[];
+
+    // total number of observations
+    private int totnrObs;
 	
     // total number of variables
     public int nrTotV;
 
     // number of actions
-    public int nrAct;
-    
-    // observation model: a-dim ADD[] 
-    private DD O[][];
+    private int nrAct;        
 	
     // transition model: a-dim ADD[] 
-    private DD T[][];
+    public DD T[][];
+
+    // observation model: a-dim ADD[] 
+    public DD O[][];
 	
     // reward model: a-dim ADD
     public DD R[];
 	
     // discount factor
-    public double gamma;
+    private double gamma;
 	
     // action names
-    //private String actStr[];
+    private String actStr[];
 	
     // observation names
-    //private String obsStr[];
+    //    public ArrayList<String>[] obsStr;
 
     // starting belief
-    public DD init;
+    private belStateAdd initBelief;
 
     // ParseSPUDD parser - Poupart's parsing class
-    public ParseSPUDD problem;
+    public ParseSPUDD problemAdd;
     
     // ------------------------------------------------------------------------
     // interface methods
@@ -81,14 +88,14 @@ public class pomdpAdd implements pomdp {
     /// constructor
     public pomdpAdd(String spuddfile) {
 	// parse SPUDD file
-	problem = new ParseSPUDD(spuddfile);
-	problem.parsePOMDP(false);
+	problemAdd = new ParseSPUDD(spuddfile);
+	problemAdd.parsePOMDP(false);
 	// assign values to local vars
-	nrStaV = problem.nStateVars;
-	nrObsV = problem.nObsVars;
+	nrStaV = problemAdd.nStateVars;
+	nrObsV = problemAdd.nObsVars;
 	nrTotV = nrStaV + nrObsV;
-	nrAct  = problem.actTransitions.size();
-	gamma  = problem.discount.getVal();
+	nrAct  = problemAdd.actTransitions.size();
+	gamma  = problemAdd.discount.getVal();
 	// allocate arrays
 	staIds   = new int[nrStaV];
 	staIdsPr = new int[nrStaV];
@@ -99,29 +106,38 @@ public class pomdpAdd implements pomdp {
 	T        = new DD [nrAct][];
 	O        = new DD [nrAct][];
 	R        = new DD [nrAct];
+	actStr   = new String[nrAct];
+	//obsStr   = new ArrayList<String>[nrObsV];
 	// get variable ids, arities and prime ids
 	int c,a;
 	for(c=0; c<nrStaV; c++) {
 	    staIds[c]   = c + 1;
 	    staIdsPr[c] = c + 1 + nrTotV;
-	    staArity[c] = problem.valNames.get(c).size();
+	    staArity[c] = problemAdd.valNames.get(c).size();
 	}	
 	for(c=0; c<nrObsV; c++) {
 	    obsIds[c]   = nrStaV + c + 1;
 	    obsIdsPr[c] = nrStaV + c + 1 + nrTotV;
-	    obsArity[c] = problem.valNames.get(nrStaV+c).size();
+	    obsArity[c] = problemAdd.valNames.get(nrStaV+c).size();
+	    //obsStr[c].add(problemAdd.varNames.get(nrStaV+c));
 	}
-	// get DDs for transitions
+	// get DDs for T, O, R
 	for(a=0; a<nrAct;  a++) {
 	    //                                   ^ this is cptid !!!!
-	    //T[a] = problem.actTransitions.get(a)[0];
-	    //O[a] = problem.actObserve.get(a)[0];
- 	    T[a] = problem.actTransitions.get(a);
-	    O[a] = problem.actObserve.get(a);
+	    //T[a] = problemAdd.actTransitions.get(a)[0];
+	    //O[a] = problemAdd.actObserve.get(a)[0];
+ 	    T[a] = problemAdd.actTransitions.get(a);
+	    O[a] = problemAdd.actObserve.get(a);
 	    // reward for a is reward for the state - the cost of a
-	    R[a] = OP.sub(problem.reward, problem.actCosts.get(a));
+	    R[a] = OP.sub(problemAdd.reward, problemAdd.actCosts.get(a));
+	    actStr[a] = problemAdd.actNames.get(a);
 	}
-    }
+	// set initial belief state
+	initBelief = new belStateAdd(problemAdd.init, staIds, 0.0);
+	// compute total nr of states and obs
+	totnrSta = IntegerArray.product(staArity);
+        totnrObs = IntegerArray.product(obsArity);
+    } // constructor
 
     /**
      * P(o|b,a) in vector form for all o's
@@ -129,7 +145,7 @@ public class pomdpAdd implements pomdp {
      */
     public double[] P_Oba(belState bel, int a) {
 	// obtain subclass and the dd for this belief
-	DD b = ((belStateDD)bel).ddB;	
+	DD b = ((belStateAdd)bel).ddB;	
 	DD pObadd;
 	double[]pOba;
 	DD[] vars   = concat(b, T[a], O[a]);
@@ -147,8 +163,9 @@ public class pomdpAdd implements pomdp {
      */
     public belState tao(belState bel, int a, int o) {	    
 	// obtain subclass and the dd for this belief 
-	DD b1 = ((belStateDD)bel).ddB;
+	DD b1 = ((belStateAdd)bel).ddB;
 	DD b2;
+	belState bPrime;
 	DD O_o[];
 	int oc[][];
 	double oProb = 0.0;
@@ -165,18 +182,16 @@ public class pomdpAdd implements pomdp {
 	oProb  = OP.addMultVarElim(b2, staIds).getVal();
 	// make sure we can normalize
 	if (oProb < 0.00001) {
-	    System.err.println("Zero prob observation - resetting to init");
-	    b2 = init;
-	    // make this branch not selectable by the heuristic
-	    oProb = 0.0;
+	    // System.err.println("Zero prob observation - resetting to init"); -!!!!!!!!!!!!!
+	    // this branch will have poba = 0.0
+	    bPrime = initBelief;
+	} else {
+	    // safe to normalize now
+	    b2 = OP.div(b2, OP.addMultVarElim(b2, staIds));
+	    bPrime = new belStateAdd(b2, staIds, oProb);
 	}
-	// store P(o|b,a)
-	//on.poba = oProb;
-
-	// safe to normalize now
-	b2 = OP.div(b2, OP.addMultVarElim(b2, staIds));
 	// return
-	return new belStateDD(b2, staIds, oProb); 
+	return bPrime;
     }
     
     /// R(b,a)
@@ -184,14 +199,58 @@ public class pomdpAdd implements pomdp {
     // 1:length(POMDP.actions(actId).rewFn) - when would this be > 1?
     public double Rba(belState bel, int a) {
 	// obtain subclass and the dd for this belief
-	DD b = ((belStateDD)bel).ddB;
+	DD b = ((belStateAdd)bel).ddB;
         return OP.dotProduct(b, R[a], staIds);
     }
+
+    /// return s x s' matrix with T[a]
+    /// to be used by mdp.java
+    public double[][] getT(int a) {
+	int vars[]     = IntegerArray.merge(staIds, staIdsPr);	
+	double T_a_v[] = OP.convert2array(OP.multN(T[a]),vars);
+	//	double T_a[][] = new double[totnrSta][totnrSta];
+	double T_a[][] = DoubleArray.fill(totnrSta, totnrSta, 0.0);
+	int i,j;
+	// convert this vector into an s x s' matrix columnwise
+	for(j=0; j<totnrSta; j++) {
+	    for(i=0; i<totnrSta; i++) {
+		T_a[i][j] = T_a_v[j*totnrSta+i];
+	    }
+	}
+	// transpose so that we have s' x s and maintain Spaans convention
+	//return DoubleArray.transpose(T_a);
+	return T_a;
+    }
+
+    /// return s' x o matrix with O[a]
+    /// this will prob become part of the interface as well...
+    public double[][] getO(int a) {
+	int vars[]     = IntegerArray.merge(staIdsPr, obsIdsPr);	
+	double O_a_v[] = OP.convert2array(OP.multN(O[a]),vars);
+	//	double O_a[][] = new double[totnrSta][totnrSta];
+	double O_a[][] = DoubleArray.fill(totnrSta, totnrObs, 0.0);
+	int i,j;
+	// convert this vector into an s' x o matrix columnwise
+	for(j=0; j<totnrObs; j++) {
+	    for(i=0; i<totnrSta; i++) {
+		O_a[i][j] = O_a_v[j*totnrSta+i];
+	    }
+	}
+	// return
+	return O_a;
+    }
+    
+    /// R(s,a)
+    public double[] getR(int a) {
+	DD R = 	OP.sub(problemAdd.reward, problemAdd.actCosts.get(a));
+	return OP.convert2array(R, staIds);
+    }
+
 
     /// nrSta is the product of the arity of
     /// each state variable in the DBN
     public int getnrSta() {
-        return IntegerArray.product(staArity);
+        return totnrSta;
     }
 
     /// nrAct
@@ -202,7 +261,7 @@ public class pomdpAdd implements pomdp {
     /// nrObs is the product of the arity of
     /// each observation variable in the DBN
     public int getnrObs() {
-        return IntegerArray.product(obsArity);
+        return totnrObs;
     }
 
     /// \gamma
@@ -210,17 +269,67 @@ public class pomdpAdd implements pomdp {
         return gamma;
     }
 
-    public String[] getactStr() {
-        return null;
+    /// get initial belief state
+    public belState getInit() {
+	return initBelief;
     }
 
-    public String[] getobsStr() {
-        return null;
+    public String getactStr(int a) {
+        return actStr[a];
+    }
+    
+    // string describing the values each obs var took
+    public String getobsStr(int o) {
+        int[] a = sdecode(o, nrObsV, obsArity);
+	String v="";
+	int c;
+	for(c=0; c<nrObsV; c++) {
+	    v=v.concat(problemAdd.varNames.get(nrStaV+c)+"="+
+		       problemAdd.valNames.get(nrStaV+c).get(a[c]-1)+", ");
+	}
+	return v;
     }
 
     // ------------------------------------------------------------------------
     // utility methods
     // ------------------------------------------------------------------------
+
+    // public simulate(int s, int a) {
+// 	restrictedTransFn = OP.restrictN(ddPOMDP.actions(actId).transFn, stateConfig); 
+//     nextStateConfig = OP.sampleMultinomial(restrictedTransFn,stateVarsPrime);
+//     restrictedObsFn = OP.restrictN(ddPOMDP.actions(actId).obsFn, [stateConfig, nextStateConfig]);
+//     obsConfig = OP.sampleMultinomial(restrictedObsFn, obsVarsPrime);
+//     }
+
+    // print a factored representation of a state
+    public String printS(int factoredS[][]) {
+	if(factoredS.length != 2 || factoredS[0].length != nrStaV) {
+	    System.err.println("Unexpected factored state matrix");
+	    return null;
+	}
+	String v="";
+	int c;
+	for(c=0; c<nrStaV; c++) {
+	    v=v.concat(problemAdd.varNames.get(c)+"="+
+		       problemAdd.valNames.get(c).get(factoredS[1][c]-1)+", ");
+	}
+	return v;
+    } // printS
+
+    // print a factored representation of an observation
+    public String printO(int factoredO[][]) {
+	if(factoredO.length != 2 || factoredO[0].length != nrObsV) {
+	    System.err.println("Unexpected factored state matrix");
+	    return null;
+	}
+	String v="";
+	int c;
+	for(c=0; c<nrObsV; c++) {
+	    v=v.concat(problemAdd.varNames.get(nrStaV+c)+"="+
+		       problemAdd.valNames.get(nrStaV+c).get(factoredO[1][c]-1)+", ");
+	}
+	return v;
+    } // printO
 
     /**
      * sdecode:
@@ -290,9 +399,7 @@ public class pomdpAdd implements pomdp {
 
     // public double[][] getR() {
     //     return R;
-    // }
-
-    
+    // }    
     
 
 } // addpomdp

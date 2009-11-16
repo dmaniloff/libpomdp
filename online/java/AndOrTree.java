@@ -180,7 +180,8 @@ public class AndOrTree {
 	    // update reference to best fringe node in the subtree of en
 	    o.bStar = o.children[o.bestA].bStar;
 	    // this orNode now has a larger subtree underneath
-	    o.subTreeSize += n.subTreeSize;
+	    //o.subTreeSize += n.subTreeSize;
+	    o.subTreeSize += problem.getnrAct() * problem.getnrObs();
 	    // iterate
 	    n = n.getParent().getParent();
 	}
@@ -261,7 +262,7 @@ public class AndOrTree {
 	return DoubleArray.min(maxUba,o.u);
     }
 
-    public orNode getroot() {
+    public orNode getRoot() {
 	return root;
     }
 
@@ -300,11 +301,12 @@ public class AndOrTree {
 
     /// output a dot-formatted file to print the tree
     /// starting from a given orNode
-    public void printdot(orNode root) {
+    public void printdot(String filename) {
+	orNode root = this.root;
 	PrintStream out = null;
 	try {
 	    out = new 
-		PrintStream("/Users/diego/Documents/MATLAB/pomdps/libpomdp/online/java/treegraph.dot");
+		PrintStream(filename);
 	}catch(Exception e) {
 	    System.err.println(e.toString());
 	}
@@ -321,7 +323,7 @@ public class AndOrTree {
     private void orprint(orNode o, PrintStream out) {
 	// print this node
 	out.format(o.hashCode() + "[label=\"" +
-		   "b=[" + DoubleArray.toString("%.2f",o.belief.bPoint) + "]\\n" +
+		   //"b=[" + DoubleArray.toString("%.2f",o.belief.bPoint) + "]\\n" +
 		   "U(b)= %.2f\\n" +
 		   "L(b)= %.2f\\n" + 
 		   "H(b)= %.2f" +
@@ -347,7 +349,7 @@ public class AndOrTree {
     private void andprint(andNode a, PrintStream out) {
 	// print this node
 	out.format(a.hashCode() + "[label=\"" + 
-		   "a=" + problem.getactStr()[a.getact()] + "\\n" + 	
+		   "a=" + problem.getactStr(a.getact()) + "\\n" + 	
 		   "U(b,a)= %.2f\\n" +
 		   "L(b,a)= %.2f" +
 		   "\"];\n", a.u, a.l);
@@ -355,7 +357,7 @@ public class AndOrTree {
 	for(orNode o : a.children) {
 	    out.format(a.hashCode() + "->" + o.hashCode() + 
 		       "[label=\"" +
-		       "o=" + problem.getobsStr()[o.getobs()] + "\\n" +
+		       "obs: " + problem.getobsStr(o.getobs()) + "\\n" +
 		       "P(o|b,a)= %.2f\\n" + 
 		       "H(b,a,o)= %.2f" +  
 		       "\"];\n",
