@@ -10,95 +10,123 @@
 % W3: http://www.cs.uic.edu/~dmanilof
 % --------------------------------------------------------------------------- %
 %% preparation
-
-% refresh java
+% clear
 clear java
-% clear all
 clear all
 % add dynamic classpath
 javaaddpath '../../external/jmatharray.jar'
-javaaddpath '../../external/symPerseusClasses'
+javaaddpath '../../external/symPerseusJava'
 javaaddpath '../../general/java'
-javaaddpath '../../online/java'
+javaaddpath '../../general/problems/rocksample'
 javaaddpath '../../offline/java'
+javaaddpath '../../online/java'
 
 % add to the matlab path
+addpath     '../../external/symPerseusMatlab/' -end
 addpath     '../../offline/matlab/' -end
 
-%% load problem parameters
+%% load problem parameters - factored representation
 
-%run ../../general/problems/tiger/initProblem.m
-run ../../general/problems/tag/initProblem.m
-global problem;
-nrS = problem.nrStates;
-nrA = problem.nrActions;
-nrO = problem.nrObservations;
-T   = problem.transitionS;
-R   = problem.rewardS;
-O   = problem.observationS;
-g   = problem.gamma;
+% factoredProb = pomdpAdd  ('../../general/problems/tiger/tiger.95.SPUDD');
+% symDD        = parsePOMDP('../../general/problems/tiger/tiger.95.SPUDD');
+% factoredProb = pomdpAdd('../../general/problems/coffee/coffee.90.SPUDD');
+% factoredProb = pomdpAdd  ('../../general/problems/rocksample/RockSample_2_1/RockSample_2_1.SPUDD');
+factoredProb = pomdpAdd  ('../../general/problems/rocksample/RockSample_7_8/RockSample_7_8.SPUDD');
+symDD        = parsePOMDP('../../general/problems/rocksample/RockSample_7_8/RockSample_7_8.SPUDD');
 
-% instantiate a java pomdpFlat object
-flatProb = pomdpFlat(cell2mat(O),...
-    cell2mat(T),...
-    cell2mat(R),...
-    nrS,...
-    nrA,...
-    nrO,...
-    g,...
-    problem.actions,...
-    problem.observations,...
-    problem.start);
+%% load problem parameters - flat representation
+% 
+% % run ../../general/problems/tiger/initProblem.m
+% % run ../../general/problems/tag/initProblem.m
+% run ../../general/problems/rocksample/RockSample_2_1/initProblem.m
+% global problem;
+% nrS = problem.nrStates;
+% nrA = problem.nrActions;
+% nrO = problem.nrObservations;
+% T   = problem.transitionS;
+% R   = problem.rewardS;
+% O   = problem.observationS;
+% g   = problem.gamma;
+% 
+% % instantiate a java pomdpFlat object
+% flatProb = pomdpFlat(cell2mat(O),...
+%     cell2mat(T),...
+%     cell2mat(R),...
+%     nrS,...
+%     nrA,...
+%     nrO,...
+%     g,...
+%     problem.actions,...
+%     problem.observations,...
+%     problem.start);
+% 
+% javaProb = flatProb;
 
 %% compute offline lower and upper bounds
-
 % use Qmdp as offline upper bound
 % V_mdp  = mdp(nrS,nrA,T,R,g);
 % Q_mdp  = Q_vec(nrS,nrA,T,R,g,V_mdp);
 % uBound = valueFunction(Q_mdp, 1:nrA);
 
-mdpcalc = mdp(flatProb);
-uBound  = mdpcalc.getQmdp();
+%  fomdpBounds = mdp(factoredProb);
+%  uBound      = fomdpBounds.getQmdp();
+%  lBound      = fomdpBounds.getBlind();
+% V_rmin = repmat(min(-10)/(1-factoredProb.getGamma),1, factoredProb.getnrSta);
+% lBound = valueFunction(V_rmin, []);
 
-% use Rmin/(1-g) as offline lower bound
-V_rmin = repmat(min(problem.rewards)/(1-g),1, nrS);
-lBound = valueFunction(V_rmin, []);
+% use Poupart's QMDP solver
+[Vqmdp qmdpP] = solveQMDP(symDD);
+uBound        = valueFunction(OP.convert2array(Vqmdp, factoredProb.staIds), qmdpP);
+
+[blind blindP]= blindAdd(factoredProb);
+lBound        = valueFunction(OP.convert2array(blind, factoredProb.staIds), blindP);
 
 %% create heuristic search AND-OR tree
-
 % instantiate an aems2 heuristic object
-aems2h  = aems2(flatProb);
+aems2h  = aems2(factoredProb);
 % instantiate AndOrTree
-aoTree = AndOrTree(flatProb, aems2h, lBound, uBound);
-% create flat representation of the initial belief state
-startBel = belStateFlat([problem.start], -1);
-aoTree.init(startBel);
-rootNode = aoTree.getroot();
+aoTree = AndOrTree(factoredProb, aems2h, lBound, uBound);
+aoTree.init(factoredProb.getInit());
+rootNode = aoTree.getRoot();
 
 %% play the pomdp
-MAXPLANNINGTIME   = 5;
+
+MAXPLANNINGTIME   = 18.0;
 MAXEPISODELENGTH  = 100;
 
+% stats counters
 stats.R           = [];
 stats.cumR        = 0;
 
+% rocksample parameters
+GRID_SIZE         = 7;
+ROCK_POSITIONS    = [2 0; 0 1; 3 1; 6 3; 2 4; 3 4; 5 5; 1 6];
+
 % initial belief and state
-b = problem.start;
-s = find(cumsum(b) > rand, 1, 'first');
+factoredS         = OP.sampleMultinomial(factoredProb.getInit.ddB, factoredProb.staIds);
 
 for i = 1:MAXEPISODELENGTH
     
     fprintf(1, '******************** INSTANCE %d ********************\n', i);
-    fprintf(1, 'Current state is:               %s\n', problem.states(s,:));
+    fprintf(1, 'Current world state is:          %s\n', cell(factoredProb.printS(factoredS)){1});
+    rocksampleGraph(GRID_SIZE, ROCK_POSITIONS,factoredS);
+    fprintf(1, 'Current belief agree prob:      %d\n', OP.eval(rootNode.belief.ddB, factoredS));
     fprintf(1, 'Current |T| is:                 %d\n', rootNode.subTreeSize);
     
+    % reset expand counter
+    expC = 0;
     % start stopwatch
     tic
     while toc < MAXPLANNINGTIME
+%         fprintf(1,'before expand: %d\n', rootNode.subTreeSize);
         % expand best node
         aoTree.expand(rootNode.bStar);
+%         fprintf(1,'after expand, before update: %d\n', rootNode.subTreeSize);
         % update its ancestors
         aoTree.updateAncestors(rootNode.bStar);
+%         fprintf(1,'after update: %d\n', rootNode.subTreeSize);
+        % expand counter
+        expC = expC + 1;
     end
     
     % obtain the best action for the root
@@ -108,35 +136,48 @@ for i = 1:MAXEPISODELENGTH
     
     % execute it and receive new belief and new o
     % may not need to waste time computing b1 here
-    [s1,b1,o] = getSuccessor(b,s,a);
+    % [s1,b1,o] = getSuccessor(b,s,a);
+    restrictedT = OP.restrictN(factoredProb.T(a), factoredS); 
+    factoredS1  = OP.sampleMultinomial(restrictedT, factoredProb.staIdsPr);
+    restrictedO = OP.restrictN(factoredProb.O(a), [factoredS, factoredS1]);
+    factoredO   = OP.sampleMultinomial(restrictedO, factoredProb.obsIdsPr);
+
     
     % save stats
-    stats.R(end+1) = problem.reward(s,a);
-    stats.cumR     = stats.cumR + problem.gamma^(i - 1) * problem.reward(s,a);
+    stats.R(end+1) = OP.eval(factoredProb.R(a), factoredS);
+    stats.cumR     = stats.cumR + factoredProb.getGamma^(i - 1) * stats.R(end);
     
     % output some stats
-    fprintf(1, 'Expansion finished, |T|:        %d\n', rootNode.subTreeSize);
-    fprintf(1, 'Outputting action:              %s\n', problem.actions(a,:));
-    fprintf(1, 'Perceived observation:          %s\n', problem.observations(o,:));
-    fprintf(1, 'Received reward:                %.2f\n', problem.reward(s,a));
+    fprintf(1, 'Expansion finished, # expands:  %d\n', expC);
+    % this will count an extra |A||O| nodes given the expansion of the root
+    fprintf(1, '|T|:                            %d\n', rootNode.subTreeSize);
+    fprintf(1, 'Outputting action:              %s\n', cell(factoredProb.getactStr(a-1)){1});
+    fprintf(1, 'Perceived observation:          %s\n', cell(factoredProb.printO(factoredO)){1});
+    fprintf(1, 'Received reward:                %.2f\n', stats.R(end));
     fprintf(1, 'Cumulative reward:              %.2f\n', stats.cumR);
     
     % check whether this episode ended
+    if(factoredS1(2,1)==7)
+        fprintf(1, 'Episode ended at instance %d\n', i);
+        break;
+    end
 %     if (problem.reward(s,a) == problem.goodReward)
 %         fprintf(1, 'Episode ended at instance %d\n', i);
 %         break;
 %     end
-    %pause;
+%     pause;
     
     % move the tree's root node
-    aoTree.moveTree(rootNode.children(a).children(o));
+    o = prod(double(factoredO(2,:)));
+    aoTree.moveTree(rootNode.children(a).children(o)); % check this!
     % update reference to rootNode
-    rootNode = aoTree.getroot();
+    rootNode = aoTree.getRoot();
     
     fprintf(1, 'Tree moved, reused |T|:         %d\n', rootNode.subTreeSize);
     
     % iterate
-    b = b1;
-    s = s1;
+    %b = b1;
+    factoredS = factoredS1;
+    factoredS = Config.primeVars(factoredS, -factoredProb.nrTotV);
 
 end
