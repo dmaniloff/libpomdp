@@ -17,9 +17,9 @@ public class belStateAdd extends belState {
     // we need the state variable ids to call convert2array
     // in case this is the init belief, poba = 0.0
     public belStateAdd(DD b, int staIds[], double poba) {
-	this.ddB = b;
+	this.ddB    = b;
 	this.bPoint = OP.convert2array(b, staIds);
-	this.poba = poba;
+	this.poba   = poba;
     }
 
 } // belState

@@ -7,6 +7,7 @@
  *              defined by Poupart and parsed using his code - 
  *              several routine methods here are inspired from Poupart's
  *              matlab code for manipulating ADDs
+ *              see README reference [5]
  * Copyright (c) 2009, Diego Maniloff 
  * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
@@ -195,8 +196,8 @@ public class pomdpAdd implements pomdp {
     }
     
     /// R(b,a)
-    // Poupart's matlab code has a loop indexed over
-    // 1:length(POMDP.actions(actId).rewFn) - when would this be > 1?
+    /// Poupart's matlab code has a loop indexed over
+    /// 1:length(POMDP.actions(actId).rewFn) - when would this be > 1?
     public double Rba(belState bel, int a) {
 	// obtain subclass and the dd for this belief
 	DD b = ((belStateAdd)bel).ddB;

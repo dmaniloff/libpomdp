@@ -31,8 +31,8 @@ public class mdp {
     private valueFunction Blind;
 
     // parameters
-    int max_iter   = 1000;
-    double epsilon = 0.00001;
+    int max_iter   = 500;
+    double epsilon = 1e-4;
 
     // ------------------------------------------------------------------------
     // methods

@@ -10,12 +10,12 @@ JC=/usr/bin/javac
 RM=/bin/rm
 
 # classpath
-JCLASSPATH=../../external/jmatharray.jar:../../general/java:.
+JCLASSPATH=../../external/jmatharray.jar:../../external/symPerseusJava:../../general/java:.
 
 # source files
-SOURCES=mdp.java
-
-mdp.class: mdp.java
+#SOURCES=mdp.java
+SOURCES=blindAdd.java qmdpAdd.java
+default:
 	$(JC) -classpath $(JCLASSPATH) $(SOURCES)
 
 clean:

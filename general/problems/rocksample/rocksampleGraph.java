@@ -9,9 +9,8 @@
 
 public class rocksampleGraph {
     
-    // constructor assumes state vars are:
-    // j, i, r_i
-    public rocksampleGraph(int n, int k[][], int factoredS[][]) {
+    // draw the world
+    public void drawState(int n, int k[][], int factoredS[][]) {
 	int c, d, r;
 	boolean fr;
 	// start with a line
@@ -43,6 +42,6 @@ public class rocksampleGraph {
 	    // print line here
 	    System.out.println("------------------------------------------");
 	}
-    } // rocksampleGraph
+    } // drawWorld
 
 } // rocksampleGraph

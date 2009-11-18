@@ -13,7 +13,7 @@ RM=/bin/rm
 JCLASSPATH=../../external/jmatharray.jar:../../external/symPerseusJava:.
 
 # source files
-SOURCES=pomdp.java pomdpFlat.java pomdpAdd.java valueFunction.java belState.java belStateAdd.java belStateFlat.java
+SOURCES=pomdp.java pomdpFlat.java pomdpAdd.java valueFunction.java valueFunctionAdd.java belState.java belStateAdd.java belStateFlat.java
 
 default:
 	$(JC) -classpath $(JCLASSPATH) $(SOURCES)

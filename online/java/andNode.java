@@ -18,19 +18,21 @@ public class andNode {
     /// U(b,a)
     public double u;
 
-    /// P(o|b,a) in vector form for all its children
-    //    public double poba[];
+    /// R(b,a):
+    /// computed and stored at init time to avoid re-computation
+    public double rba;
 
-    /// H*(b,a)
+    /// H*(b,a):
+    /// maximizing product of heuristic measures in the path to
+    /// the next node to expand in the subtree of this node
     public double hStar;
 
-    /// H(b,a,o)
-    // public double h_o[];
+    /// oStar
+    /// observation in the path to b*(b,a) in the subtree of this node
+    public int oStar;
 
-    /// bestO
-    public int bestO;
-
-    /// b*(b,a) - ref to best node in this subtree
+    /// b*(b,a):
+    /// ref to the next node to expand in the subtree of this node
     public orNode bStar;
 
     /// the parent of an AND node is an OR node
@@ -39,10 +41,12 @@ public class andNode {
     /// children
     public orNode children[];
 
-    /// initializer
-    public void init(int action, orNode parent) {
-	this.act = action;
+    /// initializer:
+    /// needs a reference to problem to call Rba
+    public void init(int action, orNode parent, pomdp problem) {
+	this.act    = action;
 	this.parent = parent;
+	this.rba    = problem.Rba(parent.belief, action);
     }
 
     // get parent
@@ -50,7 +54,7 @@ public class andNode {
 	return parent;
     }
 
-    public int getact() {
+    public int getAct() {
 	return act;
     }
 }

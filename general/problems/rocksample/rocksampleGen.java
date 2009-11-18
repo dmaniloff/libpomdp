@@ -146,6 +146,8 @@ public class rocksampleGen {
 	out.println("    observe");	
 	out.println("        o (o' (og (1.0)) (ob (0.0)))");
 	out.println("    endobserve");
+	// reward for moving off the grid goes here
+	out.println("    cost"+terminalReward(9, "j", n+1));
 	out.println("endaction");
 
 	// west
@@ -192,16 +194,16 @@ public class rocksampleGen {
 		out.println("endaction");
 	}
 
-	// reward for being in the end state
-	out.println();
-	out.println("reward (j");
-	for(c=0; c<n+1; c++) {
-	    if (c < n )
-		out.println("        (j"+c+" (0))");
-	    else
-		out.println("        (j"+c+" (10))");
-	}
-	out.println("      )");
+	// reward for being in the end state - this causes infinite rewards!!!!
+	// 	out.println();
+	// 	out.println("reward (j");
+	// 	for(c=0; c<n+1; c++) {
+	// 	    if (c < n )
+	// 		out.println("        (j"+c+" (0))");
+	// 	    else
+	// 		out.println("        (j"+c+" (10))");
+	// 	}
+	// 	out.println("      )");
 
 	// discount and tolerance
 	out.println();
@@ -285,6 +287,20 @@ public class rocksampleGen {
 	v = v.concat(indent(ind-1)+")\n");
 	return v;
     } // shiftUp
+
+    // terminal reward for moving off the grid
+    private String terminalReward(int ind, String varname, int l) {
+	String v = "(" + varname + "\n";
+	int c;
+	for(c=0; c<l; c++) {
+	    if (c==l-2)
+		v=v.concat(indent(ind) + "("+varname+c+ " (-10))\n");
+	    else
+		v=v.concat(indent(ind) + "("+varname+c+ " (0))\n");
+	}
+	v = v.concat(indent(ind-1)+")\n");
+	return v;
+    }
 
     // transition by shifting all the mass one value "down"
     private String shiftDown(int ind, String varname, int l) {

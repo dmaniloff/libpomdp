@@ -26,10 +26,10 @@ interface heuristic {
     /// H*(b)
     public double hORStar(orNode o);
 
-    /// argmax_o H(b,a,o) H*(tao(b,a,o))
-    public int bestO(andNode a);
+    /// o* = argmax_o {H(b,a,o) H*(tao(b,a,o))}
+    public int oStar(andNode a);
 
-    /// argmax_a H(b,a) H*(b,a)
-    public int bestA(orNode o);
+    /// a* = argmax_a {H(b,a) H*(b,a)}
+    public int aStar(orNode o);
     
 } // heuristic

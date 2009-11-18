@@ -27,19 +27,28 @@ public class orNode {
     /// H(b)
     public double h_b;
     
-    /// H(b,a) - randomized approximation of pi*
+    /// H(b,a):
+    /// randomized approximation of pi*(b,a) for each children node
     public double h_ba[];
 
-    /// H(b,a,o)
+    /// H(b,a,o):
+    /// heuristic of the arc incident on this node
     public double h_bao;
 
-    /// best action 
-    public int bestA;
+    /// aStar:
+    /// action in the path to b* in the subree of this node
+    public int aStar;
     
-    /// H*(b) 
+    /// H*(b):
+    /// maximizing product of heuristic measures in the path to
+    /// the next node to expand in the subtree of this node
+    /// H*(b) = \max_{a_i,o_i} H(b_F) \prod{ H(b_i,a_i) H(b_i, a_i, o_i) }
+    ///       = H(b*) \prod{ H(b_i,a_i) H(b_i, a_i, o_i) }
     public double hStar;
 
-    /// b* - best node in the fringe of this subtree
+    /// b*:
+    /// reference to the next node to expand according to H*(b)
+    /// in the subtree of this node
     public orNode bStar;
 
     /// size of the subtree rooted at this node, excluding itself

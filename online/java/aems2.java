@@ -54,22 +54,22 @@ public class aems2 implements heuristic {
 	return problem.getGamma() * o.belief.poba;
     }
 
-    /// H*(b,a) = \max_o {H(b,a,o) * H*(tao(b,a,o))}
+    /// H*(b,a) = \max_o {H(b,a,o) H*(tao(b,a,o))}
     public double hANDStar(andNode a) {
     	//return	a.h_o[a.bestO] * a.children[a.bestO].hStar;
-	return  a.children[a.bestO].h_bao * a.children[a.bestO].hStar;
+	return  a.children[a.oStar].h_bao * a.children[a.oStar].hStar;
     }
 
-    // H*(b) = H(b,a_b) * H*(b,a_b)
+    // H*(b) = H(b,a*) H*(b,a*)
     public double hORStar(orNode o) {
-	return o.h_ba[o.bestA] * o.children[o.bestA].hStar;
+	return o.h_ba[o.aStar] * o.children[o.aStar].hStar;
     }
 
-    /// o_ba = argmax_o H(b,a,o) H*(tao(b,a,o))
-    public int bestO(andNode a) {
+    /// o* = argmax_o {H(b,a,o) H*(tao(b,a,o))}
+    public int oStar(andNode a) {
 	double HbaoHostar[] = new double[problem.getnrObs()];
 	int o;
-	// gather H(b,a,o) * H*(tao(b,a,o))
+	// gather H(b,a,o) H*(tao(b,a,o))
 	for(o=0; o<problem.getnrObs(); o++) {
 	    //h_ostar[o]    = a.children[o].hStar;
 	    HbaoHostar[o] = a.children[o].h_bao * a.children[o].hStar;
@@ -79,8 +79,8 @@ public class aems2 implements heuristic {
 	return argmax(HbaoHostar);
     }
 
-    /// a_b = argmax_a H(b,a) H*(b,a)
-    public int bestA(orNode o) {
+    /// a* = argmax_a {H(b,a) H*(b,a)}
+    public int aStar(orNode o) {
 	double h_astar[] = new double[problem.getnrAct()];
 	int a;
 	for(a=0; a<problem.getnrAct(); a++)

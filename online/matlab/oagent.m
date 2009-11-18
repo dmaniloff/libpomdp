@@ -22,8 +22,8 @@ javaaddpath '../../offline/java'
 javaaddpath '../../online/java'
 
 % add to the matlab path
-addpath     '../../external/symPerseusMatlab/' -end
-addpath     '../../offline/matlab/' -end
+addpath     '../../external/symPerseusMatlab' -end
+% addpath     '../../offline/matlab' -end
 
 %% load problem parameters - factored representation
 
@@ -32,7 +32,7 @@ addpath     '../../offline/matlab/' -end
 % factoredProb = pomdpAdd('../../general/problems/coffee/coffee.90.SPUDD');
 % factoredProb = pomdpAdd  ('../../general/problems/rocksample/RockSample_2_1/RockSample_2_1.SPUDD');
 factoredProb = pomdpAdd  ('../../general/problems/rocksample/RockSample_7_8/RockSample_7_8.SPUDD');
-symDD        = parsePOMDP('../../general/problems/rocksample/RockSample_7_8/RockSample_7_8.SPUDD');
+% symDD        = parsePOMDP('../../general/problems/rocksample/RockSample_7_8/RockSample_7_8.SPUDD');
 
 %% load problem parameters - flat representation
 % 
@@ -68,19 +68,26 @@ symDD        = parsePOMDP('../../general/problems/rocksample/RockSample_7_8/Rock
 % Q_mdp  = Q_vec(nrS,nrA,T,R,g,V_mdp);
 % uBound = valueFunction(Q_mdp, 1:nrA);
 
-%  fomdpBounds = mdp(factoredProb);
+% fomdpBounds = mdp(factoredProb);
 %  uBound      = fomdpBounds.getQmdp();
 %  lBound      = fomdpBounds.getBlind();
 % V_rmin = repmat(min(-10)/(1-factoredProb.getGamma),1, factoredProb.getnrSta);
 % lBound = valueFunction(V_rmin, []);
 
 % use Poupart's QMDP solver
-[Vqmdp qmdpP] = solveQMDP(symDD);
-uBound        = valueFunction(OP.convert2array(Vqmdp, factoredProb.staIds), qmdpP);
+% [Vqmdp qmdpP] = solveQMDP(symDD);
+% uBound        = valueFunction(OP.convert2array(Vqmdp, factoredProb.staIds), qmdpP);
+% uBound        = valueFunctionAdd(Vqmdp, factoredProb.staIds, qmdpP);
 
-[blind blindP]= blindAdd(factoredProb);
-lBound        = valueFunction(OP.convert2array(blind, factoredProb.staIds), blindP);
+% [blind blindP]= blindAdd(factoredProb);
+% lBound        = valueFunction(OP.convert2array(blind, factoredProb.staIds), blindP);
+% lBound        = valueFunctionAdd(blind, factoredProb.staIds, blindP);
 
+blindCalc = blindAdd;
+lBound    = blindCalc.getBlindAdd(factoredProb);
+
+qmdpCalc  = qmdpAdd;
+uBound    = qmdpCalc.getqmdpAdd(factoredProb);
 %% create heuristic search AND-OR tree
 % instantiate an aems2 heuristic object
 aems2h  = aems2(factoredProb);
@@ -91,12 +98,13 @@ rootNode = aoTree.getRoot();
 
 %% play the pomdp
 
-MAXPLANNINGTIME   = 18.0;
+MAXPLANNINGTIME   = 20.0;
 MAXEPISODELENGTH  = 100;
 
 % stats counters
 stats.R           = [];
 stats.cumR        = 0;
+stats.expands     = [];
 
 % rocksample parameters
 GRID_SIZE         = 7;
@@ -105,10 +113,10 @@ ROCK_POSITIONS    = [2 0; 0 1; 3 1; 6 3; 2 4; 3 4; 5 5; 1 6];
 % initial belief and state
 factoredS         = OP.sampleMultinomial(factoredProb.getInit.ddB, factoredProb.staIds);
 
-for i = 1:MAXEPISODELENGTH
+for iter = 1:MAXEPISODELENGTH
     
-    fprintf(1, '******************** INSTANCE %d ********************\n', i);
-    fprintf(1, 'Current world state is:          %s\n', cell(factoredProb.printS(factoredS)){1});
+    fprintf(1, '******************** INSTANCE %d ********************\n', iter);
+    fprintf(1, 'Current world state is:         %s\n', cell(factoredProb.printS(factoredS)){1});
     rocksampleGraph(GRID_SIZE, ROCK_POSITIONS,factoredS);
     fprintf(1, 'Current belief agree prob:      %d\n', OP.eval(rootNode.belief.ddB, factoredS));
     fprintf(1, 'Current |T| is:                 %d\n', rootNode.subTreeSize);
@@ -127,11 +135,20 @@ for i = 1:MAXEPISODELENGTH
 %         fprintf(1,'after update: %d\n', rootNode.subTreeSize);
         % expand counter
         expC = expC + 1;
+        % check whether we found an e-optimal action - there is another criteria
+        % here too!!
+        if (abs(rootNode.u-rootNode.l) < 1e-3)
+            toc
+            fprintf(1, 'Found e-optimal action, aborting expansions\n');
+            break;
+        end
     end
     
     % obtain the best action for the root
     % remember that a's and o's in matlab should start from 1
-    a = rootNode.bestA;
+    % ???????????????????????????????????????????????????????????????????
+    a = aoTree.currentBestAction();
+%     a = rootNode.aStar;
     a = a + 1;
     
     % execute it and receive new belief and new o
@@ -145,7 +162,8 @@ for i = 1:MAXEPISODELENGTH
     
     % save stats
     stats.R(end+1) = OP.eval(factoredProb.R(a), factoredS);
-    stats.cumR     = stats.cumR + factoredProb.getGamma^(i - 1) * stats.R(end);
+    stats.cumR     = stats.cumR + factoredProb.getGamma^(iter - 1) * stats.R(end);
+    stats.expands(end+1)  = expC;
     
     % output some stats
     fprintf(1, 'Expansion finished, # expands:  %d\n', expC);
@@ -156,16 +174,23 @@ for i = 1:MAXEPISODELENGTH
     fprintf(1, 'Received reward:                %.2f\n', stats.R(end));
     fprintf(1, 'Cumulative reward:              %.2f\n', stats.cumR);
     
-    % check whether this episode ended
-    if(factoredS1(2,1)==7)
-        fprintf(1, 'Episode ended at instance %d\n', i);
+    % check whether this episode ended (terminal state)
+    if(factoredS1(2,1)==8)
+        fprintf(1, '***************** Episode ended at instance %d\n', iter);
+        % check for final state rewards
+%         terminalS = factoredS1;
+%         terminalS = Config.primeVars(terminalS, -factoredProb.nrTotV);
+%         stats.R(end+1) = OP.eval(factoredProb.problemAdd.reward, terminalS);
+%         stats.cumR     = stats.cumR + factoredProb.getGamma^(iter) * stats.R(end);
+%         fprintf(1, 'Received terminal reward:       %.2f\n', stats.R(end));
+%         fprintf(1, 'Final cumulative reward:        %.2f\n', stats.cumR);
         break;
     end
 %     if (problem.reward(s,a) == problem.goodReward)
 %         fprintf(1, 'Episode ended at instance %d\n', i);
 %         break;
 %     end
-%     pause;
+    pause;
     
     % move the tree's root node
     o = prod(double(factoredO(2,:)));
@@ -180,4 +205,19 @@ for i = 1:MAXEPISODELENGTH
     factoredS = factoredS1;
     factoredS = Config.primeVars(factoredS, -factoredProb.nrTotV);
 
+end
+%% offline test of online tree search
+OFF_TEST_TIME = 30.0;
+tic
+while toc < OFF_TEST_TIME
+    %         fprintf(1,'before expand: %d\n', rootNode.subTreeSize);
+    % expand best node
+    aoTree.expand(rootNode.bStar);
+    %         fprintf(1,'after expand, before update: %d\n', rootNode.subTreeSize);
+    % update its ancestors
+    aoTree.updateAncestors(rootNode.bStar);
+    %         fprintf(1,'after update: %d\n', rootNode.subTreeSize);
+    % expand counter
+    % expC = expC + 1;
+    fprintf(1,'upper: %d    lower: %d  \n',rootNode.u,rootNode.l);
 end
