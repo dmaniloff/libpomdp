@@ -23,5 +23,7 @@ default:
 run:
 	$(JVM) -classpath $(JCLASSPATH) onlineRockSampleSimulatorAdd
 
+profile:
+	$(JVM) -javaagent:shiftone-jrat/shiftone-jrat.jar -classpath $(JCLASSPATH) onlineRockSampleSimulatorAdd
 clean:
 	$(RM) ./*.class

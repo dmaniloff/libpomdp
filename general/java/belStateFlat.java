@@ -9,11 +9,18 @@
  --------------------------------------------------------------------------- */
 public class belStateFlat extends belState{
 
+    // flat belief point
+    private double bPoint[];
+
     // constructor
     // in case this is the initial belief, poba = 0.0
     public belStateFlat(double[] bPoint, double poba) {
 	this.bPoint = bPoint;
 	this.poba   = poba;
+    }
+
+    public double[] getbPoint() {
+	return bPoint;
     }
 
 } // belStateFlat

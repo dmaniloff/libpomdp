@@ -143,15 +143,16 @@ public class pomdpAdd implements pomdp {
     /**
      * P(o|b,a) in vector form for all o's
      * use ADDs and convert to array
+     * [not used anymore since we get this from tao(.)]
      */
     public double[] P_Oba(belState bel, int a) {
 	// obtain subclass and the dd for this belief
-	DD b = ((belStateAdd)bel).ddB;	
+	DD b = ((belStateAdd)bel).bAdd;	
 	DD pObadd;
 	double[]pOba;
 	DD[] vars   = concat(b, T[a], O[a]);
 	int[] svars = IntegerArray.merge(staIds, staIdsPr);
-	pObadd      = OP.addMultVarElim(vars,svars);
+	pObadd      = OP.addMultVarElim(vars, svars);
 	pOba        = OP.convert2array(pObadd,obsIdsPr);
 	return pOba;
     }
@@ -164,7 +165,7 @@ public class pomdpAdd implements pomdp {
      */
     public belState tao(belState bel, int a, int o) {	    
 	// obtain subclass and the dd for this belief 
-	DD b1 = ((belStateAdd)bel).ddB;
+	DD b1 = ((belStateAdd)bel).bAdd;
 	DD b2;
 	belState bPrime;
 	DD O_o[];
@@ -200,7 +201,7 @@ public class pomdpAdd implements pomdp {
     /// 1:length(POMDP.actions(actId).rewFn) - when would this be > 1?
     public double Rba(belState bel, int a) {
 	// obtain subclass and the dd for this belief
-	DD b = ((belStateAdd)bel).ddB;
+	DD b = ((belStateAdd)bel).bAdd;
         return OP.dotProduct(b, R[a], staIds);
     }
 

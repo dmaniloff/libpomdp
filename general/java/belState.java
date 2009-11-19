@@ -13,7 +13,8 @@ public abstract class belState {
 
     /// flat belief point
     /// this should be filled by the extending classes
-    public double bPoint[];
+    // public double bPoint[];
+    public abstract double[] getbPoint();
 
     /// reachability prob = P(o|b,a)
     /// that is associated with the computation of tao(b,a,o)

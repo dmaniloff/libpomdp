@@ -9,25 +9,27 @@
  * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
 
-public abstract class valueFunction {
+interface valueFunction {
     
     // flat representation of the alpha vectors
-    protected double vFlat[][];
+    //protected double vFlat[][];
 
-    // simple list of actions associated with each alpha
-    protected int a[];
     
-    // public methods
-    public int[] getActions() {
-	return a;
-    }
+    // protected int a[];
+    
+    // simple list of actions associated with each alpha
+    public int[] getActions();
+//  {
+// 	return a;
+//     }
 
-    public double[][] getvFlat() {
-	return vFlat;
-    }
+    //public double[][] getvFlat() {
+    //	return vFlat;
+    //}
 
-    // abstract methods
     // value of a belief according to this value function
-    public abstract double V(belState b);
+    public double V(belState b);
+
+    public double[][] getvFlat();
 
 } // valueFunction

@@ -50,7 +50,7 @@ public class qmdpAdd {
 		Vqmdp[a]            = OP.add(factoredProb.R[a], Vqmdp[a]);
 	    }
 	    // compute max_a
-	    Vmdp     = OP.maxN(Vqmdp);
+	    Vmdp = OP.maxN(Vqmdp);
 
 	    // convergence check
 	    maxdelta = OP.maxAll(OP.abs(OP.sub(Vmdp, old_Vmdp)));

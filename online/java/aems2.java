@@ -16,7 +16,10 @@ import java.util.*;
 public class aems2 implements heuristic {
 
     /// main property is the pomdp spec
-    pomdp problem;    
+    private pomdp problem;    
+
+    /// set the gen only once for every instance
+    private Random gen = new Random(System.currentTimeMillis());
 
     /// constructor
     public aems2 (pomdp prob) {
@@ -96,20 +99,36 @@ public class aems2 implements heuristic {
     /// public for debugging
     public int argmax(double v[]) {
 	// declarations
-	double maxv;
-	ArrayList<Integer> repi = new ArrayList<Integer>();
-	int a,r;
-	Random g = new Random(System.currentTimeMillis());
-	// compute maximum
-	maxv = DoubleArray.max(v);
-	// locate repeated values
-	for(a=0; a<v.length; a++) 
-	    if(v[a] == maxv) repi.add(new Integer(a));
-	// randomize among them if necessary
-	//if (repi.size() > 1) System.out.println("will rand, check!!");
-	r = g.nextInt(repi.size());
-	// return chosen index
-	return repi.get(r);
-    }
+	//Random gen    = new Random(System.currentTimeMillis());
+	double maxv = Double.NEGATIVE_INFINITY;
+	int argmax  = -1;
+	int c;
+	for(c=0; c<v.length; c++) {
+	    if (v[c] > maxv) {
+		maxv   = v[c];
+		argmax = c;
+	    } 
+	    if (v[c] == maxv) {
+		// randomly decide to change index - this will no be uniform!
+		if (gen.nextInt(2) == 0)
+		    argmax = c;
+	    }
+	}
+	return argmax;
+		
+// 	ArrayList<Integer> repi = new ArrayList<Integer>();
+// 	int a,r;
+// 	
+// 	// compute maximum
+// 	maxv = DoubleArray.max(v);
+// 	// locate repeated values
+// 	for(a=0; a<v.length; a++) 
+// 	    if(v[a] == maxv) repi.add(new Integer(a));
+// 	// randomize among them if necessary
+// 	//if (repi.size() > 1) System.out.println("will rand, check!!");
+// 	r = g.nextInt(repi.size());
+// 	// return chosen index
+// 	return repi.get(r);
+    } // argmax
 
 } // aems2

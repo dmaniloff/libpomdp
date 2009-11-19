@@ -62,7 +62,7 @@ public class onlineRockSampleSimulatorAdd {
 	double tic, avgPlanTime = 0.0;
 
 	// initial belief and state
-	factoredS = OP.sampleMultinomial(((belStateAdd)factoredProb.getInit()).ddB, factoredProb.staIds);
+	factoredS = OP.sampleMultinomial(((belStateAdd)factoredProb.getInit()).bAdd, factoredProb.staIds);
 
 	// episode loop
 	for(iter=1; iter<MAXEPISODELENGTH; iter++) {
@@ -71,7 +71,7 @@ public class onlineRockSampleSimulatorAdd {
 	    System.out.println("Current world state is:         " + factoredProb.printS(factoredS));
 	    // draw the current state
 	    drawer.drawState(GRID_SIZE, ROCK_POSITIONS, factoredS);
-	    System.out.println("Current belief agree prob:      " + OP.eval(((belStateAdd)rootNode.belief).ddB, factoredS));
+	    System.out.println("Current belief agree prob:      " + OP.eval(((belStateAdd)rootNode.belief).bAdd, factoredS));
 	    System.out.println("Current |T| is:                 " + rootNode.subTreeSize);
     
 	    // reset expand counter
