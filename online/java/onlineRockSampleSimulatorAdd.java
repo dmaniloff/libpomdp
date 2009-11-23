@@ -25,35 +25,36 @@ public class onlineRockSampleSimulatorAdd {
 	pomdpAdd factoredProb = new pomdpAdd  ("../../general/problems/rocksample/RockSample_7_8/RockSample_7_8.SPUDD");
 
 	// rocksample parameters to call graphing routine
-	final int GRID_SIZE          = 7;
-	final int ROCK_POSITIONS[][] = {{2, 0},{0, 1},{3, 1},{6, 3},{2, 4},{3, 4},{5, 5},{1, 6}};
-	rocksampleGraph drawer       = new rocksampleGraph();
+	final int GRID_SIZE           = 7;
+	final int ROCK_POSITIONS[][]  = {{2, 0},{0, 1},{3, 1},{6, 3},{2, 4},{3, 4},{5, 5},{1, 6}};
+	rocksampleGraph drawer        = new rocksampleGraph();
 
 	// compute offline bounds
-	blindAdd blindCalc      = new blindAdd();
-	valueFunctionAdd lBound = blindCalc.getBlindAdd(factoredProb);
-	qmdpAdd qmdpCalc        = new qmdpAdd();
-	valueFunctionAdd uBound = qmdpCalc.getqmdpAdd(factoredProb);
+	blindAdd blindCalc            = new blindAdd();
+	valueFunctionAdd lBound       = blindCalc.getBlindAdd(factoredProb);
+	qmdpAdd qmdpCalc              = new qmdpAdd();
+	valueFunctionAdd uBound       = qmdpCalc.getqmdpAdd(factoredProb);
 
 	// create heuristic search AND-OR tree
-	aems2 aems2H            = new aems2(factoredProb);
-	AndOrTree aoTree        = new AndOrTree(factoredProb, aems2H, lBound, uBound);
+	aems2 aems2H                  = new aems2(factoredProb);
+	AndOrTree aoTree              = new AndOrTree(factoredProb, aems2H, lBound, uBound);
 
 	// initialize
 	aoTree.init(factoredProb.getInit());
-	orNode rootNode         = aoTree.getRoot();
+	orNode rootNode               = aoTree.getRoot();
 
 	// play the pomdp
-	final double MAXPLANNINGTIME   = 1000;
-	final int    MAXEPISODELENGTH  = 100;
+	final double MAXPLANNINGTIME  = 1000;
+	final int    MAXEPISODELENGTH = 100;
 
-	
+	// just bounds
+	System.exit(0);
 
 	// stats counters
-	ArrayList<Double> Rew        = new ArrayList<Double>();
-	double cumRew                = 0.0;
-	ArrayList<Integer> nrExpands = new ArrayList<Integer>();
-	ArrayList<Double>  planTime  = new ArrayList<Double>();
+	ArrayList<Double> Rew         = new ArrayList<Double>();
+	double cumRew                 = 0.0;
+	ArrayList<Integer> nrExpands  = new ArrayList<Integer>();
+	ArrayList<Double>  planTime   = new ArrayList<Double>();
 
 	// decls
 	int [][] factoredS, factoredS1, factoredO;
@@ -153,21 +154,6 @@ public class onlineRockSampleSimulatorAdd {
 
 	} // episode loop
 
-// 	    //// offline test of online tree search
-// 	    OFF_TEST_TIME = 30.0;
-// 	tic
-// 	    while toc < OFF_TEST_TIME
-// 			    //         fprintf(1,'before expand: //d\n', rootNode.subTreeSize);
-// 	// expand best node
-// 	      aoTree.expand(rootNode.bStar);
-// 	//         fprintf(1,'after expand, before update: //d\n', rootNode.subTreeSize);
-// 	// update its ancestors
-// 	      aoTree.updateAncestors(rootNode.bStar);
-// 	//         fprintf(1,'after update: //d\n', rootNode.subTreeSize);
-// 	// expand counter
-// 	      // expC = expC + 1;
-// 	fprintf(1,'upper: //d    lower: //d  \n',rootNode.u,rootNode.l);
-// 	end
     } // main
 
 } // onlineRockSampleSimulatorAdd

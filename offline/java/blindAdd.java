@@ -61,13 +61,16 @@ public class blindAdd {
 		adds[adds.length-1] = alphas[a];		
 		//new DD[] {ddDiscFact, factoredProb.T[a], alphas[a]};
 		// \alpha_t^a = R(s,a) + \gamma \sum_{s'} {T(s,a,s') \alpha_{t-1}^a}
-		alphas[a]           = OP.addMultVarElim(adds, factoredProb.staIdsPr);        
-		alphas[a]           = OP.add(factoredProb.R[a], alphas[a]);
+		//		alphas[a]           = OP.addMultVarElim(adds, factoredProb.staIdsPr);        
+		alphas[a]           = OP.addMultVarElimNoMem(adds, factoredProb.staIdsPr);        
+		//		alphas[a]           = OP.add(factoredProb.R[a], alphas[a]);
+		alphas[a]           = OP.addNoMem(factoredProb.R[a], alphas[a]);
 	    }
    
 	    // convergence check 
 	    for(a=0; a<factoredProb.getnrAct(); a++) {
-		deltas[a] = OP.maxAll(OP.abs(OP.sub(old_alphas[a], alphas[a])));
+		//deltas[a] = OP.maxAll(OP.abs(OP.sub(old_alphas[a], alphas[a])));
+		deltas[a] = OP.maxAll(OP.abs(OP.subNoMem(old_alphas[a], alphas[a])));
 	    }
 	    maxdelta = DoubleArray.max(deltas);
 	    // convAlphas    = OP.convert2array(alphas,     factoredProb.staIds);

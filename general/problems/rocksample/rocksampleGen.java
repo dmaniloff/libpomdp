@@ -7,7 +7,7 @@
  *              rocks, and the initial position of the agent
  *              observations are og and ob, any action other than check_i
  *              returns og
- *              see README reference [x] for more information
+ *              see README reference [7] for more information
  * Copyright (c) 2009, Diego Maniloff 
  * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */

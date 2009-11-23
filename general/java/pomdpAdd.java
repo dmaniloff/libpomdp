@@ -145,17 +145,17 @@ public class pomdpAdd implements pomdp {
      * use ADDs and convert to array
      * [not used anymore since we get this from tao(.)]
      */
-    public double[] P_Oba(belState bel, int a) {
-	// obtain subclass and the dd for this belief
-	DD b = ((belStateAdd)bel).bAdd;	
-	DD pObadd;
-	double[]pOba;
-	DD[] vars   = concat(b, T[a], O[a]);
-	int[] svars = IntegerArray.merge(staIds, staIdsPr);
-	pObadd      = OP.addMultVarElim(vars, svars);
-	pOba        = OP.convert2array(pObadd,obsIdsPr);
-	return pOba;
-    }
+    // public double[] P_Oba(belState bel, int a) {
+// 	// obtain subclass and the dd for this belief
+// 	DD b = ((belStateAdd)bel).bAdd;	
+// 	DD pObadd;
+// 	double[]pOba;
+// 	DD[] vars   = concat(b, T[a], O[a]);
+// 	int[] svars = IntegerArray.merge(staIds, staIdsPr);
+// 	pObadd      = OP.addMultVarElim(vars, svars);
+// 	pOba        = OP.convert2array(pObadd,obsIdsPr);
+// 	return pOba;
+//     }
 
     /**
      *  tao(b,a,o):
@@ -178,10 +178,12 @@ public class pomdpAdd implements pomdp {
 	DD[] vars = concat(b1, T[a], O_o);
     	// compute var elim on O * T * b
 	b2 = OP.addMultVarElim(vars, staIds);
+	//b2 = OP.addMultVarElimNoMem(vars, staIds);
 	// prime the b2 DD 
 	b2 = OP.primeVars(b2, -nrTotV);
 	// compute P(o|b,a)
 	oProb  = OP.addMultVarElim(b2, staIds).getVal();
+	//oProb  = OP.addMultVarElimNoMem(b2, staIds).getVal();
 	// make sure we can normalize
 	if (oProb < 0.00001) {
 	    // System.err.println("Zero prob observation - resetting to init"); -!!!!!!!!!!!!!
@@ -190,6 +192,7 @@ public class pomdpAdd implements pomdp {
 	} else {
 	    // safe to normalize now
 	    b2 = OP.div(b2, OP.addMultVarElim(b2, staIds));
+	    //b2 = OP.divNoMem(b2, OP.addMultVarElimNoMem(b2, staIds));
 	    bPrime = new belStateAdd(b2, staIds, oProb);
 	}
 	// return
@@ -202,7 +205,8 @@ public class pomdpAdd implements pomdp {
     public double Rba(belState bel, int a) {
 	// obtain subclass and the dd for this belief
 	DD b = ((belStateAdd)bel).bAdd;
-        return OP.dotProduct(b, R[a], staIds);
+        //return OP.dotProduct(b, R[a], staIds);
+	return OP.dotProductNoMem(b, R[a], staIds);
     }
 
     /// return s x s' matrix with T[a]

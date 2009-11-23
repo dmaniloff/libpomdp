@@ -44,6 +44,7 @@ public class valueFunctionAdd implements valueFunction, Serializable {
 	//DD u = ((valueFunctionAdd)offlineUpper).vAdd;
 	//start = System.currentTimeMillis();
 	//double dotProds[] = OP.dotProduct(b, vAdd, staIds);
+	// this seems to be faster...
 	double dotProds[] = OP.dotProductNoMem(b, vAdd, staIds);
 	//System.out.println("dot prod took" + (System.currentTimeMillis() - start));
 	//start = System.currentTimeMillis();

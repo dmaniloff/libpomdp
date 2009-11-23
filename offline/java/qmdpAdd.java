@@ -46,14 +46,17 @@ public class qmdpAdd {
 		System.arraycopy(factoredProb.T[a], 0, adds, 1, factoredProb.T[a].length);
 		adds[adds.length-1] = Vmdp;		
 		// Vmdp = \max_a {R(s,a) + \gamma \sum_{s'} T(s,a,s') Vmdp(s')}
-		Vqmdp[a]            = OP.addMultVarElim(adds, factoredProb.staIdsPr);
-		Vqmdp[a]            = OP.add(factoredProb.R[a], Vqmdp[a]);
+		//Vqmdp[a]            = OP.addMultVarElim(adds, factoredProb.staIdsPr);
+		Vqmdp[a]            = OP.addMultVarElimNoMem(adds, factoredProb.staIdsPr);
+		//		Vqmdp[a]            = OP.add(factoredProb.R[a], Vqmdp[a]);
+		Vqmdp[a]            = OP.addNoMem(factoredProb.R[a], Vqmdp[a]);
 	    }
 	    // compute max_a
 	    Vmdp = OP.maxN(Vqmdp);
 
 	    // convergence check
-	    maxdelta = OP.maxAll(OP.abs(OP.sub(Vmdp, old_Vmdp)));
+	    //maxdelta = OP.maxAll(OP.abs(OP.sub(Vmdp, old_Vmdp)));
+	    maxdelta = OP.maxAll(OP.abs(OP.subNoMem(Vmdp, old_Vmdp)));
 	    System.out.println("Max delta at iteration " +  iter + " is: "+maxdelta);
 	    if (maxdelta <= EPSILON){
 		System.out.println("CONVERGED at iteration: " + iter);

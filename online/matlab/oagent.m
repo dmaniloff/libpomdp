@@ -3,8 +3,8 @@
 % ========
 % File: oagent.m
 % Description: m script to instantiate aoTree and heuristic objects to combine
-%              them with different lower bounds - 
-%              uses part of Spaan's and Poupart's packages - see README 
+%              them with different lower bounds -
+%              uses part of Spaan's and Poupart's packages - see README
 %              references [1,5]
 % Copyright (c) 2009, Diego Maniloff
 % W3: http://www.cs.uic.edu/~dmanilof
@@ -56,102 +56,157 @@ load 'saved-data/qmdpSymPerseus_RockSample_7_8.mat';
 % instantiate an aems2 heuristic object
 aems2h  = aems2(factoredProb);
 % instantiate AndOrTree
-aoTree = AndOrTree(factoredProb, aems2h, lBound, uBound);
-aoTree.init(factoredProb.getInit());
-rootNode = aoTree.getRoot();
+% aoTree = AndOrTree(factoredProb, aems2h, lBound, uBound);
 
 %% play the pomdp
+diary('../logs/rocksample/7-8-online-run-nov-22-2009.log');
 
-MAXPLANNINGTIME   = 2.0;
+% parameters
+EPISODECOUNT      = 10;
+MAXPLANNINGTIME   = 1.0;
 MAXEPISODELENGTH  = 100;
 
-% stats counters
-stats.R           = [];
-stats.cumR        = 0;
-stats.expands     = [];
+% stats
+cumR              = [];
+all.avcumrews     = [];
+all.avTs          = [];
+all.avreusedTs    = [];
+all.avplantimes   = [];
 
 % rocksample parameters for the grapher
 GRID_SIZE         = 7;
 ROCK_POSITIONS    = [2 0; 0 1; 3 1; 6 3; 2 4; 3 4; 5 5; 1 6];
 drawer            = rocksampleGraph;
 
-% initial belief and state
-factoredS         = OP.sampleMultinomial(factoredProb.getInit.bAdd, factoredProb.staIds);
+for run = 1:2^8
+    
+    fprintf(1, '///////////////////////////// RUN %d of %d \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\n', run, 2^8);
+    
+    % stats
+    all.stats{run}.cumR = [];
+    all.stats{run}.meanT = [];
+    all.stats{run}.meanreusedT = [];
+    all.stats{run}.meanplantime = [];
+    
+    % start this run
+    for ep = 1:EPISODECOUNT
 
-for iter = 1:MAXEPISODELENGTH
-    
-    fprintf(1, '******************** INSTANCE %d ********************\n', iter);
-    fprintf(1, 'Current world state is:         %s\n', cell(factoredProb.printS(factoredS)){1});
-    drawer.drawState(GRID_SIZE, ROCK_POSITIONS,factoredS);
-    fprintf(1, 'Current belief agree prob:      %d\n', OP.eval(rootNode.belief.bAdd, factoredS));
-    fprintf(1, 'Current |T| is:                 %d\n', rootNode.subTreeSize);
-    
-    % reset expand counter
-    expC = 0;
-    % start stopwatch
-    tic
-    while toc < MAXPLANNINGTIME
-        % expand best node
-        aoTree.expand(rootNode.bStar);
-        % update its ancestors
-        aoTree.updateAncestors(rootNode.bStar);
-        % expand counter
-        expC = expC + 1;
-        % check whether we found an e-optimal action - there is another criteria
-        % here too!!
-        if (abs(rootNode.u-rootNode.l) < 1e-3)
-            toc
-            fprintf(1, 'Found e-optimal action, aborting expansions\n');
-            break;
-        end
-    end
-    
-    % obtain the best action for the root
-    % remember that a's and o's in matlab should start from 1
-    a = aoTree.currentBestAction();
-    a = a + 1;
-    
-    % execute it and receive new o
-    restrictedT = OP.restrictN(factoredProb.T(a), factoredS); 
-    factoredS1  = OP.sampleMultinomial(restrictedT, factoredProb.staIdsPr);
-    restrictedO = OP.restrictN(factoredProb.O(a), [factoredS, factoredS1]);
-    factoredO   = OP.sampleMultinomial(restrictedO, factoredProb.obsIdsPr);
+        fprintf(1, '********************** EPISODE %d of %d *********************\n', ep, EPISODECOUNT);
+        
+        % re - initialize tree at starting belief
+        aoTree = [];
+        aoTree = AndOrTree(factoredProb, aems2h, lBound, uBound);
+        aoTree.init(factoredProb.getInit());
+        rootNode = aoTree.getRoot();
 
-    
-    % save stats
-    stats.R(end+1) = OP.eval(factoredProb.R(a), factoredS);
-    stats.cumR     = stats.cumR + factoredProb.getGamma^(iter - 1) * stats.R(end);
-    stats.expands(end+1)  = expC;
-    
-    % output some stats
-    fprintf(1, 'Expansion finished, # expands:  %d\n', expC);
-    % this will count an extra |A||O| nodes given the expansion of the root
-    fprintf(1, '|T|:                            %d\n', rootNode.subTreeSize);
-    fprintf(1, 'Outputting action:              %s\n', cell(factoredProb.getactStr(a-1)){1});
-    fprintf(1, 'Perceived observation:          %s\n', cell(factoredProb.printO(factoredO)){1});
-    fprintf(1, 'Received reward:                %.2f\n', stats.R(end));
-    fprintf(1, 'Cumulative reward:              %.2f\n', stats.cumR);
-    
-    % check whether this episode ended (terminal state)
-    if(factoredS1(2,1)==8)
-        fprintf(1, '***************** Episode ended at instance %d\n', iter);
-        break;
-    end
-    
-    pause;
-    
-    % move the tree's root node
-    o = prod(double(factoredO(2,:)));
-    aoTree.moveTree(rootNode.children(a).children(o)); % check this!
-    % update reference to rootNode
-    rootNode = aoTree.getRoot();
-    
-    fprintf(1, 'Tree moved, reused |T|:         %d\n', rootNode.subTreeSize);
-    
-    % iterate
-    %b = b1;
-    factoredS = factoredS1;
-    factoredS = Config.primeVars(factoredS, -factoredProb.nrTotV);
+        % starting state for this set of EPISODECOUNT episodes
+        factoredS = [factoredProb.staIds' ; 1, 4, 1 + bitget(uint8(run-1), 8:-1:1)];
+        
+        % stats
+        cumR = 0;
+        all.stats{run}.ep{ep}.R    = [];
+        all.stats{run}.ep{ep}.exps = [];
+        all.stats{run}.ep{ep}.T    = [];
+        all.stats{run}.ep{ep}.reusedT = [];
+        all.stats{run}.ep{ep}.plantime = [];
+        
+        for iter = 1:MAXEPISODELENGTH
+            
+            fprintf(1, '******************** INSTANCE %d ********************\n', iter);
+            fprintf(1, 'Current world state is:         %s\n', cell(factoredProb.printS(factoredS)){1});
+            drawer.drawState(GRID_SIZE, ROCK_POSITIONS,factoredS);
+            fprintf(1, 'Current belief agree prob:      %d\n', OP.eval(rootNode.belief.bAdd, factoredS));
+            fprintf(1, 'Current |T| is:                 %d\n', rootNode.subTreeSize);
 
-end
+            % reset expand counter
+            expC = 0;
+            
+            % start stopwatch
+            tic
+            while toc < MAXPLANNINGTIME
+                % expand best node
+                aoTree.expand(rootNode.bStar);
+                % update its ancestors
+                aoTree.updateAncestors(rootNode.bStar);
+                % expand counter
+                expC = expC + 1;
+                % check whether we found an e-optimal action - there is another criteria
+                % here too!!
+                if (abs(rootNode.u-rootNode.l) < 1e-3)
+                    toc
+                    fprintf(1, 'Found e-optimal action, aborting expansions\n');
+                    break;
+                end
+            end
+            
+            % save planning time (not very accurate)
+            all.stats{run}.ep{ep}.plantime(end+1) = toc;
 
+            % obtain the best action for the root
+            % remember that a's and o's in matlab should start from 1
+            a = aoTree.currentBestAction();
+            a = a + 1;
+
+            % execute it and receive new o
+            restrictedT = OP.restrictN(factoredProb.T(a), factoredS);
+            factoredS1  = OP.sampleMultinomial(restrictedT, factoredProb.staIdsPr);
+            restrictedO = OP.restrictN(factoredProb.O(a), [factoredS, factoredS1]);
+            factoredO   = OP.sampleMultinomial(restrictedO, factoredProb.obsIdsPr);
+
+
+            % save stats
+            all.stats{run}.ep{ep}.R(end+1)     = OP.eval(factoredProb.R(a), factoredS);
+            all.stats{run}.ep{ep}.T(end+1)     = rootNode.subTreeSize;
+            cumR = cumR + ...
+                factoredProb.getGamma^(iter - 1) * all.stats{run}.ep{ep}.R(end);
+            all.stats{run}.ep{ep}.exps(end+1)  = expC;
+
+            % output some stats
+            fprintf(1, 'Expansion finished, # expands:  %d\n', expC);
+            % this will count an extra |A||O| nodes given the expansion of the root
+            fprintf(1, '|T|:                            %d\n', rootNode.subTreeSize);
+            fprintf(1, 'Outputting action:              %s\n', cell(factoredProb.getactStr(a-1)){1});
+            fprintf(1, 'Perceived observation:          %s\n', cell(factoredProb.printO(factoredO)){1});
+            fprintf(1, 'Received reward:                %.2f\n', all.stats{run}.ep{ep}.R(end));
+            fprintf(1, 'Cumulative reward:              %.2f\n', cumR);
+
+            % check whether this episode ended (terminal state)
+            if(factoredS1(2,1)==8)
+                fprintf(1, '==================== Episode ended at instance %d==================\n', iter);
+                drawer.drawState(GRID_SIZE, ROCK_POSITIONS,factoredS1);
+                break;
+            end
+
+            %     pause;
+
+            % move the tree's root node
+            o = prod(double(factoredO(2,:)));
+            aoTree.moveTree(rootNode.children(a).children(o)); % check this!
+            % update reference to rootNode
+            rootNode = aoTree.getRoot();
+
+            fprintf(1, 'Tree moved, reused |T|:         %d\n', rootNode.subTreeSize);
+            all.stats{run}.ep{ep}.reusedT(end+1)  = rootNode.subTreeSize;
+            
+            % iterate
+            %b = b1;
+            factoredS = factoredS1;
+            factoredS = Config.primeVars(factoredS, -factoredProb.nrTotV);
+
+        end % time-steps loop
+
+        all.stats{run}.cumR(end+1)        = cumR;
+        all.stats{run}.meanT(end+1)       = mean(all.stats{run}.ep{ep}.T);
+        all.stats{run}.meanreusedT(end+1) = mean(all.stats{run}.ep{ep}.reusedT);
+        all.stats{run}.meanplantime(end+1)= mean(all.stats{run}.ep{ep}.plantime);
+        %pause
+        
+    end % episodes loop
+    
+    % average cum reward of this run of 20 episodes
+    all.avcumrews (end+1) = mean(all.stats{run}.cumR);
+    all.avTs      (end+1) = mean(all.stats{run}.meanT);
+    all.avreusedTs(end+1) = mean(all.stats{run}.meanreusedT);
+    all.avplantimes(end+1)= mean(all.stats{run}.meanplantime);
+    
+end % runs loop

@@ -1,12 +1,12 @@
 libpomdp
 ========
 
-libpomdp is a set of pomdp algorithms implemented in Java and
-Matlab. As the software evolves, the idea is that it becomes pure
-Java.
+libpomdp is a set of POMDP algorithms implemented in Java and
+Matlab.
 
 At the moment the code is built to interface with the Matlab
-implementation of [1]. Another dependency is jmatharray.jar from [3].
+implementation of [1], jmatharray.jar from [3], and the Symbolic
+Perseus Package [5].
 
 Copyright (c) 2009, Diego Maniloff.
 
