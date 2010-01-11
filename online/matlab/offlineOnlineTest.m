@@ -3,7 +3,7 @@
 % ========
 % File: offlineOnlineTest.m
 % Description: generic script to test the improvement of offline bounds
-% Copyright (c) 2009, Diego Maniloff
+% Copyright (c) 2010, Diego Maniloff
 % W3: http://www.cs.uic.edu/~dmanilof
 % --------------------------------------------------------------------------- %
 %% preparation
@@ -23,11 +23,11 @@ addpath     '../../external/symPerseusMatlab' -end
 % addpath     '../../offline/matlab' -end
 
 %% load problem parameters - factored representation
-% factoredProb = pomdpAdd  ('../../general/problems/tiger/tiger.95.SPUDD');
-% symDD        = parsePOMDP('../../general/problems/tiger/tiger.95.SPUDD');
+factoredProb = pomdpAdd  ('../../general/problems/tiger/tiger.95.SPUDD');
+symDD        = parsePOMDP('../../general/problems/tiger/tiger.95.SPUDD');
 % factoredProb = pomdpAdd('../../general/problems/coffee/coffee.90.SPUDD');
 % factoredProb = pomdpAdd  ('../../general/problems/rocksample/RockSample_2_1/RockSample_2_1.SPUDD');
-factoredProb = pomdpAdd  ('../../general/problems/rocksample/RockSample_7_8/RockSample_7_8.SPUDD');
+% factoredProb = pomdpAdd  ('../../general/problems/rocksample/RockSample_7_8/RockSample_7_8.SPUDD');
 % symDD        = parsePOMDP('../../general/problems/rocksample/RockSample_7_8/RockSample_7_8.SPUDD');
 
 
@@ -62,32 +62,65 @@ rootNode = aoTree.getRoot();
 OFF_TEST_TIME = 1.0;
 NUM_EXPANDS   = 100;
 NUM_TRIALS    = 50;
-
 expstats      = [];
 
 for j=1:NUM_TRIALS
     expc          = 0;
     tic
     while toc < OFF_TEST_TIME
-        % while expc < NUM_EXPANDS
-        %     tic
-        %         fprintf(1,'before expand: %d\n', rootNode.subTreeSize);
         % expand best node
         aoTree.expand(rootNode.bStar);
-        %         fprintf(1,'after expand, before update: %d\n', rootNode.subTreeSize);
         % update its ancestors
         aoTree.updateAncestors(rootNode.bStar);
-        %         fprintf(1,'after update: %d\n', rootNode.subTreeSize);
-        %     toc
         % expand counter
         expc = expc + 1;
-        %     fprintf(1,'upper: %d    lower: %d  \n',rootNode.u,rootNode.l);
     end
-    % fprintf(1,'expanded at a rate of %.4f expands / sec\n', expc / OFF_TEST_TIME);
     expc
     expstats(end+1) = expc;
 end
 mean(expstats)
+
+%% create tree
+% instantiate expansion h and backup h
+aems2h  = aems2(factoredProb);
+improvh = DOSI (factoredProb);
+% instantiate AndOrTree and intialize
+aoTree = AndOrTreeUpdateAdd(factoredProb, aems2h, improvh, lBound, uBound);
+aoTree.init(factoredProb.getInit());
+% get root node
+rootNode = aoTree.getRoot();
+
+%% offline test of online tree search - path update algorithm
+OFF_TEST_TIME = 1.0;
+NUM_EXPANDS   = 100;
+NUM_TRIALS    = 50;
+expstats      = [];
+
+for j=1:NUM_TRIALS
+    expc          = 0;
+    tic
+    while toc < OFF_TEST_TIME
+        % expand best node
+        aoTree.expand(rootNode.bStar);
+        % update its ancestors
+        aoTree.updateAncestorsPath(rootNode.bStar);
+        % expand counter
+        expc = expc + 1;
+    end
+    expc
+    expstats(end+1) = expc;
+end
+mean(expstats)
+
+%% same test of extending class
+% instantiate expansion h and backup h
+aems2h  = aems2(factoredProb);
+improvh = DOSI(factoredProb);
+% instantiate AndOrTree and intialize
+aoTree = AndOrTreeUpdateAdd(factoredProb, aems2h, improvh, lBound, uBound);
+aoTree.init(factoredProb.getInit());
+% get root node
+rootNode = aoTree.getRoot();
 
 %% speed of tao
 TAO_TEST = 40;

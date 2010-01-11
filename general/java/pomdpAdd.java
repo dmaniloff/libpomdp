@@ -8,7 +8,7 @@
  *              several routine methods here are inspired from Poupart's
  *              matlab code for manipulating ADDs
  *              see README reference [5]
- * Copyright (c) 2009, Diego Maniloff 
+ * Copyright (c) 2010, Diego Maniloff 
  * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
 
@@ -53,7 +53,7 @@ public class pomdpAdd implements pomdp {
     private int totnrObs;
 	
     // total number of variables
-    public int nrTotV;
+    private int nrTotV;
 
     // number of actions
     private int nrAct;        
@@ -73,9 +73,6 @@ public class pomdpAdd implements pomdp {
     // action names
     private String actStr[];
 	
-    // observation names
-    //    public ArrayList<String>[] obsStr;
-
     // starting belief
     private belStateAdd initBelief;
 
@@ -108,7 +105,6 @@ public class pomdpAdd implements pomdp {
 	O        = new DD [nrAct][];
 	R        = new DD [nrAct];
 	actStr   = new String[nrAct];
-	//obsStr   = new ArrayList<String>[nrObsV];
 	// get variable ids, arities and prime ids
 	int c,a;
 	for(c=0; c<nrStaV; c++) {
@@ -120,13 +116,10 @@ public class pomdpAdd implements pomdp {
 	    obsIds[c]   = nrStaV + c + 1;
 	    obsIdsPr[c] = nrStaV + c + 1 + nrTotV;
 	    obsArity[c] = problemAdd.valNames.get(nrStaV+c).size();
-	    //obsStr[c].add(problemAdd.varNames.get(nrStaV+c));
 	}
 	// get DDs for T, O, R
 	for(a=0; a<nrAct;  a++) {
 	    //                                   ^ this is cptid !!!!
-	    //T[a] = problemAdd.actTransitions.get(a)[0];
-	    //O[a] = problemAdd.actObserve.get(a)[0];
  	    T[a] = problemAdd.actTransitions.get(a);
 	    O[a] = problemAdd.actObserve.get(a);
 	    // reward for a is reward for the state - the cost of a
@@ -178,16 +171,13 @@ public class pomdpAdd implements pomdp {
 	DD[] vars = concat(b1, T[a], O_o);
     	// compute var elim on O * T * b
 	b2 = OP.addMultVarElim(vars, staIds);
-	//b2 = OP.addMultVarElimNoMem(vars, staIds);
 	// prime the b2 DD 
 	b2 = OP.primeVars(b2, -nrTotV);
 	// compute P(o|b,a)
 	oProb  = OP.addMultVarElim(b2, staIds).getVal();
-	//oProb  = OP.addMultVarElimNoMem(b2, staIds).getVal();
 	// make sure we can normalize
 	if (oProb < 0.00001) {
-	    // System.err.println("Zero prob observation - resetting to init"); -!!!!!!!!!!!!!
-	    // this branch will have poba = 0.0
+	    // this branch will have poba = 0.0 - also reset to init
 	    bPrime = initBelief;
 	} else {
 	    // safe to normalize now
@@ -252,7 +242,7 @@ public class pomdpAdd implements pomdp {
 	return OP.convert2array(R, staIds);
     }
 
-
+    
     /// nrSta is the product of the arity of
     /// each state variable in the DBN
     public int getnrSta() {
@@ -284,7 +274,7 @@ public class pomdpAdd implements pomdp {
         return actStr[a];
     }
     
-    // string describing the values each obs var took
+    /// string describing the values each obs var took
     public String getobsStr(int o) {
         int[] a = sdecode(o, nrObsV, obsArity);
 	String v="";
@@ -300,14 +290,30 @@ public class pomdpAdd implements pomdp {
     // utility methods
     // ------------------------------------------------------------------------
 
-    // public simulate(int s, int a) {
-// 	restrictedTransFn = OP.restrictN(ddPOMDP.actions(actId).transFn, stateConfig); 
-//     nextStateConfig = OP.sampleMultinomial(restrictedTransFn,stateVarsPrime);
-//     restrictedObsFn = OP.restrictN(ddPOMDP.actions(actId).obsFn, [stateConfig, nextStateConfig]);
-//     obsConfig = OP.sampleMultinomial(restrictedObsFn, obsVarsPrime);
-//     }
+    public int getnrTotV() {
+	return nrTotV;
+    }
 
-    // print a factored representation of a state
+    /// transform a given alpha vector with respect to an a,o pair
+    /// g_{a,o}^i = \sum_{s'} O(o,s',a) T(s,a,s') \alpha^i(s')
+    public DD gao(DD alpha, int a, int o) {
+	DD gao;
+	DD primedAlpha;
+	DD O_o[];
+	DD vars[];
+	int oc[][];
+	// alpha(s')
+	primedAlpha = OP.primeVars(alpha, nrTotV);
+	// restrict the O model to o
+	oc = IntegerArray.mergeRows(obsIdsPr, sdecode(o, nrObsV, obsArity));
+	O_o = OP.restrictN(O[a], oc); 
+	vars = concat(primedAlpha, T[a], O_o);
+    	// compute var elim on O * T * \alpha(s')
+	gao = OP.addMultVarElim(vars, staIdsPr);
+	return gao;
+    }
+
+    /// print a factored representation of a state
     public String printS(int factoredS[][]) {
 	if(factoredS.length != 2 || factoredS[0].length != nrStaV) {
 	    System.err.println("Unexpected factored state matrix");
@@ -322,7 +328,7 @@ public class pomdpAdd implements pomdp {
 	return v;
     } // printS
 
-    // print a factored representation of an observation
+    /// print a factored representation of an observation
     public String printO(int factoredO[][]) {
 	if(factoredO.length != 2 || factoredO[0].length != nrObsV) {
 	    System.err.println("Unexpected factored state matrix");
@@ -338,7 +344,7 @@ public class pomdpAdd implements pomdp {
     } // printO
 
     /**
-     * sdecode:
+     * sdecode
      * map an assignment id from
      * [0, IntegerArray.product(sizes)-1] to an array with
      * the corresponding joint assignment of each variable
@@ -362,7 +368,8 @@ public class pomdpAdd implements pomdp {
 	return ja;
     }
 
-    /// concatenate DD arrays
+    // concatenate DD arrays - need to replace this with the
+    // routine in Common.java
     private DD[] concat(DD[] first, DD[]... rest) {
 	int totalLength = first.length;
 	for (DD[] array : rest) totalLength += array.length;	
@@ -377,35 +384,11 @@ public class pomdpAdd implements pomdp {
 	return result;
     }
 
-    /// first arg is not an array
+    // first arg is not an array - IDEM as before
     private DD[] concat(DD f, DD[]... rest) {
 	DD[] first = new DD[1];
 	first[0]   = f;
 	return concat(first,rest);
     }
-
-
-    /// compare two belief vectors to a given accuracy - used??
-    /* 
-     * public boolean equalB(double[] b1, double[] b2) {
-     * 	double acc = 0.00001;
-     * 	double diff[];
-     * 	diff = LinearAlgebra.minus(b1,b2);
-     * 	return (DoubleArray.max(DoubleArray.f(diff,abs)) <= acc);
-     * }
-     * 
-     * // define absolute value function to apply to vectors
-     * private Function abs = new Function() { 
-     * 	    public double f(double x) { return Math.abs(x); }};
-     */
-
-    // public double[][][] getT() {
-    //     return T;
-    // }
-
-    // public double[][] getR() {
-    //     return R;
-    // }    
-    
 
 } // addpomdp

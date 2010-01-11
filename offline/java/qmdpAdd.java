@@ -4,7 +4,7 @@
  * File: qmdpAdd.java
  * Description: compute offline qmdp upper bound using Adds as representation
  *              see README reference [6]
- * Copyright (c) 2009, Diego Maniloff 
+ * Copyright (c) 2010, Diego Maniloff 
  * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
 
@@ -37,7 +37,7 @@ public class qmdpAdd {
 	    old_Vmdp = Vmdp;	//  why does this work?
 
 	    // prime vars forward
-	    Vmdp = OP.primeVars(Vmdp, factoredProb.nrTotV);
+	    Vmdp = OP.primeVars(Vmdp, factoredProb.getnrTotV());
 
 	    for(a=0; a<factoredProb.getnrAct(); a++) {
 		// concat all ADDs into one array        

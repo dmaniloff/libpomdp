@@ -7,10 +7,14 @@
  * Copyright (c) 2009, Diego Maniloff 
  * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
-public class belStateFlat extends belState{
+public class belStateFlat implements belState {
 
     // flat belief point
     private double bPoint[];
+
+    private double poba = -1.0;
+
+    private int planid = -1;
 
     // constructor
     // in case this is the initial belief, poba = 0.0
@@ -22,5 +26,18 @@ public class belStateFlat extends belState{
     public double[] getbPoint() {
 	return bPoint;
     }
+
+    public double getpoba() {
+	return poba;
+    }
+
+    public int getplanid() {
+	return planid;
+    }
+
+    public void setplanid(int planid) {
+	this.planid = planid;
+    }
+
 
 } // belStateFlat

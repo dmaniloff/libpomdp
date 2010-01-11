@@ -1,66 +1,46 @@
 /** ------------------------------------------------------------------------- *
  * libpomdp
  * ========
- * File: AndOrTree.java
- * Description: data structure to hold the AND-OR tree for online search
- *              The constructor takes a heuristic object H that enables the
- *              implementation of different heuristic search methods
- * Copyright (c) 2010, Diego Maniloff
+ * File: AndOrTreeUpdateAdd.java
+ * Description: extension of the AndOrTree class to implement
+ *              online updates of the offline bounds using ADD's
+ * Copyright (c) 2010, Diego Maniloff 
  * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
 
 // imports
-import java.util.*;
 import java.io.*;
 import org.math.array.*;
 
-public class AndOrTree {
+public class AndOrTreeUpdateAdd extends AndOrTree {
     
     // ------------------------------------------------------------------------
     // properties
     // ------------------------------------------------------------------------
 
-    // pomdp problem specification
-    protected pomdp problem;
+    /// work with ADD representation of the pomdp
+    pomdpAdd problem;
 
-    // expansion heursitic 
-    protected expandHeuristic expH;
-    
-    // offline computed bounds
-    protected valueFunction offlineLower;
-    protected valueFunction offlineUpper;
+    /// backup heuristic
+    backupHeuristic bakH;
 
-    // root of the tree
-    protected orNode root;
-
-    // ------------------------------------------------------------------------
-    // methods
-    // ------------------------------------------------------------------------
-
-    /// constructor
-    public AndOrTree(pomdp prob, expandHeuristic h, valueFunction L, valueFunction U) {
-	this.problem = prob;
-	this.expH = h;
-	this.offlineLower = L;
-	this.offlineUpper = U;
-    }
-
-    /// initializer
-    public void init(belState belief) {
-	this.root = new orNode();
-	this.root.init(belief, -1, null);
-	this.root.l = offlineLower.V(this.root.belief);
-	this.root.u = offlineUpper.V(this.root.belief);
+    /// same constructor with backup heuristic
+    public AndOrTreeUpdateAdd(pomdp prob, expandHeuristic h, backupHeuristic bakh, valueFunction L, valueFunction U) {
+	super(prob, h, L, U);
+	this.problem = (pomdpAdd) super.problem;
+	this.bakH    =  bakh;
     }
 
     /**
      * expand(orNode en):
      * one-step expansion of |A||O| orNodes
+     * fully overriden here to access internals and have
+     * more control - allows for greater speed
      */
     public void expand(orNode en){
 	// make sure this node hasn't been expanded before
 	if (en.children != null) { 
-	    System.err.println("node not on fringe");
+	    System.err.println("node cannot be expanded");
 	    return;
 	}
 	// save this node's old bounds
@@ -102,8 +82,6 @@ public class AndOrTree {
 		// iterate
 		observation++;
 	    } // orNode loop
-	    
-	    // update values in a
 	    // L(b,a) = R(b,a) + \gamma \sum_o P(o|b,a)L(tao(b,a,o))
 	    a.l = ANDpropagateL(a);
 	    a.u = ANDpropagateU(a); 
@@ -113,6 +91,10 @@ public class AndOrTree {
 	    a.hStar = expH.hANDStar(a); 
 	    // b*(b,a) - propagate ref of b*
 	    a.bStar = a.children[a.oStar].bStar;
+	    // propagate reference to backup candidate
+	    a.bakCandidate = bakH.bakStar(a);
+	    // fill in star value
+	    a.bakHeuristicStar = bakH.bakHStar(a);
 	    // iterate
 	    action++;
 	}  // andNode loop
@@ -123,11 +105,10 @@ public class AndOrTree {
 	en.h_b = expH.h_b(en);
 	// H(b,a)
 	en.h_ba = expH.h_ba(en);
-	// best action
 	// a_b = argmax_a {H(b,a) * H*(b,a)}
 	en.aStar = expH.aStar(en);
 	// value of best heuristic in the subtree of en
-	// H*(b) = H(b,a_b) * H*(b,a_b)	
+	// H*(b) = H(b,a_b) * H*(b,a_b)
 	en.hStar = expH.hORStar(en);
 	// update reference to best fringe node in the subtree of en
 	en.bStar = en.children[en.aStar].bStar;
@@ -139,13 +120,17 @@ public class AndOrTree {
 	if(en.oneStepDeltaLower < 0) {
 	    System.err.println("Hmmmmmmmmmmm");
 	}
+	// compute backup heuristic for this newly expanded node
+	en.bakHeuristic = bakH.h_b(en); 
+	// the backup candidate is still itself and it has its own value as best
+	en.bakHeuristicStar = en.bakHeuristic;
+	en.bakCandidate     = en;
+    } // (overriden) expand
 
-    } // expand
 
-    
     /**
-     * updateAncestors(orNode n):
-     * update the ancestors of a given orNode
+     * updateAncestors now keeps track of the best
+     * candidate node to backup
      */
     public void updateAncestors(orNode n) {
 	andNode a;
@@ -156,12 +141,14 @@ public class AndOrTree {
 	    // update the andNode that is parent of n
 	    a.l = ANDpropagateL(a);
 	    a.u = ANDpropagateU(a);
-	    // best obs
+	    // best obs for expansion
 	    a.oStar = expH.oStar(a);
 	    // H*(b,a)
 	    a.hStar = expH.hANDStar(a);
 	    // b*(b,a) - propagate ref of b*
 	    a.bStar = a.children[a.oStar].bStar;
+	    // propagate reference of backup candidate and its H value
+	    a.bakCandidate = bakH.updateBakStar(a, n.getobs());
 
 	    // get the OR parent of the parent
 	    o = a.getParent();
@@ -170,170 +157,110 @@ public class AndOrTree {
 	    o.u = ORpropagateU(o);
 	    // H(b,a)
 	    o.h_ba = expH.h_ba(o);
-	    // best action
+	    // best action for expansion
 	    o.aStar = expH.aStar(o);
 	    // value of best heuristic in the subtree of en
 	    o.hStar = o.h_ba[o.aStar] * o.children[o.aStar].hStar;
 	    // update reference to best fringe node in the subtree of en
 	    o.bStar = o.children[o.aStar].bStar;
+	    // update reference of backup candidate and its H value
+	    o.bakCandidate = bakH.updateBakStar(o, a.getAct());
 	    // increase subtree size by the branching factor |A||O|
 	    o.subTreeSize += problem.getnrAct() * problem.getnrObs();
 	    // iterate
-	    // n = n.getParent().getParent();
-	    n = o;
+	    n = n.getParent().getParent();
 	}
-    } // updateAncestors
+    } // (overriden) updateAncestors
+
 
     /**
-     * updateAncestorsPath:
-     * improved version that updates only along
-     * the path that was modified
-     * STILL IN DEVELOPMENT - NOT YET IN USE
+     * backup the lower bound at the root node
      */
-    public void updateAncestorsPath(orNode n) {
+    public double[] backupLowerAtRoot() {
 	// decls
-	double  improvLower;
-	double  improvUpper;	
-	//double lbanew;
-	//double ubanew;
-	orNode  o;
-	andNode a;	
-	boolean updateL = true;
-	boolean updateU = true;
-	// n will be a node that has just been expanded
-	// therefore its improvement will just be oneStepDelta
-	improvLower = n.oneStepDeltaLower;
-	improvUpper = n.oneStepDeltaUpper;
-	// first check
-	if(0 >= improvLower) updateL = false;
-	if(0 >= improvUpper) updateU = false;	    
-	// update loop
-	while(n.hashCode() != this.root.hashCode() /*&& (updateL || updateU)*/) {  
-	    // get AND parent node
-	    a = n.getParent();
-	    // AND break
-	    if (updateL) a.l  += problem.getGamma() * n.belief.getpoba() * improvLower;
-	    if (updateU) a.u  += problem.getGamma() * n.belief.getpoba() * improvUpper; //  ???????????
-	    // update best obs - this becomes a question of whether to continue pointing in the same
-	    // direction or not given the change in certainty along this path/branch
-	    //a.oStar = expH.oStarUpdate(a, n.getobs());
-	    a.oStar = expH.oStar(a);
-	    // H*(b,a)
-	    a.hStar = expH.hANDStar(a);
-	    // b*(b,a) - propagate ref of b*
-	    a.bStar = a.children[a.oStar].bStar;	    
+	DD gamma  = DDleaf.myNew(problem.getGamma());
+	DD gab    = DD.zero;		
+	int bestA = currentBestAction(); // consider caching this value maybe
+	DD lowerBound [] = ((valueFunctionAdd)offlineLower).getvAdd();
+	// \sum_o g_{a,o}^i
+	for(orNode o : root.children[bestA].children) {
+	    // compute g_{a,o}^{planid}
+	    problem.gao(lowerBound[o.belief.getplanid()], bestA, o.getobs()).display();
+	    gab = OP.add(gab, problem.gao(lowerBound[o.belief.getplanid()], bestA, o.getobs()));
+	}    
+	// multiply result by discount factor and add it to r_a
+	gab = OP.mult(gamma, gab);
+	gab = OP.add(problem.R[bestA], gab);
+	return OP.convert2array(gab, problem.staIds);
 
-	    // get OR parent node
-	    o = a.getParent();
-	    // OR break 
-	    // update bounds - same way as comparison against best current
-	    if (o.l >= a.l) {		
-		updateL = false;
-	    } else {
-		o.l = a.l;
-		improvLower = a.l - o.l;
-	    }
-	    if (o.u <= a.u) {
-		updateU = false;
-	    } else {
-		o.u = a.u;
-		improvUpper = o.u - a.u;
-	    }
-	    // H(b,a)
-	    o.h_ba = expH.h_baUpdate(o, a.getAct());
-	    // best action
-	    o.aStar = expH.aStar(o);
-	    // value of best heuristic in the subtree of en
-	    o.hStar = o.h_ba[o.aStar] * o.children[o.aStar].hStar;
-	    // update reference to best fringe node in the subtree of en
-	    o.bStar = o.children[o.aStar].bStar;
-	    // increase subtree size by the branching factor |A||O|
-	    o.subTreeSize += problem.getnrAct() * problem.getnrObs();
-	    // iterate
-	    n = o;
+    } // backupLowerAtRoot
+
+
+    /**
+     * backupLowerAtNode:
+     * backup the lower bound at the given orNode
+     * and update the offline lower bound by adding the
+     * new alpha vector to the value function representation
+     * Using the current info from the tree, a backup operation is
+     * reduced to computing a particular gab vector
+     */
+    public valueFunction backupLowerAtNode(orNode on) {
+	// make sure this node is not in the fringe
+	if(null == on.children) {
+	    System.err.println("Attempted to backup a fringe node");
+	    return null;
 	}
-    } // updateAncestorsPath
+	// decls
+	DD gamma  = DDleaf.myNew(problem.getGamma());
+	DD gab    = DD.zero;		
+	int bestA = currentBestActionAtNode(on); // consider caching this value maybe
+	DD lowerBound [] = ((valueFunctionAdd)offlineLower).getvAdd();
+	// \sum_o g_{a,o}^i
+	for(orNode o : on.children[bestA].children) {
+	    // compute g_{a,o}^{planid}
+	    // problem.gao(lowerBound[o.belief.getplanid()], bestA, o.getobs()).display();
+	    gab = OP.add(gab, problem.gao(lowerBound[o.belief.getplanid()], bestA, o.getobs()));
+	}    
+	// multiply result by discount factor and add it to r_a
+	gab = OP.mult(gamma, gab);
+	gab = OP.add(problem.R[bestA], gab);
 
-    /// L(b,a) = R(b,a) + \gamma \sum_o P(o|b,a) L(tao(b,a,o))
-    protected double ANDpropagateL(andNode a) {
-	double Lba = 0;
-	for(orNode o : a.children) {
-	    Lba += o.belief.getpoba() * o.l;
+	// add newly computed vector to the tree's offline lower bound - NO PRUNING FOR NOW
+	valueFunctionAdd newLB = new valueFunctionAdd(Common.append(lowerBound, gab), 
+				    problem.staIds,
+				    IntegerArray.merge(offlineLower.getActions(), new int[] {bestA}));
+	offlineLower = newLB;
+	// return 
+	//return OP.convert2array(gab, problem.staIds);
+	return newLB;
+	// how about coding a union operation in valueFunction?
+	// this function does not watch for repeated vectors yet
+    } // backupLowerAtNode
+
+
+    /**
+     * expectedReuse:
+     * calculate expected # of belief nodes
+     * to reuse given current expanded tree and
+     * best action to execute
+     */
+    public double expectedReuse() {
+	int bestA   = currentBestAction();
+	double expR = 0;
+	for(orNode o : root.children[bestA].children) {
+	    expR += o.belief.getpoba() * o.subTreeSize;
 	}
-	return a.rba + problem.getGamma() * Lba;
-    }
+	return expR;
+    } // expectedReuse
 
-    /// U(b,a) = R(b,a) + \gamma \sum P(o|b,a) U(tao(b,a,o))
-    protected double ANDpropagateU(andNode a) {
-	double Uba = 0;
-	for(orNode o : a.children) {
-	    Uba += o.belief.getpoba() * o.u;
-	}
-	return a.rba + problem.getGamma() * Uba;
-    }
-
-    /// L(b) = max{max_a L(b,a),L(b)}
-    protected double ORpropagateL(orNode o) {
-	double maxLba = Double.NEGATIVE_INFINITY;
-	for(andNode a : o.children) {
-	    if(a.l > maxLba) maxLba = a.l;
-	}
-	// compare to current bound
-	return Math.max(maxLba, o.l);
-    }
-
-    /// U(b) = min{max_a U(b,a),U(b)}
-    protected double ORpropagateU(orNode o) {
-	double maxUba = Double.NEGATIVE_INFINITY;
-	for(andNode a : o.children) {
-	    if(a.u > maxUba) maxUba = a.u;
-	}
-	// compare to current bound
-	return Math.min(maxUba, o.u);
-    }
-
-    public orNode getRoot() {
-	return root;
-    }
-
-    /// if I understood the gc's behaviour
-    /// correctly, moving the root of the tree
-    /// and setting the new root's parent to null
-    /// automagically deletes all the useless subtrees
-    public void moveTree(orNode newroot) {
-	this.root = newroot;
-	this.root.disconnect();
-    }    
-
-    /// return best action given the current state
-    /// of expansion in the whole tree
-    public int currentBestAction() {
-	// construct array with L(b,a)
-	double Lba[] = new double[problem.getnrAct()];
-	for(andNode a : root.children)
-	    Lba[a.getAct()] = a.l;
-	return Common.argmax(Lba);
-    }
-    
-
-    /// return best action according to the subtree
-    /// rooted at on
-    public int currentBestActionAtNode(orNode on) {
-	// construct array with L(b,a)
-	double Lba[] = new double[problem.getnrAct()];
-	for(andNode a : on.children)
-	    Lba[a.getAct()] = a.l;
-	return Common.argmax(Lba);
-    }
-
-    public valueFunction getLB() {
-	return offlineLower;
-    }
-
-    public valueFunction getUB() {
-	return offlineUpper;
-    }
-
+    /// reuse ratio
+    /// correct the extra |A||O| in subTreeSize of root node
+    public double expectedReuseRatio() {
+	return expectedReuse() / 
+	    (root.subTreeSize - problem.getnrObs() * problem.getnrAct());
+    } // expectedReuseRatio
+	
+    /// overriden here to print the backupHeuristic of each node
     /// output a dot-formatted file to print the tree
     /// starting from a given orNode
     public void printdot(String filename) {
@@ -347,7 +274,7 @@ public class AndOrTree {
 	}
 	//out = System.out;
 	// print file headers
-	out.println("strict digraph T {");
+	out.println("digraph T {");
 	// print node
 	orprint(root,out);
 	// print closing
@@ -364,11 +291,16 @@ public class AndOrTree {
 		   b +
 		   "U(b)= %.2f\\n" +
 		   "L(b)= %.2f\\n" + 
-		   "H(b)= %.2f" +
-		   "\"];\n", o.u, o.l, o.h_b);
-	// every or node has a reference to be best node in its subtree
+		   "expH(b)= %.2f\\n" +
+		   "expH*(b)= %.2f\\n" +
+		   "bakH(b)= %.2f" +
+		   "\"];\n", o.u, o.l, o.h_b, o.hStar, o.bakHeuristic);
+	// every or node has a reference to the best node to expand in its subtree
 	out.println(o.hashCode() + "->" + o.bStar.hashCode() +
 		    "[label=\"b*\",weight=0,color=blue];");
+	// every or node has a reference to the best node to backup in its subtree
+	//out.println(o.hashCode() + "->" + o.bakCandidate.hashCode() +
+	//	    "[label=\"bakCandidate\",weight=0,color=orange];");
 	// check it's not in the fringe before calling andprint
 	if (o.children == null) return;	
 	// print outgoing edges from this node
@@ -391,6 +323,7 @@ public class AndOrTree {
 		   "U(b,a)= %.2f\\n" +
 		   "L(b,a)= %.2f" +
 		   "\"];\n", a.u, a.l);
+	
 	// print outgoing edges for this node
 	for(orNode o : a.children) {
 	    out.format(a.hashCode() + "->" + o.hashCode() + 
@@ -398,13 +331,21 @@ public class AndOrTree {
 		       "obs: " + problem.getobsStr(o.getobs()) + "\\n" +
 		       "P(o|b,a)= %.2f\\n" + 
 		       "H(b,a,o)= %.2f" +  
-		       "\"];\n",
+		       "\"];",
+		       //problem.P_oba(o.getobs(), a.getParent().belief,a.getact()),
+		       //a.poba[o.getobs()],
 		       o.belief.getpoba(),
 		       o.h_bao);
 	}
 	out.println();
+
+	// every or node has a reference to the best node to backup in its subtree
+	out.println(a.hashCode() + "->" + a.bakCandidate.hashCode() +
+		    "[label=\"bakCandidate\",weight=0,color=orange];");
+
 	// recurse
 	for(orNode o : a.children) orprint(o,out);
     }
 
-} // AndOrTree
+
+} // AndOrTreeUpdateAdd

@@ -3,7 +3,7 @@
  * ========
  * File: andNode.java
  * Description: class for an AND node in the tree
- * Copyright (c) 2009, Diego Maniloff
+ * Copyright (c) 2010, Diego Maniloff
  * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
 
@@ -41,12 +41,25 @@ public class andNode {
     /// children
     public orNode children[];
 
+    /// best node to backup
+    public orNode bakCandidate;
+
+    /// value of the heuristic for the bakCandidate
+    /// this is NOT the same as bakCandidate.bakHeuristic
+    /// since there may be weighting factors along the path
+    public double bakHeuristicStar;
+
     /// initializer:
     /// needs a reference to problem to call Rba
     public void init(int action, orNode parent, pomdp problem) {
-	this.act    = action;
-	this.parent = parent;
-	this.rba    = problem.Rba(parent.belief, action);
+	this.act          = action;
+	this.parent       = parent;
+	this.rba          = problem.Rba(parent.belief, action);
+	this.bStar        = null;
+	this.bakCandidate = null;
+	this.bakHeuristicStar = -1;
+	//this.bakHeuristic = -1;
+	// might want to include subTreeSize for andNodes too?
     }
 
     // get parent

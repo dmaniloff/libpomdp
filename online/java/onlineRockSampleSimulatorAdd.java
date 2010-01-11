@@ -6,7 +6,7 @@
  *              an online agent in the RockSample environment
  *              ADDs and SPUDD factored descriptions are used
  *              see README reference [7] for a description of this problem
- * Copyright (c) 2009, Diego Maniloff 
+ * Copyright (c) 2010, Diego Maniloff 
  * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
 
@@ -30,8 +30,12 @@ public class onlineRockSampleSimulatorAdd {
 	rocksampleGraph drawer        = new rocksampleGraph();
 
 	// compute offline bounds
+	long start = System.currentTimeMillis();
 	blindAdd blindCalc            = new blindAdd();
 	valueFunctionAdd lBound       = blindCalc.getBlindAdd(factoredProb);
+	System.out.println("blindcalc took " + (System.currentTimeMillis() - start));
+	// just bounds for profiling
+	System.exit(0);
 	qmdpAdd qmdpCalc              = new qmdpAdd();
 	valueFunctionAdd uBound       = qmdpCalc.getqmdpAdd(factoredProb);
 
@@ -47,8 +51,6 @@ public class onlineRockSampleSimulatorAdd {
 	final double MAXPLANNINGTIME  = 1000;
 	final int    MAXEPISODELENGTH = 100;
 
-	// just bounds
-	System.exit(0);
 
 	// stats counters
 	ArrayList<Double> Rew         = new ArrayList<Double>();
@@ -150,7 +152,7 @@ public class onlineRockSampleSimulatorAdd {
 	    // factoredS = factoredS1;
 	    System.arraycopy(factoredS1, 0, factoredS, 0, factoredS1.length);
 	    // roll back var ids on factoredS
-	    factoredS = Config.primeVars(factoredS, -factoredProb.nrTotV);
+	    factoredS = Config.primeVars(factoredS, -factoredProb.getnrTotV());
 
 	} // episode loop
 

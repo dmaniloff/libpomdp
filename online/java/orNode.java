@@ -6,7 +6,7 @@
  *              all of the values associated with a heuristic are simple
  *              placeholders to be filled by a method that implements
  *              the heuristic interface
- * Copyright (c) 2009, Diego Maniloff  
+ * Copyright (c) 2010, Diego Maniloff  
  * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
 
@@ -18,6 +18,10 @@ public class orNode {
     /// observation that leads to this node
     private int obs;
 
+    // ------------------------------------------------------------------------
+    // expansion heuristic properties
+    // ------------------------------------------------------------------------
+    
     /// lower bound of this node
     public double l;
 
@@ -25,6 +29,7 @@ public class orNode {
     public double u;
 
     /// H(b)
+    /// expansion heuristic
     public double h_b;
     
     /// H(b,a):
@@ -44,12 +49,12 @@ public class orNode {
     /// the next node to expand in the subtree of this node
     /// H*(b) = \max_{a_i,o_i} H(b_F) \prod{ H(b_i,a_i) H(b_i, a_i, o_i) }
     ///       = H(b*) \prod{ H(b_i,a_i) H(b_i, a_i, o_i) }
-    public double hStar;
+    public double hStar; 
 
     /// b*:
     /// reference to the next node to expand according to H*(b)
     /// in the subtree of this node
-    public orNode bStar;
+    public orNode bStar; // might wanna change this name to expandCandidate or sth ...
 
     /// size of the subtree rooted at this node, excluding itself
     public int subTreeSize;
@@ -57,19 +62,57 @@ public class orNode {
     /// the parent of an OR node is an AND node
     private andNode parent;
 
+    /// the depth relative to orNodes only
+    public int depth = 0;
+
     /// AND children nodes indexed by action #
     public andNode children[];
 
+    // ------------------------------------------------------------------------
+    // backup heuristic properties
+    // ------------------------------------------------------------------------
+
+    /// delta of the one-step lookahead
+    public double oneStepDeltaLower;
+    public double oneStepDeltaUpper;
+
+    /// backupCandidate \max_{b \in T} b_{backupHeuristic}
+    /// reference to the best backup node
+    /// according to a given backup heuristic
+    public orNode bakCandidate;
+
+    /// backup heuristic
+    public double bakHeuristic;
+
+    /// value of the heuristic for the bakCandidate
+    /// this is NOT the same as bakCandidate.bakHeuristic
+    /// since there may be weighting factors along the path
+    public double bakHeuristicStar;
+
+    // ------------------------------------------------------------------------
+    // methods
+    // ------------------------------------------------------------------------
+
     /// initializer
     public void init(belState belief, int observation, andNode parent) {
-	this.belief      = belief;
-	this.obs         = observation;
-	this.parent      = parent;
-	this.children    = null;
+	this.belief       = belief;
+	this.obs          = observation;
+	// parent and depth
+	this.parent       = parent;
+	if (parent != null) 
+	    this.depth    = parent.getParent().depth + 1;
+	this.children     = null;
 	// best reference upon creation is to itself
-	this.bStar       = this;
+	this.bStar        = this;
+	// initialize one-step improvement 
+	this.oneStepDeltaLower = -1;
+	this.oneStepDeltaUpper = -1;
+	// backup heuristic
+	this.bakCandidate = this;
+	this.bakHeuristic = -1;
+	this.bakHeuristicStar = -1;
 	// size of the subtree rooted here
-	this.subTreeSize = 0;
+	this.subTreeSize  = 0;
     }
 
     // getParent

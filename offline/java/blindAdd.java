@@ -3,7 +3,7 @@
  * ========
  * File: blindAdd.java
  * Description: compute blind policy lower bound
- * Copyright (c) 2009, Diego Maniloff 
+ * Copyright (c) 2010, Diego Maniloff 
  * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
 
@@ -41,18 +41,11 @@ public class blindAdd {
 	}
 
 	for(iter=0; iter<MAXITERATIONS; iter++) {
-	    
-	    // make sure this copy method will work!!!!!!!!!!!!!!!!!
-	    // for(a=0; a<factoredProb.getnrAct(); a++) {
-// 		old_alphas[a] = alphas[a];
-// 	    }
-	    // or this 
+	    // save alphas
 	    System.arraycopy(alphas, 0, old_alphas, 0, alphas.length);
-
 	    // prime vars forward in the |A| alphas
-	    alphas = OP.primeVarsN(alphas, factoredProb.nrTotV);
+	    alphas = OP.primeVarsN(alphas, factoredProb.getnrTotV());
 
-    
 	    for(a=0; a<factoredProb.getnrAct(); a++) {
 		// concat all ADDs into one array        
 		adds                = new DD[1+factoredProb.T[a].length+1];
@@ -61,23 +54,18 @@ public class blindAdd {
 		adds[adds.length-1] = alphas[a];		
 		//new DD[] {ddDiscFact, factoredProb.T[a], alphas[a]};
 		// \alpha_t^a = R(s,a) + \gamma \sum_{s'} {T(s,a,s') \alpha_{t-1}^a}
-		//		alphas[a]           = OP.addMultVarElim(adds, factoredProb.staIdsPr);        
-		alphas[a]           = OP.addMultVarElimNoMem(adds, factoredProb.staIdsPr);        
-		//		alphas[a]           = OP.add(factoredProb.R[a], alphas[a]);
-		alphas[a]           = OP.addNoMem(factoredProb.R[a], alphas[a]);
+		alphas[a]           = OP.addMultVarElim(adds, factoredProb.staIdsPr);        
+		//		alphas[a]           = OP.addMultVarElimNoMem(adds, factoredProb.staIdsPr);        
+		alphas[a]           = OP.add(factoredProb.R[a], alphas[a]);
+		//alphas[a]           = OP.addNoMem(factoredProb.R[a], alphas[a]);
 	    }
    
 	    // convergence check 
 	    for(a=0; a<factoredProb.getnrAct(); a++) {
-		//deltas[a] = OP.maxAll(OP.abs(OP.sub(old_alphas[a], alphas[a])));
-		deltas[a] = OP.maxAll(OP.abs(OP.subNoMem(old_alphas[a], alphas[a])));
+		deltas[a] = OP.maxAll(OP.abs(OP.sub(old_alphas[a], alphas[a])));
+		//deltas[a] = OP.maxAll(OP.abs(OP.subNoMem(old_alphas[a], alphas[a])));
 	    }
 	    maxdelta = DoubleArray.max(deltas);
-	    // convAlphas    = OP.convert2array(alphas,     factoredProb.staIds);
-// 	    convOldAlphas = OP.convert2array(old_alphas, factoredProb.staIds);
-// 	    delta         = (convAlphas - convOldAlphas) .^ 2;
-// 	    dists         = sqrt(sum(delta, 2));
-// 	    conv          = max(dists);
 	    System.out.println("Max delta at iteration " +  iter + " is: "+maxdelta);
 
 	    if (maxdelta <= EPSILON){
@@ -85,7 +73,7 @@ public class blindAdd {
 		break;
 	    }
 	} // blind loop
-	    		
+	// return
 	return new valueFunctionAdd(alphas, factoredProb.staIds, policy);	     
     } // getBlindAdd
 

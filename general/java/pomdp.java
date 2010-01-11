@@ -3,7 +3,7 @@
  * ========
  * File: pomdp.java
  * Description: interface to represent pomdp problem specifications
- * Copyright (c) 2009, Diego Maniloff 
+ * Copyright (c) 2010, Diego Maniloff 
  * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
 

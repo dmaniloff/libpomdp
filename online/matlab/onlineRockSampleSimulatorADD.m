@@ -1,12 +1,12 @@
 % --------------------------------------------------------------------------- %
 % libpomdp
 % ========
-% File: oagent.m
+% File: onlineRockSampleSimulatorADD.m
 % Description: m script to instantiate aoTree and heuristic objects to combine
 %              them with different lower bounds -
 %              uses part of Spaan's and Poupart's packages - see README
 %              references [1,5]
-% Copyright (c) 2009, Diego Maniloff
+% Copyright (c) 2010, Diego Maniloff
 % W3: http://www.cs.uic.edu/~dmanilof
 % --------------------------------------------------------------------------- %
 %% preparation
@@ -26,27 +26,20 @@ addpath     '../../external/symPerseusMatlab' -end
 % addpath     '../../offline/matlab' -end
 
 %% load problem parameters - factored representation
-
-% factoredProb = pomdpAdd  ('../../general/problems/tiger/tiger.95.SPUDD');
-% symDD        = parsePOMDP('../../general/problems/tiger/tiger.95.SPUDD');
-% factoredProb = pomdpAdd('../../general/problems/coffee/coffee.90.SPUDD');
-% factoredProb = pomdpAdd  ('../../general/problems/rocksample/RockSample_2_1/RockSample_2_1.SPUDD');
 factoredProb = pomdpAdd  ('../../general/problems/rocksample/RockSample_7_8/RockSample_7_8.SPUDD');
 % symDD        = parsePOMDP('../../general/problems/rocksample/RockSample_7_8/RockSample_7_8.SPUDD');
 
-
-
 %% compute offline lower and upper bounds
-blindCalc = blindAdd;
-lBound    = blindCalc.getBlindAdd(factoredProb);
-
-% qmdpCalc  = qmdpAdd;
-% uBound    = qmdpCalc.getqmdpAdd(factoredProb);
-
-% use Poupart's QMDP solver
-[Vqmdp qmdpP] = solveQMDP(symDD);
-% uBound        = valueFunction(OP.convert2array(Vqmdp, factoredProb.staIds), qmdpP);
-uBound        = valueFunctionAdd(Vqmdp, factoredProb.staIds, qmdpP);
+% blindCalc = blindAdd;
+% lBound    = blindCalc.getBlindAdd(factoredProb);
+% 
+% % qmdpCalc  = qmdpAdd;
+% % uBound    = qmdpCalc.getqmdpAdd(factoredProb);
+% 
+% % use Poupart's QMDP solver
+% [Vqmdp qmdpP] = solveQMDP(symDD);
+% % uBound        = valueFunction(OP.convert2array(Vqmdp, factoredProb.staIds), qmdpP);
+% uBound        = valueFunctionAdd(Vqmdp, factoredProb.staIds, qmdpP);
 
 %% load them in case we have them saved
 load 'saved-data/blindAdd_RockSample_7_8.mat';
@@ -59,12 +52,13 @@ aems2h  = aems2(factoredProb);
 % aoTree = AndOrTree(factoredProb, aems2h, lBound, uBound);
 
 %% play the pomdp
-diary('../logs/rocksample/7-8-online-run-nov-22-2009.log');
+diary('simulation-logs/rocksample/7-8-online-run-dec-14-2009.log');
 
 % parameters
 EPISODECOUNT      = 10;
 MAXPLANNINGTIME   = 1.0;
 MAXEPISODELENGTH  = 100;
+TOTALRUNS         = 2^8;
 
 % stats
 cumR              = [];
@@ -72,21 +66,24 @@ all.avcumrews     = [];
 all.avTs          = [];
 all.avreusedTs    = [];
 all.avplantimes   = [];
+all.avexps        = [];
 
 % rocksample parameters for the grapher
 GRID_SIZE         = 7;
 ROCK_POSITIONS    = [2 0; 0 1; 3 1; 6 3; 2 4; 3 4; 5 5; 1 6];
 drawer            = rocksampleGraph;
 
-for run = 1:2^8
+for run = 1:TOTALRUNS
     
-    fprintf(1, '///////////////////////////// RUN %d of %d \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\n', run, 2^8);
+    fprintf(1, '///////////////////////////// RUN %d of %d \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\n',...
+        run, TOTALRUNS);
     
     % stats
-    all.stats{run}.cumR = [];
-    all.stats{run}.meanT = [];
-    all.stats{run}.meanreusedT = [];
+    all.stats{run}.cumR         = [];
+    all.stats{run}.meanT        = [];
+    all.stats{run}.meanreusedT  = [];
     all.stats{run}.meanplantime = [];
+    all.stats{run}.meanexps     = [];
     
     % start this run
     for ep = 1:EPISODECOUNT
@@ -104,10 +101,10 @@ for run = 1:2^8
         
         % stats
         cumR = 0;
-        all.stats{run}.ep{ep}.R    = [];
-        all.stats{run}.ep{ep}.exps = [];
-        all.stats{run}.ep{ep}.T    = [];
-        all.stats{run}.ep{ep}.reusedT = [];
+        all.stats{run}.ep{ep}.R        = [];
+        all.stats{run}.ep{ep}.exps     = [];
+        all.stats{run}.ep{ep}.T        = [];
+        all.stats{run}.ep{ep}.reusedT  = [];
         all.stats{run}.ep{ep}.plantime = [];
         
         for iter = 1:MAXEPISODELENGTH
@@ -191,7 +188,7 @@ for run = 1:2^8
             % iterate
             %b = b1;
             factoredS = factoredS1;
-            factoredS = Config.primeVars(factoredS, -factoredProb.nrTotV);
+            factoredS = Config.primeVars(factoredS, -factoredProb.getnrTotV);
 
         end % time-steps loop
 
@@ -199,6 +196,7 @@ for run = 1:2^8
         all.stats{run}.meanT(end+1)       = mean(all.stats{run}.ep{ep}.T);
         all.stats{run}.meanreusedT(end+1) = mean(all.stats{run}.ep{ep}.reusedT);
         all.stats{run}.meanplantime(end+1)= mean(all.stats{run}.ep{ep}.plantime);
+        all.stats{run}.meanexps(end+1)    = mean(all.stats{run}.ep{ep}.exps);
         %pause
         
     end % episodes loop
@@ -208,5 +206,8 @@ for run = 1:2^8
     all.avTs      (end+1) = mean(all.stats{run}.meanT);
     all.avreusedTs(end+1) = mean(all.stats{run}.meanreusedT);
     all.avplantimes(end+1)= mean(all.stats{run}.meanplantime);
+    all.avexps    (end+1) = mean(all.stats{run}.meanexps);
     
 end % runs loop
+
+% onlineRockSampleSimulatorADD
