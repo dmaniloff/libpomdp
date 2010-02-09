@@ -1,0 +1,22 @@
+###############################################################################
+# File: Makefile
+# Description: simple make file
+# Copyright (c) 2009, 2010 Diego Maniloff
+# W3: http://www.cs.uic.edu/~dmanilof
+###############################################################################
+
+# commands
+JC=/usr/bin/javac
+RM=/bin/rm
+
+# classpath
+JCLASSPATH=../../external/jmatharray.jar:../../external/symPerseusJava:../../general/java:.
+
+# source files
+#SOURCES=mdp.java
+SOURCES=blindAdd.java qmdpAdd.java
+default:
+	$(JC) -classpath $(JCLASSPATH) $(SOURCES)
+
+clean:
+	$(RM) ./*.class
