@@ -2,7 +2,8 @@
  * libpomdp
  * ========
  * File: catchGen.java
- * Description: 
+ * Description: generate POMDP specifications in the SPUDD format for the
+ *              catch problem
  --------------------------------------------------------------------------- */
 
 // imports
@@ -83,10 +84,9 @@ public class catchGen {
 	out.print  (" " + varDecl("ai", n));
 	out.print  (" " + varDecl("wj", n));
 	out.print  (" " + varDecl("wi", n));
-
 	// rocks
 	//for(c=0; c<nr; c++) out.print(" " + varDecl("r"+c, rv, 2));
-	//out.println(")");
+	out.println(")");
 
 	// observations
 	// wp: wumpus present
@@ -104,8 +104,8 @@ public class catchGen {
 	out.println("// --------------");
 	out.println("init [* (aj " + massX("aj", n, apos[0]) + ")");
 	out.println("        (ai " + massX("ai", n, apos[1]) + ")");
-	out.println("        (oj " + massX("wj", n, wpos[0]) + ")");
-	out.println("        (oi " + massX("wi", n, wpos[1]) + ")");
+	out.println("        (wj " + massX("wj", n, wpos[0]) + ")");
+	out.println("        (wi " + massX("wi", n, wpos[1]) + ")");
 	//for(c=0; c<nr; c++) 
 	//    out.println("        (r"+c + " " + unifD("r"+c, rv, 2) + ")");
 	out.println("     ]");
@@ -115,8 +115,10 @@ public class catchGen {
 	out.println();
 	out.println("// wumpus' behaviour");
 	out.println("// -----------------");
-	out.println("dd wumpusb");
+	out.println("dd wumpusbj");
 	out.print  (randomizeLoc("wj")); 
+	out.println("enddd");
+	out.println("dd wumpusbi");
 	out.print  (randomizeLoc("wi"));
 	out.println("enddd");
 
@@ -137,8 +139,8 @@ public class catchGen {
 	out.println("    aj (SAMEaj)");
 	out.print  ("    ai " + shiftUp(9, "ai", n));
 	// the wumpus' location
-	out.println("    wj (wumpusb)");
-	out.println("    wi (wumpusb)");	
+	out.println("    wj (wumpusbj)");
+	out.println("    wi (wumpusbi)");	
 	//for(c=0; c<nr; c++) out.println("    r"+c + " (SAMEr"+c+")");
 	// uninformative observation here
 	out.println("    observe");	
@@ -154,8 +156,8 @@ public class catchGen {
 	out.println("    aj (SAMEaj)");
 	out.print  ("    ai " + shiftDown(9, "ai", n));
 	// the wumpus' location
-	out.println("    wj (wumpusb)");
-	out.println("    wi (wumpusb)");	
+	out.println("    wj (wumpusbj)");
+	out.println("    wi (wumpusbi)");	
 	//for(c=0; c<nr; c++) out.println("    r"+c + " (SAMEr"+c+")");
 	// uninformative observation here
 	out.println("    observe");	
@@ -171,8 +173,8 @@ public class catchGen {
 	out.print  ("    aj " + shiftUp(9, "aj", n));
 	out.println("    ai (SAMEai)");
 	// the wumpus' location
-	out.println("    wj (wumpusb)");
-	out.println("    wi (wumpusb)");
+	out.println("    wj (wumpusbj)");
+	out.println("    wi (wumpusbi)");
 	//for(c=0; c<nr; c++) out.println("    r"+c + " (SAMEr"+c+")");
 	// uninformative observation here
 	out.println("    observe");	
@@ -188,8 +190,8 @@ public class catchGen {
 	out.print  ("    aj " + shiftDown(9, "aj", n));
 	out.println("    ai (SAMEai)");
 	// the wumpus' location
-	out.println("    wj (wumpusb)");
-	out.println("    wi (wumpusb)");
+	out.println("    wj (wumpusbj)");
+	out.println("    wi (wumpusbi)");
 	//for(c=0; c<nr; c++) out.println("    r"+c + " (SAMEr"+c+")");
 	// uninformative observation here
 	out.println("    observe");	
@@ -205,8 +207,8 @@ public class catchGen {
 	out.println("    aj (SAMEaj)");
 	out.println("    ai (SAMEai)");
 	// the wumpus' location
-	out.println("    wj (wumpusb)");
-	out.println("    wi (wumpusb)");
+	out.println("    wj (wumpusbj)");
+	out.println("    wi (wumpusbi)");
 	// if the agent is colocated with a rock, its value
 	// becomes bad right after sampling it
 	//for(c=0; c<nr; c++) 
@@ -229,8 +231,8 @@ public class catchGen {
 		out.println("    aj (SAMEaj)");
 		out.println("    ai (SAMEai)");
 		//for(d=0;d<nr;d++) out.println("    r"+d+" (SAMEr"+d+")");
-		out.println("    wj (wumpusb)");
-		out.println("    wi (wumpusb)");
+		out.println("    wj (wumpusbj)");
+		out.println("    wi (wumpusbi)");
 		out.println("    observe");
 		out.print  ("        o " + checkWumpusObs(x, y, 9));
 		out.println("    endobserve");
@@ -281,13 +283,13 @@ public class catchGen {
     // randomize wumpu's location
     private String randomizeLoc(String varname) {
 	String v="";
-	v = v.concat("(" + varname + "\n");
+	v = v.concat("    (" + varname + "\n");
 	for(int c=0;c<n;c++) {
-	    v=v.concat("    (" + varname + c +" (" + varname + "'");
+	    v=v.concat(indent(8) + "(" + varname + c +" (" + varname + "'");
 	    v=v.concat(randomNext(c,varname));
 	    v=v.concat("))\n");
 	}
-	v=v.concat(")\n");
+	v=v.concat("    )\n");
 	return v;
     }
 
@@ -547,23 +549,32 @@ public class catchGen {
 	String v="";
 	v=v.concat("(aj'\n");	// aj
 	for (int aj=0;aj<n;aj++) { 	
-	    v=v.concat(indent(ind+3) + "(aj" + aj + " (ai'\n"); // ai
+	    v=v.concat(indent(ind+4) + "(aj" + aj + " (ai'\n"); // ai
 	    for(int ai=0;ai<n;ai++) {	
-		v=v.concat(indent(ind+11) + "(ai" + ai + " (wj'\n"); // wj
-		for(int wj=0;wj<n;wj++) {	
-		    v=v.concat(indent(ind+20) + "(wj" + wj + " (wi'"); // wi
-		    for(int wi=0;wi<n;wi++) { 
-			tpx = aj + dx;
-			tpy = ai + dy;
-			if (tpx == wj && tpy == wi)
-			    v=v.concat(" (wi" + wi + " (o' (wp ("+acc(dx,dy)     + ") wa(" + (1-acc(dx,dy)) + "))))  ");
-			else
-			    v=v.concat(" (wi" + wi + " (o' (wp ("+(1-acc(dx,dy)) + ") wa(" + acc(dx,dy)     + "))))  ");
-
-		    } v=v.concat("))\n");	       // wi
-		} v=v.concat(indent(ind+20) + "))\n"); // wj
-	    } v=v.concat(indent(ind+11)+ "))\n");      // ai
-	} v=v.concat(indent(ind+3) + ")\n");			       // aj
+		// actual target positions of the check action
+		tpx = aj + dx;
+		tpy = ai + dy;
+		if (tpx < 0 || tpy < 0) { // not checkeable
+		    v=v.concat(indent(ind+12) + "(ai" + ai + " (uninfobs))\n");		    
+		} else {	          // consider possible locations of the wumpus
+		    v=v.concat(indent(ind+12) + "(ai" + ai + " (wj'\n"); // wj
+		    for(int wj=0;wj<n;wj++) {	
+			v=v.concat(indent(ind+20) + "(wj" + wj + " (wi'\n"); // wi
+			for(int wi=0;wi<n;wi++) { 						
+			    if (tpx == wj && tpy == wi) {
+				v=v.concat(indent(ind+28) + "(wi" + wi + " (o' (wp ("+acc(dx,dy)     + ")) (wa (" + (1-acc(dx,dy)) + "))))\n");
+			    } else {
+				v=v.concat(indent(ind+28) + "(wi" + wi + " (o' (wp ("+(1-acc(dx,dy)) + ")) (wa (" + acc(dx,dy)     + "))))\n");			    
+			    }
+			} 
+			v=v.concat(indent(ind+28) + "))\n"); // wi
+		    } 
+		    v=v.concat(indent(ind+20) + "))\n"); // wj
+		}
+	    } 
+	    v=v.concat(indent(ind+12)+ "))\n"); // ai
+	} 
+	v=v.concat(indent(ind+4) + ")\n"); // aj	
 	return v;
     } // checkWumpusObs
 
