@@ -51,7 +51,7 @@ def vec2str(p, names=[]):
             s = s + '_' + names[pos]; 
     return s;
 
-# deterministic successor-state functions
+# deterministic successor-state functions for a single agent
 def north(state, agent, n, k, rows, cols):
     p = dec2n(state, n, k);
     pos = decpos(p[agent], rows, cols);
@@ -88,10 +88,67 @@ def south(state, agent, n, k, rows, cols):
         p[agent] = encpos(pos[0], pos[1] - 1, rows, cols);
         return n2dec(p, n, k);
 
+def add2dict(dic, key, val):
+    """Add an entry to a dictionary
+    If dictionary already has that key the values are added together.
+
+    Keyword arguments:
+    dic -- the dictionary
+    key -- the key
+    val -- the value associated to key
+
+    """
+
+    if dic.has_key(key):
+        dic[key] += val;
+    else:
+        dic[key] = val;
+
 # nondeterministic move function for a single agent
-def move(state, agent, dir, n, k, rows, cols):
-    if random.random() <= mr:
-        
+def transition(state, agent, action, mr, n, k, rows, cols):
+    """Transition function for a single agent action. Returns a dictionary <next_state,prob>
+
+    Keyword arguments:
+    state  -- the state number
+    agent  -- the index of the agent performing the action
+    action -- the index of the action (0='N', 1='S', 2='E', 3='W', 4='T')
+    mr     -- the reliability of movement actions
+    n      -- the number of squares in the world
+    k      -- the number of agents in the world
+    rows   -- the number of rows in the world
+    cols   -- the number of cols in the world
+
+    """
+
+    nstate = dict();
+    # North
+    if action == 0:
+        nstate[north(state, agent, n, k, rows, cols)] = mr;
+        add2dict(nstate, west(state, agent, n, k, rows, cols), (1.0-mr)/2.0);
+        add2dict(nstate, east(state, agent, n, k, rows, cols), (1.0-mr)/2.0);
+    # South
+    elif action == 1:
+        nstate[south(state, agent, n, k, rows, cols)] = mr;
+        add2dict(nstate, west(state, agent, n, k, rows, cols), (1.0-mr)/2.0);
+        add2dict(nstate, east(state, agent, n, k, rows, cols), (1.0-mr)/2.0);
+    # East
+    elif action == 2:
+        nstate[east(state, agent, n, k, rows, cols)] = mr;
+        add2dict(nstate, north(state, agent, n, k, rows, cols), (1.0-mr)/2.0);
+        add2dict(nstate, south(state, agent, n, k, rows, cols), (1.0-mr)/2.0);
+    # West
+    elif action == 3:
+        nstate[west(state, agent, n, k, rows, cols)] = mr;
+        add2dict(nstate, north(state, agent, n, k, rows, cols), (1.0-mr)/2.0);
+        add2dict(nstate, south(state, agent, n, k, rows, cols), (1.0-mr)/2.0);
+    # Tag
+    elif action == 4:
+        nstate[state] = 1.0;
+    # Should never happen
+    else:
+        nstate[state] = 1.0;
+
+    return nstate;
 
 # decode position: (row, col)
 def decpos(pos, rows, cols):
@@ -140,6 +197,6 @@ f.write('\n');
         
 # transition function
 f.write('T: N\n')
-for i in range(n**k):
+#for i in range(n**k):
     
 
