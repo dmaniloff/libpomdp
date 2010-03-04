@@ -114,8 +114,13 @@ def merge2dict(dic, m):
     m   -- the dictionary to merge into dic
 
     """
-    for k,v in m:
+    for k,v in m.iteritems():
         add2dict(dic, k, v)
+
+# Multiply all entries of a dictionary by f
+def dmult(dic, f):
+    for k,v in dic.iteritems():
+        dic[k] = v*f;
 
 # Transition function for a single agent action
 def stransition(state, agent, action, mr, n, k, rows, cols):
@@ -188,10 +193,14 @@ def rtransition(stated, ja, agent, mr, n, k, rows, cols):
     nstated = dict();
     if agent == k-1:
         for s,p in stated.iteritems():
-            merge2dic(nstated, stransition(s, agent, ja[agent], mr, n, k, rows, cols));
+            tstated = stransition(s, agent, ja[agent], mr, n, k, rows, cols);
+            dmult(tstated, p);
+            merge2dic(nstated, tstated);
     else:
         for s,p in stated.iteritems():
-            merge2dic(nstated, rtransition(nstated, ja, agent+1, mr, n, k, rows, cols));
+            tstated = rtransition(nstated, ja, agent+1, mr, n, k, rows, cols);
+            dmult(tstated, p);
+            merge2dic(nstated, tstated);
     
     return nstated;
 
