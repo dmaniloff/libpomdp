@@ -104,9 +104,23 @@ def add2dict(dic, key, val):
     else:
         dic[key] = val;
 
-# nondeterministic move function for a single agent
-def transition(state, agent, action, mr, n, k, rows, cols):
-    """Transition function for a single agent action. Returns a dictionary <next_state,prob>
+# Merge two dictionaries.
+def merge2dict(dic, m):
+    """Merge entries of dictionary m into dictionary dic.
+    Duplicated entries are summed together.
+
+    Keyword arguments:
+    dic -- the dictionary
+    m   -- the dictionary to merge into dic
+
+    """
+    for k,v in m:
+        add2dict(dic, k, v)
+
+# Transition function for a single agent action
+def stransition(state, agent, action, mr, n, k, rows, cols):
+    """Transition function for a single agent action.
+    Returns a dictionary <next_state,prob>
 
     Keyword arguments:
     state  -- the state number
@@ -120,35 +134,66 @@ def transition(state, agent, action, mr, n, k, rows, cols):
 
     """
 
-    nstate = dict();
+    nstated = dict();
     # North
     if action == 0:
-        nstate[north(state, agent, n, k, rows, cols)] = mr;
-        add2dict(nstate, west(state, agent, n, k, rows, cols), (1.0-mr)/2.0);
-        add2dict(nstate, east(state, agent, n, k, rows, cols), (1.0-mr)/2.0);
+        nstated[north(state, agent, n, k, rows, cols)] = mr;
+        add2dict(nstated, west(state, agent, n, k, rows, cols), (1.0-mr)/2.0);
+        add2dict(nstated, east(state, agent, n, k, rows, cols), (1.0-mr)/2.0);
     # South
     elif action == 1:
-        nstate[south(state, agent, n, k, rows, cols)] = mr;
-        add2dict(nstate, west(state, agent, n, k, rows, cols), (1.0-mr)/2.0);
-        add2dict(nstate, east(state, agent, n, k, rows, cols), (1.0-mr)/2.0);
+        nstated[south(state, agent, n, k, rows, cols)] = mr;
+        add2dict(nstated, west(state, agent, n, k, rows, cols), (1.0-mr)/2.0);
+        add2dict(nstated, east(state, agent, n, k, rows, cols), (1.0-mr)/2.0);
     # East
     elif action == 2:
-        nstate[east(state, agent, n, k, rows, cols)] = mr;
-        add2dict(nstate, north(state, agent, n, k, rows, cols), (1.0-mr)/2.0);
-        add2dict(nstate, south(state, agent, n, k, rows, cols), (1.0-mr)/2.0);
+        nstated[east(state, agent, n, k, rows, cols)] = mr;
+        add2dict(nstated, north(state, agent, n, k, rows, cols), (1.0-mr)/2.0);
+        add2dict(nstated, south(state, agent, n, k, rows, cols), (1.0-mr)/2.0);
     # West
     elif action == 3:
-        nstate[west(state, agent, n, k, rows, cols)] = mr;
-        add2dict(nstate, north(state, agent, n, k, rows, cols), (1.0-mr)/2.0);
-        add2dict(nstate, south(state, agent, n, k, rows, cols), (1.0-mr)/2.0);
+        nstated[west(state, agent, n, k, rows, cols)] = mr;
+        add2dict(nstated, north(state, agent, n, k, rows, cols), (1.0-mr)/2.0);
+        add2dict(nstated, south(state, agent, n, k, rows, cols), (1.0-mr)/2.0);
     # Tag
     elif action == 4:
-        nstate[state] = 1.0;
+        nstated[state] = 1.0;
     # Should never happen
     else:
-        nstate[state] = 1.0;
+        nstated[state] = 1.0;
 
-    return nstate;
+    return nstated;
+
+# Transition function for joint action
+def jtransition(state, ja, mr, n, k, rows, cols):
+    """Transition function for joint action.
+    Returns a dictionary <next_state,prob>
+
+    Keyword arguments:
+    state  -- the state number
+    ja     -- the joint action, as a vector [a_1, ..., a_k]
+    mr     -- the reliability of movement actions
+    n      -- the number of squares in the world
+    k      -- the number of agents in the world
+    rows   -- the number of rows in the world
+    cols   -- the number of cols in the world
+
+    """
+    
+    stated = dict();
+    stated[state] = 1.0;
+    return rtransition(stated, ja, 0, mr, n, k, rows, cols);
+
+def rtransition(stated, ja, agent, mr, n, k, rows, cols):
+    nstated = dict();
+    if agent == k-1:
+        for s,p in stated.iteritems():
+            merge2dic(nstated, stransition(s, agent, ja[agent], mr, n, k, rows, cols));
+    else:
+        for s,p in stated.iteritems():
+            merge2dic(nstated, rtransition(nstated, ja, agent+1, mr, n, k, rows, cols));
+    
+    return nstated;
 
 # decode position: (row, col)
 def decpos(pos, rows, cols):
