@@ -10,10 +10,9 @@
 # imports
 import random;
 
-
-
-
-# classes
+###############################################################################
+# Classes
+###############################################################################
 class AgentInterface:
     """ 
     general agent class for agents and wumpi
@@ -44,7 +43,7 @@ class Agent(AgentInterface):
         self.cols = cols;
         self.n    = rows * cols;
         #self.actn = ['N', 'S', 'E', 'W', 'T'];
-        self.actn = ['k'];
+        self.actn = ['N'];
         self.a    = len(self.actn);
         self.mr   = mr;
 
@@ -74,7 +73,9 @@ class Agent(AgentInterface):
 
         """
 
+        # Next state dictionary
         nstated = dict();
+
         # North
         if action == 0:
             nstated[north(agentpos, self.rows, self.cols)] = self.mr;
@@ -126,63 +127,197 @@ class StupidWumpus(AgentInterface):
         add2dict(nstated, west (wumpuspos, self.rows, self.cols), 0.25);
         return nstated;
 
-# deterministic successor-state functions for a single agent
-def north(agentpos, rows, cols):
+###############################################################################
+# Grid helper functions
+###############################################################################
+
+def decpos(pos, rows, cols):
+    """ Decode pos --> [row, col]
+
+    Keyword arguments:
+    pos  -- position in the grid
+    rows -- number of rows in the grid
+    cols -- number of columns in the grid
+
+    Numbering in the grid is row-major starting form the bottom row. Eg.:
+    
+       6 7 8
+       3 4 5
+       0 1 2
+
+    """
+    return [pos // cols, pos % cols];
+    
+def encpos(r, c, rows, cols):
+    """ Encode [r, c] --> pos
+
+    Keyword arguments:
+    r    -- row number
+    c    -- column number
+    rows -- number of rows in the grid
+    cols -- number of columns in the grid
+
+    Numbering in the grid is row-major starting form the bottom row. Eg.:
+    
+       6 7 8
+       3 4 5
+       0 1 2
+
+    """
+    return r * cols + c;
+
+# Functions to move (deterministically) in a grid
+def north(spos, rows, cols):
+    """ Move north
+    If spos is on the top edge of the grid the position doesn't change.
+
+    Keyword arguments:
+    spos -- starting position
+    rows -- number of rows in the grid
+    cols -- number of columns in the grid
+    """
     # get row and col position for the agent
-    pos = decpos(agentpos, rows, cols);
+    pos = decpos(spos, rows, cols);
     if pos[0] == rows - 1:
-        return agentpos;
+        return spos;
     else:
         return encpos(pos[0] + 1, pos[1], rows, cols);
 
-def south(agentpos, rows, cols):
+def south(spos, rows, cols):
+    """ Move south
+    If spos is on the bottom edge of the grid the position doesn't change.
+
+    Keyword arguments:
+    spos -- starting position
+    rows -- number of rows in the grid
+    cols -- number of columns in the grid
+    """
     # get row and col position for the agent
-    pos = decpos(agentpos, rows, cols);
+    pos = decpos(spos, rows, cols);
     if pos[0] == 0:
-        return agentpos;
+        return spos;
     else:
         return encpos(pos[0] - 1, pos[1], rows, cols);
 
-def east(agentpos, rows, cols):
+def east(spos, rows, cols):
+    """ Move east
+    If spos is on the rightmost edge of the grid the position doesn't change.
+
+    Keyword arguments:
+    spos -- starting position
+    rows -- number of rows in the grid
+    cols -- number of columns in the grid
+    """
     # get row and col position for the agent
-    pos = decpos(agentpos, rows, cols);
+    pos = decpos(spos, rows, cols);
     if pos[1] == cols - 1:
-        return agentpos;
+        return spos;
     else:
         return encpos(pos[0], pos[1] + 1, rows, cols);
 
-def west(agentpos, rows, cols):
+def west(spos, rows, cols):
+    """ Move west
+    If spos is on the leftmost edge of the grid the position doesn't change.
+
+    Keyword arguments:
+    spos -- starting position
+    rows -- number of rows in the grid
+    cols -- number of columns in the grid
+    """
     # get row and col position for the agent
-    pos = decpos(agentpos, rows, cols);
+    pos = decpos(spos, rows, cols);
     if pos[1] == 0:
-        return agentpos;
+        return spos;
     else:
         return encpos(pos[0], pos[1] - 1, rows, cols);
 
-def n2dec(p, n, k):
-    '''
-    base n into decimal conversioin
-    '''
-    i = 0;
-    for j in range(k):
-        i += n**j * p[k-j-1];
-    return i;
+###############################################################################
+# Encoding/decoding functions
+###############################################################################
+def n2dec(digits, base):
+    """ Convertion to decimal base
 
-def dec2n(i, n, k):
-    '''
-    state encoding into base n
-    '''
-    p = [0] * k;
+    Keyword arguments:
+    digits -- the vector of "digits"
+    base   -- base of the entries in digits
+    """
+    num = 0;
+    n = len(digits);
+    for j in range(n):
+        num += base**j * digits[n-j-1];
+    return num;
+
+def dec2n(num, base, k):
+    """ Convertion from decimal base.
+
+    Return an array whose length is k
+
+    Keyword arguments:
+    digits -- the vector of "digits"
+    base   -- the new base
+    k      -- desired length of the returned array
+    """
+    digits = [0] * k;
     j = k-1;
-    while i >= n:
-        p[j] = i % n;
-        i = i // n;
+    while num >= base:
+        digits[j] = num % base;
+        num = num // base;
         j = j - 1;
-    p[j] = i;
-    return p;
+    digits[j] = num;
+    return digits;
+
+def decode(num, dimensions):
+    """ Decode a number into a vector of "digits".
+    
+    Return an array whose length is len(dimensions)
+
+    Keyword arguments:
+    num        -- the number
+    dimensions -- "base" for each "digit"
+
+    A special case for this function is when all entries in dimensions
+    are the same, in which case this function is just a change of base
+    
+    """
+    nd  = len(dimensions);
+    digits = [0] * nd;
+    di  = nd-1;
+    while num > 0:
+        digits[di] = num % dimensions[di];
+        num = num // dimensions[di];
+        di = di - 1;
+    return digits;
+
+def encode(digits, dimensions):
+    """ Encode a vector of "digits" into a number.
+    
+    Keyword arguments:
+    digits     -- the vector of "digits"
+    dimensions -- "base" for each "digit"
+
+    A special case for this function is when all entries in dimensions
+    are the same, in which case this function is just a change of base
+    
+    """
+    nd = len(digits);
+    num = 0;
+    f = 1;
+    i = nd - 1;
+    while i >= 0:
+        num += f * digits[i];
+        f *= dimensions[i];
+        i = i - 1;
+
+    return num;
 
 def ja2str(av, agents):
-    s='';
+    """ Return a string representation of a joint action
+
+    Keyword arguments:
+    av     -- an array of the form [a_1, ..., a_k], where a_i is agent i's action
+    agents -- array [A_1, ..., A_k] of agents, used to fetch action names
+    """
+    s = '';
     for ai in range(len(agents)):
         s = s + '_' + agents[ai].actstr(av[ai]);
     return s;
@@ -200,11 +335,12 @@ def vec2str(p, names=[]):
             s = s + '_' + names[pos]; 
     return s;
 
-
+###############################################################################
+# Other functions
+###############################################################################
 
 def add2dict(dic, key, val):
-    """
-    Add an entry to a dictionary
+    """Add an entry to a dictionary.
     If dictionary already has that key the values are added together.
 
     Keyword arguments:
@@ -219,91 +355,64 @@ def add2dict(dic, key, val):
     else:
         dic[key] = val;
 
+def jtransition(jsv, jav, agents):
+    """Transition function.
 
-# decode position: (row, col)
-def decpos(pos, rows, cols):
-    return [pos // cols, pos % cols];
+    Returns a dictionary whose entries are of the form <next_state, probability> and
+    correspond to all possible next states (and their probability) when the joint
+    action described by jav is performed in the joint state described by jsv.
+
+    Keyword arguments:
+    jsv    -- state vector (one state for each agent)
+    jav    -- action vector (one action for each agent)
+    agents -- array of agents
     
-# encode agent's position
-def encpos(r, c, rows, cols):
-    return r * cols + c;
+    """
 
-def decja(ja, agents):
-    """
-    decode joint action into vector of individual actions
-    """
-    na  = len(agents);
-    jav = [0] * na;
-    ai  = na-1;
-    while ja > 0:
-        jav[ai] = ja % agents[ai].actions();
-        ja = ja // agents[ai].actions();
-        ai = ai - 1;
-    return jav;
+    # This function uses the global variable nstates, which is a 4-dimensional
+    # dictionary:
+    #    nstates[agt][s][a] is a dictionary whose entries are all possible single-
+    #    agent next states for agent agt when it performs action a in state s.
+    #    These entries are of the form <next_state, probability>
 
-def decjs(js, agents):
-    """
-    decode joint state into vector of individual actions
-    """
-    na  = len(agents);
-    jsv = [0] * na;
-    ai  = na-1;
-    while js > 0:
-        jsv[ai] = js % agents[ai].states();
-        js = js // agents[ai].states();
-        ai = ai - 1;
-    return jsv;
-
-def decode(j, dimensions):
-    """
-    general decode
-    """
-    nd  = len(dimensions);
-    jv = [0] * nd;
-    di  = nd-1;
-    while j > 0:
-        jv[di] = j % dimensions[di];
-        j = j // dimensions[di];
-        di = di - 1;
-    return jv;
-
-def encode(jv, dimensions):
-    """
-    general encode
-    """
-    nd = len(jv);
-    j = 0;
-    f = 1;
-    i = nd - 1;
-    while i >= 0:
-        j += f * jv[i];
-        f *= dimensions[i];
-        i = i - 1;
-
-    return j;
-
-def jp(jsv, jav, agents):
-    # next states' probability dictionary
+    # Next states' probability dictionary. We are going to return it
     nspd = dict();
-    # first build dimensions array
-    dimensions = [];
-    jns = 1;
-    for i in range(len(agents)):        
-        dimensions.append(len(nstates[agents[i]][jsv[i]][jav[i]]));
+
+    # Store in dimensions the number of possible next single-agent states for
+    # each agent and in n the total number of joint-next-states.
+    dimensions = [0]*len(agents);
+    n = 1;
+    for ai in range(len(agents)):        
+        dimensions[ai] = len(nstates[agents[ai]][jsv[ai]][jav[ai]]);
         # compute number of joint next states
-        jns *= dimensions[i];
-    
-    p = 1.0;
-    for i in range(jns):
-        # obtain dictionary indices
-        di = decode(i, dimensions);
-        # next state array
-        ns = [];
+        n *= dimensions[ai];
+
+#   print('------');
+#   print('State: ' + str(jsv) + ', joint action: ' + ja2str(jav, agents) + ' --> ' + str(n) + ' next states: ' + str(dimensions));
+#   print('------\n');
+
+    # Loop on every possible next state: compute its probability and add the tuple
+    # to the dictionary nspd.
+    for jns in range(n):
+        p = 1.0;
+
+        # Obtain dictionary indices: for each agent the single-agent next state that
+        # generated the joint next-state jns
+        di = decode(jns, dimensions);
+#       print('Next state: ' + str(jns) + ' --> ' + str(di));
+#       print(di);
+
+        # Compute probability of joint next state by multiplying probabilities of
+        # single-agent next states
+        ns = [0]*len(agents);
         for ai in range(len(agents)):
-            ns.append(nstates[agents[ai]][jsv[ai]][jav[ai]].keys()[di[ai]]);
+            ns[ai] = nstates[agents[ai]][jsv[ai]][jav[ai]].keys()[di[ai]];
             p *= nstates[agents[ai]][jsv[ai]][jav[ai]][ns[ai]];
+
+        # Store <next_state, probability> in the dictionary
         nspd[encode(ns, statearity)] = p;
-        return nspd;
+    
+    return nspd;
 
 ###############################################################################
 # computations
@@ -326,7 +435,11 @@ for ai in range(len(agents)):
     actionarity.append(agents[ai].actions());
     statearity.append(agents[ai].states());
 
-# dictionaries of individual s'
+# Compute dictionaries of individual agents' transitions.
+# nstates will be  a 4-dimensional dictionary:
+#    nstates[agt][s][a] is a dictionary whose entries are all possible single-
+#    agent next states for agent agt when it performs action a in state s.
+#    These entries are of the form <next_state, probability>
 nstates = dict();
 totja = 1;
 totjs = 1;
@@ -338,7 +451,7 @@ for ag in agents:
         nstates[ag][s] = dict();
         for a in range(ag.actions()):
             nstates[ag][s][a] = ag.transition(s, a);
-print(totja)
+
 ###############################################################################
 # start writing the POMDP file
 ###############################################################################
@@ -380,17 +493,14 @@ for i in range(n**(k+w)):
         f.write('0 ');
 f.write('\n');
         
-# compute cross product of the dictionaries
+# transitions
 f.write('T: * : * : * : 0.0\n');
-
 for ja in range(totja):
     for js in range(totjs):
         jav = decode(ja, actionarity);
         jsv = decode(js, statearity);
-        print(jav)
-        print(jsv)
-        nsp = jp(jsv, jav, agents);
-        for ns,p in nsp.iteritems():
+        nsp = jtransition(jsv, jav, agents);
+        for ns, p in nsp.iteritems():
             f.write('T: ' + ja2str(jav, agents) + ' : ' + vec2str(jsv) + ' : ' 
                     +  vec2str(decode(ns,statearity)) + ' : ' + str(p) + '\n');
 
