@@ -436,7 +436,7 @@ public class rocksampleGen {
 	    v=v.concat(indent(ind+1)+"(j"+c+"\n");
 	    // check for the end state
 	    if(c==n) {
-		v=v.concat(indent(ind+3)+"(o' (og (0.5)) (ob (0.5))))\n");
+		v=v.concat(indent(ind+3)+"(o' (og (0.5)) (ob (0.5))))\n"); // ??????????????????????????????????
 		break;
 	    }
 	    v=v.concat(indent(ind+3) + "(i'\n");

@@ -3,10 +3,10 @@ libpomdp
 
 libpomdp is a set of Partially Observable Markov Decision Process
 (POMDP) algorithms implemented in Java and Matlab. The code is growing
-to include algorithms, problem specifications, and simulators for
+to interface with algorithms, problem specifications, and simulators for
 DEC-POMDPs and I-POMDPs.
 
-At the moment the code is built to interface with the Matlab
+At the moment the code is built to work with the Matlab
 implementation of [1], jmatharray.jar from [3], and the Symbolic
 Perseus Package [5].
 
