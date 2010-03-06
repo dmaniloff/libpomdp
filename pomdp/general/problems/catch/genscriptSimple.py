@@ -49,12 +49,11 @@ class Agent(AgentInterface):
         self.cols = cols;
         self.n    = rows * cols;
         self.actn = ['N', 'S', 'E', 'W', 'T'];
-        #self.actn = ['N'];
+#        self.actn = ['N'];
         self.a    = len(self.actn);
         self.obsn = ['wp', 'wa'];
         self.o    = len(self.obsn);
-        self.mr   = mr;
-        
+        self.mr   = mr;     
 
     def states(self):
         return self.n;
@@ -247,6 +246,28 @@ def west(spos, rows, cols):
     else:
         return encpos(pos[0], pos[1] - 1, rows, cols);
 
+def distance(pos1, pos2, rows, cols):
+    """ Distance between two cells in a grid
+
+    Returns the distance (row, col) between pos1 and pos2.
+
+    Keyword arguments:
+    pos1
+    pos2
+    rows -- number of rows in the grid
+    cols -- number of columns in the grid
+    """
+    p1 = decpos(pos1, rows, cols);
+    p2 = decpos(pos2, rows, cols);
+    return (abs(p1[0]-p2[0]), abs(p1[1]-p2[1]));
+
+def colocated(pos1, pos2, rows, cols):
+    return pos1 == pos2;
+
+def adjacent(pos1, pos2, rows, cols):
+    (r,c) = distance(pos1, pos2, rows, cols);
+    return r+c == 1;
+
 ###############################################################################
 # Encoding/decoding functions
 ###############################################################################
@@ -312,8 +333,7 @@ def encode(digits, dimensions):
     dimensions -- "base" for each "digit"
 
     A special case for this function is when all entries in dimensions
-    are the same, in which case this function is just a change of base
-    
+    are the same, in which case this function is just a change of base    
     """
     nd = len(digits);
     num = 0;
@@ -336,6 +356,18 @@ def ja2str(av, agents):
     s = '';
     for ai in range(len(agents)):
         s = s + '_' + agents[ai].actstr(av[ai]);
+    return s;
+
+def jo2str(ov, agents):
+    """ Return a string representation of a joint observation
+
+    Keyword arguments:
+    ov     -- an array of the form [o_1, ..., o_k], where o_i is agent i's observation
+    agents -- array [A_1, ..., A_k] of agents, used to fetch observation names
+    """
+    s = '';
+    for ai in range(len(agents)):
+        s = s + '_' + agents[ai].obsstr(ov[ai]);
     return s;
 
 def vec2str(p, names=[]):
@@ -424,27 +456,29 @@ def jtransition(jsv, jav, agents):
     
     return nspd;
 
-def jobservation(jav, jsv, ragents, wumpi):
+def jobservation(jav, jsv, ragents, wumpi, rows, cols):
+    # Observation probability dictionary. We are going to return it
     nopd = dict();
 
     # Store in nobs all possible single-agent observations for each agent, 
     # in dimensions the number of such observations and in n the total number 
     # of joint-next-observations.
     dimensions = [1] * (len(ragents) + len(wumpi));
-    nobs = [dict()] * len(ragents) + [dict('0: 1.0')] * len(wumpi);
+    nobs = [dict()] * len(ragents) + [dict([(0, 1.0)])] * len(wumpi);
     n = 1;
+
     # check for co-location 
     for rai in range(len(ragents)):
         nobs[rai] = dict();
-        rangefl = false;
+        rangefl = False;
         for wai in range(len(wumpi)):
-            if inrange(jsv[rai], jsv[len(ragents) + wai]):
-                rangefl = true;
+            if adjacent(jsv[rai], jsv[len(ragents) + wai], rows, cols):
+                rangefl = True;
                 break;
-        if rangefl:
-            nobs[rai]['wp'] = 1.0;
+        if rangefl == True:
+            nobs[rai][0] = 1.0; # 'wp'
         else:
-            nobs[rai]['wa'] = 0.0;
+            nobs[rai][1] = 1.0; # 'wa'
         dimensions[rai] = len(nobs[rai]);
         n *= dimensions[rai];
     
@@ -473,15 +507,14 @@ def jobservation(jav, jsv, ragents, wumpi):
 ###############################################################################
 
 # declarations
-rows = 2;                       # rows
-cols = 2;                       # cols
+rows = 5;                       # rows
+cols = 5;                       # cols
 n    = rows * cols;             # squares
 k    = 2;                       # agents
 w    = 1;                       # wumpi
 o    = 2;                       # observations per agent
 mr   = 0.8;                     # motion reliability
 obsn = ['wp', 'wa'];
-
 
 ragents = [Agent(rows, cols, mr)] * k;
 wumpi   = [StupidWumpus(rows, cols)] * w;
@@ -505,7 +538,6 @@ for ai in range(len(agents)):
 #    These entries are of the form <next_obs, probability>
 
 nstates = dict();
-nobs    = dict();
 totja = 1;
 totjs = 1;
 for ag in agents:
@@ -569,16 +601,22 @@ for ja in range(totja):
             f.write('T: ' + ja2str(jav, agents) + ' : ' + vec2str(jsv) + ' : ' 
                     +  vec2str(decode(ns,statearity)) + ' : ' + str(p) + '\n');
 
-    
-
-
 # observations
 f.write('O: * : * : * : 0.0\n');
-for ja in range(totja):
-    for js in range(totjs):
-        jav = decode(ja, actionarity);
-        jsv = decode(js, statearity);
-        nop = jobservation(jsv, jav, agents);
-        for no, p in nop.iteritems():
-            f.write('O: ' + ja2str(jav, agents) + ' : ' + vec2str(jsv) + ' : ' 
-                    +  vec2str(decode(no,statearity)) + ' : ' + str(p) + '\n');
+# for ja in range(totja):
+#     for js in range(totjs):
+#         jav = decode(ja, actionarity);
+#         jsv = decode(js, statearity);
+#         nop = jobservation(jav, jsv, ragents, wumpi, rows, cols);
+#         for no, p in nop.iteritems():
+#             f.write('O: ' + ja2str(jav, agents) + ' : ' + vec2str(jsv) + ' : ' 
+#                     +  jo2str(decode(no,obsarity), agents) + ' : ' + str(p) + '\n');
+
+# Right now the observation does not depend on the action, but only on the state
+jav = decode(0, actionarity);
+for js in range(totjs):
+    jsv = decode(js, statearity);
+    nop = jobservation(jav, jsv, ragents, wumpi, rows, cols);
+    for no, p in nop.iteritems():
+        f.write('O: * : ' + vec2str(jsv) + ' : ' 
+                +  jo2str(decode(no,obsarity), agents) + ' : ' + str(p) + '\n');
