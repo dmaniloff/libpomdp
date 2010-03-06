@@ -24,10 +24,16 @@ class AgentInterface:
     def actions(self):
         return 1;
 
+    def observations(self):
+        return 1;
+
     def transition(self, state, action):
         return dict();
 
     def actstr(self, acti):
+        return '0';
+    
+    def obsstr(self, obsi):
         return '0';
 
 class Agent(AgentInterface):
@@ -42,10 +48,13 @@ class Agent(AgentInterface):
         self.rows = rows;
         self.cols = cols;
         self.n    = rows * cols;
-        #self.actn = ['N', 'S', 'E', 'W', 'T'];
-        self.actn = ['N'];
+        self.actn = ['N', 'S', 'E', 'W', 'T'];
+        #self.actn = ['N'];
         self.a    = len(self.actn);
+        self.obsn = ['wp', 'wa'];
+        self.o    = len(self.obsn);
         self.mr   = mr;
+        
 
     def states(self):
         return self.n;
@@ -53,8 +62,14 @@ class Agent(AgentInterface):
     def actions(self):
         return self.a;
 
+    def observations(self):
+        return self.o;
+
     def actstr(self, acti):
         return self.actn[acti];
+
+    def obsstr(self, obsi):
+        return self.obsn[obsi];
 
     def transition(self, agentpos, action):
         """
@@ -126,6 +141,7 @@ class StupidWumpus(AgentInterface):
         add2dict(nstated, east (wumpuspos, self.rows, self.cols), 0.25);
         add2dict(nstated, west (wumpuspos, self.rows, self.cols), 0.25);
         return nstated;
+
 
 ###############################################################################
 # Grid helper functions
@@ -387,10 +403,6 @@ def jtransition(jsv, jav, agents):
         # compute number of joint next states
         n *= dimensions[ai];
 
-#   print('------');
-#   print('State: ' + str(jsv) + ', joint action: ' + ja2str(jav, agents) + ' --> ' + str(n) + ' next states: ' + str(dimensions));
-#   print('------\n');
-
     # Loop on every possible next state: compute its probability and add the tuple
     # to the dictionary nspd.
     for jns in range(n):
@@ -399,8 +411,6 @@ def jtransition(jsv, jav, agents):
         # Obtain dictionary indices: for each agent the single-agent next state that
         # generated the joint next-state jns
         di = decode(jns, dimensions);
-#       print('Next state: ' + str(jns) + ' --> ' + str(di));
-#       print(di);
 
         # Compute probability of joint next state by multiplying probabilities of
         # single-agent next states
@@ -414,6 +424,50 @@ def jtransition(jsv, jav, agents):
     
     return nspd;
 
+def jobservation(jav, jsv, ragents, wumpi):
+    nopd = dict();
+
+    # Store in nobs all possible single-agent observations for each agent, 
+    # in dimensions the number of such observations and in n the total number 
+    # of joint-next-observations.
+    dimensions = [1] * (len(ragents) + len(wumpi));
+    nobs = [dict()] * len(ragents) + [dict('0: 1.0')] * len(wumpi);
+    n = 1;
+    # check for co-location 
+    for rai in range(len(ragents)):
+        nobs[rai] = dict();
+        rangefl = false;
+        for wai in range(len(wumpi)):
+            if inrange(jsv[rai], jsv[len(ragents) + wai]):
+                rangefl = true;
+                break;
+        if rangefl:
+            nobs[rai]['wp'] = 1.0;
+        else:
+            nobs[rai]['wa'] = 0.0;
+        dimensions[rai] = len(nobs[rai]);
+        n *= dimensions[rai];
+    
+    # Loop on every possible next observation: compute its probability and add the tuple
+    # to the dictionary nopd.
+    for jno in range(n):
+        p = 1.0;
+
+        # Obtain dictionary indices: for each agent the single-agent observation
+        # that generated the joint obsrvation jno
+        di = decode(jno, dimensions);
+
+        # Compute probability of joint observation by multiplying probabilities of
+        # single-agent observations
+        no = [0] * (len(ragents) + len(wumpi));
+        for ai in range((len(ragents) + len(wumpi))):
+            no[ai] = nobs[ai].keys()[di[ai]];
+            p *= nobs[ai][no[ai]];
+
+        # Store <next_state, probability> in the dictionary
+        nopd[encode(no, obsarity)] = p;
+    return nopd;
+
 ###############################################################################
 # computations
 ###############################################################################
@@ -423,24 +477,35 @@ rows = 2;                       # rows
 cols = 2;                       # cols
 n    = rows * cols;             # squares
 k    = 2;                       # agents
-w    = 0;                       # wumpi
+w    = 1;                       # wumpi
 o    = 2;                       # observations per agent
 mr   = 0.8;                     # motion reliability
 obsn = ['wp', 'wa'];
-agents = [Agent(rows, cols, mr)] * k + [StupidWumpus(rows, cols)] * w;
 
-actionarity = [];
-statearity = [];
+
+ragents = [Agent(rows, cols, mr)] * k;
+wumpi   = [StupidWumpus(rows, cols)] * w;
+agents  = ragents + wumpi;
+
+actionarity = [0] * len(agents);
+statearity  = [0] * len(agents);
+obsarity    = [0] * len(agents); 
 for ai in range(len(agents)):
-    actionarity.append(agents[ai].actions());
-    statearity.append(agents[ai].states());
+    actionarity[ai] = agents[ai].actions();
+    statearity [ai] = agents[ai].states();
+    obsarity   [ai] = agents[ai].observations();
 
 # Compute dictionaries of individual agents' transitions.
 # nstates will be  a 4-dimensional dictionary:
-#    nstates[agt][s][a] is a dictionary whose entries are all possible single-
-#    agent next states for agent agt when it performs action a in state s.
+#    nstates[ag][s][a] is a dictionary whose entries are all possible single-
+#    agent next states for agent ag when it performs action a in state s.
 #    These entries are of the form <next_state, probability>
+#    nobs[ag][s][a] is a dictionary whose entries are all possible single-
+#    agent next observations for agent ag when it performs action a, lands in state s.
+#    These entries are of the form <next_obs, probability>
+
 nstates = dict();
+nobs    = dict();
 totja = 1;
 totjs = 1;
 for ag in agents:
@@ -507,3 +572,13 @@ for ja in range(totja):
     
 
 
+# observations
+f.write('O: * : * : * : 0.0\n');
+for ja in range(totja):
+    for js in range(totjs):
+        jav = decode(ja, actionarity);
+        jsv = decode(js, statearity);
+        nop = jobservation(jsv, jav, agents);
+        for no, p in nop.iteritems():
+            f.write('O: ' + ja2str(jav, agents) + ' : ' + vec2str(jsv) + ' : ' 
+                    +  vec2str(decode(no,statearity)) + ' : ' + str(p) + '\n');
