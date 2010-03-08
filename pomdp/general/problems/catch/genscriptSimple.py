@@ -11,6 +11,19 @@
 import random;
 
 ###############################################################################
+# parameters
+###############################################################################
+
+# declarations
+rows = 2;                       # rows
+cols = 2;                       # cols
+n    = rows * cols;             # squares
+k    = 2;                       # agents
+w    = 1;                       # wumpi
+mr   = 0.8;                     # motion reliability
+discount = 0.95;
+
+###############################################################################
 # Classes
 ###############################################################################
 class AgentInterface:
@@ -18,6 +31,10 @@ class AgentInterface:
     general agent class for agents and wumpi
     """
     
+    def __init(self):
+        self.astr = self.aname(0);
+        self.ostr = self.oname(0);
+
     def states(self):
         return 1;
 
@@ -27,13 +44,19 @@ class AgentInterface:
     def observations(self):
         return 1;
 
-    def transition(self, state, action):
+    def stransition(self, state, action):
         return dict();
 
-    def actstr(self, acti):
+    def anames(self):
+        return self.astr;
+
+    def aname(self, acti):
         return '0';
+
+    def onames(self):
+        return self.ostr;
     
-    def obsstr(self, obsi):
+    def oname(self, obsi):
         return '0';
 
 class Agent(AgentInterface):
@@ -48,12 +71,18 @@ class Agent(AgentInterface):
         self.rows = rows;
         self.cols = cols;
         self.n    = rows * cols;
-        self.actn = ['N', 'S', 'E', 'W', 'T'];
+        self.actn = ['n', 's', 'e', 'w', 't'];
 #        self.actn = ['N'];
         self.a    = len(self.actn);
         self.obsn = ['wp', 'wa'];
         self.o    = len(self.obsn);
-        self.mr   = mr;     
+        self.mr   = mr;
+        self.astr = self.actn[0];
+        for a in self.actn[1:]:
+            self.astr += ' ' + a;
+        self.ostr = self.obsn[0];
+        for o in self.obsn[1:]:
+            self.ostr += ' ' + o;
 
     def states(self):
         return self.n;
@@ -64,13 +93,13 @@ class Agent(AgentInterface):
     def observations(self):
         return self.o;
 
-    def actstr(self, acti):
+    def aname(self, acti):
         return self.actn[acti];
 
-    def obsstr(self, obsi):
+    def oname(self, obsi):
         return self.obsn[obsi];
 
-    def transition(self, agentpos, action):
+    def stransition(self, agentpos, action):
         """
         Nondeterminisic transition function for a single agent action.
         Returns a dictionary <next_state,prob>
@@ -116,7 +145,7 @@ class Agent(AgentInterface):
         # Should never happen
         else:
             nstated[agentpos] = 1.0;            
-        return nstated;
+        return nstated;      
 
 class StupidWumpus(AgentInterface):
     """
@@ -133,7 +162,7 @@ class StupidWumpus(AgentInterface):
     def states(self):
         return n;
     
-    def transition(self, wumpuspos, action):
+    def stransition(self, wumpuspos, action):
         nstated = dict();
         nstated[north(wumpuspos, self.rows, self.cols)] = 0.25;
         add2dict(nstated, south(wumpuspos, self.rows, self.cols), 0.25);
@@ -355,8 +384,8 @@ def ja2str(av, agents):
     """
     s = '';
     for ai in range(len(agents)):
-        s = s + '_' + agents[ai].actstr(av[ai]);
-    return s;
+        s += agents[ai].aname(av[ai]) + ' ';
+    return s[0:len(s)-1];
 
 def jo2str(ov, agents):
     """ Return a string representation of a joint observation
@@ -367,21 +396,21 @@ def jo2str(ov, agents):
     """
     s = '';
     for ai in range(len(agents)):
-        s = s + '_' + agents[ai].obsstr(ov[ai]);
-    return s;
+        s += agents[ai].oname(ov[ai]) + ' ';
+    return s[0:len(s)-1];
 
 def vec2str(p, names=[]):
     """
     state encoding to string
     """
-    s = '';
+    s = 'S';
     if [] == names:
         for pos in p:
-            s = s + '_' + str(pos);
+            s += str(pos) + '_';
     else:
         for pos in p:            
-            s = s + '_' + names[pos]; 
-    return s;
+            s += names[pos] + '_'; 
+    return s[0:len(s)-1];
 
 ###############################################################################
 # Other functions
@@ -502,19 +531,19 @@ def jobservation(jav, jsv, ragents, wumpi, rows, cols):
         nopd[encode(no, obsarity)] = p;
     return nopd;
 
+def jreward(jsv, jav, ragents, wumpi, rows, cols):
+    # Reward += 1 for each wumpus that is tagged
+    reward = 0;
+    for wai in range(len(wumpi)):
+        for rai in range(len(ragents)):
+            if colocated(jsv[rai], jsv[len(ragents) + wai], rows, cols) and jav[rai] == 4:
+                reward += 1;
+                break;
+    return reward;
+
 ###############################################################################
 # computations
 ###############################################################################
-
-# declarations
-rows = 5;                       # rows
-cols = 5;                       # cols
-n    = rows * cols;             # squares
-k    = 2;                       # agents
-w    = 1;                       # wumpi
-o    = 2;                       # observations per agent
-mr   = 0.8;                     # motion reliability
-obsn = ['wp', 'wa'];
 
 ragents = [Agent(rows, cols, mr)] * k;
 wumpi   = [StupidWumpus(rows, cols)] * w;
@@ -547,76 +576,103 @@ for ag in agents:
     for s in range(ag.states()):
         nstates[ag][s] = dict();
         for a in range(ag.actions()):
-            nstates[ag][s][a] = ag.transition(s, a);
+            nstates[ag][s][a] = ag.stransition(s, a);
 
 ###############################################################################
 # start writing the POMDP file
 ###############################################################################
 
 # open file
-f = open('catchSimple.POMDP', 'w');
+fname = 'dcatch' + str(rows) + 'x' + str(cols) + '-' + str(k) + 'a' + str(w) + 'w.dpomdp';
+f = open(fname, 'w');
+
+# brief description of the problem
+f.write('# Catch problem:\n');
+f.write('#\n');
+f.write('#    Grid   : ' + str(rows) + 'x' + str(cols) + '\n');
+f.write('#    Agents : ' + str(k) + '\n');
+f.write('#    Wumpi  : ' + str(w) + '\n');
+f.write('#\n');
+f.write('#\n');
 
 # init parameters
-f.write('discount: 0.95\n');
+f.write('# preamble\n');
+f.write('agents: ' + str(k) + '\n');
+f.write('discount: ' + str(discount) + '\n');
 f.write('values: reward\n');
+f.write('# States are named Sa1_.._ak_w1_.._wn, where pi is the position of agent i '
+        + 'and wi is the position of wumpus i and there are k agents and n wumpi\n');
 f.write('states: ')
-
 # enumerate states - the wumpi are the least significat digits - agent0 is the most significant digit
-for i in range(n**(k+w)):
-    f.write(vec2str(dec2n(i,n,k+w)) + ' ');
+for js in range(totjs):
+    jsv = decode(js, statearity);
+    f.write(vec2str(jsv) + ' ');
 f.write('\n');
-
-# enumerate actions
-f.write('actions: ')
-for ja in range(totja):
-    f.write(ja2str(decode(ja, actionarity), agents) + ' ');
-f.write('\n');
-
-# enumerate observations
-f.write('observations: ');
-for i in range(o**k):
-    f.write(vec2str(dec2n(i,o,k), obsn) + ' ');
-f.write('\n');
-
+f.write('#\n');
 # start state
-f.write('start: \n');
-rp = round(1.0/n, 6);
-for i in range(n**(k+w)):
-    if i < n-1:
-        f.write(str(rp) + ' ');
-    elif i == n-1:
-        f.write(str(1.0-(n-1.0)*rp) + ' ');
-    else:
-        f.write('0 ');
+f.write('start:\n');
+# Agents start in (0,0) but they don't know where the wumpi are
+rp = round(1.0/(n**w), 6);
+lp = 1.0;
+for js in range(n**w-1):
+    f.write(str(rp) + ' ');
+    lp -= rp;
+f.write(str(lp) + ' ');
+for js in range(n**w, totjs):
+    f.write('0 ');
 f.write('\n');
-        
+f.write('#\n');
+# enumerate actions
+# for each agent we must have one line specifying the agent's actions
+f.write('actions:\n');
+for ag in ragents:
+    f.write(ag.anames() + '\n');
+f.write('#\n');
+# enumerate observations
+# for each agent we must have one line specifying the agent's observations
+f.write('observations:\n');
+for ag in ragents:
+    f.write(ag.onames() + '\n');
+f.write('#\n');
+f.write('#\n');
+
 # transitions
+f.write('# transitions\n');
 f.write('T: * : * : * : 0.0\n');
 for ja in range(totja):
+    jav = decode(ja, actionarity);
     for js in range(totjs):
-        jav = decode(ja, actionarity);
         jsv = decode(js, statearity);
         nsp = jtransition(jsv, jav, agents);
         for ns, p in nsp.iteritems():
-            f.write('T: ' + ja2str(jav, agents) + ' : ' + vec2str(jsv) + ' : ' 
+            f.write('T: ' + ja2str(jav, ragents) + ' : ' + vec2str(jsv) + ' : ' 
                     +  vec2str(decode(ns,statearity)) + ' : ' + str(p) + '\n');
+f.write('#\n');
 
 # observations
-f.write('O: * : * : * : 0.0\n');
-# for ja in range(totja):
-#     for js in range(totjs):
-#         jav = decode(ja, actionarity);
-#         jsv = decode(js, statearity);
-#         nop = jobservation(jav, jsv, ragents, wumpi, rows, cols);
-#         for no, p in nop.iteritems():
-#             f.write('O: ' + ja2str(jav, agents) + ' : ' + vec2str(jsv) + ' : ' 
-#                     +  jo2str(decode(no,obsarity), agents) + ' : ' + str(p) + '\n');
-
 # Right now the observation does not depend on the action, but only on the state
+f.write('# observations\n');
+f.write('O: * : * : * : 0.0\n');
 jav = decode(0, actionarity);
 for js in range(totjs):
     jsv = decode(js, statearity);
     nop = jobservation(jav, jsv, ragents, wumpi, rows, cols);
     for no, p in nop.iteritems():
         f.write('O: * : ' + vec2str(jsv) + ' : ' 
-                +  jo2str(decode(no,obsarity), agents) + ' : ' + str(p) + '\n');
+                + jo2str(decode(no,obsarity), ragents) + ' : ' + str(p) + '\n');
+f.write('#\n');
+
+# rewards
+f.write('# rewards\n');
+f.write('R: * : * : * : * : 0\n');
+for ja in range(totja):
+    jav = decode(ja, actionarity);
+    for js in range(totjs):
+        jsv = decode(js, statearity);
+        reward = jreward(jsv, jav, ragents, wumpi, rows, cols);
+        if reward != 0:
+            f.write('R: ' + ja2str(jav, ragents) + ' : ' + vec2str(jsv) 
+                    + ' : * : * : ' + str(reward) + '\n');
+f.write('#\n');
+
+f.close();
