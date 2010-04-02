@@ -10,7 +10,7 @@ JC=/usr/bin/javac -Xlint
 RM=/bin/rm
 
 # classpath
-JCLASSPATH=../../../external/mtj-0.9.12/mtj-0.9.12.jar:../../../external/mtj-0.9.12/lib/netlib-java/arpack_combo-0.1.jar:../../../external/mtj-0.9.12/lib/netlib-java/netlib-java-0.9.1.jar:../../../external/jmatharray.jar:../../../external/ujmp-complete-0.2.4.jar:../../../external/symPerseusJava:.
+JCLASSPATH=../../external/mtj-0.9.12/mtj-0.9.12.jar:../../external/mtj-0.9.12/lib/netlib-java/arpack_combo-0.1.jar:../../external/mtj-0.9.12/lib/netlib-java/netlib-java-0.9.1.jar:../../external/jmatharray.jar:../../external/ujmp-complete-0.2.4.jar:../../external/symPerseusJava:.
 
 # source files
 SOURCES=pomdp.java \
