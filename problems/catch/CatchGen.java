@@ -38,10 +38,10 @@ public class CatchGen {
     //  |
     //  |
     //  v
-    public int WIDTH  = 5;
-    public int HEIGHT = 5;
+    public int WIDTH;
+    public int HEIGHT;
     // grid size
-    private final int N = WIDTH * HEIGHT;
+    private int N;
     // move directions
     public enum Direction {N, S, E, W} 
 
@@ -56,6 +56,7 @@ public class CatchGen {
 	this.gp  = gp;
 	this.WIDTH = w;
 	this.HEIGHT = h;
+	this.N =  WIDTH * HEIGHT;
     }
 
     // constructor to call from within the grapher
@@ -136,6 +137,7 @@ public class CatchGen {
 	out.println(ind(2) + "aloc (ldd)");
 	out.println(ind(4) + "coll (cdd)");
 	out.println(ind(2) + "endobserve");
+	out.println("cost (1)");
 	out.println("endaction");
 	out.println();
 
@@ -147,6 +149,7 @@ public class CatchGen {
 	out.println(ind(2) + "aloc (ldd)");
 	out.println(ind(4) + "coll (cdd)");
 	out.println(ind(2) + "endobserve");
+	out.println("cost (1)");
 	out.println("endaction");
 	out.println();
 
@@ -158,6 +161,7 @@ public class CatchGen {
 	out.println(ind(2) + "aloc (ldd)");
 	out.println(ind(4) + "coll (cdd)");
 	out.println(ind(2) + "endobserve");
+	out.println("cost (1)");
 	out.println("endaction");
 	out.println();
 
@@ -169,6 +173,7 @@ public class CatchGen {
 	out.println(ind(2) + "aloc (ldd)");
 	out.println(ind(4) + "coll (cdd)");
 	out.println(ind(2) + "endobserve");
+	out.println("cost (1)");
 	out.println("endaction");
 	out.println();
 

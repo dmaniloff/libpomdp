@@ -10,8 +10,8 @@
 public class CatchTagGrid implements CatchGridProperties {
     
     // class properties
-    private int WIDTH;
-    private int HEIGHT;
+    public int WIDTH;
+    public int HEIGHT;
     // grid size
     private int N;
 
@@ -29,11 +29,11 @@ public class CatchTagGrid implements CatchGridProperties {
 	int x=getxy(position)[0]; int y=getxy(position)[1];
 	switch (move) {
 	case N:
-	    return ((y==1 && (x<=4 || x>=8)) || (y==4 && x<=7 && x>=5));
+	    return ((HEIGHT-1 == y) || (y==1 && (x<=4 || x>=8)) || (y==4 && x<=7 && x>=5));
 	case S:
 	    return (y==0);
 	case E:
-	    return (x==9 || (x==7 && y>=2 && y<=4));	    
+	    return (WIDTH-1 == x) || (x==9 || (x==7 && y>=2 && y<=4));	    
 	case W:
 	    return (x==0 || (x==5 && y>=2 && y<=4));
 	}	

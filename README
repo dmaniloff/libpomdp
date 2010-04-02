@@ -2,13 +2,15 @@ libpomdp
 ========
 
 libpomdp is a set of Partially Observable Markov Decision Process
-(POMDP) algorithms implemented in Java and Matlab. The code is growing
-to interface with algorithms, problem specifications, and simulators for
-DEC-POMDPs and I-POMDPs.
+(POMDP) algorithms implemented in Java, Jython, and Matlab.
 
-At the moment the code is built to work with the Matlab
-implementation of [1], jmatharray.jar from [3], and the Symbolic
-Perseus Package [5].
+The code has different dependencies, according to what algorithm you
+want to run: 
+* the Matlab implementation of [1], 
+* jmatharray.jar from [3], 
+* the Symbolic Perseus Package [5],
+* the Universal Java Matrix Package [8],
+* matrix-toolkits-java [9].
 
 Copyright (c) 2009, 2010 Diego Maniloff.
 
@@ -24,20 +26,19 @@ Directories and files
 
 README           - this file
 doc/		 - documentation 
-pomdp/		 - POMDP directory
-decpomdp/	 - DEC-POMDP directory
-ipomdp/		 - I-POMDP directory
 external/        - external dependencies
-pomdp/general/   - general POMDP components for both offline and online algorithms
-pomdp/offline/   - implementation of offline POMDP algs
-pomdp/online/    - implementation of online POMDP algs
+general/         - general POMDP components for both offline and online algorithms
+offline/         - implementation of offline POMDP algorithms
+online/          - implementation of online POMDP algorithms
+hybrid/          - implementation of hybrid POMDP algorithms
 
 Implemented algorithms
 ======================
 
+
 Documentation
 =============
-See the doc/ directory and the github wiki.
+
 
 References
 ==========
@@ -66,3 +67,6 @@ Intelligence Research (2000).
 POMDPs." in Proceedings of the 20th conference on Uncertainty in
 artificial intelligence, 2004, 520-527.
 
+[8] Universal Java Matrix Package, http://www.ujmp.org/
+
+[8] matrix-toolkits-java, http://code.google.com/p/matrix-toolkits-java/
