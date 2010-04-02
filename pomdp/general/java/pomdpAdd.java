@@ -294,6 +294,10 @@ public class pomdpAdd implements pomdp {
 	return nrTotV;
     }
 
+    public int getnrStaV() {
+	return nrStaV;
+    }
+
     /// transform a given alpha vector with respect to an a,o pair
     /// g_{a,o}^i = \sum_{s'} O(o,s',a) T(s,a,s') \alpha^i(s')
     public DD gao(DD alpha, int a, int o) {

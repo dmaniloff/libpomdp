@@ -106,12 +106,12 @@ public class pomdpFlat implements pomdp {
 	double b1[], b2[];
 	belState bPrime;
 	b1 = b.getbPoint();
-	b2 = LinearAlgebra.times(T[a], b1);
-	b2 = LinearAlgebra.times(b2, DoubleArray.getColumnCopy(O[a],o));
+	b2 = LinearAlgebra.times(T[a], b1); // matrix by vector
+	b2 = LinearAlgebra.times(b2, DoubleArray.getColumnCopy(O[a],o)); // element-wise
 	double poba = DoubleArray.sum(b2);
 	// make sure we can normalize
 	if (poba < 0.00001) {
-	    System.err.println("Zero prob observation - resetting to init");
+	    //System.err.println("Zero prob observation - resetting to init");
 	    // this branch will have poba = 0.0
 	    bPrime = initBelief;
 	} else {

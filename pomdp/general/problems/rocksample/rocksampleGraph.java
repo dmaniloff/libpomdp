@@ -14,13 +14,15 @@ public class rocksampleGraph {
 	int c, d, r;
 	boolean fr;
 	// start with a line
-	System.out.println("------------------------------------------");
+	for(int f=0; f<n; f++) System.out.print("-----");
+	System.out.println("------");
+
 	for(d=n-1; d>=0; d--) {	    
 	    for(c=0; c<n+1; c++) {
 		System.out.print("|");
 		if (c==factoredS[1][0] - 1 &&
 		    d==factoredS[1][1] - 1)
-		    System.out.print("A ");
+		    System.out.print(" A");
 		else
 		    System.out.print("  ");
 		fr = false;
@@ -40,7 +42,9 @@ public class rocksampleGraph {
 	    }
 	    System.out.println(" |");
 	    // print line here
-	    System.out.println("------------------------------------------");
+	    for(int f=0; f<n; f++) System.out.print("-----");
+	    System.out.println("------");
+
 	}
     } // drawWorld
 

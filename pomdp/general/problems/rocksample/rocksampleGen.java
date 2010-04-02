@@ -434,9 +434,9 @@ public class rocksampleGen {
 	int c,d;
 	for(c=0; c<n+1; c++) {	    
 	    v=v.concat(indent(ind+1)+"(j"+c+"\n");
-	    // check for the end state
+	    // check for the terminal state, give uniform obs here - does it matter?
 	    if(c==n) {
-		v=v.concat(indent(ind+3)+"(o' (og (0.5)) (ob (0.5))))\n"); // ??????????????????????????????????
+		v=v.concat(indent(ind+3)+"(o' (og (0.5)) (ob (0.5))))\n"); 
 		break;
 	    }
 	    v=v.concat(indent(ind+3) + "(i'\n");

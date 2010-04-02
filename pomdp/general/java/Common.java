@@ -16,7 +16,19 @@ public class Common {
     /// set the gen only once for every instance
     public static Random gen = new Random(System.currentTimeMillis());
 
-    /// public for debugging
+    /// sample from a distribution - need not be fast, this is outside the planning loop
+    /// so this will be O(n), instead of log(n) using binary search
+    public static int sample(double d[]) {
+	double[] cumSum = DoubleArray.cumSum(d);
+	double   r      = gen.nextDouble();
+	for(int i=0; i<cumSum.length; i++)
+	    if(cumSum[i] > r) 
+		return i;
+	return d.length-1;
+    }
+		
+    
+    /// randomized argmax
     public static int argmax(double v[]) {
 	// declarations
 	double maxv = Double.NEGATIVE_INFINITY;

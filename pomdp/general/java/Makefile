@@ -6,14 +6,29 @@
 ###############################################################################
 
 # commands
-JC=/usr/bin/javac
+JC=/usr/bin/javac -Xlint
 RM=/bin/rm
 
 # classpath
-JCLASSPATH=../../external/jmatharray.jar:../../external/symPerseusJava:.
+JCLASSPATH=../../../external/mtj-0.9.12/mtj-0.9.12.jar:../../../external/mtj-0.9.12/lib/netlib-java/arpack_combo-0.1.jar:../../../external/mtj-0.9.12/lib/netlib-java/netlib-java-0.9.1.jar:../../../external/jmatharray.jar:../../../external/ujmp-complete-0.2.4.jar:../../../external/symPerseusJava:.
 
 # source files
-SOURCES=pomdp.java pomdpFlat.java pomdpAdd.java valueFunction.java valueFunctionAdd.java belState.java belStateAdd.java belStateFlat.java Common.java
+SOURCES=pomdp.java \
+	pomdpFlat.java \
+	pomdpSparseUJMP.java \
+	pomdpSparseMTJ.java \
+	pomdpAdd.java \
+	valueFunction.java \
+	valueFunctionFlat.java \
+	valueFunctionSparseUJMP.java \
+	valueFunctionSparseMTJ.java \
+	valueFunctionAdd.java \
+	belState.java \
+	belStateAdd.java \
+	belStateFlat.java \
+	belStateSparseUJMP.java \
+	belStateSparseMTJ.java \
+	Common.java
 
 default:
 	$(JC) -classpath $(JCLASSPATH) $(SOURCES)

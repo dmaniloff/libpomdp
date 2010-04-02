@@ -13,7 +13,7 @@ RM=/bin/rm
 JCLASSPATH=.
 
 # source files
-SOURCES=catchGen.java
+SOURCES=CatchGen.java CatchGraph.java CatchGridProperties.java CatchRectangularGrid.java CatchTagGrid.java
 
 default:
 	$(JC) -classpath $(JCLASSPATH) $(SOURCES)

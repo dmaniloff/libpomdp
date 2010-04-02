@@ -14,20 +14,25 @@
 clear java
 clear all
 % add dynamic classpath
-javaaddpath '../../external/jmatharray.jar'
-javaaddpath '../../external/symPerseusJava'
+javaaddpath '../../../external/jmatharray.jar'
+javaaddpath '../../../external/symPerseusJava'
 javaaddpath '../../general/java'
 javaaddpath '../../general/problems/rocksample'
 javaaddpath '../../offline/java'
 javaaddpath '../../online/java'
 
 % add to the matlab path
-addpath     '../../external/symPerseusMatlab' -end
+addpath     '../../../external/symPerseusMatlab' -end
 % addpath     '../../offline/matlab' -end
 
 %% load problem parameters - factored representation
-factoredProb = pomdpAdd  ('../../general/problems/rocksample/RockSample_7_8/RockSample_7_8.SPUDD');
-% symDD        = parsePOMDP('../../general/problems/rocksample/RockSample_7_8/RockSample_7_8.SPUDD');
+factoredProb = pomdpAdd  ('../../general/problems/rocksample/7-8/RockSample_7_8.SPUDD');
+symDD        = parsePOMDP('../../general/problems/rocksample/7-8/RockSample_7_8.SPUDD');
+
+%% larger problem
+factoredProb = pomdpAdd  ('../../general/problems/rocksample/7-8/RockSample_10_10.SPUDD');
+symDD        = parsePOMDP('../../general/problems/rocksample/7-8/RockSample_10_10.SPUDD');
+
 
 %% compute offline lower and upper bounds
 % blindCalc = blindAdd;

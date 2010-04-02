@@ -7,6 +7,7 @@
  * Copyright (c) 2009, 2010 Diego Maniloff 
  * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
+import org.math.array.*;
 
 public class qmdpAdd {
 
@@ -27,37 +28,40 @@ public class qmdpAdd {
 	DD old_Vmdp = DD.zero;
 
 	// allocate policy - one vec per action
-	int policy[]    = new int [factoredProb.getnrAct()];
+	int policy[]    = new int [factoredProb.getnrAct()]; // this needs to be set somewhere!!
 	DD ddDiscFact   = DDleaf.myNew(factoredProb.getGamma());
 
 	for(iter=0; iter<MAXITERATIONS; iter++) {	
 
 	    // copy Vmdp
-	    //System.arraycopy(Vmdp, 0, old_Vmdp, 0, 1);
 	    old_Vmdp = Vmdp;	//  why does this work?
 
 	    // prime vars forward
 	    Vmdp = OP.primeVars(Vmdp, factoredProb.getnrTotV());
 
 	    for(a=0; a<factoredProb.getnrAct(); a++) {
+		System.out.println("at action: "+ a);
 		// concat all ADDs into one array        
 		adds                = new DD[1+factoredProb.T[a].length+1];
 		adds[0]             = ddDiscFact;
 		System.arraycopy(factoredProb.T[a], 0, adds, 1, factoredProb.T[a].length);
-		adds[adds.length-1] = Vmdp;		
-		// Vmdp = \max_a {R(s,a) + \gamma \sum_{s'} T(s,a,s') Vmdp(s')}
-		//Vqmdp[a]            = OP.addMultVarElim(adds, factoredProb.staIdsPr);
-		Vqmdp[a]            = OP.addMultVarElimNoMem(adds, factoredProb.staIdsPr);
-		//		Vqmdp[a]            = OP.add(factoredProb.R[a], Vqmdp[a]);
-		Vqmdp[a]            = OP.addNoMem(factoredProb.R[a], Vqmdp[a]);
+		adds[adds.length-1] = Vmdp;	
+		//Vmdp.display();
+		System.out.println("num leaves of Vmdp b4 multvar elim: "+ Vmdp.getNumLeaves());
+		// Vmdp = \max_a {R(s,a) + \gamma \sum_{s'} T(s,a,s') Vmdp(s')}		
+		Vqmdp[a]            = OP.addMultVarElim(adds, factoredProb.staIdsPr);
+		System.out.println("num leaves of Vqmdp[a] aft multvar elim: "+ Vqmdp[a].getNumLeaves());
+		Vqmdp[a]            = OP.add(factoredProb.R[a], Vqmdp[a]);
+		System.out.println("num leaves of Vqmdp[a] aft OP.add: "+ Vqmdp[a].getNumLeaves());
 	    }
+
 	    // compute max_a
 	    Vmdp = OP.maxN(Vqmdp);
 
 	    // convergence check
-	    //maxdelta = OP.maxAll(OP.abs(OP.sub(Vmdp, old_Vmdp)));
-	    maxdelta = OP.maxAll(OP.abs(OP.subNoMem(Vmdp, old_Vmdp)));
+	    maxdelta = OP.maxAll(OP.abs(OP.sub(Vmdp, old_Vmdp)));	    
 	    System.out.println("Max delta at iteration " +  iter + " is: "+maxdelta);
+
 	    if (maxdelta <= EPSILON){
 		System.out.println("CONVERGED at iteration: " + iter);
 		break;
