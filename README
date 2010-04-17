@@ -25,12 +25,13 @@ Directories and files
 =====================
 
 README           - this file
-doc/		 - documentation 
+doc/		 - documentation
 external/        - external dependencies
-general/         - general POMDP components for both offline and online algorithms
+general/         - general POMDP components 
+hybrid/          - implementation of hybrid POMDP algorithms
 offline/         - implementation of offline POMDP algorithms
 online/          - implementation of online POMDP algorithms
-hybrid/          - implementation of hybrid POMDP algorithms
+problems/	 - POMDP problems 
 
 Implemented algorithms
 ======================

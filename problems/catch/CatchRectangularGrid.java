@@ -55,7 +55,7 @@ public class CatchRectangularGrid implements CatchGridProperties {
     // convert absolute position to (x,y) coordinates
     // xy[0] contains x coordinate
     // xy[1] contains y coordinate
-    private int[] getxy(int pos) {
+    public int[] getxy(int pos) {
 	int xy[] = new int[2];
 	// compute row and col
 	xy[0] = pos % WIDTH;

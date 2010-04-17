@@ -24,6 +24,12 @@ public class CatchGen {
     // type of grid to generate
     CatchGridProperties gp;
 
+    // type of wumpus we are against
+    Wumpus w;
+
+    // kind of sensing functions our agent posesses
+    Sensor s;
+
     // output filename
     private PrintStream out;
     // grid dimensions:
@@ -51,11 +57,18 @@ public class CatchGen {
 
     // constructor
     // takes output file stream
-    public CatchGen (int w, int h, CatchGridProperties gp, PrintStream out) {
+    public CatchGen (int width, 
+		     int height, 
+		     CatchGridProperties gp, 
+		     Wumpus wumpus,
+		     Sensor s,
+		     PrintStream out) {
 	this.out = out;
 	this.gp  = gp;
-	this.WIDTH = w;
-	this.HEIGHT = h;
+	this.w   = wumpus;
+	this.s   = s;
+	this.WIDTH = width;
+	this.HEIGHT = height;
 	this.N =  WIDTH * HEIGHT;
     }
 
@@ -92,8 +105,9 @@ public class CatchGen {
 	// location of the agent, since it is fully observable, there is
 	// one observation corresponding to each of the possible locations
 	out.println(ind(2) + varDecl("aloc", N));
-	// collocation with the wumpus - the only moment in which we see it
-	// coll0 = not collocated; coll1 = collocated
+	// sensing of the wumpus - this dictates the kind of sensing our agent has
+	// we call it coll since originally this indicated collocation with the wumpus
+	// coll0 = wumpus not sensed; coll1 = wumpus sensed
 	out.println(ind(2) + varDecl("coll", 2));
 	out.println(")");
 
@@ -105,10 +119,10 @@ public class CatchGen {
 
 	// dd declarations
 	// wumpus' behaviour
-	out.println("// wumpus' behaviour dd - omnicient with .8");
+	out.println("// wumpus' behaviour dd");
 	out.println("// ----------------------------------------");
-	out.println("dd omniwumpus");
-	out.println(ind(2) + omniwumpus());
+	out.println("dd wumpusb");
+	out.println(ind(2) + wumpusb());
 	out.println("enddd");
 
 	// location observation dd
@@ -121,8 +135,8 @@ public class CatchGen {
 	// collocation observation dd 
 	out.println("// collocation observation dd");
 	out.println("// --------------------------");
-	out.println("dd cdd");
-	out.println(ind(2) + cdd());
+	out.println("dd sensingdd");
+	out.println(ind(2) + sensingdd());
 	out.println("enddd");
 
 	// action declarations
@@ -132,10 +146,10 @@ public class CatchGen {
 	// north
 	out.println("action north");
 	out.println(ind(2) + "apos " + move(Direction.N));
-	out.println(ind(2) + "wpos (omniwumpus)");
+	out.println(ind(2) + "wpos (wumpusb)");
 	out.println(ind(2) + "observe");
 	out.println(ind(2) + "aloc (ldd)");
-	out.println(ind(4) + "coll (cdd)");
+	out.println(ind(4) + "coll (sensingdd)");
 	out.println(ind(2) + "endobserve");
 	out.println("cost (1)");
 	out.println("endaction");
@@ -144,10 +158,10 @@ public class CatchGen {
 	// south
 	out.println("action south");
 	out.println(ind(2) + "apos " + move(Direction.S));
-	out.println(ind(2) + "wpos (omniwumpus)");
+	out.println(ind(2) + "wpos (wumpusb)");
 	out.println(ind(2) + "observe");
 	out.println(ind(2) + "aloc (ldd)");
-	out.println(ind(4) + "coll (cdd)");
+	out.println(ind(4) + "coll (sensingdd)");
 	out.println(ind(2) + "endobserve");
 	out.println("cost (1)");
 	out.println("endaction");
@@ -156,10 +170,10 @@ public class CatchGen {
 	// east
 	out.println("action east");
 	out.println(ind(2) + "apos " + move(Direction.E));
-	out.println(ind(2) + "wpos (omniwumpus)");
+	out.println(ind(2) + "wpos (wumpusb)");
 	out.println(ind(2) + "observe");
 	out.println(ind(2) + "aloc (ldd)");
-	out.println(ind(4) + "coll (cdd)");
+	out.println(ind(4) + "coll (sensingdd)");
 	out.println(ind(2) + "endobserve");
 	out.println("cost (1)");
 	out.println("endaction");
@@ -168,10 +182,10 @@ public class CatchGen {
 	// west
 	out.println("action west");
 	out.println(ind(2) + "apos " + move(Direction.W));
-	out.println(ind(2) + "wpos (omniwumpus)");
+	out.println(ind(2) + "wpos (wumpusb)");
 	out.println(ind(2) + "observe");
 	out.println(ind(2) + "aloc (ldd)");
-	out.println(ind(4) + "coll (cdd)");
+	out.println(ind(4) + "coll (sensingdd)");
 	out.println(ind(2) + "endobserve");
 	out.println("cost (1)");
 	out.println("endaction");
@@ -256,11 +270,10 @@ public class CatchGen {
     }
 
     
-
     // return adjacent position to p1 in direction move
     // this is called knowing that there is no wall ahead
     private int getAdjacentPos(int p1, Direction move) {
-	int x1=getxy(p1)[0]; int y1=getxy(p1)[1];
+	int x1=gp.getxy(p1)[0]; int y1=gp.getxy(p1)[1];
 	switch (move) {
 	case N:
 	    return getpos (x1, y1 + 1);
@@ -280,17 +293,17 @@ public class CatchGen {
 	return y * WIDTH + x;	
     }
 
-    // convert absolute position to (x,y) coordinates
-    // xy[0] contains x coordinate
-    // xy[1] contains y coordinate
-    public int[] getxy(int pos) {
-	int xy[] = new int[2];
-	// compute row and col
-	xy[0] = pos % WIDTH;
-	xy[1] = pos / WIDTH;
-	// return
-	return xy;
-    }
+    // // convert absolute position to (x,y) coordinates
+//     // xy[0] contains x coordinate
+//     // xy[1] contains y coordinate
+//     public int[] getxy(int pos) {
+// 	int xy[] = new int[2];
+// 	// compute row and col
+// 	xy[0] = pos % WIDTH;
+// 	xy[1] = pos / WIDTH;
+// 	// return
+// 	return xy;
+//     }
 
     // concentrate all mass in value pos
     private String massX(String varname, int l, int pos) {
@@ -344,12 +357,13 @@ public class CatchGen {
 
     // collocation decision diagram
     // when the absolute positions are equal, (coll' (coll0 (0.0)) (coll1 (1.0)))
-    private String cdd () {
+    private String sensingdd () {
 	String v="(apos'\n";
 	for (int c=0;c<N;c++){
 	    v=v.concat(ind(2) + "(apos"+c+" (wpos'\n");
 	    for (int k=0;k<N;k++) {
-		if (k==c)
+		// see if the wumpus is in range according to the sensing function...
+		if (s.inRange(c,k))
 		    v=v.concat(ind(4) + "(wpos"+k+ " (coll' (coll0 (0.0)) (coll1 (1.0))))\n"); 
 		else
 		    v=v.concat(ind(4) + "(wpos"+k+ " (coll' (coll0 (1.0)) (coll1 (0.0))))\n");
@@ -360,16 +374,17 @@ public class CatchGen {
 	return v;	
     }
 
-    // behaviour of an omnicient wumpus with .8 prob
-    private String omniwumpus() {
+    // behaviour of the wumpus
+    private String wumpusb() {
 	String v      = "(apos\n";
 	double actd[] = new double[5];
 	for (int c=0;c<N;c++){
 	    v=v.concat(ind(2) + "(apos"+c+" (wpos\n");
 	    for (int k=0;k<N;k++) {
 		v=v.concat(ind(4) + "(wpos"+k+" (wpos'\n" + ind(6));
-		actd = getWumpusActDist(c, k);
+		actd = w.getActDist(c, k);
 		for (int s=0;s<N;s++) {
+		    // this assumes the wumpus can only move to its adjacent cells...
 		    if(getAdjIndex(k, s) >= 0)			
 			v=v.concat("(wpos"+s+" ("+ 
 				   String.format("%.5f",actd[getAdjIndex(k, s)]) +
@@ -384,14 +399,13 @@ public class CatchGen {
 	v=v.concat(")\n");
 	return v;
     }
-
 		
     private int getAdjIndex(int currpos, int nextpos) {
 	// 0-none, 1-north, 2-east, 3-south, 4-west
-	int currx = getxy(currpos)[0];
-	int curry = getxy(currpos)[1];
-	int nextx = getxy(nextpos)[0];
-	int nexty = getxy(nextpos)[1];
+	int currx = gp.getxy(currpos)[0];
+	int curry = gp.getxy(currpos)[1];
+	int nextx = gp.getxy(nextpos)[0];
+	int nexty = gp.getxy(nextpos)[1];
 	// none
 	if(nexty == curry && nextx == currx)
 	    return 0;
@@ -409,60 +423,7 @@ public class CatchGen {
 	    return 4;
 	else
 	    return -1;
-    }
-
-    //  (0-none, 1-north, 2-east, 3-south, 4-west)
-    private double[] getWumpusActDist(int apos, int wpos)
-    {
-	double ret[]    = new double[5];
-	// get positions
-	int agentpos [] = getxy(apos);
-	int wumpuspos[] = getxy(wpos);
-	int ax = agentpos [0]; int ay = agentpos [1];
-	int wx = wumpuspos[0]; int wy = wumpuspos[1];
-
-	// will stay put with prob .2
-	ret[0] = 0.2d;
-
-	// south of the opponent, the opponent will move north with probability .4
-	if(ay < wy) {
-	    ret[1] = 0.4d;
-	    ret[3] = 0d;	    
-	}
-	// north of the opponent, the opponent will move south with probability .4
-	else if (ay > wy) {
-	    ret[1] = 0d;
-	    ret[3] = 0.4d;	    
-	}
-	// same row than the opponent, the opponent will move north or south with probability .2
-	else if(ay == wy){
-	    ret[1] = 0.2d;
-	    ret[3] = 0.2d;	    
-	}
-	// east of the opponent, the opponent will move west with probability .4
-	if(ax > wx) {
-	    ret[2] = 0d;
-	    ret[4] = 0.4d;
-	}
-	// west of the opponent, the opponent will move east with probability .4
-	else if (ax < wx) {
-	    ret[2] = 0.4d;
-	    ret[4] = 0d;
-	}
-	// same column of the opponent, the opponent will move west or east with probability .2
-	else if(ax == wx) {
-	    ret[2] = 0.2d;
-	    ret[4] = 0.2d;
-	}
-
- 	// illegal moves into probabilities that the opponent does not move
-	if (gp.wallAhead(wpos, Direction.N)) {ret[0]+=ret[1]; ret[1]=0d;}
-	if (gp.wallAhead(wpos, Direction.S)) {ret[0]+=ret[3]; ret[3]=0d;}
-	if (gp.wallAhead(wpos, Direction.E)) {ret[0]+=ret[2]; ret[2]=0d;}
-	if (gp.wallAhead(wpos, Direction.W)) {ret[0]+=ret[4]; ret[4]=0d;}
-
-	return ret;
-    } // getWumpusActDist
+    }    
 
 
     // collocation reward

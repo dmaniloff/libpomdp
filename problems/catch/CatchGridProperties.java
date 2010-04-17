@@ -2,7 +2,8 @@
  * libpomdp
  * ========
  * File: CatchGridProperties.java
- * Description: 
+ * Description: Interface to implement different grid configurations of the
+ *              catch environment. By configurations we mean walls for now.
  * Copyright (c) 2009, 2010 Diego Maniloff 
  * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
@@ -17,4 +18,7 @@ interface CatchGridProperties {
 
     // how many legal locations are there?
     public int totPossibleLocations ();
+
+    // simple utility function to get x and y coordinates
+    public int[] getxy (int pos);
 }

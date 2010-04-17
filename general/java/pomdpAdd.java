@@ -242,7 +242,11 @@ public class pomdpAdd implements pomdp {
 	return OP.convert2array(R, staIds);
     }
 
-    
+    /// R(s,a), s given in factored form
+    public double getReward(int[] factoredS, int a) {
+	return OP.eval(R[a], IntegerArray.mergeRows(staIds, factoredS));
+    }
+
     /// nrSta is the product of the arity of
     /// each state variable in the DBN
     public int getnrSta() {
@@ -289,6 +293,53 @@ public class pomdpAdd implements pomdp {
     // ------------------------------------------------------------------------
     // utility methods
     // ------------------------------------------------------------------------
+
+    // this one might become part of the interface in the future
+    public int[] sampleNextState(int[] state, int action) {
+	// we receive the factored representation of the state
+	// whereby each element of the array contains the value of each of
+	// the state variables - there are no var ids here
+	int factoredS[][]  = IntegerArray.mergeRows(staIds, state); 
+	DD[]  restrictedT  = OP.restrictN(T[action], factoredS);
+	int factoredS1[][] = OP.sampleMultinomial(restrictedT, staIdsPr);
+	System.out.println(IntegerArray.toString(factoredS1));
+	// and we don't return any var ids either
+	return factoredS1[1];
+    }
+
+    // this one might become part of the interface in the future
+    public int[] sampleObservation(int[] s, int[] s1, int action) {
+	// we receive the factored representation of the state
+	// whereby each element of the array contains the value of each of
+	// the state variables - there are no var ids here
+	//int factoredS[][]   = IntegerArray.mergeRows(staIds, s); 
+	//int factoredS1[][]  = IntegerArray.mergeRows(staIds, s1); 
+	int[] ids  = IntegerArray.merge(staIds, staIds);
+	int[] vals = IntegerArray.merge(s, s1);
+	int[][] restriction = IntegerArray.mergeRows(ids, vals);
+	DD[] restrictedO = OP.restrictN(O[action], restriction);
+	int factoredO[][]   = OP.sampleMultinomial(restrictedO, obsIdsPr);
+	// and we don't return any var ids either
+	return factoredO[1];
+    }
+
+    // compute list of possible initial states given the
+    // initial belief state specified by the POMDP
+    public int [] getListofInitStates() {
+	ArrayList<Integer> states = new ArrayList<Integer>();
+	int factoredS[][];
+	for (int r=0; r<totnrSta; r++) {
+	    factoredS = IntegerArray.mergeRows(staIds, 
+					       sdecode(r,
+						       nrStaV,
+						       staArity));
+	    if (OP.eval(initBelief.bAdd, factoredS) > 0)
+		states.add(r);
+	}
+	int s[] = new int[states.size()];
+	for(int i=0; i<s.length; i++) s[i] = states.get(i).intValue();
+	return s;
+    }
 
     public int getnrTotV() {
 	return nrTotV;

@@ -19,4 +19,5 @@ interface valueFunction {
     // flat representation
     public double[][] getvFlat();
 
+
 } // valueFunction
