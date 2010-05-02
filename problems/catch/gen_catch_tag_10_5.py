@@ -9,15 +9,22 @@
 '''
 
 # imports
-import CatchGen
+import CatchTagGenerator
 import CatchGridProperties
 import CatchTagGrid
+import OmniWumpus
+import CollocatedObs
 import java.io.PrintStream as PrintStream
 
 # declarations
-gp   = CatchTagGrid(10, 5)
-out  = PrintStream("catch_tag_10_5.SPUDD")
-gen  = CatchGen(10, 5, gp, out)
+ol     = 0.8
+width  = 10
+height = 5
+gp     = CatchTagGrid(width, height)
+w      = OmniWumpus(gp, ol)
+s      = CollocatedObs(gp)
+out    = PrintStream("catch_tag_taggingAction_10_5.SPUDD")
+gen    = CatchTagGenerator(width, height, gp, w, s, out)
 
 # generate model
 gen.generate();
