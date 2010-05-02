@@ -138,17 +138,17 @@ public class pomdpAdd implements pomdp {
      * use ADDs and convert to array
      * [not used anymore since we get this from tao(.)]
      */
-    // public double[] P_Oba(belState bel, int a) {
-// 	// obtain subclass and the dd for this belief
-// 	DD b = ((belStateAdd)bel).bAdd;	
-// 	DD pObadd;
-// 	double[]pOba;
-// 	DD[] vars   = concat(b, T[a], O[a]);
-// 	int[] svars = IntegerArray.merge(staIds, staIdsPr);
-// 	pObadd      = OP.addMultVarElim(vars, svars);
-// 	pOba        = OP.convert2array(pObadd,obsIdsPr);
-// 	return pOba;
-//     }
+    public double[] P_Oba(belState bel, int a) {
+	// obtain subclass and the dd for this belief
+	DD b = ((belStateAdd)bel).bAdd;	
+	DD pObadd;
+	double[]pOba;
+	DD[] vars   = concat(b, T[a], O[a]);
+	int[] svars = IntegerArray.merge(staIds, staIdsPr);
+	pObadd      = OP.addMultVarElim(vars, svars);
+	pOba        = OP.convert2array(pObadd,obsIdsPr);
+	return pOba;
+    }
 
     /**
      *  tao(b,a,o):
@@ -160,10 +160,11 @@ public class pomdpAdd implements pomdp {
 	// obtain subclass and the dd for this belief 
 	DD b1 = ((belStateAdd)bel).bAdd;
 	DD b2;
+	DD oProb;
 	belState bPrime;
 	DD O_o[];
 	int oc[][];
-	double oProb = 0.0;
+	//double oProb = 0.0;
 	// restrict the prime observation variables to the ones that occurred
 	oc  = IntegerArray.mergeRows(obsIdsPr, sdecode(o, nrObsV, obsArity));
 	//System.out.println(IntegerArray.toString(oc));
@@ -174,16 +175,15 @@ public class pomdpAdd implements pomdp {
 	// prime the b2 DD 
 	b2 = OP.primeVars(b2, -nrTotV);
 	// compute P(o|b,a)
-	oProb  = OP.addMultVarElim(b2, staIds).getVal();
+	oProb  = OP.addMultVarElim(b2, staIds);
 	// make sure we can normalize
-	if (oProb < 0.00001) {
+	if (oProb.getVal() < 0.00001) {
 	    // this branch will have poba = 0.0 - also reset to init
 	    bPrime = initBelief;
 	} else {
 	    // safe to normalize now
-	    b2 = OP.div(b2, OP.addMultVarElim(b2, staIds));
-	    //b2 = OP.divNoMem(b2, OP.addMultVarElimNoMem(b2, staIds));
-	    bPrime = new belStateAdd(b2, staIds, oProb);
+	    b2 = OP.div(b2, oProb);	    
+	    bPrime = new belStateAdd(b2, staIds, oProb.getVal());
 	}
 	// return
 	return bPrime;
@@ -274,6 +274,7 @@ public class pomdpAdd implements pomdp {
 	return initBelief;
     }
 
+    // takes an action starting from 0
     public String getactStr(int a) {
         return actStr[a];
     }
@@ -295,6 +296,7 @@ public class pomdpAdd implements pomdp {
     // ------------------------------------------------------------------------
 
     // this one might become part of the interface in the future
+    // actions start from 0
     public int[] sampleNextState(int[] state, int action) {
 	// we receive the factored representation of the state
 	// whereby each element of the array contains the value of each of
@@ -314,7 +316,7 @@ public class pomdpAdd implements pomdp {
 	// the state variables - there are no var ids here
 	//int factoredS[][]   = IntegerArray.mergeRows(staIds, s); 
 	//int factoredS1[][]  = IntegerArray.mergeRows(staIds, s1); 
-	int[] ids  = IntegerArray.merge(staIds, staIds);
+	int[] ids  = IntegerArray.merge(staIds, staIdsPr);
 	int[] vals = IntegerArray.merge(s, s1);
 	int[][] restriction = IntegerArray.mergeRows(ids, vals);
 	DD[] restrictedO = OP.restrictN(O[action], restriction);
@@ -347,6 +349,10 @@ public class pomdpAdd implements pomdp {
 
     public int getnrStaV() {
 	return nrStaV;
+    }
+
+    public int getnrObsV() {
+	return nrObsV;
     }
 
     /// transform a given alpha vector with respect to an a,o pair
@@ -384,6 +390,7 @@ public class pomdpAdd implements pomdp {
     } // printS
 
     /// print a factored representation of an observation
+    /// takes factoredO starting from 1
     public String printO(int factoredO[][]) {
 	if(factoredO.length != 2 || factoredO[0].length != nrObsV) {
 	    System.err.println("Unexpected factored state matrix");
@@ -403,6 +410,8 @@ public class pomdpAdd implements pomdp {
      * map an assignment id from
      * [0, IntegerArray.product(sizes)-1] to an array with
      * the corresponding joint assignment of each variable
+     * when all entries in sizes are the same, this becomes a
+     * change of base
      */
     public int[] sdecode(int sid, int n, int sizes[]) {
 	// make sure sid is in the right range
@@ -411,16 +420,30 @@ public class pomdpAdd implements pomdp {
 	    return null;
 	}
 	// calculate joint assignment
-	int i,q  = sid;
+	int q  = sid;
 	int ja[] = IntegerArray.fill(n, 0);
-	for(i=0; i<n; i++) {
+	for(int i=0; i<n; i++) {
 	    if (q==0) break;
 	    ja[i] = q % sizes[i];
 	    q = q / sizes[i];
 	}
 	// add 1 to each entry to comply with format
-	for(i=0; i<n; i++) ja[i]++;
+	for(int i=0; i<n; i++) ja[i]++;
 	return ja;
+    }
+
+    /// encode state, complement of sdecode
+    public int sencode(int fstate[], int n, int sizes[]) {
+	// sub 1 for format
+	for(int i=0; i<n; i++) fstate[i]--;
+	int s = 0;
+	int f = 1;
+	for(int i=0;i<n;i++) {
+	    s += f * fstate[i];
+	    f *= sizes[i];
+	}
+	// back to format from 1
+	return s + 1;
     }
 
     // concatenate DD arrays - need to replace this with the
