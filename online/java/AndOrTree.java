@@ -59,10 +59,10 @@ public class AndOrTree {
      */
     public void expand(orNode en){
 	// make sure this node hasn't been expanded before
-	if (en.children != null) { 
-	    System.err.println("node not on fringe");
-	    return;
-	}
+	// if (en.children != null) { 
+	// 	    System.err.println("node not on fringe");
+	// 	    return;
+	// 	}
 	// save this node's old bounds
  	double old_l = en.l;
 	double old_u = en.u;
@@ -89,6 +89,18 @@ public class AndOrTree {
 		// initialize this node
 		// the belief property contains bPoint and poba
 		o.init(problem.tao(en.belief,action,observation), observation, a);
+		
+		// STILL TO THINK ABOUT:
+		// here we should continue the loop and avoid re-computing V^L and V^U
+		// for belief nodes with poba == 0
+		// another opportunity for savings here is to make sure the belief is
+		// not already in the fringe, or in the tree....not sure about this...
+		// if (o.belief.getpoba() == 0) {
+		// 		    a.children[observation] = null;
+		// 		    observation++;
+		// 		    continue;
+		// 		} 
+
 		o.l = offlineLower.V(o.belief);
 		o.u = offlineUpper.V(o.belief);
 		// H(b)
@@ -116,6 +128,7 @@ public class AndOrTree {
 	    // iterate
 	    action++;
 	}  // andNode loop
+
 	// update values in en
 	en.l = ORpropagateL(en);
 	en.u = ORpropagateU(en);
@@ -139,7 +152,6 @@ public class AndOrTree {
 	if(en.oneStepDeltaLower < 0) {
 	    System.err.println("Hmmmmmmmmmmm");
 	}
-
     } // expand
 
     
@@ -258,15 +270,17 @@ public class AndOrTree {
     protected double ANDpropagateL(andNode a) {
 	double Lba = 0;
 	for(orNode o : a.children) {
+	    // if(o != null) 
 	    Lba += o.belief.getpoba() * o.l;
 	}
 	return a.rba + problem.getGamma() * Lba;
     }
 
-    /// U(b,a) = R(b,a) + \gamma \sum P(o|b,a) U(tao(b,a,o))
+    /// U(b,a) = R(b,a) + \gamma \sum_o P(o|b,a) U(tao(b,a,o))
     protected double ANDpropagateU(andNode a) {
 	double Uba = 0;
 	for(orNode o : a.children) {
+	    // if(o != null) 
 	    Uba += o.belief.getpoba() * o.u;
 	}
 	return a.rba + problem.getGamma() * Uba;
