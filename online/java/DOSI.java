@@ -7,6 +7,8 @@
  * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
 
+import org.math.array.*;
+
 public class DOSI implements backupHeuristic {
 
     // pomdp specification
@@ -17,7 +19,7 @@ public class DOSI implements backupHeuristic {
 	this.problem = prob;
     }
 
-    /// heuristic of each orNode = I * \gamma^D_b
+    /// heuristic of each orNode = I * \gamma^{D_b}
     public double h_b(orNode o) {
 	return o.oneStepDeltaLower * Math.pow(problem.getGamma(), o.depth);
     }
@@ -30,6 +32,19 @@ public class DOSI implements backupHeuristic {
 	double bh[] = new double[problem.getnrObs()];
 	for(orNode o : a.children) bh[o.getobs()] = o.bakHeuristic;	
 	return a.children[Common.argmax(bh)];
+
+	// STILL TO THINK ABOUT:
+	// 	for(int o=0; o<bh.length; o++) {
+	// 	    if(a.children[o]!=null) {
+	// 		bh[o] = a.children[o].bakHeuristic;	
+	// 		System.out.println("its NOT null");
+	// 	    } else {
+	// 		bh[o] = -1; // set the bak heuristic as that of a fringe node
+	// 		System.out.println("its null");
+	// 	    }
+	// 	}
+	// 	System.out.println(DoubleArray.toString(bh));
+	// 	return a.children[Common.argmax(bh)];
     } 
 
     // set bakHeuristic value of this andNode right

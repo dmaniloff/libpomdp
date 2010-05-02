@@ -28,6 +28,11 @@ public class aems2 implements expandHeuristic {
    
     /// H(b)
     public double h_b(orNode o) {
+	// if(o.u - o.l < 0) System.err.println("bad H(b) at ornode" + o.getobs()  + 
+	// 					     " parent is action " + o.getParent().getAct()
+	// 					     + " hbis: "+ (o.u - o.l));
+	// 	System.err.println("upper is" + o.u);
+	// 	System.err.println("lower is" + o.l);
 	return o.u - o.l;
     }
 
@@ -51,6 +56,7 @@ public class aems2 implements expandHeuristic {
     }
 
     /// H(b,a) update version
+    /// does this work?? needs to be tested...
     public double[] h_baUpdate(orNode o, int a) {
 	double challenge = o.children[a].u;
 	int argmax = Common.argmax(new double[] {o.children[o.aStar].u, 
@@ -68,7 +74,7 @@ public class aems2 implements expandHeuristic {
     /// H(b,a,o) = \gamma * P(o|b,a)
     /// be means of a depth value we could get rid of this
     /// product............
-    public double h_bao(orNode o) {
+    public double h_bao(orNode o) {	
 	return problem.getGamma() * o.belief.getpoba();
     }
 
@@ -84,33 +90,50 @@ public class aems2 implements expandHeuristic {
 
     /// o* = argmax_o {H(b,a,o) H*(tao(b,a,o))}
     public int oStar(andNode a) {
-	double HbaoHostar[] = new double[problem.getnrObs()];
+	double HbaoHostar[] = new double[problem.getnrObs()];	
 	for(orNode o : a.children) HbaoHostar[o.getobs()] = o.h_bao * o.hStar;
 	return Common.argmax(HbaoHostar);
+
+	// STILL TO THINK ABOUT:
+	//int nullCount=0;
+	//for(orNode o : a.children) 
+	// for(int o=0; o<problem.getnrObs(); o++) {
+	// 	    if(a.children[o] != null) {
+	// 		HbaoHostar[o] = a.children[o].h_bao * a.children[o].hStar;
+	// 	    } else {
+	// 		HbaoHostar[o] = -1; // do this to preserve the argmax
+	// 		//nullCount++;
+	// 	    }
+	// 	}
+	// System.out.println("nullcount inside oStar is "+ nullCount);
+	// 	System.out.println(DoubleArray.toString(HbaoHostar));
+	// 	int argmax = Common.argmax(HbaoHostar);
+	// 	if (argmax < 0 || argmax >= problem.getnrObs())
+	// 	    System.err.println("armax out of bounds");
+	// 	if (HbaoHostar[argmax] == -1) {
+	// 	    System.err.println("Hba[argmax]=-1");
+	// 	    //System.exit(0);
+	// 	}	
+	//return argmax;	
     }
 
     /// update version with challenge obs
     /// INCORRECT
     // public int oStarUpdate(andNode a, int o) {
-// 	double challenge = a.children[o].h_bao * a.children[o].hStar;
-// 	int argmax = Common.argmax(new double[] {a.children[a.oStar].h_bao * a.children[a.oStar].hStar,
-// 						 challenge});
-// 	if(0==argmax)
-// 	    return a.oStar;
-// 	else
-// 	    return o;
-//     }
+    // 	double challenge = a.children[o].h_bao * a.children[o].hStar;
+    // 	int argmax = Common.argmax(new double[] {a.children[a.oStar].h_bao * a.children[a.oStar].hStar,
+    // 						 challenge});
+    // 	if(0==argmax)
+    // 	    return a.oStar;
+    // 	else
+    // 	    return o;
+    //     }
 
     /// a* = argmax_a {H(b,a) H*(b,a)}
     /// given the way H(b,a) is computed in AEMS2, we don't
     /// need to compute the actual argmax, we just return the
-    /// stored value from the computation of H(b,a) - can even DELETE this!
-    public int aStar(orNode o) {
-	//double h_astar[] = new double[problem.getnrAct()];
-	//for(andNode a : o.children) h_astar[a.getAct()] = a.hStar;
-	// element-wise product with H(b,a)
-	//double HbaHbastar[] = LinearAlgebra.times(o.h_ba, h_astar);
-	//return Common.argmax(HbaHbastar);
+    /// stored value from the computation of H(b,a)
+    public int aStar(orNode o) {	
 	return o.aStar;
     }
 
