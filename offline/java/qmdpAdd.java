@@ -18,7 +18,6 @@ public class qmdpAdd {
     public valueFunctionAdd getqmdpAdd(pomdpAdd factoredProb) {
 
 	// decls
-	int a, iter;
 	DD[] adds;
 	double maxdelta;
 
@@ -28,10 +27,12 @@ public class qmdpAdd {
 	DD old_Vmdp = DD.zero;
 
 	// allocate policy - one vec per action
-	int policy[]    = new int [factoredProb.getnrAct()]; // this needs to be set somewhere!!
+	int policy[]    = new int [factoredProb.getnrAct()]; 
+	for (int a=0; a<factoredProb.getnrAct(); a++) policy[a] = a;
+
 	DD ddDiscFact   = DDleaf.myNew(factoredProb.getGamma());
 
-	for(iter=0; iter<MAXITERATIONS; iter++) {	
+	for(int iter=0; iter<MAXITERATIONS; iter++) {	
 
 	    // copy Vmdp
 	    old_Vmdp = Vmdp;	//  why does this work?
@@ -39,20 +40,15 @@ public class qmdpAdd {
 	    // prime vars forward
 	    Vmdp = OP.primeVars(Vmdp, factoredProb.getnrTotV());
 
-	    for(a=0; a<factoredProb.getnrAct(); a++) {
-		System.out.println("at action: "+ a);
+	    for(int a=0; a<factoredProb.getnrAct(); a++) {
 		// concat all ADDs into one array        
 		adds                = new DD[1+factoredProb.T[a].length+1];
 		adds[0]             = ddDiscFact;
 		System.arraycopy(factoredProb.T[a], 0, adds, 1, factoredProb.T[a].length);
 		adds[adds.length-1] = Vmdp;	
-		//Vmdp.display();
-		System.out.println("num leaves of Vmdp b4 multvar elim: "+ Vmdp.getNumLeaves());
 		// Vmdp = \max_a {R(s,a) + \gamma \sum_{s'} T(s,a,s') Vmdp(s')}		
 		Vqmdp[a]            = OP.addMultVarElim(adds, factoredProb.staIdsPr);
-		System.out.println("num leaves of Vqmdp[a] aft multvar elim: "+ Vqmdp[a].getNumLeaves());
 		Vqmdp[a]            = OP.add(factoredProb.R[a], Vqmdp[a]);
-		System.out.println("num leaves of Vqmdp[a] aft OP.add: "+ Vqmdp[a].getNumLeaves());
 	    }
 
 	    // compute max_a
@@ -68,6 +64,7 @@ public class qmdpAdd {
 	    }
 	} // qmdp loop
 
+	// return
 	return new valueFunctionAdd(Vqmdp, factoredProb.staIds, policy);
 
     } // getqmdpAdd
