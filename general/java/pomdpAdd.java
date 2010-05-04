@@ -47,7 +47,7 @@ public class pomdpAdd implements pomdp {
     public int obsIdsPr[];
 
     // arity of observation variables
-    public int obsArity[];
+    private int obsArity[];
 
     // total number of observations
     private int totnrObs;
@@ -280,6 +280,7 @@ public class pomdpAdd implements pomdp {
     }
     
     /// string describing the values each obs var took
+    /// the observation starts from 0
     public String getobsStr(int o) {
         int[] a = sdecode(o, nrObsV, obsArity);
 	String v="";
@@ -292,11 +293,11 @@ public class pomdpAdd implements pomdp {
     }
 
     // ------------------------------------------------------------------------
-    // utility methods
+    // utility methods particular to this representation
     // ------------------------------------------------------------------------
 
-    // this one might become part of the interface in the future
-    // actions start from 0
+    /// this one might become part of the interface in the future
+    /// actions start from 0, but the state from 1
     public int[] sampleNextState(int[] state, int action) {
 	// we receive the factored representation of the state
 	// whereby each element of the array contains the value of each of
@@ -309,13 +310,13 @@ public class pomdpAdd implements pomdp {
 	return factoredS1[1];
     }
 
-    // this one might become part of the interface in the future
+    /// this one might become part of the interface in the future
+    /// actions start from 0, but the states from 1 and the returned
+    /// observation also starts from 1
     public int[] sampleObservation(int[] s, int[] s1, int action) {
 	// we receive the factored representation of the state
 	// whereby each element of the array contains the value of each of
 	// the state variables - there are no var ids here
-	//int factoredS[][]   = IntegerArray.mergeRows(staIds, s); 
-	//int factoredS1[][]  = IntegerArray.mergeRows(staIds, s1); 
 	int[] ids  = IntegerArray.merge(staIds, staIdsPr);
 	int[] vals = IntegerArray.merge(s, s1);
 	int[][] restriction = IntegerArray.mergeRows(ids, vals);
@@ -353,6 +354,10 @@ public class pomdpAdd implements pomdp {
 
     public int getnrObsV() {
 	return nrObsV;
+    }
+
+    public int[] getobsArity() {
+	return obsArity;
     }
 
     /// transform a given alpha vector with respect to an a,o pair
@@ -433,13 +438,16 @@ public class pomdpAdd implements pomdp {
     }
 
     /// encode state, complement of sdecode
+    /// receives factored state starting from 1
+    /// and returns factored state in the same form
     public int sencode(int fstate[], int n, int sizes[]) {
-	// sub 1 for format
-	for(int i=0; i<n; i++) fstate[i]--;
+	// make sure fstate is in the right range
+	// subtract 1 for format
+	// for(int i=0; i<n; i++) fstate[i]--; // BUG HERE!
 	int s = 0;
 	int f = 1;
 	for(int i=0;i<n;i++) {
-	    s += f * fstate[i];
+	    s += f * (fstate[i] - 1); // remember that fstate starts from 1
 	    f *= sizes[i];
 	}
 	// back to format from 1
