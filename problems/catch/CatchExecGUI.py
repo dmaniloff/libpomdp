@@ -21,6 +21,7 @@ from java.lang import Integer
 from java.lang import Double
 from javax.swing import *
 from java.awt import *
+from java.awt.image import *
 from threading import Thread
 import time
 import pomdpAdd
@@ -45,36 +46,29 @@ import StreamTokenizer
 import TripletConfig
 import TripletSet
 
-
 # globals
-TWIDTH       = 900
-WIDTH        = 700
-HEIGHT       = 700
+TWIDTH       = 1070
+WIDTH        = 900
+HEIGHT       = 800
 CATCH_REWARD = 10
 ROWS         = 5
 COLS         = 5
 PROBLEM      = 'catch_rect_5_5.SPUDD'
-ALPHAS       = 'symperseus-log/catch_value_function.alpha'
+#ALPHAS       = 'symperseus-log/catch_value_function.alpha'
+ALPHAS       = 'symperseus-log/catch_rect_5_5_rounds1_iter50_nbel10000_nsbel10000.alpha'
 
 # declarations
 gp               = CatchRectangularGrid(ROWS,COLS)
 parser           = dotalphaParserFlat() # the parentheses here are needed!!
 parser.parse(ALPHAS)
 valueFunction    = parser.getValueFunction()
-initState        = [1, ROWS * COLS ] # initial state in factored form - starts counting from 1 here
+initState        = [1, 13] # initial state in factored form - starts from 1 here
 pomdpProblem     = pomdpAdd(PROBLEM) # the idea is that we can have any imlpementation here
-currState        = initState
-currBelief       = pomdpProblem.getInit()
+initBelief       = pomdpProblem.getInit()
+gamma            = pomdpProblem.getGamma()
 
 # figure out all possible initial states of the pomdp
-# in the future, this little routine should be pushed into the pomdp object
 states           = pomdpProblem.getListofInitStates()
-
-# useful objects
-wIcon  = ImageIcon('wumpusicon.gif')
-wLabel = JLabel(wIcon)
-aIcon  = ImageIcon('agenticon.gif')
-aLabel = JLabel(aIcon)
 
 
 # main class
@@ -85,8 +79,7 @@ class CatchExecGUI:
         # main window container
         self.frame = JFrame('Catch problem simulator',
                             # Exit the application, using System.exit(0)
-                            defaultCloseOperation = JFrame.EXIT_ON_CLOSE                                 
-                            )
+                            defaultCloseOperation = JFrame.EXIT_ON_CLOSE)
         self.panel = JPanel()
         self.panel.setLayout(BoxLayout(self.panel, BoxLayout.LINE_AXIS))
         self.panel.setPreferredSize(Dimension(WIDTH, HEIGHT))
@@ -124,7 +117,7 @@ class CatchExecGUI:
 
         # cummulative reward
         self.crewTit = JLabel("Cummulative")
-        self.crewLbl = JLabel("nil")
+        self.crewLbl = JLabel("0")
         self.ctrPane.add(self.crewTit)
         self.ctrPane.add(self.crewLbl)
         
@@ -134,11 +127,17 @@ class CatchExecGUI:
         self.ctrPane.add(self.obsTit)
         self.ctrPane.add(self.obsLbl)
 
-        # action
-        self.actTit = JLabel("Action")
-        self.actLbl = JLabel("nil")
-        self.ctrPane.add(self.actTit)
-        self.ctrPane.add(self.actLbl)
+        # last action
+        self.lactTit = JLabel("Last action")
+        self.lactLbl = JLabel("nil")
+        self.ctrPane.add(self.lactTit)
+        self.ctrPane.add(self.lactLbl)
+
+        # about to exec action
+        self.nactTit = JLabel("About to exec")
+        self.nactLbl = JLabel("nil")
+        self.ctrPane.add(self.nactTit)
+        self.ctrPane.add(self.nactLbl)
 
         #######################################################################
         # world panel
@@ -146,15 +145,22 @@ class CatchExecGUI:
         self.wrlPane.setLayout(GridLayout(ROWS,COLS))
         self.wrlPane.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT)
         #self.wrlPane.setLayout(None)
-        self.wrlPane.setPreferredSize(Dimension(WIDTH, HEIGHT))
+        self.wrlPane.setSize(Dimension(WIDTH, HEIGHT))
         self.wrlPane.setBorder(BorderFactory.createTitledBorder(
                                  "World view"))
         self.wrlInsets = self.wrlPane.getInsets()
  
+        # agent and wumpus images
+        self.wIcon  = ImageIcon('wumpusicon.gif')
+        self.wLabel = JLabel(self.scale(self.wIcon.getImage(), 0.6))
+        self.aIcon  = ImageIcon('agenticon.gif')
+        self.aLabel = JLabel(self.scale(self.aIcon.getImage(), 0.6))
+
         # grid cells
         self.cells   = [] # make sure this is OK
         for i in range(ROWS*COLS): 
             self.cells.append(JPanel())            
+            #self.cells[i].setSize(Dimension(WIDTH/COLS, HEIGHT/ROWS)) 
             self.cells[i].setBorder(BorderFactory.createLineBorder(Color.gray))
             self.wrlPane.add(self.cells[i])
 
@@ -203,10 +209,22 @@ class CatchExecGUI:
             self.cells[i].removeAll()        
         apos = ROWS * COLS  - state[0]
         wpos = ROWS * COLS  - state[1]
-        self.cells[apos].add(aLabel)
-        self.cells[wpos].add(wLabel)
+        self.cells[apos].add(self.aLabel)
+        self.cells[wpos].add(self.wLabel)
         for i in range(len(self.cells)):
+            if gp.isLegalPosition(i) == False:
+                self.cells[i].setBackground(Color.BLACK)
             self.cells[i].updateUI()
+            
+    def scale(self, src, scale):
+        w = (int)(scale*src.getWidth(None))
+        h = (int)(scale*src.getHeight(None))
+        type = BufferedImage.TYPE_INT_RGB
+        dst = BufferedImage(w, h, type)
+        g2 = dst.createGraphics()
+        g2.drawImage(src, 0, 0, w, h, Color(.92,.92,.92,0.0), None)
+        g2.dispose()
+        return ImageIcon(dst)
 
     def execute_catch(self,event):
         # spawn this on its own thread
@@ -215,55 +233,71 @@ class CatchExecGUI:
     def run_sim(self):
         episoderunning = True
         
-        # starting belief state and state from where we left off
-        currbelief = currBelief
-        factoredS  = currState
-
+        # starting belief state 
+        currbelief = initBelief
+        factoredS  = initState
+        instance   = 1
+        cumrew     = 0
         # execution loop
         while(episoderunning):
 
+            # draw current state
+            # self.draw_state(factoredS) 
+            
             # extract action from direct controller - ie., 0-step LA
             exreward = valueFunction.V(currbelief)
             action   = valueFunction.directControl(currbelief)
             print "value of b %f and selected action %d" % (exreward,action)
 
-            # execute action, percieve observation and receive reward           
+            # show action that we are about to execute
+            self.nactLbl.setText(pomdpProblem.getactStr(action))
+            time.sleep(1)
+
+            # sample new state, observation, and calculate reward           
             print factoredS
             factoredS1 = pomdpProblem.sampleNextState(factoredS, action)
+            print " sampled state is" 
             print factoredS1
             factoredO  = pomdpProblem.sampleObservation(factoredS, factoredS1, action)
+            print " sampled o is" 
             print factoredO
-            
             reward = pomdpProblem.getReward(factoredS, action)
             print reward
 
-            # display some info
-            self.actLbl.setText(pomdpProblem.getactStr(action)) 
-            self.rewLbl.setText(Double.toString(reward))
-            self.obsLbl.setText(pomdpProblem.
-                                getobsStr(IntegerArray.product(factoredO) - 1))
-
-            # draw new state
-            self.draw_state(factoredS) # or S1?
-            self.panel.repaint() # try this
-            self.wrlPane.repaint()
-            self.ctrPane.repaint()
-
+            # draw new state, and display what's happening
+            self.draw_state(factoredS1) 
+            self.lactLbl.setText(pomdpProblem.getactStr(action))
+            self.nactLbl.setText("nil")
+            self.rewLbl.setText (Double.toString(reward))
+            cumrew = cumrew + reward*gamma**instance
+            self.crewLbl.setText(Double.toString(cumrew))
+            self.obsLbl.setText (pomdpProblem.
+                                 getobsStr(pomdpProblem.
+                                           sencode(factoredO,
+                                                   pomdpProblem.getnrObsV(),
+                                                   pomdpProblem.getobsArity()) - 1))
+            
             # iterate
-            nextbelief = pomdpProblem.tao(currbelief, action, IntegerArray.product(factoredO) - 1)
+            nextbelief = pomdpProblem.tao(currbelief,
+                                          action,
+                                          pomdpProblem.
+                                          sencode(factoredO,
+                                                  pomdpProblem.getnrObsV(),
+                                                  pomdpProblem.getobsArity()) - 1)
             currbelief = nextbelief;
             factoredS  = factoredS1;
+            instance   = instance + 1;
 
             # step button
-            while self.stepBtn.isEnabled() == True:
-                time.sleep(1)
             if self.stepChk.isSelected() == True:
                 self.stepBtn.setEnabled(True)
-
+            while self.stepBtn.isEnabled() == True:
+                time.sleep(1)
+            
             # check whether this episode has ended
-            if reward == CATCH_REWARD:
-                print "Episode ended!"
-                episoderunning = false
+            #if reward == CATCH_REWARD - 1:
+            #    print "Episode ended!"
+            #    episoderunning = false
 
             # smooth the sim a little in case we're not stepping
             time.sleep(1)
