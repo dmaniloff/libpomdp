@@ -43,10 +43,10 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
      */
     public void expand(orNode en){
 	// make sure this node hasn't been expanded before
-	// if (en.children != null) { 
-// 	    System.err.println("node cannot be expanded");
-// 	    return;
-// 	}
+	if (en.children != null) { 
+	    System.err.println("node cannot be expanded");
+	    return;
+	}
 	// save this node's old bounds
  	double old_l = en.l;
 	double old_u = en.u;
@@ -104,6 +104,7 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 		// iterate
 		observation++;
 	    } // orNode loop
+
 	    //System.out.println("this is the num of nulls in action="+action+" : "+numnull); 
 	    // L(b,a) = R(b,a) + \gamma \sum_o P(o|b,a)L(tao(b,a,o))
 	    a.l = ANDpropagateL(a);
@@ -146,9 +147,9 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 	// one-step improvement
 	en.oneStepDeltaLower = en.l - old_l;
 	en.oneStepDeltaUpper = en.u - old_u;
-	// if(en.oneStepDeltaLower < 0) {
-// 	    System.err.println("Hmmmmmmmmmmm");
-// 	}
+	if(en.oneStepDeltaLower < 0) {
+	    System.err.println("Hmmmmmmmmmmm");
+	}
 	// compute backup heuristic for this newly expanded node
 	en.bakHeuristic = bakH.h_b(en); 
 	// the backup candidate is still itself and it has its own value as best
@@ -203,7 +204,7 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 
 
     /**
-     * backup the lower bound at the root node
+     * backup the lower bound at the root node - not used for now
      */
     public double[] backupLowerAtRoot() {
 	// decls
@@ -235,13 +236,11 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
      * reduced to computing a particular gab vector
      */
     public valueFunction backupLowerAtNode(orNode on) {
-	// OPTIONAL CHECK - REMOVE FOR SPEED:
 	// make sure this node is not in the fringe
-	// if(null == on.children) {
-	// 	    System.err.println("Attempted to backup a fringe node");
-	// 	    return null;
-	// 	}
-
+	if(null == on.children) {
+	    System.err.println("Attempted to backup a fringe node");
+	    return null;
+	}
 	// decls
 	DD gamma  = DDleaf.myNew(problem.getGamma());
 	DD gab    = DD.zero;		
@@ -251,13 +250,12 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 	for(orNode o : on.children[bestA].children) {
 	    //if(o==null) continue;
 	    // compute g_{a,o}^{planid}
-	    // problem.gao(lowerBound[o.belief.getplanid()], bestA, o.getobs()).display();
-	    gab = OP.add(gab, problem.gao(lowerBound[o.belief.getplanid()], bestA, o.getobs()));
+	    gab = OP.add(gab, problem.
+			 gao(lowerBound[o.belief.getplanid()], bestA, o.getobs()));
 	}    
 	// multiply result by discount factor and add it to r_a
 	gab = OP.mult(gamma, gab);
 	gab = OP.add(problem.R[bestA], gab);
-
 	// add newly computed vector to the tree's offline lower bound - NO PRUNING FOR NOW
 	valueFunctionAdd newLB = new valueFunctionAdd(Common.append(lowerBound, gab), 
 				    problem.staIds,

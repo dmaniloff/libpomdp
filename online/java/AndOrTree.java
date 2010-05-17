@@ -59,10 +59,10 @@ public class AndOrTree {
      */
     public void expand(orNode en){
 	// make sure this node hasn't been expanded before
-	// if (en.children != null) { 
-	// 	    System.err.println("node not on fringe");
-	// 	    return;
-	// 	}
+	if (en.children != null) { 
+	    System.err.println("node not on fringe");
+	    return;
+	}
 	// save this node's old bounds
  	double old_l = en.l;
 	double old_u = en.u;

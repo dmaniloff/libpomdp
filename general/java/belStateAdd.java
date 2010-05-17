@@ -26,7 +26,6 @@ public class belStateAdd implements belState {
     // in case this is the init belief, poba = 0.0
     public belStateAdd(DD b, int staIds[], double poba) {
 	this.bAdd    = b;
-	//this.bPoint = OP.convert2array(b, staIds); !!!!!!!
 	this.staIds = staIds;
 	this.poba   = poba;
     }

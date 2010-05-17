@@ -14,10 +14,10 @@ RM=/bin/rm
 JCOPTS=-Xlint
 
 # classpath
-JCLASSPATH=../../external/jmatharray.jar:../../external/symPerseusJava:../../general/java:../../general/problems/rocksample:../../offline/java:.
+JCLASSPATH=../../external/jmatharray.jar:../../external/symPerseusJava:../../general/java:../../problems/rocksample:../../offline/java:.
 
 # source files
-SOURCES=AndOrTree.java AndOrTreeUpdateAdd.java orNode.java andNode.java expandHeuristic.java aems2.java backupHeuristic.java DOSI.java onlineRockSampleSimulatorAdd.java
+SOURCES=AndOrTree.java AndOrTreeUpdateAdd.java orNode.java andNode.java expandHeuristic.java aems2.java backupHeuristic.java DOSI.java onlineRockSampleSimulatorAdd.java TreeProfiler.java
 
 default:
 	$(JC) $(JCOPTS) -classpath $(JCLASSPATH) $(SOURCES)
@@ -25,8 +25,11 @@ default:
 run:
 	$(JVM) -classpath $(JCLASSPATH) onlineRockSampleSimulatorAdd
 
+# profile:
+# 	$(JVM) -javaagent:shiftone-jrat/shiftone-jrat.jar -classpath $(JCLASSPATH) onlineRockSampleSimulatorAdd
+
 profile:
-	$(JVM) -javaagent:shiftone-jrat/shiftone-jrat.jar -classpath $(JCLASSPATH) onlineRockSampleSimulatorAdd
+	$(JVM) -javaagent:shiftone-jrat/shiftone-jrat.jar -classpath $(JCLASSPATH) TreeProfiler
 
 clean:
 	$(RM) ./*.class

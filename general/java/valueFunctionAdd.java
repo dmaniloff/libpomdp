@@ -48,11 +48,12 @@ public class valueFunctionAdd implements valueFunction, Serializable {
 
     // return value of a belief state
     public double V(belState bel) {
-	double start;		
 	DD b = ((belStateAdd)bel).bAdd;
 	// the NoMem version this seems to be faster 
 	double dotProds[] = OP.dotProductNoMem(b, vAdd, staIds);
 	int argmax = Common.argmax(dotProds);
+	//System.out.println(DoubleArray.toString(dotProds));
+	//System.out.println("argmax is"+ argmax);
 	// save the index of the alpha that supports this belief point
 	bel.setplanid(argmax);
 	double max = dotProds[argmax];
