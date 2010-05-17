@@ -1,11 +1,8 @@
 % --------------------------------------------------------------------------- %
 % libpomdp
 % ========
-% File: onlineRockSampleSimulatorADD.m
-% Description: m script to instantiate aoTree and heuristic objects to combine
-%              them with different lower bounds -
-%              uses part of Spaan's and Poupart's packages - see README
-%              references [1,5]
+% File: 
+% Description: 
 % Copyright (c) 2009, 2010 Diego Maniloff
 % W3: http://www.cs.uic.edu/~dmanilof
 % --------------------------------------------------------------------------- %
@@ -14,70 +11,69 @@
 clear java
 clear all
 % add dynamic classpath
-javaaddpath '../../../external/jmatharray.jar'
-javaaddpath '../../../external/symPerseusJava'
+javaaddpath '../../external/jmatharray.jar'
+javaaddpath '../../external/symPerseusJava'
 javaaddpath '../../general/java'
-javaaddpath '../../general/problems/rocksample'
+javaaddpath '../../problems/catch'
 javaaddpath '../../offline/java'
 javaaddpath '../../online/java'
 
 % add to the matlab path
-addpath     '../../../external/symPerseusMatlab' -end
+addpath     '../../external/symPerseusMatlab' -end
 % addpath     '../../offline/matlab' -end
 
 %% load problem parameters - factored representation
-factoredProb = pomdpAdd  ('../../general/problems/rocksample/7-8/RockSample_7_8.SPUDD');
-symDD        = parsePOMDP('../../general/problems/rocksample/7-8/RockSample_7_8.SPUDD');
-
-%% larger problem
-factoredProb = pomdpAdd  ('../../general/problems/rocksample/7-8/RockSample_10_10.SPUDD');
-symDD        = parsePOMDP('../../general/problems/rocksample/7-8/RockSample_10_10.SPUDD');
-
+factoredProb  = pomdpAdd  ('../../problems/catch/catch_tag_taggingAction_10_5.SPUDD');
+symDD         = parsePOMDP('../../problems/catch/catch_tag_taggingAction_10_5.SPUDD');
 
 %% compute offline lower and upper bounds
-% blindCalc = blindAdd;
-% lBound    = blindCalc.getBlindAdd(factoredProb);
-% 
-% % qmdpCalc  = qmdpAdd;
-% % uBound    = qmdpCalc.getqmdpAdd(factoredProb);
-% 
-% % use Poupart's QMDP solver
-% [Vqmdp qmdpP] = solveQMDP(symDD);
-% % uBound        = valueFunction(OP.convert2array(Vqmdp, factoredProb.staIds), qmdpP);
-% uBound        = valueFunctionAdd(Vqmdp, factoredProb.staIds, qmdpP);
+blindCalc = blindAdd;
+lBound    = blindCalc.getBlindAdd(factoredProb);
+
+qmdpCalc  = qmdpAdd;
+uBound    = qmdpCalc.getqmdpAdd(factoredProb);
 
 %% load them in case we have them saved
-load 'saved-data/blindAdd_RockSample_7_8.mat';
+% load 'saved-data/blindAdd_RockSample_7_8.mat';
 % load 'saved-data/qmdpAdd_RockSample_7_8.mat';
-load 'saved-data/qmdpSymPerseus_RockSample_7_8.mat';
+% load 'saved-data/qmdpSymPerseus_RockSample_7_8.mat';
+
 %% create heuristic search AND-OR tree
 % instantiate an aems2 heuristic object
 aems2h  = aems2(factoredProb);
-% instantiate AndOrTree
-% aoTree = AndOrTree(factoredProb, aems2h, lBound, uBound);
+
+%% figure out all possible initial states of the pomdp
+states  = [];
+for r=1:factoredProb.getnrSta
+    factoredS = [factoredProb.staIds'; ...
+        factoredProb.sdecode(r-1, factoredProb.getnrStaV, factoredProb.staArity)'];
+    if (OP.eval(factoredProb.getInit.bAdd , factoredS) > 0)
+        states(end+1) = r - 1;
+    end
+end
 
 %% play the pomdp
-diary(['simulation-logs/rocksample/7-8-online-run-AEMS2-',date,'.log']);
+diary(['simulation-logs/catch-tag/online-run-AEMS2-',date,'.log']);
 
-% parameters
+% catch parameters for the grapher
+drawer            = CatchGraph(10, 5, CatchTagGrid(10,5));
+COLLOCATED_REWARD = 10.0;
+
+% other parameters
 EPISODECOUNT      = 10;
 MAXPLANNINGTIME   = 1.0;
 MAXEPISODELENGTH  = 100;
-TOTALRUNS         = 2^8;
+TOTALRUNS         = size(states,2);
 
 % stats
 cumR              = [];
 all.avcumrews     = [];
 all.avTs          = [];
 all.avreusedTs    = [];
-all.avplantimes   = [];
 all.avexps        = [];
 all.avfoundeopt   = [];
 
-% rocksample parameters for the grapher
-GRID_SIZE         = 7;
-ROCK_POSITIONS    = [2 0; 0 1; 3 1; 6 3; 2 4; 3 4; 5 5; 1 6];
-drawer            = rocksampleGraph;
+
 
 for run = 1:TOTALRUNS
     
@@ -89,7 +85,6 @@ for run = 1:TOTALRUNS
     all.stats{run}.foundeopt    = [];
     all.stats{run}.meanT        = [];
     all.stats{run}.meanreusedT  = [];
-    all.stats{run}.meanplantime = [];
     all.stats{run}.meanexps     = [];
     
     % start this run
@@ -104,7 +99,8 @@ for run = 1:TOTALRUNS
         rootNode = aoTree.getRoot();
 
         % starting state for this set of EPISODECOUNT episodes
-        factoredS = [factoredProb.staIds' ; 1, 4, 1 + bitget(uint8(run-1), 8:-1:1)];
+        factoredS = [factoredProb.staIds' ; ...
+            factoredProb.sdecode(states(run), factoredProb.getnrStaV, factoredProb.staArity)'];
         
         % stats
         cumR = 0;
@@ -113,15 +109,15 @@ for run = 1:TOTALRUNS
         all.stats{run}.ep{ep}.exps     = [];
         all.stats{run}.ep{ep}.T        = [];
         all.stats{run}.ep{ep}.reusedT  = [];
-        all.stats{run}.ep{ep}.plantime = [];
         
         for iter = 1:MAXEPISODELENGTH
             
             fprintf(1, '******************** INSTANCE %d ********************\n', iter);
             tc = cell(factoredProb.printS(factoredS));
             fprintf(1, 'Current world state is:         %s\n', tc{1});
-            drawer.drawState(GRID_SIZE, ROCK_POSITIONS,factoredS);
-            fprintf(1, 'Current belief agree prob:      %d\n', OP.eval(rootNode.belief.bAdd, factoredS));
+            drawer.drawState(factoredS);
+            fprintf(1, 'Current belief agree prob:      %d\n', ...
+                    OP.eval(rootNode.belief.bAdd, factoredS)); 
             fprintf(1, 'Current |T| is:                 %d\n', rootNode.subTreeSize);
 
             % reset expand counter
@@ -147,9 +143,6 @@ for run = 1:TOTALRUNS
                 end
             end
             
-            % save planning time (not very accurate)
-            all.stats{run}.ep{ep}.plantime(end+1) = toc;
-
             % obtain the best action for the root
             % remember that a's and o's in matlab should start from 1
             a = aoTree.currentBestAction();
@@ -180,10 +173,10 @@ for run = 1:TOTALRUNS
             fprintf(1, 'Received reward:                %.2f\n', all.stats{run}.ep{ep}.R(end));
             fprintf(1, 'Cumulative reward:              %.2f\n', cumR);
 
-            % check whether this episode ended (terminal state)
-            if(factoredS1(2,1)==8)
+            % check whether this episode ended (reward for being collocated)
+            if(all.stats{run}.ep{ep}.R(end) == COLLOCATED_REWARD)
                 fprintf(1, '==================== Episode ended at instance %d==================\n', iter);
-                drawer.drawState(GRID_SIZE, ROCK_POSITIONS,factoredS1);
+                drawer.drawState(factoredS1);
                 break;
             end
 
@@ -209,7 +202,6 @@ for run = 1:TOTALRUNS
         all.stats{run}.foundeopt   (end+1) = fndO;
         all.stats{run}.meanT       (end+1) = mean(all.stats{run}.ep{ep}.T);
         all.stats{run}.meanreusedT (end+1) = mean(all.stats{run}.ep{ep}.reusedT);
-        all.stats{run}.meanplantime(end+1) = mean(all.stats{run}.ep{ep}.plantime);
         all.stats{run}.meanexps    (end+1) = mean(all.stats{run}.ep{ep}.exps);
         %pause
         
@@ -220,13 +212,11 @@ for run = 1:TOTALRUNS
     all.avfoundeopt(end+1) = mean(all.stats{run}.foundeopt);
     all.avTs       (end+1) = mean(all.stats{run}.meanT);
     all.avreusedTs (end+1) = mean(all.stats{run}.meanreusedT);
-    all.avplantimes(end+1) = mean(all.stats{run}.meanplantime);
     all.avexps     (end+1) = mean(all.stats{run}.meanexps);
     
 end % runs loop
 
 % save statistics before quitting
-save (['simulation-logs/rocksample/ALLSTATS-7-8-online-run-AEMS2-',date,'.mat'], 'all');
-save (['simulation-logs/rocksample/AOTREE-7-8-online-run-AEMS2-',date,'.mat']  , 'aoTree');
+save (['simulation-logs/catch-tag/ALLSTATS-online-run-AEMS2-',date,'.mat'], 'all');
 
-% onlineRockSampleSimulatorADD
+% onlineTagSimulatorADD
