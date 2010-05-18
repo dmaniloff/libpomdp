@@ -19,12 +19,11 @@ javaaddpath '../../offline/java'
 javaaddpath '../../online/java'
 
 % add to the matlab path
-addpath     '../../../external/symPerseusMatlab' -end
+% addpath     '../../external/symPerseusMatlab' -end
 % addpath     '../../offline/matlab' -end
 
 %% load problem
 factoredProb = pomdpAdd  ('../../problems/rocksample/7-8/RockSample_7_8.SPUDD');
-
 
 %% compute offline lower and upper bounds
 % blindCalc = blindAdd;
