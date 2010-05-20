@@ -124,6 +124,10 @@ public class pomdpAdd implements pomdp {
 	    O[a] = problemAdd.actObserve.get(a);
 	    // reward for a is reward for the state - the cost of a
 	    R[a] = OP.sub(problemAdd.reward, problemAdd.actCosts.get(a));
+	    // if we wanted to have a model for R(s,a,s'), then we need this:
+	    // actStruct.rewFn = 
+	    // 		OP.addMultVarElim([actStruct.rewFn,actStruct.transFn], 
+	    // 				  ddPOMDP.nVars+1:ddPOMDP.nVars+ddPOMDP.nStateVars);
 	    actStr[a] = problemAdd.actNames.get(a);
 	}
 	// set initial belief state
