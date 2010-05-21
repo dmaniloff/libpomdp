@@ -1,0 +1,296 @@
+// Partially Observable coffee example
+// a robot uses battery, computational and physical resources to obtain and deliver coffee to a single user
+// the robot can move from an office location to a shop 
+// it may possibly be raining outside between the two, and the robot can get wet
+// the robot cannot directly observe the rain, but only detect if the pavement is wet
+// this measurement only works if the robot either tries to move
+// or takes the special action 'measurewet'
+// the robot can get an umbrella that helps it not get wet when outside
+// the robot's job is to get the user coffee when she doesn't have any
+// and to avoid getting wet
+//
+(variables 
+	(huc yes no) 			// huc: user has coffee
+	(w drenched sprinkled dry) 	// w  : robot is wet
+	(hrc yes no) 			// hrc: robot has coffee
+	(r heavy light no) 		// r  : raining outside?
+	(u yes no) 			// u  : robot has umbrella
+	(l office shop) 		// l  : robot's location
+	(batt dead low high)		// batt: battery state 
+)
+// observations are whether or not the pavement is wet
+// and a measurement of the battery charge
+(observations	(wetp	wet dry)
+		(charge	zero one two))
+// initial belief is a product of marginal beliefs
+init [* (huc	(yes	(0.0))	(no	(1.0)))
+	(w	(drenched	(0.0))	(sprinkled	(0.0))	(dry	(1.0)))
+	(hrc	(yes	(0.0))	(no	(1.0)))
+	(r	(heavy	(0.33))	(light	(0.33))	(no	(0.34)))
+	(u	(yes	(0.0))	(no	(1.0)))
+	(l	(office	(1.0))	(shop	(0.0)))
+	(batt	(dead	(0.0))	(low	(0.0))	(high	(1.0)))
+     ]
+//
+// some CPTS may be unnormalized - 
+// this means all CPTs will be automatically normalized when read in
+unnormalised
+//
+// user keeps coffee if it has it
+// example of an unnormalized CPT - 
+// hucno is a predefined dd of the form <xx><yy> where <xx> is a variable name and <yy> is a value
+// that variable can take on. the dd <xx><yy> then is 1 whenever xx' has value yy, zero otherwise.
+dd defaulthuc
+	(huc	(yes    (huc'	(yes	(9.0)) (no	(1.0))))
+		(no	(hucno)))
+enddd
+// location changes if robot moves
+dd moveloc
+	(l	(office	(l'	(office	(0.10)) (shop	(0.90))))
+		(shop	(l'	(office	(0.90)) (shop   (0.10)))))
+enddd
+// state of rain can progress from no <-> light <-> heavy
+dd defaultrain
+	(r	(heavy 	(r'	(heavy	(0.9)) (light	(0.1)) (no	(0.0))))
+		(light	(r'	(heavy	(0.1)) (light	(0.8)) (no	(0.1))))
+		(no	(r'	(heavy	(0.0)) (light	(0.1)) (no	(0.9)))))
+enddd
+// battery slowly discharges
+dd defaultbatt
+	(batt	(dead	(batt'	(dead	(1.0))	(low	(0.0))	(high	(0.0))))
+		(low	(batt'	(dead	(0.2))	(low	(0.8))	(high	(0.0))))
+		(high	(batt'	(dead	(0.0))	(low	(0.01))	(high	(0.99)))))
+enddd
+// battery observation function
+dd batteryOF
+	(batt'	(dead	(chargezero))
+		(low	(charge'	(zero	(0.1))	(one	(0.9))	(two 	(0.0))))
+		(high	(charge'	(zero	(0.0))	(one	(0.2))	(two 	(0.8)))))
+enddd
+dd evenwetp
+	(wetp'	(dry	(0.5)) (wet	(0.5)))
+enddd
+// do nothing - exogenous events may affect huc and r
+// and the battery will discharge as usual
+action nothing
+	huc	(defaulthuc)
+	// SAME<xx> where <xx> is a variable name are pre-defined to be the CPT
+	// that is 1 whenever xx is the same as xx', 0 otherwise.
+	hrc	(SAMEhrc)
+	w	(SAMEw)
+	r	(defaultrain)
+	u	(SAMEu)
+	l	(SAMEl)
+	batt	(defaultbatt)
+	observe
+		wetp	(evenwetp)
+		charge	(batteryOF)
+	endobserve
+endaction
+action measurewet
+	huc	(defaulthuc)
+	hrc	(SAMEhrc)
+	w	(SAMEw)
+	r	(defaultrain)
+	u	(SAMEu)
+	l	(SAMEl)
+	batt	(defaultbatt)
+	observe
+		wetp	(r'	(heavy	(wetpwet))
+				(light	(wetp'	(wet	(1.0))	(dry	(0.0))))
+				(no	(wetp'	(wet	(0.2))	(dry	(0.8)))))
+		charge	(batteryOF)
+	endobserve
+endaction
+// move to shop if in office and vice-versa
+// robot can get wet along the way if its raining and robot has no umbrella
+// this works less well if battery is low
+// doesn't work at all if battery is dead
+// its uphill from office->shop so the cost is a little more (wear on motors)
+action move
+	huc	(defaulthuc)
+	hrc	(SAMEhrc)
+	w	(w	(drenched	(wdrenched))
+			(sprinkled	(r	(heavy	(u	(yes	(w'	(drenched	(0.10))
+										(sprinkled	(0.9))
+										(dry		(0.0))))
+								(no	(w'	(drenched	(0.9))
+										(sprinkled	(0.1))
+										(dry		(0.0))))))
+						(light	(u	(yes	(w'	(drenched	(0.05))
+										(sprinkled	(0.95))
+										(dry		(0.0))))
+								(no	(w'	(drenched	(0.3))
+										(sprinkled	(0.7))
+										(dry		(0.0))))))
+						(no	(w'	(drenched	(0.0))
+								(sprinkled	(0.9))
+								(dry		(0.1))))))
+			(dry		(r	(heavy	(u	(yes	(w'	(drenched	(0.1))
+										(sprinkled	(0.1))
+										(dry		(0.8))))
+								(no	(w'	(drenched	(0.9))
+										(sprinkled	(0.1))
+										(dry		(0.0))))))
+						(light	(u	(yes	(w'	(drenched	(0.0))
+										(sprinkled	(0.05))
+										(dry		(0.95))))
+								(no	(w'	(drenched	(0.2))
+										(sprinkled	(0.7))
+										(dry		(0.1))))))
+						(no	(w'	(drenched	(0.0))
+								(sprinkled	(0.1))
+								(dry		(0.9)))))))
+	r	(defaultrain)
+	u	(SAMEu)
+	// an example of nested operators - + and *
+	l	[*	[+  (moveloc)  
+			    (batt	(dead	(0.0))	
+					(low	(1.0))	
+					(high	(0.0)))]
+			(batt	(dead	(SAMEl))	
+				(low	(1.0))	
+				(high	(1.0)))]
+	batt	(defaultbatt)
+	observe
+		wetp	(evenwetp)
+		charge	(batteryOF)
+	endobserve
+	// a cost specified over post-action variables
+	cost	(l	(office	(0.2))
+			(shop	(0.1)))
+endaction
+// robot delivers coffee to user
+action delc
+	huc	(huc	(yes	(huc'	(yes	(0.90)) (no	(0.10))))
+			(no	(hrc	(yes	(l	(office	(huc'	(yes	(0.80)) (no	(0.20))))
+							(shop	(hucno))))
+					(no	(hucno)))))
+	hrc	(hrc	(yes	(l	(office	(hrc'	(yes	(0.10)) (no	(0.90))))
+					(shop	(hrc'	(yes	(0.80)) (no	(0.20))))))
+			(no	(hrcno)))
+	w	(SAMEw)
+	r	(defaultrain)
+	u	(SAMEu)
+	l	(SAMEl)
+	batt	(defaultbatt)
+	observe
+		wetp	(evenwetp)
+		charge	(batteryOF)
+	endobserve
+endaction
+// robot gets the umbrella
+action getu
+	huc	(defaulthuc)
+	hrc	(SAMEhrc)
+	w	(SAMEw)
+	r	(defaultrain)
+	u	(u	(yes	(uyes))
+			(no	(l	(office	(u'	(yes	(0.90)) (no	(0.10))))
+					(shop	(uno)))))
+	batt	(defaultbatt)
+	l	(SAMEl)
+	observe
+		wetp	(evenwetp)
+		charge	(batteryOF)
+	endobserve
+	cost	(l	(office	(1.6))
+			(shop	(0.0)))
+endaction
+// robot buys coffee carefully
+// this only works if the robot's in the shop
+// the robot can get wet here because of coffee spillage on receiving coffee
+// this costs more in computation power (more complex motions?)
+// but the probability of getting wet is smaller than in buyc_fast
+action buyc_careful
+	huc	(defaulthuc)
+	hrc	(hrc	(yes	(hrcyes))
+			(no	(l	(office	(hrcno))
+					(shop	(hrcyes)))))
+	w	(hrc	(no	(hrc'	(yes	(w	(drenched  (wdrenched))
+							(sprinkled (wsprinkled))
+							(dry	   (w'	(drenched	(0.0))
+									(sprinkled	(0.1))
+									(dry	 (0.9))))))
+					(no	(SAMEw))))
+			(yes	(SAMEw)))
+	r	(defaultrain)
+	u	(SAMEu)
+	batt	(defaultbatt)
+	l	(SAMEl)
+	observe
+		wetp	(evenwetp)
+		charge	(batteryOF)
+	endobserve
+	cost 	(l	(office	(0.0))
+			(shop	(0.3)))
+endaction
+// robot buys coffee quickly
+// again, this only works if the robot's in the shop
+// the robot can get wet here because of coffee spillage on receiving coffee
+// but the probability is higher here than in buyc_careful
+action buyc_fast
+	huc	(defaulthuc)
+	hrc	(hrc	(yes	(hrcyes))
+			(no	(l	(office	(hrcno))
+					(shop	(hrc'	(yes	(0.90)) (no	(0.10)))))))
+	w	(hrc	(no	(hrc'	(yes	(w	(drenched  (wdrenched))
+							(sprinkled (wsprinkled))
+							(dry	   (w'	(drenched	(0.0))
+									(sprinkled	(0.3))
+									(dry	 (0.7))))))
+					(no	(SAMEw))))
+			(yes	(SAMEw)))
+	r	(defaultrain)
+	u	(SAMEu)
+	l	(SAMEl)
+	batt	(defaultbatt)
+	observe
+		wetp	(evenwetp)
+		charge	(batteryOF)
+	endobserve
+	cost 	(l	(office	(0.0))
+			(shop	(0.1)))
+endaction
+// recharge the battery
+action recharge
+	huc	(defaulthuc)
+	hrc	(SAMEhrc)
+	w	(SAMEw)
+	r	(defaultrain)
+	u	(SAMEu)
+	l	(SAMEl)
+	batt	(l	(office		(batthigh))
+			(shop	(defaultbatt)))
+	observe
+		wetp	(evenwetp)
+		charge	(batteryOF)
+	endobserve
+endaction	
+action dryoff
+	huc	(defaulthuc)
+	hrc	(SAMEhrc)
+	w	(w	(drenched	(w'	(drenched	(0.1))
+						(sprinkled	(0.2))
+						(dry	(0.7))))
+			(sprinkled	(w'	(drenched	(0.0))
+						(sprinkled	(0.1))
+						(dry	(0.9))))
+			(dry		(wdry)))
+	r	(defaultrain)
+	u	(SAMEu)
+	l	(SAMEl)
+	batt	(defaultbatt)
+	observe
+		wetp	(evenwetp)
+		charge	(batteryOF)
+	endobserve
+endaction
+
+reward [+  (huc	(yes	(5.0))
+		(no	(0.0)))
+	   (w	(drenched (-3.0))
+		(sprinkled (-1.1))
+		(dry	(0.0)))]
+discount 0.9
+tolerance 0.001
