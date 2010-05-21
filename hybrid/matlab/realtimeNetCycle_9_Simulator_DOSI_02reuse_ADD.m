@@ -25,14 +25,15 @@ factoredProb  = pomdpAdd  ('../../problems/network/cycle9.SPUDD');
 symDD         = parsePOMDP('../../problems/network/cycle9.SPUDD');
 
 %% compute offline lower and upper bounds
-blindCalc = blindAdd;
-lBound    = blindCalc.getBlindAdd(factoredProb);
+% blindCalc = blindAdd;
+% lBound    = blindCalc.getBlindAdd(factoredProb);
 
-qmdpCalc  = qmdpAdd;
-uBound    = qmdpCalc.getqmdpAdd(factoredProb);
+% qmdpCalc  = qmdpAdd;
+% uBound    = qmdpCalc.getqmdpAdd(factoredProb);
 
 %% load them in case we have them saved
-
+load 'saved-data/network/blindAdd_NetCycle_9.mat';
+load 'saved-data/network/qmdpAdd_NetCycle_9.mat';
 
 %% create heuristics
 aems2h  = aems2(factoredProb);
