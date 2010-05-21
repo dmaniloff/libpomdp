@@ -34,9 +34,6 @@ qmdpCalc  = qmdpAdd;
 uBound    = qmdpCalc.getqmdpAdd(factoredProb);
 
 %% load them in case we have them saved
-% load 'saved-data/blindAdd_RockSample_7_8.mat';
-% load 'saved-data/qmdpAdd_RockSample_7_8.mat';
-% load 'saved-data/qmdpSymPerseus_RockSample_7_8.mat';
 
 %% create heuristic search AND-OR tree
 % instantiate an aems2 heuristic object

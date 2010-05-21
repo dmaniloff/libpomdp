@@ -1,7 +1,7 @@
 % --------------------------------------------------------------------------- %
 % libpomdp
 % ========
-% File: onlineRockSampleSimulatorADD.m
+% File: .m
 % Description: m script to instantiate aoTree and heuristic objects to combine
 %              them with different lower bounds -
 %              uses part of Spaan's and Poupart's packages - see README
@@ -14,20 +14,20 @@
 clear java
 clear all
 % add dynamic classpath
-javaaddpath '../../../external/jmatharray.jar'
-javaaddpath '../../../external/symPerseusJava'
+javaaddpath '../../external/jmatharray.jar'
+javaaddpath '../../external/symPerseusJava'
 javaaddpath '../../general/java'
-javaaddpath '../../general/problems/rocksample'
+javaaddpath '../../problems/rocksample'
 javaaddpath '../../offline/java'
 javaaddpath '../../online/java'
 
 % add to the matlab path
-addpath     '../../../external/symPerseusMatlab' -end
+% addpath     '../../../external/symPerseusMatlab' -end
 % addpath     '../../offline/matlab' -end
 
 %% load problem parameters - factored representation
-factoredProb = pomdpAdd  ('../../general/problems/rocksample/7-8/RockSample_7_8.SPUDD');
-symDD        = parsePOMDP('../../general/problems/rocksample/7-8/RockSample_7_8.SPUDD');
+factoredProb = pomdpAdd  ('../../problems/rocksample/7-8/RockSample_7_8.SPUDD');
+% symDD        = parsePOMDP('../../general/problems/rocksample/7-8/RockSample_7_8.SPUDD');
 
 %% compute offline lower and upper bounds
 % blindCalc = blindAdd;
@@ -42,14 +42,13 @@ symDD        = parsePOMDP('../../general/problems/rocksample/7-8/RockSample_7_8.
 % uBound        = valueFunctionAdd(Vqmdp, factoredProb.staIds, qmdpP);
 
 %% load them in case we have them saved
-load 'saved-data/blindAdd_RockSample_7_8.mat';
+load 'saved-data/rocksample/blindAdd_RockSample_7_8.mat';
 % load 'saved-data/qmdpAdd_RockSample_7_8.mat';
-load 'saved-data/qmdpSymPerseus_RockSample_7_8.mat';
+load 'saved-data/rocksample/qmdpSymPerseus_RockSample_7_8.mat';
+
 %% create heuristic search AND-OR tree
 % instantiate an aems2 heuristic object
 aems2h  = aems2(factoredProb);
-% instantiate AndOrTree
-% aoTree = AndOrTree(factoredProb, aems2h, lBound, uBound);
 
 %% play the pomdp
 diary(['simulation-logs/rocksample/7-8-online-run-AEMS2-',date,'.log']);
