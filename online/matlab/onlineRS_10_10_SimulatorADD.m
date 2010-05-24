@@ -190,8 +190,10 @@ for run = 1:TOTALRUNS
             %     pause;
 
             % move the tree's root node
-            o = prod(double(factoredO(2,:)));
-            aoTree.moveTree(rootNode.children(a).children(o)); % check this!
+            o = factoredProb.sencode(factoredO(2,:), ...
+                                     factoredProb.getnrObsV(), ...
+                                     factoredProb.getobsArity()); 
+            aoTree.moveTree(rootNode.children(a).children(o)); 
             % update reference to rootNode
             rootNode = aoTree.getRoot();
 
