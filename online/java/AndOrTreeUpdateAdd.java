@@ -70,7 +70,6 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 
 	    // iterate through new fringe nodes
 	    // start observations at zero 
-	    int numnull = 0;
 	    observation = 0;
 	    for (orNode o : a.children) {
 		// initialize this node
@@ -83,7 +82,6 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 		if (o.belief.getpoba() == 0.0) { 
 		    a.children[observation] = null;
 		    observation++;
-		    numnull++;
 		    continue;
 		} 
 
@@ -93,7 +91,8 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 		o.l = offlineLower.V(o.belief);
 		if(o.l == -1) {System.err.println("bad lower!!!");break;}
 		
-		// save one valid plan id for this andNode, may be saved multiple times, but it's ok
+		// save one valid plan id for this andNode
+		// may be saved multiple times, but it's ok
 		a.validPlanid = o.belief.getplanid();
 
 		// H(b)
@@ -108,7 +107,6 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 		observation++;
 	    } // orNode loop
 
-	    System.out.println("this is the num of nulls in action="+action+" : "+numnull); 
 	    // L(b,a) = R(b,a) + \gamma \sum_o P(o|b,a)L(tao(b,a,o))
 	    a.l = ANDpropagateL(a);
 	    a.u = ANDpropagateU(a); 

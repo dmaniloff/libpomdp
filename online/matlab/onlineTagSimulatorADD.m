@@ -50,7 +50,7 @@ for r=1:factoredProb.getnrSta
 end
 
 %% play the pomdp
-diary(['simulation-logs/catch-tag/online-run-AEMS2-',date,'.log']);
+diary(['simulation-logs/catch-tag/nz-obs/online-run-AEMS2-',date,'.log']);
 
 % catch parameters for the grapher
 drawer            = CatchGraph(10, 5, CatchTagGrid(10,5));
@@ -216,6 +216,6 @@ for run = 1:TOTALRUNS
 end % runs loop
 
 % save statistics before quitting
-save (['simulation-logs/catch-tag/ALLSTATS-online-run-AEMS2-',date,'.mat'], 'all');
+save (['simulation-logs/catch-tag/nz-obs/ALLSTATS-online-run-AEMS2-',date,'.mat'], 'all');
 
 % onlineTagSimulatorADD

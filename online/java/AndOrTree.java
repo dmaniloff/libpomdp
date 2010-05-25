@@ -90,19 +90,19 @@ public class AndOrTree {
 		// the belief property contains bPoint and poba
 		o.init(problem.tao(en.belief,action,observation), observation, a);
 		
-		// STILL TO THINK ABOUT:
+		// ZERO-PROB OBSERVATIONS:
 		// here we should continue the loop and avoid re-computing V^L and V^U
-		// for belief nodes with poba == 0
-		// another opportunity for savings here is to make sure the belief is
-		// not already in the fringe, or in the tree....not sure about this...
-		// if (o.belief.getpoba() == 0) {
-		// 		    a.children[observation] = null;
-		// 		    observation++;
-		// 		    continue;
-		// 		} 
+		// for belief nodes with poba == 0		
+		if (o.belief.getpoba() == 0) {
+		    a.children[observation] = null;
+		    observation++;
+		    continue;
+		} 
 
-		o.l = offlineLower.V(o.belief);
+		// compute upper and lower bounds for this node - this sets planid too
+		// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		o.u = offlineUpper.V(o.belief);
+		o.l = offlineLower.V(o.belief);
 		// H(b)
 		o.h_b = expH.h_b(o);
 		// H(b,a,o)	
