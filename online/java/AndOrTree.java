@@ -270,8 +270,8 @@ public class AndOrTree {
     protected double ANDpropagateL(andNode a) {
 	double Lba = 0;
 	for(orNode o : a.children) {
-	    // if(o != null) 
-	    Lba += o.belief.getpoba() * o.l;
+	    // o.belief.getpoba() == 0 for null orNodes anyway
+	    if(o != null) Lba += o.belief.getpoba() * o.l;
 	}
 	return a.rba + problem.getGamma() * Lba;
     }
@@ -280,8 +280,8 @@ public class AndOrTree {
     protected double ANDpropagateU(andNode a) {
 	double Uba = 0;
 	for(orNode o : a.children) {
-	    // if(o != null) 
-	    Uba += o.belief.getpoba() * o.u;
+	    // o.belief.getpoba() == 0 for null orNodes anyway
+	    if(o != null) Uba += o.belief.getpoba() * o.u;
 	}
 	return a.rba + problem.getGamma() * Uba;
     }

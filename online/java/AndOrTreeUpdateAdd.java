@@ -70,29 +70,32 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 
 	    // iterate through new fringe nodes
 	    // start observations at zero 
-	    //int numnull = 0;
+	    int numnull = 0;
 	    observation = 0;
 	    for (orNode o : a.children) {
 		// initialize this node
 		// the belief property contains bPoint and poba
 		o.init(problem.tao(en.belief,action,observation), observation, a);
 		
-		// STILL TO THINK ABOUT:
+		// ZERO-PROB OBSERVATIONS:
 		// here we should continue the loop and avoid re-computing V^L and V^U
-		// for belief nodes with poba == 0
-		// another opportunity for savings here is to make sure the belief is
-		// not already in the fringe, or in the tree....not sure about this...
-		// if (o.belief.getpoba() == 0.0) { 
-		// 		    a.children[observation] = null;
-		// 		    observation++;
-		// 		    numnull++;
-		// 		    continue;
-		// 		} 
+		// for belief nodes with poba == 0		
+		if (o.belief.getpoba() == 0.0) { 
+		    a.children[observation] = null;
+		    observation++;
+		    numnull++;
+		    continue;
+		} 
 
 		// compute upper and lower bounds for this node - this sets planid too
+		// !!!!!!!!!!!!!!!!!!!
+		o.u = offlineUpper.V(o.belief);		
 		o.l = offlineLower.V(o.belief);
 		if(o.l == -1) {System.err.println("bad lower!!!");break;}
-		o.u = offlineUpper.V(o.belief);		
+		
+		// save one valid plan id for this andNode, may be saved multiple times, but it's ok
+		a.validPlanid = o.belief.getplanid();
+
 		// H(b)
 		o.h_b = expH.h_b(o);
 		// H(b,a,o)	
@@ -105,7 +108,7 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 		observation++;
 	    } // orNode loop
 
-	    //System.out.println("this is the num of nulls in action="+action+" : "+numnull); 
+	    System.out.println("this is the num of nulls in action="+action+" : "+numnull); 
 	    // L(b,a) = R(b,a) + \gamma \sum_o P(o|b,a)L(tao(b,a,o))
 	    a.l = ANDpropagateL(a);
 	    a.u = ANDpropagateU(a); 
@@ -144,12 +147,15 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 	en.bStar = en.children[en.aStar].bStar;
 	// the number of nodes under en increases by |A||O|
 	en.subTreeSize += problem.getnrAct() * problem.getnrObs();
+	
 	// one-step improvement
 	en.oneStepDeltaLower = en.l - old_l;
 	en.oneStepDeltaUpper = en.u - old_u;
 	if(en.oneStepDeltaLower < 0) {
 	    System.err.println("Hmmmmmmmmmmm");
 	}
+	// one-step best action
+	en.oneStepBestAction = currentBestActionAtNode(en);	
 	// compute backup heuristic for this newly expanded node
 	en.bakHeuristic = bakH.h_b(en); 
 	// the backup candidate is still itself and it has its own value as best
@@ -244,26 +250,37 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 	// decls
 	DD gamma  = DDleaf.myNew(problem.getGamma());
 	DD gab    = DD.zero;		
-	int bestA = currentBestActionAtNode(on); // consider caching this value maybe
+	//int bestA = currentBestActionAtNode(on); // consider caching this value maybe
+	int obs   = 0;
 	DD lowerBound [] = ((valueFunctionAdd)offlineLower).getvAdd();
 	// \sum_o g_{a,o}^i
-	for(orNode o : on.children[bestA].children) {
-	    //if(o==null) continue;
-	    // compute g_{a,o}^{planid}
-	    gab = OP.add(gab, problem.
-			 gao(lowerBound[o.belief.getplanid()], bestA, o.getobs()));
+	for(orNode o : on.children[on.oneStepBestAction].children) {
+	    if(o==null) {
+		// in this case we use any valid supporting alpha to compute g_{a,o}^{i}
+		gab = OP.add(gab, problem.
+			     gao(lowerBound[on.children[on.oneStepBestAction].validPlanid], 
+				 on.oneStepBestAction, 
+				 obs));
+	    } else {
+		// compute g_{a,o}^{planid}
+		gab = OP.add(gab, problem.
+			     gao(lowerBound[o.belief.getplanid()], 
+				 on.oneStepBestAction, 
+				 obs));
+	    }
+	    // iterate counter
+	    obs++;
 	}    
 	// multiply result by discount factor and add it to r_a
 	gab = OP.mult(gamma, gab);
-	gab = OP.add(problem.R[bestA], gab);
+	gab = OP.add(problem.R[on.oneStepBestAction], gab);
 	// add newly computed vector to the tree's offline lower bound - NO PRUNING FOR NOW
 	valueFunctionAdd newLB = new valueFunctionAdd(Common.append(lowerBound, gab), 
 				    problem.staIds,
 				    IntegerArray.merge(offlineLower.getActions(), 
-						       new int[] {bestA}));
+						       new int[] {on.oneStepBestAction}));
 	offlineLower = newLB;
 	// return 
-	//return OP.convert2array(gab, problem.staIds);
 	return newLB;
 	// how about coding a union operation in valueFunction?
 	// this function does not watch for repeated vectors yet
@@ -280,8 +297,8 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 	int bestA   = currentBestAction();
 	double expR = 0;
 	for(orNode o : root.children[bestA].children) {
-	    //if(o!=null) 
-	    expR += o.belief.getpoba() * o.subTreeSize;
+	    if(o!=null) 
+		expR += o.belief.getpoba() * o.subTreeSize;
 	}
 	return expR;
     } // expectedReuse
