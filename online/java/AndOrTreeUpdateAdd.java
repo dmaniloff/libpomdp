@@ -73,26 +73,15 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 	    //int numnull = 0;
 	    observation = 0;
 	    for (orNode o : a.children) {
-		// initialize this node
+		// initialize this node, factored representation using marginals
 		// the belief property contains bPoint and poba
-		o.init(problem.tao(en.belief,action,observation), observation, a);
+		o.init(problem.factoredtao(en.belief,action,observation), observation, a);
 		
-		// STILL TO THINK ABOUT:
-		// here we should continue the loop and avoid re-computing V^L and V^U
-		// for belief nodes with poba == 0
-		// another opportunity for savings here is to make sure the belief is
-		// not already in the fringe, or in the tree....not sure about this...
-		// if (o.belief.getpoba() == 0.0) { 
-		// 		    a.children[observation] = null;
-		// 		    observation++;
-		// 		    numnull++;
-		// 		    continue;
-		// 		} 
-
 		// compute upper and lower bounds for this node - this sets planid too
+		o.u = offlineUpper.V(o.belief);		
 		o.l = offlineLower.V(o.belief);
 		if(o.l == -1) {System.err.println("bad lower!!!");break;}
-		o.u = offlineUpper.V(o.belief);		
+		
 		// H(b)
 		o.h_b = expH.h_b(o);
 		// H(b,a,o)	
@@ -105,7 +94,7 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 		observation++;
 	    } // orNode loop
 
-	    //System.out.println("this is the num of nulls in action="+action+" : "+numnull); 
+	     
 	    // L(b,a) = R(b,a) + \gamma \sum_o P(o|b,a)L(tao(b,a,o))
 	    a.l = ANDpropagateL(a);
 	    a.u = ANDpropagateU(a); 
@@ -115,14 +104,6 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 	    a.hStar = expH.hANDStar(a); 
 	    // b*(b,a) - propagate ref of b*
 	    a.bStar = a.children[a.oStar].bStar;
-	    
-	    // the backup candidate and bakheursitic stay as in the
-	    // initialization of the andNode since none of its children
-	    // can be backed-up given that they are all fringe nodes
-	    // propagate reference to backup candidate
-	    //a.bakCandidate = bakH.bakStar(a);
-	    // fill in star value
-	    //a.bakHeuristicStar = bakH.bakHStar(a);
 	    
 	    // iterate
 	    action++;

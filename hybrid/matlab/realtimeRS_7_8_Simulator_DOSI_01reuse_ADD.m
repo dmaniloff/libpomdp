@@ -49,7 +49,7 @@ dosih   = DOSI(factoredProb);
 %% play the pomdp - set the main parameter first
 REUSETHRESHOLD    = 0.1;
 
-logFilename = sprintf('simulation-logs/rocksample/realtime-LOG-7-8-rs-%s-DOSI-%.1freuse-ADD.log',...
+logFilename = sprintf('simulation-logs/rocksample/marginals/realtime-LOG-7-8-rs-%s-DOSI-%.1freuse-ADD.log',...
                       date, REUSETHRESHOLD);
 
 diary(logFilename);
@@ -264,6 +264,6 @@ end % runs loop
 
 % save statistics before quitting
 statsFilename = ...
-    sprintf('simulation-logs/rocksample/realtime-ALLSTATS-7-8-rs-%s-DOSI-%.1freuse-ADD.mat',...
+    sprintf('simulation-logs/rocksample/marginals/realtime-ALLSTATS-7-8-rs-%s-DOSI-%.1freuse-ADD.mat',...
             date, REUSETHRESHOLD);
 save(statsFilename, 'all');

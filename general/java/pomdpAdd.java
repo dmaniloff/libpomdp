@@ -192,6 +192,55 @@ public class pomdpAdd implements pomdp {
 	// return
 	return bPrime;
     }
+
+    /**
+     *  factoredtao(b,a,o):
+     *  compute new belief state from current and a,o pair
+     *  uses DD representation and functions from Symbolic Perseus
+     *  stores poba in the orNode o to avoid re-computation
+     *  uses the product of marginals to approximate a belief
+     */
+    public belState factoredtao(belState bel, int a, int o) {	    
+	// declarations
+	DD       b1[];	
+	DD       b2[];
+	DD       oProb;
+	belState bPrime;
+	DD       O_o[];
+	int      oc[][];
+
+	// obtain subclass and the dd for this belief 
+	// if this is the root belief it will be a belStateAdd
+	// from here on, all beliefs will be approximated using
+	// BelStateFactoredADD
+	if (bel instanceof belStateAdd) {
+	    b1 = new DD[1];
+	    b1[0] = ((belStateAdd)bel).bAdd;
+	} else {
+	    b1 = ((BelStateFactoredADD)bel).marginals;
+	}
+	// restrict the prime observation variables to the ones that occurred
+	oc  = IntegerArray.mergeRows(obsIdsPr, sdecode(o, nrObsV, obsArity));
+	O_o = OP.restrictN(O[a], oc); 
+	// gather all necessary ADDs for variable elimination
+	DD[] vars = concat(b1, T[a], O_o);
+    	// compute var elim on O * T * b
+	b2 = OP.marginals(vars, staIdsPr, staIds);
+	// unprime the b2 DD 
+	b2 = OP.primeVarsN(b2, -nrTotV);
+	// get P(o|b,a) - make sure this is right!!
+	oProb = b2[nrStaV];
+	// make sure we can normalize
+	if (oProb.getVal() < 0.00001) {
+	    // this branch will have poba = 0.0 - also reset to init
+	    bPrime = initBelief;
+	} else {
+	    // no need to normalize, done inside OP.marginals()	    
+	    bPrime = new BelStateFactoredADD(b2, staIds, oProb.getVal());
+	}
+	// return
+	return bPrime;
+    }
     
     /// R(b,a)
     /// Poupart's matlab code has a loop indexed over
