@@ -21,7 +21,7 @@ public class AndOrTree {
     // ------------------------------------------------------------------------
 
     // pomdp problem specification
-    protected pomdp problem;
+    protected pomdpAdd problem;
 
     // expansion heursitic 
     protected expandHeuristic expH;
@@ -39,7 +39,7 @@ public class AndOrTree {
 
     /// constructor
     public AndOrTree(pomdp prob, expandHeuristic h, valueFunction L, valueFunction U) {
-	this.problem = prob;
+	this.problem = (pomdpAdd)prob;
 	this.expH = h;
 	this.offlineLower = L;
 	this.offlineUpper = U;
@@ -88,21 +88,12 @@ public class AndOrTree {
 	    for (orNode o : a.children) {
 		// initialize this node
 		// the belief property contains bPoint and poba
-		o.init(problem.tao(en.belief,action,observation), observation, a);
-		
-		// STILL TO THINK ABOUT:
-		// here we should continue the loop and avoid re-computing V^L and V^U
-		// for belief nodes with poba == 0
-		// another opportunity for savings here is to make sure the belief is
-		// not already in the fringe, or in the tree....not sure about this...
-		// if (o.belief.getpoba() == 0) {
-		// 		    a.children[observation] = null;
-		// 		    observation++;
-		// 		    continue;
-		// 		} 
-
-		o.l = offlineLower.V(o.belief);
+		o.init(problem.factoredtao(en.belief,action,observation), observation, a);
+	       	
+		// compute upper and lower bounds for this node
 		o.u = offlineUpper.V(o.belief);
+		o.l = offlineLower.V(o.belief);
+		
 		// H(b)
 		o.h_b = expH.h_b(o);
 		// H(b,a,o)	
@@ -388,10 +379,20 @@ public class AndOrTree {
     private void orprint(orNode o, PrintStream out) {
 	// print this node
 	String b = "";
-	if (o.belief.getbPoint().length < 4)
-	    b = "b=[" + DoubleArray.toString("%.2f",o.belief.getbPoint()) + "]\\n";
+	DD     m[];
+	if (!(o.belief instanceof BelStateFactoredADD)) {
+	    b = "b=[\\n " + 
+		DoubleArray.toString("%.2f",o.belief.getbPoint()) + 
+		"]\\n";
+	} else {
+	    m = ((BelStateFactoredADD)o.belief).marginals;
+	    b = "b=[\\n ";
+	    for (int i=0;i<problem.getnrStaV();i++)
+		//b = b.concat(m[i].display());
+	    b = b.concat("]\\n");
+	}
 	out.format(o.hashCode() + "[label=\"" +
-		   b +
+		   //b +
 		   "U(b)= %.2f\\n" +
 		   "L(b)= %.2f\\n" + 
 		   "H(b)= %.2f" +

@@ -247,9 +247,15 @@ public class pomdpAdd implements pomdp {
     /// 1:length(POMDP.actions(actId).rewFn) - when would this be > 1?
     public double Rba(belState bel, int a) {
 	// obtain subclass and the dd for this belief
-	DD b = ((belStateAdd)bel).bAdd;
-        //return OP.dotProduct(b, R[a], staIds);
-	return OP.dotProductNoMem(b, R[a], staIds);
+	DD b;
+	DD m[];
+	if (bel instanceof belStateAdd) {
+	    b = ((belStateAdd)bel).bAdd;
+	    return OP.dotProductNoMem(b, R[a], staIds);
+	} else {
+	    m = ((BelStateFactoredADD)bel).marginals;
+	    return OP.factoredExpectationSparseNoMem(m, R[a]);
+	}
     }
 
     /// return s x s' matrix with T[a]
