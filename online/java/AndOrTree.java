@@ -391,7 +391,7 @@ public class AndOrTree {
 	if (o.belief.getbPoint().length < 4)
 	    b = "b=[" + DoubleArray.toString("%.2f",o.belief.getbPoint()) + "]\\n";
 	out.format(o.hashCode() + "[label=\"" +
-		   b +
+		   //b +
 		   "U(b)= %.2f\\n" +
 		   "L(b)= %.2f\\n" + 
 		   "H(b)= %.2f" +
