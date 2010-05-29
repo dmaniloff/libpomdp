@@ -76,6 +76,9 @@ public class orNode {
     public double oneStepDeltaLower;
     public double oneStepDeltaUpper;
 
+    /// best action after one-step lookahead
+    public int oneStepBestAction;
+
     /// backupCandidate \max_{b \in T} b_{backupHeuristic}
     /// reference to the best backup node
     /// according to a given backup heuristic
@@ -95,22 +98,24 @@ public class orNode {
 
     /// initializer
     public void init(belState belief, int observation, andNode parent) {
-	this.belief       = belief;
-	this.obs          = observation;
+	this.belief            = belief;
+	this.obs               = observation;
 	// parent and depth
-	this.parent       = parent;
+	this.parent            = parent;
 	if (parent != null) 
-	    this.depth    = parent.getParent().depth + 1;
-	this.children     = null;
+	    this.depth         = parent.getParent().depth + 1;
+	this.children          = null;
 	// best reference upon creation is to itself
-	this.bStar        = this;
+	this.bStar             = this;
 	// initialize one-step improvement 
 	this.oneStepDeltaLower = -1;
 	this.oneStepDeltaUpper = -1;
+	// initialize one-step best action
+	this.oneStepBestAction = -1;
 	// backup heuristic
-	this.bakCandidate = this;
-	this.bakHeuristic = -1;
-	this.bakHeuristicStar = -1;
+	this.bakCandidate      = this;
+	this.bakHeuristic      = -1;
+	this.bakHeuristicStar  = -1;
 	// size of the subtree rooted here
 	this.subTreeSize  = 0;
     }
