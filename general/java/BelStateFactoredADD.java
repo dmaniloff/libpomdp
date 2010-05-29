@@ -1,7 +1,7 @@
 /** ------------------------------------------------------------------------- *
  * libpomdp
  * ========
- * File: .java
+ * File: BelStateFactoredADD.java
  * Description: implements belState via the product of marginals with ADDs
  *              uses Popuart's implementation from Symbolic Perseus
  * Copyright (c) 2009, 2010 Diego Maniloff 
@@ -30,6 +30,12 @@ public class BelStateFactoredADD implements belState {
 	this.poba      = poba;
     }
 
+    // constructor without poba
+    public BelStateFactoredADD(DD m[], int staIds[]) {
+	this.marginals = m;
+	this.staIds    = staIds;	
+    }
+
     // compute this only if we actually need it
     public double[] getbPoint() {
 	return	OP.convert2array(OP.multN(marginals), staIds);
@@ -37,6 +43,10 @@ public class BelStateFactoredADD implements belState {
 
     public double getpoba() {
 	return poba;
+    }
+
+    public void setpoba(double poba) {
+	this.poba = poba;
     }
 
     public int getplanid() {

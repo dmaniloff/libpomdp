@@ -199,13 +199,13 @@ for run = 1:TOTALRUNS
                                      factoredProb.getnrObsV(), ...
                                      factoredProb.getobsArity()); 
             % compute an exact update of the new belief we will move into...this should not matter for RS!
-            bPrime = factoredProb.factoredtao(rootNode.belief,a-1,o-1);
+            % bPrime = factoredProb.factoredtao(rootNode.belief,a-1,o-1);
             % move the tree's root node
             aoTree.moveTree(rootNode.children(a).children(o)); 
             % update reference to rootNode
             rootNode = aoTree.getRoot();
             % replace its factored belief by an exact one....this should not matter for RS!
-            rootNode.belief = bPrime;
+            % rootNode.belief = bPrime;
             
             fprintf(1, 'Tree moved, reused |T|:         %d\n', rootNode.subTreeSize);
             all.stats{run}.ep{ep}.reusedT(end+1)  = rootNode.subTreeSize;

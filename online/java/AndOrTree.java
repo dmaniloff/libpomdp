@@ -63,11 +63,13 @@ public class AndOrTree {
 	    System.err.println("node not on fringe");
 	    return;
 	}
-	// save this node's old bounds
- 	double old_l = en.l;
-	double old_u = en.u;
 	// iterators
 	int action, observation;
+	// poba vector for each action
+	double pOba[];
+	// save this node's old bounds
+ 	double old_l = en.l;
+	double old_u = en.u;	
 	// allocate space for the children AND nodes (do we have to do this here?)
 	en.children = new andNode[problem.getnrAct()];
 	for(action=0; action<problem.getnrAct(); action++) 
@@ -82,18 +84,26 @@ public class AndOrTree {
 	    a.children = new orNode[problem.getnrObs()];
 	    for(observation=0; observation<problem.getnrObs(); observation++)
 		a.children[observation] = new orNode();
+	    // pre-compute observation probabilities
+	    pOba = problem.P_Oba(en.belief, action);
 	    // iterate through new fringe nodes
 	    // start observations at zero 
 	    observation = 0;
 	    for (orNode o : a.children) {
-		// initialize this node
-		// the belief property contains bPoint and poba
-		o.init(problem.factoredtao(en.belief,action,observation), observation, a);
-	       	
+		// ZERO-PROB OBSERVATIONS:
+		// here we should continue the loop and avoid re-computing V^L and V^U
+		// for belief nodes with poba == 0              
+		if (pOba[observation] == 0) {
+		    a.children[observation] = null;
+		    observation++;
+		    continue;
+		} 
+		// initialize this node with factored belief, set its poba
+		o.init(problem.factoredtao(en.belief,action,observation), observation, a);		
+		((BelStateFactoredADD)o.belief).setpoba(pOba[observation]);
 		// compute upper and lower bounds for this node
 		o.u = offlineUpper.V(o.belief);
-		o.l = offlineLower.V(o.belief);
-		
+		o.l = offlineLower.V(o.belief);		
 		// H(b)
 		o.h_b = expH.h_b(o);
 		// H(b,a,o)	
@@ -182,7 +192,6 @@ public class AndOrTree {
 	    // increase subtree size by the branching factor |A||O|
 	    o.subTreeSize += problem.getnrAct() * problem.getnrObs();
 	    // iterate
-	    // n = n.getParent().getParent();
 	    n = o;
 	}
     } // updateAncestors
@@ -261,8 +270,8 @@ public class AndOrTree {
     protected double ANDpropagateL(andNode a) {
 	double Lba = 0;
 	for(orNode o : a.children) {
-	    // if(o != null) 
-	    Lba += o.belief.getpoba() * o.l;
+	    // o.belief.getpoba() == 0 for null orNodes anyway
+	    if(o != null) Lba += o.belief.getpoba() * o.l;
 	}
 	return a.rba + problem.getGamma() * Lba;
     }
@@ -271,8 +280,8 @@ public class AndOrTree {
     protected double ANDpropagateU(andNode a) {
 	double Uba = 0;
 	for(orNode o : a.children) {
-	    // if(o != null) 
-	    Uba += o.belief.getpoba() * o.u;
+	    // o.belief.getpoba() == 0 for null orNodes anyway
+	    if(o != null) Uba += o.belief.getpoba() * o.u;
 	}
 	return a.rba + problem.getGamma() * Uba;
     }
@@ -379,18 +388,9 @@ public class AndOrTree {
     private void orprint(orNode o, PrintStream out) {
 	// print this node
 	String b = "";
-	DD     m[];
-	if (!(o.belief instanceof BelStateFactoredADD)) {
-	    b = "b=[\\n " + 
-		DoubleArray.toString("%.2f",o.belief.getbPoint()) + 
-		"]\\n";
-	} else {
-	    m = ((BelStateFactoredADD)o.belief).marginals;
-	    b = "b=[\\n ";
-	    for (int i=0;i<problem.getnrStaV();i++)
-		//b = b.concat(m[i].display());
-	    b = b.concat("]\\n");
-	}
+	b = "b=[\\n " + 
+	    DoubleArray.toString("%.2f",o.belief.getbPoint()) + 
+	    "]\\n";
 	out.format(o.hashCode() + "[label=\"" +
 		   //b +
 		   "U(b)= %.2f\\n" +

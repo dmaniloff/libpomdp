@@ -140,17 +140,26 @@ public class pomdpAdd implements pomdp {
     /**
      * P(o|b,a) in vector form for all o's
      * use ADDs and convert to array
-     * [not used anymore since we get this from tao(.)]
+     * used with factoredtao
      */
     public double[] P_Oba(belState bel, int a) {
 	// obtain subclass and the dd for this belief
-	DD b = ((belStateAdd)bel).bAdd;	
-	DD pObadd;
-	double[]pOba;
-	DD[] vars   = concat(b, T[a], O[a]);
+	//DD b = ((belStateAdd)bel).bAdd;
+	// declarations
+	DD     b1[];
+	DD     pObadd;
+	double pOba[];
+	if (bel instanceof belStateAdd) {
+	    b1 = new DD[1];
+	    b1[0] = ((belStateAdd)bel).bAdd;
+	} else {
+	    b1 = ((BelStateFactoredADD)bel).marginals;
+	}
+	// O_a * T_a * b1
+	DD[]  vars  = concat(b1, T[a], O[a]);
 	int[] svars = IntegerArray.merge(staIds, staIdsPr);
 	pObadd      = OP.addMultVarElim(vars, svars);
-	pOba        = OP.convert2array(pObadd,obsIdsPr);
+	pOba        = OP.convert2array(pObadd, obsIdsPr);
 	return pOba;
     }
 
@@ -208,7 +217,6 @@ public class pomdpAdd implements pomdp {
 	belState bPrime;
 	DD       O_o[];
 	int      oc[][];
-
 	// obtain subclass and the dd for this belief 
 	// if this is the root belief it will be a belStateAdd
 	// from here on, all beliefs will be approximated using
@@ -228,16 +236,8 @@ public class pomdpAdd implements pomdp {
 	b2 = OP.marginals(vars, staIdsPr, staIds);
 	// unprime the b2 DD 
 	b2 = OP.primeVarsN(b2, -nrTotV);
-	// get P(o|b,a) - make sure this is right!!
-	oProb = b2[nrStaV];
-	// make sure we can normalize
-	if (oProb.getVal() < 0.00001) {
-	    // this branch will have poba = 0.0 - also reset to init
-	    bPrime = initBelief;
-	} else {
-	    // no need to normalize, done inside OP.marginals()	    
-	    bPrime = new BelStateFactoredADD(b2, staIds, oProb.getVal());
-	}
+	// no need to normalize, done inside OP.marginals()	    
+	bPrime = new BelStateFactoredADD(b2, staIds);
 	// return
 	return bPrime;
     }
