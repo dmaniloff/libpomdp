@@ -132,7 +132,6 @@ for run = 1:TOTALRUNS
             if rootNode.belief.getClass.toString == 'class BelStateFactoredADD'
               fprintf(1, 'Current belief agree prob:      %d\n', ...                       
                       OP.evalN(rootNode.belief.marginals, factoredS));
-                      %OP.eval(OP.multN(rootNode.belief.marginals), factoredS));
             else
               fprintf(1, 'Current belief agree prob:      %d\n', ... 
                       OP.eval(rootNode.belief.bAdd, factoredS));

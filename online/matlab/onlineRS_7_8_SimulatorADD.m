@@ -50,8 +50,6 @@ load 'saved-data/rocksample/qmdpSymPerseus_RockSample_7_8.mat';
 % instantiate an aems2 heuristic object
 aems2h  = aems2(factoredProb);
 
-pause
-
 %% play the pomdp
 diary(['simulation-logs/rocksample/marginals/7-8-online-run-AEMS2-',date,'.log']);
 
@@ -124,7 +122,6 @@ for run = 1:TOTALRUNS
             if rootNode.belief.getClass.toString == 'class BelStateFactoredADD'
               fprintf(1, 'Current belief agree prob:      %d\n', ...                       
                       OP.evalN(rootNode.belief.marginals, factoredS));
-                      %OP.eval(OP.multN(rootNode.belief.marginals), factoredS));
             else
               fprintf(1, 'Current belief agree prob:      %d\n', ... 
                       OP.eval(rootNode.belief.bAdd, factoredS));

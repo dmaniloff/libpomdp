@@ -49,7 +49,7 @@ dosih   = DOSI(factoredProb);
 %% play the pomdp - set the main parameter first
 REUSETHRESHOLD    = 0.3;
 
-logFilename = sprintf('simulation-logs/rocksample/realtime-LOG-7-8-rs-%s-DOSI-%.1freuse-ADD.log',...
+logFilename = sprintf('simulation-logs/rocksample/marginals/realtime-LOG-7-8-rs-%s-DOSI-%.1freuse-ADD.log',...
                       date, REUSETHRESHOLD);
 
 diary(logFilename);
@@ -128,7 +128,13 @@ for run = 1:TOTALRUNS
             tc = cell(factoredProb.printS(factoredS));
             fprintf(1, 'Current world state is:         %s\n', tc{1});
             drawer.drawState(GRID_SIZE, ROCK_POSITIONS, factoredS);
-            fprintf(1, 'Current belief agree prob:      %d\n', OP.eval(rootNode.belief.bAdd, factoredS));
+            if rootNode.belief.getClass.toString == 'class BelStateFactoredADD'
+              fprintf(1, 'Current belief agree prob:      %d\n', ...                       
+                      OP.evalN(rootNode.belief.marginals, factoredS));
+            else
+              fprintf(1, 'Current belief agree prob:      %d\n', ... 
+                      OP.eval(rootNode.belief.bAdd, factoredS));
+            end
             fprintf(1, 'Current |T| is:                 %d\n', rootNode.subTreeSize);
 
             % reset expand counter
@@ -264,6 +270,6 @@ end % runs loop
 
 % save statistics before quitting
 statsFilename = ...
-    sprintf('simulation-logs/rocksample/realtime-ALLSTATS-7-8-rs-%s-DOSI-%.1freuse-ADD.mat',...
+    sprintf('simulation-logs/rocksample/marginals/realtime-ALLSTATS-7-8-rs-%s-DOSI-%.1freuse-ADD.mat',...
             date, REUSETHRESHOLD);
 save(statsFilename, 'all');
