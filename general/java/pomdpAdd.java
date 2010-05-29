@@ -213,6 +213,7 @@ public class pomdpAdd implements pomdp {
 	// declarations
 	DD       b1[];	
 	DD       b2[];
+	DD       b2u[] = new DD[nrStaV];
 	DD       oProb;
 	belState bPrime;
 	DD       O_o[];
@@ -235,9 +236,9 @@ public class pomdpAdd implements pomdp {
     	// compute var elim on O * T * b
 	b2 = OP.marginals(vars, staIdsPr, staIds);
 	// unprime the b2 DD 
-	b2 = OP.primeVarsN(b2, -nrTotV);
+	for(int i=0; i<nrStaV; i++) b2u[i] = OP.primeVars(b2[i], -nrTotV);
 	// no need to normalize, done inside OP.marginals()	    
-	bPrime = new BelStateFactoredADD(b2, staIds);
+	bPrime = new BelStateFactoredADD(b2u, staIds);
 	// return
 	return bPrime;
     }

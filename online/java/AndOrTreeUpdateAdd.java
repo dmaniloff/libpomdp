@@ -46,12 +46,14 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 	if (en.children != null) { 
 	    System.err.println("node cannot be expanded");
 	    return;
-	}
+	}	
+	// iterators
+	int action, observation;
+	// poba vector for each action
+	double pOba[];
 	// save this node's old bounds
  	double old_l = en.l;
 	double old_u = en.u;
-	// iterators
-	int action, observation;
 	// allocate space for the children AND nodes (do we have to do this here?)
 	en.children = new andNode[problem.getnrAct()];
 	for(action=0; action<problem.getnrAct(); action++) 
@@ -67,21 +69,29 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 	    a.children = new orNode[problem.getnrObs()];
 	    for(observation=0; observation<problem.getnrObs(); observation++)
 		a.children[observation] = new orNode();
-
+	    // pre-compute observation probabilities
+	    pOba = problem.P_Oba(en.belief, action);
 	    // iterate through new fringe nodes
 	    // start observations at zero 
-	    //int numnull = 0;
 	    observation = 0;
 	    for (orNode o : a.children) {
-		// initialize this node, factored representation using marginals
-		// the belief property contains bPoint and poba
+		// ZERO-PROB OBSERVATIONS:
+		// here we should continue the loop and avoid re-computing V^L and V^U
+		// for belief nodes with poba == 0              
+		if (pOba[observation] == 0) {
+		    a.children[observation] = null;
+		    observation++;
+		    continue;
+		} 
+		// initialize this node with factored belief, set its poba		
 		o.init(problem.factoredtao(en.belief,action,observation), observation, a);
-		
-		// compute upper and lower bounds for this node - this sets planid too
+		((BelStateFactoredADD)o.belief).setpoba(pOba[observation]);		
+		// compute upper and lower bounds for this node
 		o.u = offlineUpper.V(o.belief);		
 		o.l = offlineLower.V(o.belief);
-		if(o.l == -1) {System.err.println("bad lower!!!");break;}
-		
+		// save one valid plan id for this andNode
+		// may be saved multiple times, but it's ok
+		a.validPlanid = o.belief.getplanid();
 		// H(b)
 		o.h_b = expH.h_b(o);
 		// H(b,a,o)	
@@ -94,7 +104,6 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 		observation++;
 	    } // orNode loop
 
-	     
 	    // L(b,a) = R(b,a) + \gamma \sum_o P(o|b,a)L(tao(b,a,o))
 	    a.l = ANDpropagateL(a);
 	    a.u = ANDpropagateU(a); 
@@ -104,6 +113,10 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 	    a.hStar = expH.hANDStar(a); 
 	    // b*(b,a) - propagate ref of b*
 	    a.bStar = a.children[a.oStar].bStar;
+	    
+	    // the backup candidate and bakheursitic stay as in the
+	    // initialization of the andNode since none of its children
+	    // can be backed-up given that they are all fringe nodes	    
 	    
 	    // iterate
 	    action++;
@@ -124,13 +137,15 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 	// update reference to best fringe node in the subtree of en
 	en.bStar = en.children[en.aStar].bStar;
 	// the number of nodes under en increases by |A||O|
-	en.subTreeSize += problem.getnrAct() * problem.getnrObs();
+	en.subTreeSize += problem.getnrAct() * problem.getnrObs();	
 	// one-step improvement
 	en.oneStepDeltaLower = en.l - old_l;
 	en.oneStepDeltaUpper = en.u - old_u;
 	if(en.oneStepDeltaLower < 0) {
 	    System.err.println("Hmmmmmmmmmmm");
 	}
+	// one-step best action
+	en.oneStepBestAction = currentBestActionAtNode(en);	
 	// compute backup heuristic for this newly expanded node
 	en.bakHeuristic = bakH.h_b(en); 
 	// the backup candidate is still itself and it has its own value as best
@@ -225,26 +240,37 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 	// decls
 	DD gamma  = DDleaf.myNew(problem.getGamma());
 	DD gab    = DD.zero;		
-	int bestA = currentBestActionAtNode(on); // consider caching this value maybe
+	//int bestA = currentBestActionAtNode(on); // consider caching this value maybe
+	int obs   = 0;
 	DD lowerBound [] = ((valueFunctionAdd)offlineLower).getvAdd();
 	// \sum_o g_{a,o}^i
-	for(orNode o : on.children[bestA].children) {
-	    //if(o==null) continue;
-	    // compute g_{a,o}^{planid}
-	    gab = OP.add(gab, problem.
-			 gao(lowerBound[o.belief.getplanid()], bestA, o.getobs()));
+	for(orNode o : on.children[on.oneStepBestAction].children) {
+	    if(o==null) {
+		// in this case we use any valid supporting alpha to compute g_{a,o}^{i}
+		gab = OP.add(gab, problem.
+			     gao(lowerBound[on.children[on.oneStepBestAction].validPlanid], 
+				 on.oneStepBestAction, 
+				 obs));
+	    } else {
+		// compute g_{a,o}^{planid}
+		gab = OP.add(gab, problem.
+			     gao(lowerBound[o.belief.getplanid()], 
+				 on.oneStepBestAction, 
+				 obs));
+	    }
+	    // iterate counter
+	    obs++;
 	}    
 	// multiply result by discount factor and add it to r_a
 	gab = OP.mult(gamma, gab);
-	gab = OP.add(problem.R[bestA], gab);
+	gab = OP.add(problem.R[on.oneStepBestAction], gab);
 	// add newly computed vector to the tree's offline lower bound - NO PRUNING FOR NOW
 	valueFunctionAdd newLB = new valueFunctionAdd(Common.append(lowerBound, gab), 
 				    problem.staIds,
 				    IntegerArray.merge(offlineLower.getActions(), 
-						       new int[] {bestA}));
+						       new int[] {on.oneStepBestAction}));
 	offlineLower = newLB;
 	// return 
-	//return OP.convert2array(gab, problem.staIds);
 	return newLB;
 	// how about coding a union operation in valueFunction?
 	// this function does not watch for repeated vectors yet
@@ -261,8 +287,8 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 	int bestA   = currentBestAction();
 	double expR = 0;
 	for(orNode o : root.children[bestA].children) {
-	    //if(o!=null) 
-	    expR += o.belief.getpoba() * o.subTreeSize;
+	    // null nodes do not contribute to this sum
+	    if(o!=null) expR += o.belief.getpoba() * o.subTreeSize;
 	}
 	return expR;
     } // expectedReuse
@@ -302,7 +328,7 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 	if (o.belief.getbPoint().length < 4)
 	    b = "b=[" + DoubleArray.toString("%.2f",o.belief.getbPoint()) + "]\\n";
 	out.format(o.hashCode() + "[label=\"" +
-		   b +
+		   //b +
 		   "U(b)= %.2f\\n" +
 		   "L(b)= %.2f\\n" + 
 		   "expH(b)= %.2f\\n" +
@@ -340,16 +366,15 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 	
 	// print outgoing edges for this node
 	for(orNode o : a.children) {
-	    out.format(a.hashCode() + "->" + o.hashCode() + 
-		       "[label=\"" +
-		       "obs: " + problem.getobsStr(o.getobs()) + "\\n" +
-		       "P(o|b,a)= %.2f\\n" + 
-		       "H(b,a,o)= %.2f" +  
-		       "\"];",
-		       //problem.P_oba(o.getobs(), a.getParent().belief,a.getact()),
-		       //a.poba[o.getobs()],
-		       o.belief.getpoba(),
-		       o.h_bao);
+	    if (!(o==null))
+		out.format(a.hashCode() + "->" + o.hashCode() + 
+			   "[label=\"" +
+			   "obs: " + problem.getobsStr(o.getobs()) + "\\n" +
+			   "P(o|b,a)= %.2f\\n" + 
+			   "H(b,a,o)= %.2f" +  
+			   "\"];",
+			   o.belief.getpoba(),
+			   o.h_bao);
 	}
 	out.println();
 
@@ -358,7 +383,7 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 		    "[label=\"bakCandidate\",weight=0,color=orange];");
 
 	// recurse
-	for(orNode o : a.children) orprint(o,out);
+	for(orNode o : a.children) if(!(o==null)) orprint(o,out);
     }
 
 

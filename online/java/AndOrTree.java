@@ -99,7 +99,7 @@ public class AndOrTree {
 		    continue;
 		} 
 		// initialize this node with factored belief, set its poba
-		o.init(problem.factoredtao(en.belief,action,observation), observation, a);		
+		o.init(problem.factoredtao(en.belief,action,observation), observation, a);
 		((BelStateFactoredADD)o.belief).setpoba(pOba[observation]);
 		// compute upper and lower bounds for this node
 		o.u = offlineUpper.V(o.belief);
@@ -424,18 +424,19 @@ public class AndOrTree {
 		   "\"];\n", a.u, a.l);
 	// print outgoing edges for this node
 	for(orNode o : a.children) {
-	    out.format(a.hashCode() + "->" + o.hashCode() + 
-		       "[label=\"" +
-		       "obs: " + problem.getobsStr(o.getobs()) + "\\n" +
-		       "P(o|b,a)= %.2f\\n" + 
-		       "H(b,a,o)= %.2f" +  
-		       "\"];\n",
-		       o.belief.getpoba(),
-		       o.h_bao);
+	    if (!(o==null))		
+		out.format(a.hashCode() + "->" + o.hashCode() + 
+			   "[label=\"" +
+			   "obs: " + problem.getobsStr(o.getobs()) + "\\n" +
+			   "P(o|b,a)= %.2f\\n" + 
+			   "H(b,a,o)= %.2f" +  
+			   "\"];\n",
+			   o.belief.getpoba(),
+			   o.h_bao);
 	}
 	out.println();
 	// recurse
-	for(orNode o : a.children) orprint(o,out);
+	for(orNode o : a.children) if(!(o==null)) orprint(o,out);
     }
 
 } // AndOrTree

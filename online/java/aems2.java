@@ -28,11 +28,11 @@ public class aems2 implements expandHeuristic {
    
     /// H(b)
     public double h_b(orNode o) {
-	// if(o.u - o.l < 0) System.err.println("bad H(b) at ornode" + o.getobs()  + 
-	// 					     " parent is action " + o.getParent().getAct()
-	// 					     + " hbis: "+ (o.u - o.l));
-	// 	System.err.println("upper is" + o.u);
-	// 	System.err.println("lower is" + o.l);
+// 	if(o.u - o.l < 0) System.err.println("bad H(b) at ornode" + o.getobs()  + 
+// 					     " parent is action " + o.getParent().getAct()
+// 					     + " hb is: "+ (o.u - o.l));
+// 	System.err.println("upper is" + o.u);
+// 	System.err.println("lower is" + o.l);
 	return o.u - o.l;
     }
 
