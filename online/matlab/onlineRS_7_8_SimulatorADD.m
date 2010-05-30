@@ -27,7 +27,7 @@ javaaddpath '../../online/java'
 
 %% load problem parameters - factored representation
 factoredProb = pomdpAdd  ('../../problems/rocksample/7-8/RockSample_7_8.SPUDD');
-% symDD        = parsePOMDP('../../general/problems/rocksample/7-8/RockSample_7_8.SPUDD');
+% symDD        = parsePOMDP('../../problems/rocksample/7-8/RockSample_7_8.SPUDD');
 
 %% compute offline lower and upper bounds
 % blindCalc = blindAdd;
@@ -71,7 +71,6 @@ cumR              = [];
 all.avcumrews     = [];
 all.avTs          = [];
 all.avreusedTs    = [];
-all.avplantimes   = [];
 all.avexps        = [];
 all.avfoundeopt   = [];
 
@@ -87,7 +86,6 @@ for run = 1:TOTALRUNS
     all.stats{run}.foundeopt    = [];
     all.stats{run}.meanT        = [];
     all.stats{run}.meanreusedT  = [];
-    all.stats{run}.meanplantime = [];
     all.stats{run}.meanexps     = [];
     
     % start this run
@@ -111,7 +109,6 @@ for run = 1:TOTALRUNS
         all.stats{run}.ep{ep}.exps     = [];
         all.stats{run}.ep{ep}.T        = [];
         all.stats{run}.ep{ep}.reusedT  = [];
-        all.stats{run}.ep{ep}.plantime = [];
         
         for iter = 1:MAXEPISODELENGTH
             
@@ -151,8 +148,6 @@ for run = 1:TOTALRUNS
                 end
             end
             
-            % save planning time (not very accurate)
-            all.stats{run}.ep{ep}.plantime(end+1) = toc;
 
             % obtain the best action for the root
             % remember that a's and o's in matlab should start from 1
@@ -217,7 +212,6 @@ for run = 1:TOTALRUNS
         all.stats{run}.foundeopt   (end+1) = fndO;
         all.stats{run}.meanT       (end+1) = mean(all.stats{run}.ep{ep}.T);
         all.stats{run}.meanreusedT (end+1) = mean(all.stats{run}.ep{ep}.reusedT);
-        all.stats{run}.meanplantime(end+1) = mean(all.stats{run}.ep{ep}.plantime);
         all.stats{run}.meanexps    (end+1) = mean(all.stats{run}.ep{ep}.exps);
         %pause
         
@@ -228,7 +222,6 @@ for run = 1:TOTALRUNS
     all.avfoundeopt(end+1) = mean(all.stats{run}.foundeopt);
     all.avTs       (end+1) = mean(all.stats{run}.meanT);
     all.avreusedTs (end+1) = mean(all.stats{run}.meanreusedT);
-    all.avplantimes(end+1) = mean(all.stats{run}.meanplantime);
     all.avexps     (end+1) = mean(all.stats{run}.meanexps);
     
 end % runs loop

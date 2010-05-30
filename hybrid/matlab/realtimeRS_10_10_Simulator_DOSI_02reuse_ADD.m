@@ -1,12 +1,9 @@
 % --------------------------------------------------------------------------- %
 % libpomdp
 % ========
-% File: .m
-% Description: m script to instantiate aoTree and heuristic objects to combine
-%              them with different lower bounds -
-%              uses part of Spaan's and Poupart's packages - see README
-%              references [1,5]
-% Copyright (c) 2009, 2010 Diego Maniloff
+% File: realtimeRS_7_8_Simulator_DOSI_01reuse_ADD.m
+% Description: online agent simulator with updates to the offline bounds
+% Copyright (c) 2010, Diego Maniloff
 % W3: http://www.cs.uic.edu/~dmanilof
 % --------------------------------------------------------------------------- %
 %% preparation
@@ -22,10 +19,10 @@ javaaddpath '../../offline/java'
 javaaddpath '../../online/java'
 
 % add to the matlab path
-% addpath     '../../../external/symPerseusMatlab' -end
+% addpath     '../../external/symPerseusMatlab' -end
 % addpath     '../../offline/matlab' -end
 
-%% load problem parameters - factored representation
+%% load problem
 factoredProb = pomdpAdd  ('../../problems/rocksample/10-10/RockSample_10_10.SPUDD');
 % symDD        = parsePOMDP('../../problems/rocksample/10-10/RockSample_10_10.SPUDD');
 
@@ -46,12 +43,17 @@ load 'saved-data/rocksample/blindAdd_RockSample_10_10.mat';
 % load 'saved-data/qmdpAdd_RockSample_7_8.mat';
 load 'saved-data/rocksample/qmdpSymPerseus_RockSample_10_10.mat';
 
-%% create heuristic search AND-OR tree
-% instantiate an aems2 heuristic object
+%% create heuristics
 aems2h  = aems2(factoredProb);
+dosih   = DOSI(factoredProb);
 
-%% play the pomdp
-diary(['simulation-logs/rocksample/marginals/10-10-online-run-AEMS2-',date,'.log']);
+%% play the pomdp - set the main parameter first
+REUSETHRESHOLD    = 0.2;
+
+logFilename = sprintf('simulation-logs/rocksample/marginals/realtime-LOG-10-10-rs-%s-DOSI-%.1freuse-ADD.log',...
+                      date, REUSETHRESHOLD);
+
+diary(logFilename);
 
 % rocksample parameters for the grapher
 GRID_SIZE         = 10;
@@ -61,32 +63,40 @@ drawer            = rocksampleGraph;
 NUM_ROCKS         = size(ROCK_POSITIONS,1);
 
 % parameters
+EPSILON_ACT_TH    = 1e-3;
 EPISODECOUNT      = 10;
-MAXPLANNINGTIME   = 1.0;
 MAXEPISODELENGTH  = 100;
 TOTALRUNS         = 2^NUM_ROCKS;
+EXPANSIONTIME     = 0.9;
+BACKUPTIME        = 0.1;
+TOTALPLANNINGTIME = 1.0;  
+
 
 % stats
 cumR              = [];
 all.avcumrews     = [];
 all.avTs          = [];
 all.avreusedTs    = [];
+all.avbackuptimes = [];
 all.avexps        = [];
+all.avbackups     = [];
 all.avfoundeopt   = [];
-
 
 
 for run = 1:TOTALRUNS
     
-    fprintf(1, '///////////////////////////// RUN %d of %d \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\n',...
+    fprintf(1, '///////////////////////////// UPDATE RUN %d of %d \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\n',...
         run, TOTALRUNS);
     
     % stats
-    all.stats{run}.cumrews      = [];
-    all.stats{run}.foundeopt    = [];
-    all.stats{run}.meanT        = [];
-    all.stats{run}.meanreusedT  = [];
-    all.stats{run}.meanexps     = [];
+    all.stats{run}.cumrews        = [];
+    all.stats{run}.backups        = [];
+    all.stats{run}.foundeopt      = [];
+    all.stats{run}.meanT          = [];
+    all.stats{run}.meanreusedT    = [];
+    all.stats{run}.meanbackuptime = [];
+    all.stats{run}.meanexps       = [];
+    
     
     % start this run
     for ep = 1:EPISODECOUNT
@@ -95,77 +105,109 @@ for run = 1:TOTALRUNS
         
         % re - initialize tree at starting belief
         aoTree = [];
-        aoTree = AndOrTree(factoredProb, aems2h, lBound, uBound);
+        aoTree = AndOrTreeUpdateAdd(factoredProb, aems2h, dosih, lBound, uBound);
         aoTree.init(factoredProb.getInit());
         rootNode = aoTree.getRoot();
 
         % starting state for this set of EPISODECOUNT episodes
-        factoredS = [factoredProb.staIds' ; 1 + SARTING_POS, 1 + bitget((run-1), NUM_ROCKS:-1:1)];
+        factoredS = [factoredProb.staIds' ; ...
+                     1 + SARTING_POS, 1 + bitget((run-1), NUM_ROCKS:-1:1)];
         
         % stats
         cumR = 0;
+        bakC = 0;
         fndO = 0;
-        all.stats{run}.ep{ep}.R        = [];
-        all.stats{run}.ep{ep}.exps     = [];
-        all.stats{run}.ep{ep}.T        = [];
-        all.stats{run}.ep{ep}.reusedT  = [];
+        all.stats{run}.ep{ep}.R          = [];
+        all.stats{run}.ep{ep}.exps       = [];
+        all.stats{run}.ep{ep}.T          = [];
+        all.stats{run}.ep{ep}.reusedT    = [];
+        all.stats{run}.ep{ep}.backuptime = [];
         
         for iter = 1:MAXEPISODELENGTH
             
             fprintf(1, '******************** INSTANCE %d ********************\n', iter);
             tc = cell(factoredProb.printS(factoredS));
             fprintf(1, 'Current world state is:         %s\n', tc{1});
-            drawer.drawState(GRID_SIZE, ROCK_POSITIONS,factoredS);
+            drawer.drawState(GRID_SIZE, ROCK_POSITIONS, factoredS);
             if rootNode.belief.getClass.toString == 'class BelStateFactoredADD'
               fprintf(1, 'Current belief agree prob:      %d\n', ...                       
                       OP.evalN(rootNode.belief.marginals, factoredS));
             else
               fprintf(1, 'Current belief agree prob:      %d\n', ... 
                       OP.eval(rootNode.belief.bAdd, factoredS));
-            end            
+            end
             fprintf(1, 'Current |T| is:                 %d\n', rootNode.subTreeSize);
 
             % reset expand counter
             expC = 0;
             
-            % start stopwatch
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            % start stopwatch for expansions
             tic
-            while toc < MAXPLANNINGTIME
+            while toc < EXPANSIONTIME
                 % expand best node
                 aoTree.expand(rootNode.bStar);
                 % update its ancestors
                 aoTree.updateAncestors(rootNode.bStar);
                 % expand counter
                 expC = expC + 1;
-                % check whether we found an e-optimal action - there is another criteria
-                % here too!!
-                %if (abs(rootNode.u-rootNode.l) < 1e-3)
-                if (aoTree.currentBestActionIsOptimal(1e-3))
-                    toc
-                    fprintf(1, 'Found e-optimal action, aborting expansions\n');
-                    fndO = fndO + 1;
-                    break;
+            end
+            
+            % obtain the best action for the root
+            % remember that a's and o's in matlab should start from 1
+            % a = aoTree.currentBestAction();
+            % a = a + 1;
+            
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            % UPDATE decision comes here 
+            if(aoTree.expectedReuseRatio() > REUSETHRESHOLD && ...
+                    rootNode.children(aoTree.currentBestAction() + 1).bakHeuristicStar > 0)
+                % bakup at best node according to heuristic
+                tic
+                aoTree.backupLowerAtNode(...
+                    rootNode.children(aoTree.currentBestAction() + ...
+                                      1).bakCandidate);
+                all.stats{run}.ep{ep}.backuptime(end+1) = toc;
+                bakC = bakC + 1;
+            else
+            % if not, continue expanding for the remaining 0.1 secs
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    
+                tic
+                while toc < BACKUPTIME
+                    % expand best node
+                    aoTree.expand(rootNode.bStar);
+                    % update its ancestors
+                    aoTree.updateAncestors(rootNode.bStar);
+                    % expand counter
+                    expC = expC + 1;
                 end
+            end
+            
+            % check whether we found an e-optimal action, either in the
+            % EXPANSIONTIME slot or in the TOTALPLANNINGTIME slot
+            if (aoTree.currentBestActionIsOptimal(EPSILON_ACT_TH))
+                fprintf(1, 'Achieved e-optimal action!\n');
+                fndO = fndO + 1;
             end
             
             % obtain the best action for the root
             % remember that a's and o's in matlab should start from 1
             a = aoTree.currentBestAction();
             a = a + 1;
-
-            % execute it and receive new o
+            
+            % execute best action and receive new o
             restrictedT = OP.restrictN(factoredProb.T(a), factoredS);
             factoredS1  = OP.sampleMultinomial(restrictedT, factoredProb.staIdsPr);
             restrictedO = OP.restrictN(factoredProb.O(a), [factoredS, factoredS1]);
             factoredO   = OP.sampleMultinomial(restrictedO, factoredProb.obsIdsPr);
 
-
             % save stats
-            all.stats{run}.ep{ep}.R(end+1)     = OP.eval(factoredProb.R(a), factoredS);
-            all.stats{run}.ep{ep}.T(end+1)     = rootNode.subTreeSize;
+            all.stats{run}.ep{ep}.exps(end+1)  = expC;
+            all.stats{run}.ep{ep}.R   (end+1)  = OP.eval(factoredProb.R(a), factoredS);
+            all.stats{run}.ep{ep}.T   (end+1)  = rootNode.subTreeSize;
             cumR = cumR + ...
                 factoredProb.getGamma^(iter - 1) * all.stats{run}.ep{ep}.R(end);
-            all.stats{run}.ep{ep}.exps(end+1)  = expC;
+            
 
             % output some stats
             fprintf(1, 'Expansion finished, # expands:  %d\n', expC);
@@ -181,49 +223,54 @@ for run = 1:TOTALRUNS
             % check whether this episode ended (terminal state)
             if(factoredS1(2,1) == GRID_SIZE+1)
                 fprintf(1, '==================== Episode ended at instance %d==================\n', iter);
-                drawer.drawState(GRID_SIZE, ROCK_POSITIONS,factoredS1);
+                drawer.drawState(GRID_SIZE, ROCK_POSITIONS, factoredS1);
                 break;
             end
 
-            % transform factoredO into absolute o 
+            %     pause;
+
+            % move the tree's root node
             o = factoredProb.sencode(factoredO(2,:), ...
                                      factoredProb.getnrObsV(), ...
                                      factoredProb.getobsArity()); 
-            % compute an exact update of the new belief we will move into...this should not matter for RS!
-            % bPrime = factoredProb.factoredtao(rootNode.belief,a-1,o-1);
-            % move the tree's root node
             aoTree.moveTree(rootNode.children(a).children(o)); 
             % update reference to rootNode
             rootNode = aoTree.getRoot();
-            % replace its factored belief by an exact one....this should not matter for RS!
-            % rootNode.belief = bPrime;
-            
+
             fprintf(1, 'Tree moved, reused |T|:         %d\n', rootNode.subTreeSize);
             all.stats{run}.ep{ep}.reusedT(end+1)  = rootNode.subTreeSize;
             
             % iterate
+            %b = b1;
             factoredS = factoredS1;
             factoredS = Config.primeVars(factoredS, -factoredProb.getnrTotV);
 
         end % time-steps loop
 
-        all.stats{run}.cumrews     (end+1) = cumR;
-        all.stats{run}.foundeopt   (end+1) = fndO;
-        all.stats{run}.meanT       (end+1) = mean(all.stats{run}.ep{ep}.T);
-        all.stats{run}.meanreusedT (end+1) = mean(all.stats{run}.ep{ep}.reusedT);
-        all.stats{run}.meanexps    (end+1) = mean(all.stats{run}.ep{ep}.exps);
+        all.stats{run}.cumrews       (end+1)   = cumR;
+        all.stats{run}.backups       (end+1)   = bakC;
+        all.stats{run}.foundeopt     (end+1)   = fndO;
+        all.stats{run}.meanT         (end+1)   = mean(all.stats{run}.ep{ep}.T);
+        all.stats{run}.meanreusedT   (end+1)   = mean(all.stats{run}.ep{ep}.reusedT);
+        all.stats{run}.meanbackuptime(end+1)   = mean(all.stats{run}.ep{ep}.backuptime);
+        all.stats{run}.meanexps      (end+1)   = mean(all.stats{run}.ep{ep}.exps);
         %pause
         
     end % episodes loop
     
     % average cum reward of this run of 20 episodes
-    all.avcumrews  (end+1) = mean(all.stats{run}.cumrews);
-    all.avfoundeopt(end+1) = mean(all.stats{run}.foundeopt);
-    all.avTs       (end+1) = mean(all.stats{run}.meanT);
-    all.avreusedTs (end+1) = mean(all.stats{run}.meanreusedT);
-    all.avexps     (end+1) = mean(all.stats{run}.meanexps);
+    all.avcumrews    (end+1)   = mean(all.stats{run}.cumrews);
+    all.avbackups    (end+1)   = mean(all.stats{run}.backups);
+    all.avfoundeopt  (end+1)   = mean(all.stats{run}.foundeopt);
+    all.avTs         (end+1)   = mean(all.stats{run}.meanT);
+    all.avreusedTs   (end+1)   = mean(all.stats{run}.meanreusedT);
+    all.avbackuptimes(end+1)   = mean(all.stats{run}.meanbackuptime);
+    all.avexps       (end+1)   = mean(all.stats{run}.meanexps);
     
 end % runs loop
 
 % save statistics before quitting
-save (['simulation-logs/rocksample/marginals/ALLSTATS-10-10-online-run-AEMS2-',date,'.mat'], 'all');
+statsFilename = ...
+    sprintf('simulation-logs/rocksample/marginals/realtime-ALLSTATS-10-10-rs-%s-DOSI-%.1freuse-ADD.mat',...
+            date, REUSETHRESHOLD);
+save(statsFilename, 'all');
