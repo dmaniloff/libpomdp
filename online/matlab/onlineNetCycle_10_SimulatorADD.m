@@ -33,7 +33,7 @@ factoredProb  = pomdpAdd  ('../../problems/network/cycle10.SPUDD');
 
 %% load them in case we have them saved
 load 'saved-data/network/blindAdd_NetCycle_10.mat';
-load 'saved-data/network/qmdpSymPerseus_NetCycle_10.mat';
+load 'saved-data/network/qmdpAdd_NetCycle_10.mat';
 
 %% create heuristic search AND-OR tree
 % instantiate an aems2 heuristic object
