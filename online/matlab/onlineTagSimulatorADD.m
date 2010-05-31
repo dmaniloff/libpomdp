@@ -57,7 +57,7 @@ drawer            = CatchGraph(10, 5, CatchTagGrid(10,5));
 COLLOCATED_REWARD = 10.0;
 
 % other parameters
-EPISODECOUNT      = 10;
+EPISODECOUNT      = 5;
 MAXPLANNINGTIME   = 1.0;
 MAXEPISODELENGTH  = 100;
 TOTALRUNS         = size(states,2);

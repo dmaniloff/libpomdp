@@ -61,7 +61,7 @@ drawer            = rocksampleGraph;
 NUM_ROCKS         = size(ROCK_POSITIONS,1);
 
 % parameters
-EPISODECOUNT      = 10;
+EPISODECOUNT      = 5;
 MAXPLANNINGTIME   = 1.0;
 MAXEPISODELENGTH  = 100;
 TOTALRUNS         = 2^NUM_ROCKS;
