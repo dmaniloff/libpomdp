@@ -50,7 +50,7 @@ end
 
 %% play the pomdp 
 
-logFilename = sprintf('simulation-logs/coffee/online-LOG-coffee-AEMS2-%s-ADD.log', date);
+logFilename = sprintf('simulation-logs/coffee/marginals/online-LOG-coffee-AEMS2-%s-ADD.log', date);
 diary(logFilename);
 
 % parameters
@@ -109,8 +109,13 @@ for run = 1:TOTALRUNS
             fprintf(1, '******************** INSTANCE %d ********************\n', iter);
             tc = cell(factoredProb.printS(factoredS));
             fprintf(1, 'Current world state is:         %s\n', tc{1});
-            fprintf(1, 'Current belief agree prob:      %d\n', ...
-                    OP.eval(rootNode.belief.bAdd, factoredS)); 
+            if rootNode.belief.getClass.toString == 'class BelStateFactoredADD'
+              fprintf(1, 'Current belief agree prob:      %d\n', ...                       
+                      OP.evalN(rootNode.belief.marginals, factoredS));
+            else
+              fprintf(1, 'Current belief agree prob:      %d\n', ... 
+                      OP.eval(rootNode.belief.bAdd, factoredS));
+            end
             fprintf(1, 'Current |T| is:                 %d\n', rootNode.subTreeSize);
 
             % reset expand counter
@@ -204,5 +209,5 @@ end % runs loop
 
 % save statistics before quitting
 statsFilename = ...
-    sprintf('simulation-logs/coffee/online-ALLSTATS-coffee-AEMS2-%s-ADD.mat', date);
+    sprintf('simulation-logs/coffee/marginals/online-ALLSTATS-coffee-AEMS2-%s-ADD.mat', date);
 save(statsFilename, 'all');
