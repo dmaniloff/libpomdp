@@ -89,9 +89,6 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 		// compute upper and lower bounds for this node
 		o.u = offlineUpper.V(o.belief);		
 		o.l = offlineLower.V(o.belief);
-		// save one valid plan id for this andNode
-		// may be saved multiple times, but it's ok
-		a.validPlanid = o.belief.getplanid();
 		// H(b)
 		o.h_b = expH.h_b(o);
 		// H(b,a,o)	
@@ -246,9 +243,9 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 	// \sum_o g_{a,o}^i
 	for(orNode o : on.children[on.oneStepBestAction].children) {
 	    if(o==null) {
-		// in this case we use any valid supporting alpha to compute g_{a,o}^{i}
+		// in this case we use the supporting vector of the parent
 		gab = OP.add(gab, problem.
-			     gao(lowerBound[on.children[on.oneStepBestAction].validPlanid], 
+			     gao(lowerBound[on.belief.getplanid()], 
 				 on.oneStepBestAction, 
 				 obs));
 	    } else {

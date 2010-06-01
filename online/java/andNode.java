@@ -49,10 +49,6 @@ public class andNode {
     /// since there may be weighting factors along the path
     public double bakHeuristicStar;
 
-    /// a plan id that is valid (part of the max planes representation)
-    /// for one of this andNode's children (any)
-    public int validPlanid;
-
     /// initializer:
     /// needs a reference to problem to call Rba
     public void init(int action, orNode parent, pomdp problem) {
@@ -62,7 +58,6 @@ public class andNode {
 	this.bStar            = null;
 	this.bakCandidate     = null;
 	this.bakHeuristicStar = -1;
-	this.validPlanid     = -1;
 	// might want to include subTreeSize for andNodes too?
     }
 
