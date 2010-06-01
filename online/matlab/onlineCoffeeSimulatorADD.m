@@ -23,7 +23,6 @@ javaaddpath '../../online/java'
 
 %% load problem parameters - factored representation
 factoredProb  = pomdpAdd  ('../../problems/coffee/coffee.90.SPUDD');
-symDD         = parsePOMDP('../../problems/coffee/coffee.90.SPUDD');
 
 %% compute offline lower and upper bounds
 blindCalc = blindAdd;
