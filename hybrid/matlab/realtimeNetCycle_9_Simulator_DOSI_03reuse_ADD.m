@@ -47,7 +47,7 @@ states(end+1) = factoredProb.getnrSta - 1;
 NUM_MACHINES      = 9;
 REUSETHRESHOLD    = 0.3;
 
-logFilename = sprintf('simulation-logs/network/realtime-LOG-NetCycle-%d-%s-DOSI-%.1freuse-ADD.log',...
+logFilename = sprintf('simulation-logs/network/marginals/realtime-LOG-NetCycle-%d-%s-DOSI-%.1freuse-ADD.log',...
                       NUM_MACHINES, date, REUSETHRESHOLD);
 diary(logFilename);
 
@@ -117,8 +117,13 @@ for run = 1:TOTALRUNS
             fprintf(1, '******************** INSTANCE %d ********************\n', iter);
             tc = cell(factoredProb.printS(factoredS));
             fprintf(1, 'Current world state is:         %s\n', tc{1});
-            fprintf(1, 'Current belief agree prob:      %d\n', ...
-                    OP.eval(rootNode.belief.bAdd, factoredS)); 
+            if rootNode.belief.getClass.toString == 'class BelStateFactoredADD'
+              fprintf(1, 'Current belief agree prob:      %d\n', ...                       
+                      OP.evalN(rootNode.belief.marginals, factoredS));
+            else
+              fprintf(1, 'Current belief agree prob:      %d\n', ... 
+                      OP.eval(rootNode.belief.bAdd, factoredS));
+            end
             fprintf(1, 'Current |T| is:                 %d\n', rootNode.subTreeSize);
 
             % reset expand counter
@@ -243,6 +248,6 @@ end % runs loop
 
 % save statistics before quitting
 statsFilename = ...
-    sprintf('simulation-logs/network/realtime-ALLSTATS-NetCycle-%d-%s-DOSI-%.1freuse-ADD.mat',...
+    sprintf('simulation-logs/network/marginals/realtime-ALLSTATS-NetCycle-%d-%s-DOSI-%.1freuse-ADD.mat',...
             NUM_MACHINES, date, REUSETHRESHOLD);
 save(statsFilename, 'all');
