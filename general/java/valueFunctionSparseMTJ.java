@@ -18,6 +18,9 @@ public class valueFunctionSparseMTJ implements valueFunction, Serializable {
     // properties
     // ------------------------------------------------------------------------
 
+    // serial id
+    static final long serialVersionUID = 4L;
+
     // represent a value function via a Matrix object
     private CompColMatrix v;
 

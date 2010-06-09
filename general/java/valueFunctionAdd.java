@@ -21,6 +21,9 @@ public class valueFunctionAdd implements valueFunction, Serializable {
     // properties
     // ------------------------------------------------------------------------
 
+    // serial id
+    static final long serialVersionUID = 5L;
+
     // represent a value function via an array of Adds
     private DD vAdd[];
 

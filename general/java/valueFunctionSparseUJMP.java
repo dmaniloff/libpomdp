@@ -20,6 +20,9 @@ public class valueFunctionSparseUJMP implements valueFunction, Serializable {
     // properties
     // ------------------------------------------------------------------------
 
+    // serial id
+    static final long serialVersionUID = 3L;
+
     // represent a value function via a Matrix object
     private DefaultSparseDoubleMatrix v;
 

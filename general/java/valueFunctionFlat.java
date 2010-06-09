@@ -17,6 +17,9 @@ public class valueFunctionFlat implements valueFunction, Serializable {
     // properties
     // ------------------------------------------------------------------------
 
+    // serial id
+    static final long serialVersionUID = 2L;
+
     // represent a value function via an array of doubles
     private double v[][];
 
