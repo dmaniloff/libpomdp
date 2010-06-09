@@ -50,9 +50,9 @@ tokens {
 @members {
     // main method
     public static void main(String[] args) throws Exception {
-        dotpomdpLexer lex = new dotpomdpLexer(new ANTLRFileStream(args[0]));
+        dotpomdpMTJLexer lex = new dotpomdpMTJLexer(new ANTLRFileStream(args[0]));
        	CommonTokenStream tokens = new CommonTokenStream(lex);
-        dotpomdpParser parser = new dotpomdpParser(tokens);
+        dotpomdpMTJParser parser = new dotpomdpMTJParser(tokens);
 
         try {
             parser.dotpomdp();
@@ -66,6 +66,7 @@ tokens {
 
     // threshold for sums of distros
     final double THRESHOLD = 1e-5;
+
     // return main structure
     public pomdpSpecSparseMTJ getSpec() {
         return dotpomdpSpec;
@@ -100,10 +101,11 @@ COMMENT
     |   '/*' ( options {greedy=false;} : . )* '*/' {$channel=HIDDEN;} // can also use skip()?
     ;
 
-WS  :   ( ' '
-        | '\t'
-        | '\r'
-        | '\n'
+WS  
+    :   ( ' '
+    |   '\t'
+    |   '\r'
+    |   '\n'
         ) {$channel=HIDDEN;}
     ;
 
