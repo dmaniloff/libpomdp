@@ -17,6 +17,9 @@ import no.uib.cipr.matrix.sparse.*;
 
 public class pomdpSpecSparseMTJ implements Serializable{
 
+    // serial id
+    static final long serialVersionUID = 1L;
+
     // discount factor
     public double discount;
     
