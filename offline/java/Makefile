@@ -13,7 +13,11 @@ RM=/bin/rm
 JCLASSPATH=../../external/ujmp-complete-0.2.4.jar:../../external/mtj-0.9.12/mtj-0.9.12.jar:../../external/mtj-0.9.12/lib/netlib-java/arpack_combo-0.1.jar:../../external/mtj-0.9.12/lib/netlib-java/netlib-java-0.9.1.jar:../../external/jmatharray.jar:../../external/symPerseusJava:../../general/java:.
 
 # source files
-SOURCES=blindAdd.java qmdpAdd.java mdpSparseMTJ.java mdpFlatFromSparseMTJ.java mdpFlatFromSparseUJMP.java
+SOURCES=blindAdd.java \
+	qmdpAdd.java \
+	blindFlat.java \
+	qmdpFlat.java 
+
 default:
 	$(JC) -classpath $(JCLASSPATH) $(SOURCES)
 
