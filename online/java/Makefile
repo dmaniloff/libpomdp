@@ -17,7 +17,14 @@ JCOPTS=-Xlint
 JCLASSPATH=../../external/jmatharray.jar:../../external/symPerseusJava:../../general/java:../../problems/rocksample:../../offline/java:.
 
 # source files
-SOURCES=AndOrTree.java AndOrTreeUpdateAdd.java orNode.java andNode.java expandHeuristic.java aems2.java backupHeuristic.java DOSI.java
+SOURCES=AndOrTree.java \
+	AndOrTreeUpdateAdd.java \
+	orNode.java \
+	andNode.java \
+	expandHeuristic.java \
+	aems2.java \
+	backupHeuristic.java \
+	DOSI.java
 
 default:
 	$(JC) $(JCOPTS) -classpath $(JCLASSPATH) $(SOURCES)
