@@ -53,17 +53,16 @@ HEIGHT       = 800
 CATCH_REWARD = 10
 ROWS         = 5
 COLS         = 5
-PROBLEM      = 'catch_rect_5_5.SPUDD'
-#ALPHAS       = 'symperseus-log/catch_value_function.alpha'
-ALPHAS       = 'symperseus-log/catch_rect_5_5_rounds1_iter50_nbel10000_nsbel10000.alpha'
+PROBLEM      = 'catch_rect_5_5_rand_adjobs.SPUDD'
+ALPHAS       = 'symperseus-log/catch_rect_rand_adjobs_5_5_rounds1_iter100_nbel10000_nsbel10000_alphas619.alpha'
 
 # declarations
 gp               = CatchRectangularGrid(ROWS,COLS)
 parser           = dotalphaParserFlat() # the parentheses here are needed!!
 parser.parse(ALPHAS)
 valueFunction    = parser.getValueFunction()
-initState        = [1, 13] # initial state in factored form - starts from 1 here
-pomdpProblem     = pomdpAdd(PROBLEM) # the idea is that we can have any imlpementation here
+initState        = [1, 25]              # initial state in factored form - starts from 1 here
+pomdpProblem     = pomdpAdd(PROBLEM)    # the idea is that we can have any imlpementation here
 initBelief       = pomdpProblem.getInit()
 gamma            = pomdpProblem.getGamma()
 
