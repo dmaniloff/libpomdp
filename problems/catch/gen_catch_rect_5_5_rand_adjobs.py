@@ -19,9 +19,8 @@ import CatchRectangularGrid
 import java.io.PrintStream as PrintStream
 
 # declarations
-OL   = 0.5                      # omniscience level 
 gp   = CatchRectangularGrid(5, 5)
-w    = OmniWumpus(gp, OL)
+w    = RandomWumpus(gp)
 s    = AdjacentObs(gp)
 out  = PrintStream("catch_rect_5_5_rand_adjobs.SPUDD")
 gen  = CatchGen(5, 5, gp, w, s, out)
