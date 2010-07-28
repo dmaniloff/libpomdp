@@ -22,7 +22,6 @@ addpath     '../../external/symPerseusMatlab' -end
 
 %% load problem parameters - factored representation
 factoredProb  = pomdpAdd  ('../../problems/coffee/coffee.90.SPUDD');
-symDD         = parsePOMDP('../../problems/coffee/coffee.90.SPUDD');
 
 %% compute offline lower and upper bounds
 blindCalc = blindAdd;
@@ -50,7 +49,7 @@ end
 %% play the pomdp - set main parameter first
 REUSETHRESHOLD    = 0.8;
 
-logFilename = sprintf('simulation-logs/coffee/realtime-LOG-coffee-%s-DOSI-%.1freuse-ADD.log',...
+logFilename = sprintf('simulation-logs/coffee/marginals/realtime-LOG-coffee-%s-DOSI-%.1freuse-ADD.log',...
                       date, REUSETHRESHOLD);
 diary(logFilename);
 
@@ -120,8 +119,13 @@ for run = 1:TOTALRUNS
             fprintf(1, '******************** INSTANCE %d ********************\n', iter);
             tc = cell(factoredProb.printS(factoredS));
             fprintf(1, 'Current world state is:         %s\n', tc{1});
-            fprintf(1, 'Current belief agree prob:      %d\n', ...
-                    OP.eval(rootNode.belief.bAdd, factoredS)); 
+            if rootNode.belief.getClass.toString == 'class BelStateFactoredADD'
+              fprintf(1, 'Current belief agree prob:      %d\n', ...                       
+                      OP.evalN(rootNode.belief.marginals, factoredS));
+            else
+              fprintf(1, 'Current belief agree prob:      %d\n', ... 
+                      OP.eval(rootNode.belief.bAdd, factoredS));
+            end
             fprintf(1, 'Current |T| is:                 %d\n', rootNode.subTreeSize);
 
             % reset expand counter
@@ -245,6 +249,6 @@ end % runs loop
 
 % save statistics before quitting
 statsFilename = ...
-    sprintf('simulation-logs/coffee/realtime-ALLSTATS-coffee-%s-DOSI-%.1freuse-ADD.mat',...
+    sprintf('simulation-logs/coffee/marginals/realtime-ALLSTATS-coffee-%s-DOSI-%.1freuse-ADD.mat',...
             date, REUSETHRESHOLD);
 save(statsFilename, 'all');

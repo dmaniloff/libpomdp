@@ -23,7 +23,6 @@ javaaddpath '../../online/java'
 
 %% load problem parameters - factored representation
 factoredProb  = pomdpAdd  ('../../problems/network/cycle9.SPUDD');
-symDD         = parsePOMDP('../../problems/network/cycle9.SPUDD');
 
 %% compute offline lower and upper bounds
 % blindCalc = blindAdd;
@@ -47,7 +46,7 @@ states(end+1) = factoredProb.getnrSta - 1;
 %% play the pomdp - set main parameter first
 NUM_MACHINES      = 9;
 
-logFilename = sprintf('simulation-logs/network/online-LOG-NetCycle-%d-%s-ADD.log',...
+logFilename = sprintf('simulation-logs/network/marginals/online-LOG-NetCycle-%d-%s-ADD.log',...
                       NUM_MACHINES, date);
 diary(logFilename);
 
@@ -107,9 +106,13 @@ for run = 1:TOTALRUNS
             fprintf(1, '******************** INSTANCE %d ********************\n', iter);
             tc = cell(factoredProb.printS(factoredS));
             fprintf(1, 'Current world state is:         %s\n', tc{1});
-            % drawer.drawState(factoredS);
-            fprintf(1, 'Current belief agree prob:      %d\n', ...
-                    OP.eval(rootNode.belief.bAdd, factoredS)); 
+            if rootNode.belief.getClass.toString == 'class BelStateFactoredADD'
+              fprintf(1, 'Current belief agree prob:      %d\n', ...                       
+                      OP.evalN(rootNode.belief.marginals, factoredS));
+            else
+              fprintf(1, 'Current belief agree prob:      %d\n', ... 
+                      OP.eval(rootNode.belief.bAdd, factoredS));
+            end
             fprintf(1, 'Current |T| is:                 %d\n', rootNode.subTreeSize);
 
             % reset expand counter
@@ -204,6 +207,6 @@ end % runs loop
 
 % save statistics before quitting
 statsFilename = ...
-    sprintf('simulation-logs/network/online-ALLSTATS-NetCycle-%d-%s-ADD.mat',...
+    sprintf('simulation-logs/network/marginals/online-ALLSTATS-NetCycle-%d-%s-ADD.mat',...
             NUM_MACHINES, date);
 save(statsFilename, 'all');

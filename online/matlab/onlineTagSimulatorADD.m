@@ -50,14 +50,14 @@ for r=1:factoredProb.getnrSta
 end
 
 %% play the pomdp
-diary(['simulation-logs/catch-tag/online-run-AEMS2-',date,'.log']);
+diary(['simulation-logs/catch-tag/marginals/online-run-AEMS2-',date,'.log']);
 
 % catch parameters for the grapher
 drawer            = CatchGraph(10, 5, CatchTagGrid(10,5));
 COLLOCATED_REWARD = 10.0;
 
 % other parameters
-EPISODECOUNT      = 10;
+EPISODECOUNT      = 5;
 MAXPLANNINGTIME   = 1.0;
 MAXEPISODELENGTH  = 100;
 TOTALRUNS         = size(states,2);
@@ -113,8 +113,13 @@ for run = 1:TOTALRUNS
             tc = cell(factoredProb.printS(factoredS));
             fprintf(1, 'Current world state is:         %s\n', tc{1});
             drawer.drawState(factoredS);
-            fprintf(1, 'Current belief agree prob:      %d\n', ...
-                    OP.eval(rootNode.belief.bAdd, factoredS)); 
+            if rootNode.belief.getClass.toString == 'class BelStateFactoredADD'
+              fprintf(1, 'Current belief agree prob:      %d\n', ...                       
+                      OP.evalN(rootNode.belief.marginals, factoredS));
+            else
+              fprintf(1, 'Current belief agree prob:      %d\n', ... 
+                      OP.eval(rootNode.belief.bAdd, factoredS));
+            end
             fprintf(1, 'Current |T| is:                 %d\n', rootNode.subTreeSize);
 
             % reset expand counter
@@ -216,6 +221,6 @@ for run = 1:TOTALRUNS
 end % runs loop
 
 % save statistics before quitting
-save (['simulation-logs/catch-tag/ALLSTATS-online-run-AEMS2-',date,'.mat'], 'all');
+save (['simulation-logs/catch-tag/marginals/ALLSTATS-online-run-AEMS2-',date,'.mat'], 'all');
 
 % onlineTagSimulatorADD

@@ -10,9 +10,7 @@
 interface pomdp {
 
     /// P(o|b,a) in vector form for all o's
-    // does not seem to be necessary anymore since we
-    // are reusing computation from tao(b,a,o)
-    //public double[] P_Oba(belState b, int a);
+    public double[] P_Oba(belState b, int a);
 
     /// tao(b,a,o)
     public belState tao(belState b, int a, int o);

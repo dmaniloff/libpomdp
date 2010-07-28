@@ -1,7 +1,7 @@
 % --------------------------------------------------------------------------- %
 % libpomdp
 % ========
-% File: onlineRS_10_10_SimulatorADD.m
+% File: .m
 % Description: m script to instantiate aoTree and heuristic objects to combine
 %              them with different lower bounds -
 %              uses part of Spaan's and Poupart's packages - see README
@@ -22,12 +22,12 @@ javaaddpath '../../offline/java'
 javaaddpath '../../online/java'
 
 % add to the matlab path
-addpath     '../../../external/symPerseusMatlab' -end
+% addpath     '../../../external/symPerseusMatlab' -end
 % addpath     '../../offline/matlab' -end
 
-%% load problem
+%% load problem parameters - factored representation
 factoredProb = pomdpAdd  ('../../problems/rocksample/10-10/RockSample_10_10.SPUDD');
-% symDD        = parsePOMDP('../../general/problems/rocksample/10-10/RockSample_10_10.SPUDD');
+% symDD        = parsePOMDP('../../problems/rocksample/10-10/RockSample_10_10.SPUDD');
 
 %% compute offline lower and upper bounds
 % blindCalc = blindAdd;
@@ -49,11 +49,9 @@ load 'saved-data/rocksample/qmdpSymPerseus_RockSample_10_10.mat';
 %% create heuristic search AND-OR tree
 % instantiate an aems2 heuristic object
 aems2h  = aems2(factoredProb);
-% instantiate AndOrTree
-% aoTree = AndOrTree(factoredProb, aems2h, lBound, uBound);
 
 %% play the pomdp
-diary(['simulation-logs/rocksample/10-10-online-run-AEMS2-',date,'.log']);
+diary(['simulation-logs/rocksample/marginals/10-10-online-run-AEMS2-',date,'.log']);
 
 % rocksample parameters for the grapher
 GRID_SIZE         = 10;
@@ -63,8 +61,8 @@ drawer            = rocksampleGraph;
 NUM_ROCKS         = size(ROCK_POSITIONS,1);
 
 % parameters
-EPISODECOUNT      = 10;
-MAXPLANNINGTIME   = 2.0; % we set the realtime constrain to 2 seconds here
+EPISODECOUNT      = 5;
+MAXPLANNINGTIME   = 1.0;
 MAXEPISODELENGTH  = 100;
 TOTALRUNS         = 2^NUM_ROCKS;
 
@@ -73,7 +71,6 @@ cumR              = [];
 all.avcumrews     = [];
 all.avTs          = [];
 all.avreusedTs    = [];
-all.avplantimes   = [];
 all.avexps        = [];
 all.avfoundeopt   = [];
 
@@ -89,7 +86,6 @@ for run = 1:TOTALRUNS
     all.stats{run}.foundeopt    = [];
     all.stats{run}.meanT        = [];
     all.stats{run}.meanreusedT  = [];
-    all.stats{run}.meanplantime = [];
     all.stats{run}.meanexps     = [];
     
     % start this run
@@ -104,7 +100,7 @@ for run = 1:TOTALRUNS
         rootNode = aoTree.getRoot();
 
         % starting state for this set of EPISODECOUNT episodes
-        factoredS = [factoredProb.staIds' ; 1+ SARTING_POS, 1 + bitget((run-1), NUM_ROCKS:-1:1)];
+        factoredS = [factoredProb.staIds' ; 1 + SARTING_POS, 1 + bitget((run-1), NUM_ROCKS:-1:1)];
         
         % stats
         cumR = 0;
@@ -113,7 +109,6 @@ for run = 1:TOTALRUNS
         all.stats{run}.ep{ep}.exps     = [];
         all.stats{run}.ep{ep}.T        = [];
         all.stats{run}.ep{ep}.reusedT  = [];
-        all.stats{run}.ep{ep}.plantime = [];
         
         for iter = 1:MAXEPISODELENGTH
             
@@ -121,7 +116,13 @@ for run = 1:TOTALRUNS
             tc = cell(factoredProb.printS(factoredS));
             fprintf(1, 'Current world state is:         %s\n', tc{1});
             drawer.drawState(GRID_SIZE, ROCK_POSITIONS,factoredS);
-            fprintf(1, 'Current belief agree prob:      %d\n', OP.eval(rootNode.belief.bAdd, factoredS));
+            if rootNode.belief.getClass.toString == 'class BelStateFactoredADD'
+              fprintf(1, 'Current belief agree prob:      %d\n', ...                       
+                      OP.evalN(rootNode.belief.marginals, factoredS));
+            else
+              fprintf(1, 'Current belief agree prob:      %d\n', ... 
+                      OP.eval(rootNode.belief.bAdd, factoredS));
+            end            
             fprintf(1, 'Current |T| is:                 %d\n', rootNode.subTreeSize);
 
             % reset expand counter
@@ -147,9 +148,6 @@ for run = 1:TOTALRUNS
                 end
             end
             
-            % save planning time (not very accurate)
-            all.stats{run}.ep{ep}.plantime(end+1) = toc;
-
             % obtain the best action for the root
             % remember that a's and o's in matlab should start from 1
             a = aoTree.currentBestAction();
@@ -187,21 +185,23 @@ for run = 1:TOTALRUNS
                 break;
             end
 
-            %     pause;
-
-            % move the tree's root node
+            % transform factoredO into absolute o 
             o = factoredProb.sencode(factoredO(2,:), ...
                                      factoredProb.getnrObsV(), ...
                                      factoredProb.getobsArity()); 
+            % compute an exact update of the new belief we will move into...this should not matter for RS!
+            % bPrime = factoredProb.factoredtao(rootNode.belief,a-1,o-1);
+            % move the tree's root node
             aoTree.moveTree(rootNode.children(a).children(o)); 
             % update reference to rootNode
             rootNode = aoTree.getRoot();
-
+            % replace its factored belief by an exact one....this should not matter for RS!
+            % rootNode.belief = bPrime;
+            
             fprintf(1, 'Tree moved, reused |T|:         %d\n', rootNode.subTreeSize);
             all.stats{run}.ep{ep}.reusedT(end+1)  = rootNode.subTreeSize;
             
             % iterate
-            %b = b1;
             factoredS = factoredS1;
             factoredS = Config.primeVars(factoredS, -factoredProb.getnrTotV);
 
@@ -211,7 +211,6 @@ for run = 1:TOTALRUNS
         all.stats{run}.foundeopt   (end+1) = fndO;
         all.stats{run}.meanT       (end+1) = mean(all.stats{run}.ep{ep}.T);
         all.stats{run}.meanreusedT (end+1) = mean(all.stats{run}.ep{ep}.reusedT);
-        all.stats{run}.meanplantime(end+1) = mean(all.stats{run}.ep{ep}.plantime);
         all.stats{run}.meanexps    (end+1) = mean(all.stats{run}.ep{ep}.exps);
         %pause
         
@@ -222,12 +221,9 @@ for run = 1:TOTALRUNS
     all.avfoundeopt(end+1) = mean(all.stats{run}.foundeopt);
     all.avTs       (end+1) = mean(all.stats{run}.meanT);
     all.avreusedTs (end+1) = mean(all.stats{run}.meanreusedT);
-    all.avplantimes(end+1) = mean(all.stats{run}.meanplantime);
     all.avexps     (end+1) = mean(all.stats{run}.meanexps);
     
 end % runs loop
 
 % save statistics before quitting
-save (['simulation-logs/rocksample/ALLSTATS-10-10-online-run-AEMS2-',date,'.mat'], 'all');
-
-% onlineRS_10_10_SimulatorADD
+save (['simulation-logs/rocksample/marginals/ALLSTATS-10-10-online-run-AEMS2-',date,'.mat'], 'all');

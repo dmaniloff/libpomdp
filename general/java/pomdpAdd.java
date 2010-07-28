@@ -140,35 +140,57 @@ public class pomdpAdd implements pomdp {
     /**
      * P(o|b,a) in vector form for all o's
      * use ADDs and convert to array
-     * [not used anymore since we get this from tao(.)]
+     * used to quicky identify zero-prob obs and
+     * avoid bulding an or node for those beliefs
      */
     public double[] P_Oba(belState bel, int a) {
 	// obtain subclass and the dd for this belief
-	DD b = ((belStateAdd)bel).bAdd;	
-	DD pObadd;
-	double[]pOba;
-	DD[] vars   = concat(b, T[a], O[a]);
+	//DD b = ((belStateAdd)bel).bAdd;
+	// declarations
+	DD     b1[];
+	DD     pObadd;
+	double pOba[];
+	if (bel instanceof belStateAdd) {
+	    b1 = new DD[1];
+	    b1[0] = ((belStateAdd)bel).bAdd;
+	} else {
+	    b1 = ((BelStateFactoredADD)bel).marginals;
+	}
+	// O_a * T_a * b1
+	DD[]  vars  = concat(b1, T[a], O[a]);
 	int[] svars = IntegerArray.merge(staIds, staIdsPr);
 	pObadd      = OP.addMultVarElim(vars, svars);
-	pOba        = OP.convert2array(pObadd,obsIdsPr);
+	pOba        = OP.convert2array(pObadd, obsIdsPr);
 	return pOba;
     }
 
     /**
      *  tao(b,a,o):
      *  compute new belief state from current and a,o pair
-     *  uses DD representation and functions from Symbolic Perseus
-     *  stores poba in the orNode o to avoid re-computation
      */
-    public belState tao(belState bel, int a, int o) {	    
+    public belState tao(belState bel, int a, int o) {
+	if (bel instanceof belStateAdd) {
+	    return regulartao ((belStateAdd)bel, a, o);
+	} else {
+	    return factoredtao((BelStateFactoredADD)bel, a, o);
+	}
+    }
+
+    /**
+     * regulartao(b,a,o):
+     * compute new belief state from current and a,o pair
+     * uses DD representation and functions from Symbolic Perseus
+     * this function re-computes poba to normalize the belief,
+     * need to think of a clever way to avoid this...
+     */
+    public belState regulartao(belStateAdd bel, int a, int o) {	    
 	// obtain subclass and the dd for this belief 
-	DD b1 = ((belStateAdd)bel).bAdd;
+	DD b1 = bel.bAdd;
 	DD b2;
 	DD oProb;
 	belState bPrime;
 	DD O_o[];
 	int oc[][];
-	//double oProb = 0.0;
 	// restrict the prime observation variables to the ones that occurred
 	oc  = IntegerArray.mergeRows(obsIdsPr, sdecode(o, nrObsV, obsArity));
 	//System.out.println(IntegerArray.toString(oc));
@@ -192,15 +214,50 @@ public class pomdpAdd implements pomdp {
 	// return
 	return bPrime;
     }
+
+    /**
+     *  factoredtao(b,a,o):
+     *  compute new belief state from current and a,o pair
+     *  uses DD representation and functions from Symbolic Perseus
+     *  uses the product of marginals to approximate a belief
+     */
+    public belState factoredtao(BelStateFactoredADD bel, int a, int o) {	    
+	// declarations
+	DD       b1[] = bel.marginals;	
+	DD       b2[];
+	DD       b2u[] = new DD[nrStaV];
+	belState bPrime;
+	DD       O_o[];
+	int      oc[][];	
+	// restrict the prime observation variables to the ones that occurred
+	oc  = IntegerArray.mergeRows(obsIdsPr, sdecode(o, nrObsV, obsArity));
+	O_o = OP.restrictN(O[a], oc); 
+	// gather all necessary ADDs for variable elimination
+	DD[] vars = concat(b1, T[a], O_o);
+    	// compute var elim on O * T * b
+	b2 = OP.marginals(vars, staIdsPr, staIds);
+	// unprime the b2 DD 
+	for(int i=0; i<nrStaV; i++) b2u[i] = OP.primeVars(b2[i], -nrTotV);
+	// no need to normalize, done inside OP.marginals()	    
+	bPrime = new BelStateFactoredADD(b2u, staIds);
+	// return
+	return bPrime;
+    }
     
     /// R(b,a)
     /// Poupart's matlab code has a loop indexed over
     /// 1:length(POMDP.actions(actId).rewFn) - when would this be > 1?
     public double Rba(belState bel, int a) {
 	// obtain subclass and the dd for this belief
-	DD b = ((belStateAdd)bel).bAdd;
-        //return OP.dotProduct(b, R[a], staIds);
-	return OP.dotProductNoMem(b, R[a], staIds);
+	DD b;
+	DD m[];
+	if (bel instanceof belStateAdd) {
+	    b = ((belStateAdd)bel).bAdd;
+	    return OP.dotProductNoMem(b, R[a], staIds);
+	} else {
+	    m = ((BelStateFactoredADD)bel).marginals;
+	    return OP.factoredExpectationSparseNoMem(m, R[a]);
+	}
     }
 
     /// return s x s' matrix with T[a]

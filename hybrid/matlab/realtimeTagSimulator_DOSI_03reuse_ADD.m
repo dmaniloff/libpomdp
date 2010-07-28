@@ -60,7 +60,7 @@ end
 %% play the pomdp - set main parameter first
 REUSETHRESHOLD    = 0.3;
 
-logFilename = sprintf('simulation-logs/catch-tag/realtime-LOG-tag-%s-DOSI-%.1freuse-ADD.log',...
+logFilename = sprintf('simulation-logs/catch-tag/marginals/realtime-LOG-tag-%s-DOSI-%.1freuse-ADD.log',...
                       date, REUSETHRESHOLD);
 diary(logFilename);
 
@@ -135,8 +135,13 @@ for run = 1:TOTALRUNS
             tc = cell(factoredProb.printS(factoredS));
             fprintf(1, 'Current world state is:         %s\n', tc{1});
             drawer.drawState(factoredS);
-            fprintf(1, 'Current belief agree prob:      %d\n', ...
-                    OP.eval(rootNode.belief.bAdd, factoredS)); 
+            if rootNode.belief.getClass.toString == 'class BelStateFactoredADD'
+              fprintf(1, 'Current belief agree prob:      %d\n', ...                       
+                      OP.evalN(rootNode.belief.marginals, factoredS));
+            else
+              fprintf(1, 'Current belief agree prob:      %d\n', ... 
+                      OP.eval(rootNode.belief.bAdd, factoredS));
+            end
             fprintf(1, 'Current |T| is:                 %d\n', rootNode.subTreeSize);
 
             % reset expand counter
@@ -266,6 +271,6 @@ for run = 1:TOTALRUNS
 end % runs loop
 
 % save statistics before quitting
-statsFilename = sprintf('simulation-logs/catch-tag/realtime-ALLSTATS-tag-%s-DOSI-%.1freuse-ADD.mat',...
+statsFilename = sprintf('simulation-logs/catch-tag/marginals/realtime-ALLSTATS-tag-%s-DOSI-%.1freuse-ADD.mat',...
                         date, REUSETHRESHOLD);
 save(statsFilename, 'all');

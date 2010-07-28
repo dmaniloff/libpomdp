@@ -39,7 +39,7 @@ public class AndOrTree {
 
     /// constructor
     public AndOrTree(pomdp prob, expandHeuristic h, valueFunction L, valueFunction U) {
-	this.problem = prob;
+	this.problem = (pomdpAdd)prob;
 	this.expH = h;
 	this.offlineLower = L;
 	this.offlineUpper = U;
@@ -63,11 +63,13 @@ public class AndOrTree {
 	    System.err.println("node not on fringe");
 	    return;
 	}
-	// save this node's old bounds
- 	double old_l = en.l;
-	double old_u = en.u;
 	// iterators
 	int action, observation;
+	// poba vector for each action
+	double pOba[];
+	// save this node's old bounds
+ 	double old_l = en.l;
+	double old_u = en.u;	
 	// allocate space for the children AND nodes (do we have to do this here?)
 	en.children = new andNode[problem.getnrAct()];
 	for(action=0; action<problem.getnrAct(); action++) 
@@ -82,27 +84,26 @@ public class AndOrTree {
 	    a.children = new orNode[problem.getnrObs()];
 	    for(observation=0; observation<problem.getnrObs(); observation++)
 		a.children[observation] = new orNode();
+	    // pre-compute observation probabilities
+	    pOba = problem.P_Oba(en.belief, action);
 	    // iterate through new fringe nodes
 	    // start observations at zero 
 	    observation = 0;
 	    for (orNode o : a.children) {
-		// initialize this node
-		// the belief property contains bPoint and poba
-		o.init(problem.tao(en.belief,action,observation), observation, a);
-		
-		// STILL TO THINK ABOUT:
+		// ZERO-PROB OBSERVATIONS:
 		// here we should continue the loop and avoid re-computing V^L and V^U
-		// for belief nodes with poba == 0
-		// another opportunity for savings here is to make sure the belief is
-		// not already in the fringe, or in the tree....not sure about this...
-		// if (o.belief.getpoba() == 0) {
-		// 		    a.children[observation] = null;
-		// 		    observation++;
-		// 		    continue;
-		// 		} 
-
-		o.l = offlineLower.V(o.belief);
+		// for belief nodes with poba == 0              
+		if (pOba[observation] == 0) {
+		    a.children[observation] = null;
+		    observation++;
+		    continue;
+		} 
+		// initialize this node, set its poba
+		o.init(problem.tao(en.belief,action,observation), observation, a);
+		o.belief.setpoba(pOba[observation]);
+		// compute upper and lower bounds for this node
 		o.u = offlineUpper.V(o.belief);
+		o.l = offlineLower.V(o.belief);		
 		// H(b)
 		o.h_b = expH.h_b(o);
 		// H(b,a,o)	
@@ -191,7 +192,6 @@ public class AndOrTree {
 	    // increase subtree size by the branching factor |A||O|
 	    o.subTreeSize += problem.getnrAct() * problem.getnrObs();
 	    // iterate
-	    // n = n.getParent().getParent();
 	    n = o;
 	}
     } // updateAncestors
@@ -270,8 +270,8 @@ public class AndOrTree {
     protected double ANDpropagateL(andNode a) {
 	double Lba = 0;
 	for(orNode o : a.children) {
-	    // if(o != null) 
-	    Lba += o.belief.getpoba() * o.l;
+	    // o.belief.getpoba() == 0 for null orNodes anyway
+	    if(o != null) Lba += o.belief.getpoba() * o.l;
 	}
 	return a.rba + problem.getGamma() * Lba;
     }
@@ -280,8 +280,8 @@ public class AndOrTree {
     protected double ANDpropagateU(andNode a) {
 	double Uba = 0;
 	for(orNode o : a.children) {
-	    // if(o != null) 
-	    Uba += o.belief.getpoba() * o.u;
+	    // o.belief.getpoba() == 0 for null orNodes anyway
+	    if(o != null) Uba += o.belief.getpoba() * o.u;
 	}
 	return a.rba + problem.getGamma() * Uba;
     }
@@ -388,8 +388,9 @@ public class AndOrTree {
     private void orprint(orNode o, PrintStream out) {
 	// print this node
 	String b = "";
-	if (o.belief.getbPoint().length < 4)
-	    b = "b=[" + DoubleArray.toString("%.2f",o.belief.getbPoint()) + "]\\n";
+	b = "b=[\\n " + 
+	    DoubleArray.toString("%.2f",o.belief.getbPoint()) + 
+	    "]\\n";
 	out.format(o.hashCode() + "[label=\"" +
 		   //b +
 		   "U(b)= %.2f\\n" +
@@ -423,18 +424,19 @@ public class AndOrTree {
 		   "\"];\n", a.u, a.l);
 	// print outgoing edges for this node
 	for(orNode o : a.children) {
-	    out.format(a.hashCode() + "->" + o.hashCode() + 
-		       "[label=\"" +
-		       "obs: " + problem.getobsStr(o.getobs()) + "\\n" +
-		       "P(o|b,a)= %.2f\\n" + 
-		       "H(b,a,o)= %.2f" +  
-		       "\"];\n",
-		       o.belief.getpoba(),
-		       o.h_bao);
+	    if (!(o==null))		
+		out.format(a.hashCode() + "->" + o.hashCode() + 
+			   "[label=\"" +
+			   "obs: " + problem.getobsStr(o.getobs()) + "\\n" +
+			   "P(o|b,a)= %.2f\\n" + 
+			   "H(b,a,o)= %.2f" +  
+			   "\"];\n",
+			   o.belief.getpoba(),
+			   o.h_bao);
 	}
 	out.println();
 	// recurse
-	for(orNode o : a.children) orprint(o,out);
+	for(orNode o : a.children) if(!(o==null)) orprint(o,out);
     }
 
 } // AndOrTree

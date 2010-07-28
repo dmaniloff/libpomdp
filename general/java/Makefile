@@ -25,6 +25,7 @@ SOURCES=pomdp.java \
 	valueFunctionAdd.java \
 	belState.java \
 	belStateAdd.java \
+	BelStateFactoredADD.java \
 	belStateFlat.java \
 	belStateSparseUJMP.java \
 	belStateSparseMTJ.java \

@@ -28,11 +28,11 @@ public class aems2 implements expandHeuristic {
    
     /// H(b)
     public double h_b(orNode o) {
-	// if(o.u - o.l < 0) System.err.println("bad H(b) at ornode" + o.getobs()  + 
-	// 					     " parent is action " + o.getParent().getAct()
-	// 					     + " hbis: "+ (o.u - o.l));
-	// 	System.err.println("upper is" + o.u);
-	// 	System.err.println("lower is" + o.l);
+// 	if(o.u - o.l < 0) System.err.println("bad H(b) at ornode" + o.getobs()  + 
+// 					     " parent is action " + o.getParent().getAct()
+// 					     + " hb is: "+ (o.u - o.l));
+// 	System.err.println("upper is" + o.u);
+// 	System.err.println("lower is" + o.l);
 	return o.u - o.l;
     }
 
@@ -91,20 +91,20 @@ public class aems2 implements expandHeuristic {
     /// o* = argmax_o {H(b,a,o) H*(tao(b,a,o))}
     public int oStar(andNode a) {
 	double HbaoHostar[] = new double[problem.getnrObs()];	
-	for(orNode o : a.children) HbaoHostar[o.getobs()] = o.h_bao * o.hStar;
-	return Common.argmax(HbaoHostar);
+	//for(orNode o : a.children) HbaoHostar[o.getobs()] = o.h_bao * o.hStar;
+	//return Common.argmax(HbaoHostar);
 
 	// STILL TO THINK ABOUT:
 	//int nullCount=0;
 	//for(orNode o : a.children) 
-	// for(int o=0; o<problem.getnrObs(); o++) {
-	// 	    if(a.children[o] != null) {
-	// 		HbaoHostar[o] = a.children[o].h_bao * a.children[o].hStar;
-	// 	    } else {
-	// 		HbaoHostar[o] = -1; // do this to preserve the argmax
-	// 		//nullCount++;
-	// 	    }
-	// 	}
+	for(int o=0; o<problem.getnrObs(); o++) {
+	    if(a.children[o] != null) {
+		HbaoHostar[o] = a.children[o].h_bao * a.children[o].hStar;
+	    } else {
+		HbaoHostar[o] = -1; // do this to preserve the argmax
+		//nullCount++;
+	    }
+	}
 	// System.out.println("nullcount inside oStar is "+ nullCount);
 	// 	System.out.println(DoubleArray.toString(HbaoHostar));
 	// 	int argmax = Common.argmax(HbaoHostar);
@@ -115,6 +115,7 @@ public class aems2 implements expandHeuristic {
 	// 	    //System.exit(0);
 	// 	}	
 	//return argmax;	
+	return Common.argmax(HbaoHostar);
     }
 
     /// update version with challenge obs

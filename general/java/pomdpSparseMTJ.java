@@ -102,6 +102,17 @@ public class pomdpSparseMTJ implements pomdp {
 	}
     } // constructor
 
+    // P(o|b,a) in vector form for all o's
+    // THIS IS NOT MAKING THE RIGHT USE OF SPARSITY
+    public double[] P_Oba(belState b, int a) {
+	SparseVector  b1  = ((belStateSparseMTJ)b).bSparse;
+    	SparseVector  Tb  = new SparseVector(nrSta);
+	Tb                = (SparseVector) T[a].mult(b1, Tb);
+    	SparseVector Poba = new SparseVector(nrObs);
+	Poba              = (SparseVector) O[a].transMult(Tb, Poba);
+    	return Matrices.getArray(Poba);
+    }
+
     /// tao(b,a,o)
     public belState tao(belState b, int a, int o) {
 	long start = System.currentTimeMillis();

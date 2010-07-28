@@ -100,6 +100,16 @@ public class pomdpSparseUJMP implements pomdp {
 	}
     } // constuctor
 
+    // P(o|b,a) in vector form for all o's
+    public double[] P_Oba(belState b, int a) {
+	// convert this to use sparsity!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	DefaultSparseDoubleMatrix b1   = ((belStateSparseUJMP)b).bSparse;
+	DefaultSparseDoubleMatrix Tb   = (DefaultSparseDoubleMatrix) T[a].mtimes(b1);
+    	DefaultSparseDoubleMatrix Poba = (DefaultSparseDoubleMatrix) O[a].transpose().
+	    mtimes(Tb);
+    	return Poba.toDoubleArray()[0];
+    }
+
     /// tao(b,a,o)
     public belState tao(belState b, int a, int o) {
 	long start = System.currentTimeMillis();
@@ -109,10 +119,12 @@ public class pomdpSparseUJMP implements pomdp {
 	b1 = ((belStateSparseUJMP)b).bSparse;
 	// b1 comes in as a column vector, so transpose it and then times with T[a]
 	b2 = (DefaultSparseDoubleMatrix) b1.transpose().mtimes(T[a]); 
-	System.out.println("Elapsed in tao - T[a] * b1" + (System.currentTimeMillis() - start));
+	System.out.println("Elapsed in tao - T[a] * b1" + 
+			   (System.currentTimeMillis() - start));
 	// element-wise vector multiplication
 	b2 = (DefaultSparseDoubleMatrix) b2.times(O[a].selectColumns(Ret.NEW, o));  
-	System.out.println("Elapsed in tao - O[a] .* b2" + (System.currentTimeMillis() - start));
+	System.out.println("Elapsed in tao - O[a] .* b2" + 
+			   (System.currentTimeMillis() - start));
 	// calculate normalizing factor
 	double poba = b2.getValueSum();
 	// make sure we can normalize

@@ -25,7 +25,7 @@ public class belStateAdd implements belState {
     // constructor
     // in case this is the init belief, poba = 0.0
     public belStateAdd(DD b, int staIds[], double poba) {
-	this.bAdd    = b;
+	this.bAdd   = b;
 	this.staIds = staIds;
 	this.poba   = poba;
     }
@@ -37,6 +37,10 @@ public class belStateAdd implements belState {
 
     public double getpoba() {
 	return poba;
+    }
+
+    public void setpoba(double poba) {
+	this.poba = poba;
     }
 
     public int getplanid() {
