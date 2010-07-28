@@ -95,11 +95,11 @@ public class pomdpFlat implements pomdp {
     // }
 
     // P(o|b,a) in vector form for all o's
-    // public double[] P_Oba(double b[], int a) {
-    // 	double Tb[]   = LinearAlgebra.times(T[a],b);
-    // 	double Poba[] = LinearAlgebra.times(DoubleArray.transpose(O[a]),Tb);
-    // 	return Poba;
-    // }
+    public double[] P_Oba(belState b, int a) {
+    	double Tb[]   = LinearAlgebra.times(T[a],b.getbPoint());
+    	double Poba[] = LinearAlgebra.times(DoubleArray.transpose(O[a]),Tb);
+    	return Poba;
+    }
 
     /// tao(b,a,o)
     public belState tao(belState b, int a, int o) {
