@@ -21,7 +21,7 @@ public class AndOrTree {
     // ------------------------------------------------------------------------
 
     // pomdp problem specification
-    protected pomdpAdd problem;
+    protected pomdp problem;
 
     // expansion heursitic 
     protected expandHeuristic expH;
@@ -98,9 +98,9 @@ public class AndOrTree {
 		    observation++;
 		    continue;
 		} 
-		// initialize this node with factored belief, set its poba
-		o.init(problem.factoredtao(en.belief,action,observation), observation, a);
-		((BelStateFactoredADD)o.belief).setpoba(pOba[observation]);
+		// initialize this node, set its poba
+		o.init(problem.tao(en.belief,action,observation), observation, a);
+		o.belief.setpoba(pOba[observation]);
 		// compute upper and lower bounds for this node
 		o.u = offlineUpper.V(o.belief);
 		o.l = offlineLower.V(o.belief);		
