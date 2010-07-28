@@ -140,7 +140,8 @@ public class pomdpAdd implements pomdp {
     /**
      * P(o|b,a) in vector form for all o's
      * use ADDs and convert to array
-     * used with factoredtao
+     * used to quicky identify zero-prob obs and
+     * avoid bulding an or node for those beliefs
      */
     public double[] P_Oba(belState bel, int a) {
 	// obtain subclass and the dd for this belief
@@ -166,18 +167,30 @@ public class pomdpAdd implements pomdp {
     /**
      *  tao(b,a,o):
      *  compute new belief state from current and a,o pair
-     *  uses DD representation and functions from Symbolic Perseus
-     *  stores poba in the orNode o to avoid re-computation
      */
-    public belState tao(belState bel, int a, int o) {	    
+    public belState tao(belState bel, int a, int o) {
+	if (bel instanceof belStateAdd) {
+	    return regulartao ((belStateAdd)bel, a, o);
+	} else {
+	    return factoredtao((BelStateFactoredADD)bel, a, o);
+	}
+    }
+
+    /**
+     * regulartao(b,a,o):
+     * compute new belief state from current and a,o pair
+     * uses DD representation and functions from Symbolic Perseus
+     * this function re-computes poba to normalize the belief,
+     * need to think of a clever way to avoid this...
+     */
+    public belState regulartao(belStateAdd bel, int a, int o) {	    
 	// obtain subclass and the dd for this belief 
-	DD b1 = ((belStateAdd)bel).bAdd;
+	DD b1 = bel.bAdd;
 	DD b2;
 	DD oProb;
 	belState bPrime;
 	DD O_o[];
 	int oc[][];
-	//double oProb = 0.0;
 	// restrict the prime observation variables to the ones that occurred
 	oc  = IntegerArray.mergeRows(obsIdsPr, sdecode(o, nrObsV, obsArity));
 	//System.out.println(IntegerArray.toString(oc));
@@ -206,28 +219,16 @@ public class pomdpAdd implements pomdp {
      *  factoredtao(b,a,o):
      *  compute new belief state from current and a,o pair
      *  uses DD representation and functions from Symbolic Perseus
-     *  stores poba in the orNode o to avoid re-computation
      *  uses the product of marginals to approximate a belief
      */
-    public belState factoredtao(belState bel, int a, int o) {	    
+    public belState factoredtao(BelStateFactoredADD bel, int a, int o) {	    
 	// declarations
-	DD       b1[];	
+	DD       b1[] = bel.marginals;	
 	DD       b2[];
 	DD       b2u[] = new DD[nrStaV];
-	DD       oProb;
 	belState bPrime;
 	DD       O_o[];
-	int      oc[][];
-	// obtain subclass and the dd for this belief 
-	// if this is the root belief it will be a belStateAdd
-	// from here on, all beliefs will be approximated using
-	// BelStateFactoredADD
-	if (bel instanceof belStateAdd) {
-	    b1 = new DD[1];
-	    b1[0] = ((belStateAdd)bel).bAdd;
-	} else {
-	    b1 = ((BelStateFactoredADD)bel).marginals;
-	}
+	int      oc[][];	
 	// restrict the prime observation variables to the ones that occurred
 	oc  = IntegerArray.mergeRows(obsIdsPr, sdecode(o, nrObsV, obsArity));
 	O_o = OP.restrictN(O[a], oc); 
