@@ -18,6 +18,9 @@ interface belState {
     /// that is associated with the computation of tao(b,a,o)
     public double getpoba();
 
+    /// set reachability prob
+    public void setpoba(double poba);
+
     /// get index of the alpha vector that supports this point 
     public int getplanid();
 

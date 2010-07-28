@@ -43,6 +43,10 @@ public class belStateSparseUJMP implements belState {
 	return poba;
     }
 
+    public void setpoba(double poba) {
+	this.poba = poba;
+    }
+
     public int getplanid() {
 	return planid;
     }
