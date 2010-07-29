@@ -7,6 +7,8 @@
  * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
 
+package libpomdp.online.java;
+
 public class andNode {
     
     /// main property is the action the node represents

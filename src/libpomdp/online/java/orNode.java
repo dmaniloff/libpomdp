@@ -10,6 +10,8 @@
  * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
 
+package libpomdp.online.java;
+
 public class orNode {
     
     /// first property of an OR node is its belief state

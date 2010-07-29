@@ -8,6 +8,8 @@
  * W3: http://www.cs.uic.edu/~dmanilof 
  --------------------------------------------------------------------------- */
 
+package libpomdp.online.java;
+
 interface expandHeuristic {
 
     /// H(b): heuristic for the orNode
