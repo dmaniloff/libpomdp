@@ -10,12 +10,12 @@
 
 # imports
 import sys
-sys.path.append('../../../../external/symPerseusJava.jar')
-sys.path.append('../../../../external/antlr-3.2.jar')
-sys.path.append('../../../../external/jmatharray.jar')
-sys.path.append('../../../../external/mtj-0.9.12.jar')
-sys.path.append('../../../../external/ujmp-complete-0.2.4.jar')
-sys.path.append('../../../../dist/libpomdp.jar')
+sys.path.append('../../../../../external/symPerseusJava.jar')
+sys.path.append('../../../../../external/antlr-3.2.jar')
+sys.path.append('../../../../../external/jmatharray.jar')
+sys.path.append('../../../../../external/mtj-0.9.12.jar')
+sys.path.append('../../../../../external/ujmp-complete-0.2.4.jar')
+sys.path.append('../../../../../dist/libpomdp.jar')
 from libpomdp.general.java import *
 from libpomdp.problems.catchproblem import *
 from symPerseusJava import *
@@ -36,8 +36,8 @@ HEIGHT       = 800
 CATCH_REWARD = 10
 ROWS         = 5
 COLS         = 5
-PROBLEM      = 'catch_rect_5_5_rand_adjobs.SPUDD'
-ALPHAS       = 'symperseus-log/catch_rect_rand_adjobs_5_5_rounds1_iter100_nbel10000_nsbel10000_alphas619.alpha'
+PROBLEM      = '../catch_rect_5_5_rand_adjobs.SPUDD'
+ALPHAS       = '../data/catch_rect_rand_adjobs_5_5_rounds1_iter100_nbel10000_nsbel10000_alphas619.alpha'
 
 # declarations
 gp               = CatchRectangularGrid(ROWS,COLS)
