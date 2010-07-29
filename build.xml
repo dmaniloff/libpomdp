@@ -26,6 +26,7 @@
 
   <!-- default excludes -->
   <defaultexcludes add="**/bak/*"/>
+  <defaultexcludes add=".git/**"/>
 
   <target name="init">
     <!-- Create the time stamp -->
