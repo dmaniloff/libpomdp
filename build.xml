@@ -40,10 +40,9 @@
     <!-- antlr target="${src}/libpomdp/general/java/pomdp-parser/dotpomdpMTJ.g">  -->
     <!--       <classpath refid="classpath"/> -->
     <!--     </antlr> -->
-    <java 
-	classname="org.antlr.Tool" 
-	args="${src}/libpomdp/general/java/pomdp-parser/dotpomdpMTJ.g"
-	classpathref="classpath">
+    <!-- ANTRL is called with a java task, this should be changed to use antlr  -->
+    <java classname="org.antlr.Tool" classpathref="classpath">
+	<arg value="${src}/libpomdp/general/java/pomdp-parser/dotpomdpMTJ.g"/>	
     </java>
     <javac srcdir="${src}" destdir="${build}" classpathref="classpath"/>
   </target>
