@@ -10,11 +10,15 @@
 
 # imports
 import sys
-sys.path.append('../../general/java')
-sys.path.append('../../external/symPerseusJava')
-sys.path.append('../../external/antlr-3.2.jar')
-sys.path.append('../../external/jmatharray.jar')
-sys.path.append('../../general/java/alpha-parser')
+sys.path.append('../../../../external/symPerseusJava.jar')
+sys.path.append('../../../../external/antlr-3.2.jar')
+sys.path.append('../../../../external/jmatharray.jar')
+sys.path.append('../../../../external/mtj-0.9.12.jar')
+sys.path.append('../../../../external/ujmp-complete-0.2.4.jar')
+sys.path.append('../../../../dist/libpomdp.jar')
+from libpomdp.general.java import *
+from libpomdp.problems.catchproblem import *
+from symPerseusJava import *
 from org.antlr.runtime import *
 from org.math.array import *
 from java.lang import Integer
@@ -24,27 +28,6 @@ from java.awt import *
 from java.awt.image import *
 from threading import Thread
 import time
-import pomdpAdd
-import CatchGridProperties
-import CatchRectangularGrid
-import dotalphaParserFlat
-import AbstractMap
-import Config
-import DD
-import DDcollection
-import DDleaf
-import DDnode
-import Global
-import HashMap
-import LinkedHashMap
-import MyDoubleArray
-import MySet
-import OP
-import Pair
-import ParseSPUDD
-import StreamTokenizer
-import TripletConfig
-import TripletSet
 
 # globals
 TWIDTH       = 1070
