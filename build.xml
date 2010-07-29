@@ -44,6 +44,9 @@
     <java classname="org.antlr.Tool" classpathref="classpath">
 	<arg value="${src}/libpomdp/general/java/pomdp-parser/dotpomdpMTJ.g"/>	
     </java>
+    <java classname="org.antlr.Tool" classpathref="classpath">
+	<arg value="${src}/libpomdp/general/java/alpha-parser/dotalpha.g"/>	
+    </java>
     <javac srcdir="${src}" destdir="${build}" classpathref="classpath"/>
   </target>
 
