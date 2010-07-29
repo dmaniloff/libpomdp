@@ -9,6 +9,8 @@
  * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
 
+package libpomdp.offline.java;
+
 // imports
 import org.math.array.*;
 
