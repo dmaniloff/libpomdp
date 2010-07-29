@@ -10,6 +10,8 @@
 package libpomdp.offline.java;
 
 // imports
+import libpomdp.general.java.*;
+import symPerseusJava.*;
 import org.math.array.*;
 
 public class blindAdd {
