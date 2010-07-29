@@ -7,6 +7,8 @@
  * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
 
+package libpomdp.problems.catchproblem;
+
 public class CatchGraph {
     
     // instantiate empty generator to acces some of its methods

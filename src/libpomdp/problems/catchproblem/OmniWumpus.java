@@ -10,6 +10,8 @@
  * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
 
+package libpomdp.problems.catchproblem;
+
 public class OmniWumpus implements Wumpus {
 
     // ------------------------------------------------------------------------

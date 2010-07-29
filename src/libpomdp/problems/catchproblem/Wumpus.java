@@ -8,6 +8,8 @@
  * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
 
+package libpomdp.problems.catchproblem;
+
 interface Wumpus {
 
     // returns a vector with the action distribution for the wumpus

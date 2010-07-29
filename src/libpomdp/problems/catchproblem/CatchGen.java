@@ -11,6 +11,8 @@
  * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
 
+package libpomdp.problems.catchproblem;
+
 // imports
 import java.io.*;
 

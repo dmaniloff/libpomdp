@@ -8,6 +8,8 @@
  * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
 
+package libpomdp.problems.catchproblem;
+
 interface Sensor {
 
     // simply say wether the wumpus is in range for this

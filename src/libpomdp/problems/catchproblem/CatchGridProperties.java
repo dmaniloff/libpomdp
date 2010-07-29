@@ -8,6 +8,8 @@
  * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
 
+package libpomdp.problems.catchproblem;
+
 interface CatchGridProperties {
 
     // is there a wall ahead of position in direcion m?

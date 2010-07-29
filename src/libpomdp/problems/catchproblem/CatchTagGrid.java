@@ -7,6 +7,8 @@
  * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
 
+package libpomdp.problems.catchproblem;
+
 public class CatchTagGrid implements CatchGridProperties {
     
     // class properties
