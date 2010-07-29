@@ -11,6 +11,9 @@
 package libpomdp.hybrid.java;
 
 // imports
+import libpomdp.general.java.*;
+import libpomdp.online.java.*;
+import symPerseusJava.*;
 import java.io.*;
 import org.math.array.*;
 

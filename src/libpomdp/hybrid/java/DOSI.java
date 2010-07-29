@@ -10,6 +10,8 @@
 package libpomdp.hybrid.java;
 
 // imports
+import libpomdp.general.java.*;
+import libpomdp.online.java.*;
 import org.math.array.*;
 
 public class DOSI implements backupHeuristic {

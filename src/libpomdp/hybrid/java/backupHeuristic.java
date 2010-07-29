@@ -9,6 +9,9 @@
 
 package libpomdp.hybrid.java;
 
+// imports
+import libpomdp.online.java.*;
+
 interface backupHeuristic {
 
     public double h_b(orNode o);
