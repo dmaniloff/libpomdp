@@ -8,6 +8,8 @@
  * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
 
+package libpomdp.hybrid.java;
+
 // imports
 import java.io.*;
 import org.math.array.*;

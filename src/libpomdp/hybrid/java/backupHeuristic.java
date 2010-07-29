@@ -7,6 +7,8 @@
  * W3: http://www.cs.uic.edu/~dmanilof 
  --------------------------------------------------------------------------- */
 
+package libpomdp.hybrid.java;
+
 interface backupHeuristic {
 
     public double h_b(orNode o);

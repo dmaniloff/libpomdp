@@ -7,6 +7,9 @@
  * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
 
+package libpomdp.hybrid.java;
+
+// imports
 import org.math.array.*;
 
 public class DOSI implements backupHeuristic {
