@@ -14,6 +14,7 @@
 package libpomdp.general.java;
 
 // imports
+import symPerseusJava.*;
 import org.math.array.*;
 import java.io.*;
 

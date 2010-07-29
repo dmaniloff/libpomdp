@@ -10,6 +10,9 @@
 
 package libpomdp.general.java;
 
+// imports
+import symPerseusJava.*;
+
 public class belStateAdd implements belState {
     
     // main property is the DD itself
