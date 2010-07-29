@@ -7,6 +7,8 @@
  * Copyright (c) 2009, 2010 Diego Maniloff 
  * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
+package libpomdp.general.java;
+
 public class belStateFlat implements belState {
 
     // flat belief point

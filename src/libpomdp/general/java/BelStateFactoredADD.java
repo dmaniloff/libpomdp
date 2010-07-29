@@ -8,6 +8,8 @@
  * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
 
+package libpomdp.general.java;
+
 public class BelStateFactoredADD implements belState {
     
     // main property is the DD array of marginals

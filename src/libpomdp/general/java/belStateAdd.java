@@ -8,6 +8,8 @@
  * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
 
+package libpomdp.general.java;
+
 public class belStateAdd implements belState {
     
     // main property is the DD itself

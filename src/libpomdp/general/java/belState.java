@@ -9,6 +9,8 @@
  * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
 
+package libpomdp.general.java;
+
 interface belState {
 
     /// flat belief point

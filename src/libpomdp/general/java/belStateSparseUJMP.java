@@ -7,6 +7,8 @@
  * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
 
+package libpomdp.general.java;
+
 // imports
 import org.ujmp.core.*;
 import org.ujmp.core.doublematrix.impl.*;

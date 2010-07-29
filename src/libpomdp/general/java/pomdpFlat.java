@@ -12,6 +12,8 @@
  * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
 
+package libpomdp.general.java;
+
 // imports
 import org.math.array.*;
 import org.math.array.util.*; //dont't know why the above is not enough
