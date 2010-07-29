@@ -39,9 +39,18 @@ tokens {
 }
 
 /*------------------------------------------------------------------
+ * LEXER INITIALIZATIONS
+ *------------------------------------------------------------------*/
+@lexer::header {
+    package libpomdp.general.java;
+}
+
+/*------------------------------------------------------------------
  * PARSER INITIALIZATIONS
  *------------------------------------------------------------------*/
 @header {
+    package libpomdp.general.java;
+
     // we're using mtj to store the data
     import no.uib.cipr.matrix.*;    
     import no.uib.cipr.matrix.sparse.*;   

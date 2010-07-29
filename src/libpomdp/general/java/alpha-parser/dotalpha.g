@@ -9,6 +9,20 @@
 
 grammar dotalpha;
 
+/*------------------------------------------------------------------
+ * LEXER INITIALIZATIONS
+ *------------------------------------------------------------------*/
+@lexer::header {
+    package libpomdp.general.java;
+}
+
+/*------------------------------------------------------------------
+ * PARSER INITIALIZATIONS
+ *------------------------------------------------------------------*/
+@header {
+    package libpomdp.general.java;
+}
+
 @members {
     // main method
     public static void main(String[] args) throws Exception {

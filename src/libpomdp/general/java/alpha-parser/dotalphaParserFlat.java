@@ -9,8 +9,9 @@
  * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
 
+package libpomdp.general.java;
+
 // imports
-import libpomdp.general.java.*;
 import org.antlr.runtime.*;
 import java.io.*;
 
