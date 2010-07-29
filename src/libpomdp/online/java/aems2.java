@@ -12,6 +12,7 @@
 package libpomdp.online.java;
 
 // imports
+import libpomdp.general.java.*;
 import org.math.array.*;
 import java.util.*;
 

@@ -12,6 +12,9 @@
 
 package libpomdp.online.java;
 
+// imports
+import libpomdp.general.java.*;
+
 public class orNode {
     
     /// first property of an OR node is its belief state

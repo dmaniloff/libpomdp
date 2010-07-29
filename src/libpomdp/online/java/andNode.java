@@ -9,6 +9,9 @@
 
 package libpomdp.online.java;
 
+// imports
+import libpomdp.general.java.*;
+
 public class andNode {
     
     /// main property is the action the node represents
