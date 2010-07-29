@@ -10,7 +10,7 @@
 
 package libpomdp.general.java;
 
-interface valueFunction {
+public interface valueFunction {
     
     // list of actions associated with each alpha
     public int[] getActions();

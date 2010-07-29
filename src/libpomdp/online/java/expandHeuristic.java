@@ -10,7 +10,7 @@
 
 package libpomdp.online.java;
 
-interface expandHeuristic {
+public interface expandHeuristic {
 
     /// H(b): heuristic for the orNode
     public double h_b(orNode o);

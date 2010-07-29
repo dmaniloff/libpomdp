@@ -9,7 +9,7 @@
 
 package libpomdp.general.java;
 
-interface pomdp {
+public interface pomdp {
 
     /// P(o|b,a) in vector form for all o's
     public double[] P_Oba(belState b, int a);
