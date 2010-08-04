@@ -12,6 +12,8 @@
  * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
 
+package libpomdp.problems.rocksample;
+
 // imports
 import java.io.*;
 import java.util.*;
