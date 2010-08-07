@@ -7,7 +7,7 @@
 <!--  * W3: http://www.cs.uic.edu/~dmanilof                                           -->
 <!--  ******************************************************************************* -->
 
-<project name="libpomdp" default="compile">
+<project name="libpomdp" default="dist">
     <description>
         build file
     </description>
