@@ -42,7 +42,7 @@ public class AndOrTree {
 
     /// constructor
     public AndOrTree(pomdp prob, expandHeuristic h, valueFunction L, valueFunction U) {
-	this.problem = (pomdpAdd)prob;
+	this.problem = prob;
 	this.expH = h;
 	this.offlineLower = L;
 	this.offlineUpper = U;
