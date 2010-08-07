@@ -20,6 +20,7 @@ javaaddpath '../../../../external/symPerseusJava.jar'
 javaaddpath '../../../../dist/libpomdp.jar'
 
 % java imports
+import symPerseusJava.*;
 import libpomdp.general.java.*;
 import libpomdp.online.java.*;
 import libpomdp.offline.java.*;
@@ -31,24 +32,10 @@ import libpomdp.problems.rocksample.*;
 
 %% load problem parameters - factored representation
 factoredProb = pomdpAdd  ('../../problems/rocksample/15-12/RockSample_15_12.SPUDD');
-% symDD        = parsePOMDP('../../problems/rocksample/10-10/RockSample_10_10.SPUDD');
-
-%% compute offline lower and upper bounds
-blindCalc = blindAdd;
-lBound    = blindCalc.getBlindAdd(factoredProb);
- 
-qmdpCalc  = qmdpAdd;
-uBound    = qmdpCalc.getqmdpAdd(factoredProb);
-
-% % use Poupart's QMDP solver
-% [Vqmdp qmdpP] = solveQMDP(symDD);
-% % uBound        = valueFunction(OP.convert2array(Vqmdp, factoredProb.staIds), qmdpP);
-% uBound        = valueFunctionAdd(Vqmdp, factoredProb.staIds, qmdpP);
 
 %% load them in case we have them saved
-% load 'saved-data/rocksample/blindAdd_RockSample_10_10.mat';
-% load 'saved-data/qmdpAdd_RockSample_7_8.mat';
-% load 'saved-data/rocksample/qmdpSymPerseus_RockSample_10_10.mat';
+load '../../problems/rocksample/15-12/blindAdd_RockSample_15_12.mat';
+load '../../problems/rocksample/15-12/qmdpSymPerseus_RockSample_15_12.mat';
 
 %% create heuristic search AND-OR tree
 % instantiate an aems2 heuristic object
@@ -98,10 +85,14 @@ for run = 1:TOTALRUNS
 
         fprintf(1, '********************** EPISODE %d of %d *********************\n', ep, EPISODECOUNT);
         
-        % re - initialize tree at starting belief
+        % re - initialize tree at starting belief - using factored beliefs
         aoTree = [];
         aoTree = AndOrTree(factoredProb, aems2h, lBound, uBound);
-        aoTree.init(factoredProb.getInit());
+        b_init = javaArray('symPerseusJava.DD', 1);
+        b_init(1) = factoredProb.getInit().bAdd;
+        aoTree.init(BelStateFactoredADD( ...
+            OP.marginals(b_init,factoredProb.staIds,factoredProb.staIdsPr),...
+            factoredProb.staIds));
         rootNode = aoTree.getRoot();
 
         % starting state for this set of EPISODECOUNT episodes
@@ -121,7 +112,7 @@ for run = 1:TOTALRUNS
             tc = cell(factoredProb.printS(factoredS));
             fprintf(1, 'Current world state is:         %s\n', tc{1});
             drawer.drawState(GRID_SIZE, ROCK_POSITIONS,factoredS);
-            if rootNode.belief.getClass.toString == 'class BelStateFactoredADD'
+            if rootNode.belief.getClass.toString == 'class libpomdp.general.java.BelStateFactoredADD'
               fprintf(1, 'Current belief agree prob:      %d\n', ...                       
                       OP.evalN(rootNode.belief.marginals, factoredS));
             else
