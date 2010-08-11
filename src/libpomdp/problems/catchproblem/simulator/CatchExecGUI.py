@@ -40,6 +40,7 @@ PROBLEM      = '../catch_rect_5_5_rand_adjobs.SPUDD'
 ALPHAS       = '../data/catch_rect_rand_adjobs_5_5_rounds1_iter100_nbel10000_nsbel10000_alphas619.alpha'
 
 # declarations
+stats            = []
 gp               = CatchRectangularGrid(ROWS,COLS)
 parser           = dotalphaParserFlat() # the parentheses here are needed!!
 parser.parse(ALPHAS)
@@ -220,9 +221,10 @@ class CatchExecGUI:
         factoredS  = initState
         instance   = 1
         cumrew     = 0
+        run        = 1
         # execution loop
-        while(episoderunning):
-
+        # while(episoderunning):
+        while(run <= 100):
             # draw current state
             # self.draw_state(factoredS) 
             
@@ -284,6 +286,16 @@ class CatchExecGUI:
             # smooth the sim a little in case we're not stepping
             time.sleep(1)
 
+            # stop after 100 iterations
+            if instance == 100:
+                run = run + 1;
+                stats.append(cumrew);
+                currbelief = initBelief
+                factoredS  = initState
+                cumrew = 0;
+                instance = 1;
+
+        print stats;
 
 if __name__ == '__main__':
     CatchExecGUI()

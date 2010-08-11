@@ -265,59 +265,87 @@ class CatchExecGUI:
         # declarations
         global initState
         global gamma
-        instance = 1
-        wpos   = initState[NUM_AGENTS]
-        jstate = [None] * (NUM_AGENTS + 1)
-        jrewrd = [None] * (NUM_AGENTS)
-        state_rew_queue = Queue(NUM_AGENTS)
-        wumpus_queue    = Queue(NUM_AGENTS)
-        cumrew          = 0
+        run   = 1
+        stats = []
 
-        # spawn one thread for each agent
-        for i in range(NUM_AGENTS):
-            # Thread(target=lambda: self.run_sim(i)).start()
-            thread.start_new_thread(self.run_agent, (i, state_rew_queue, wumpus_queue,))
+        while run <= 200:
+
+            # initialization for each agent
+            instance        = 1
+            wpos            = initState[NUM_AGENTS]
+            jstate          = [None] * (NUM_AGENTS + 1)
+            jrewrd          = [None] * (NUM_AGENTS)
+            state_rew_queue = Queue(NUM_AGENTS)
+            wumpus_queue    = Queue(NUM_AGENTS)
+            running_queue   = Queue(NUM_AGENTS)
+            cumrew          = 0
+
+            # spawn one thread for each agent
+            for i in range(NUM_AGENTS):
+                # Thread(target=lambda: self.run_sim(i)).start()
+                thread.start_new_thread(self.run_agent, 
+                                        (i, 
+                                         state_rew_queue, 
+                                         wumpus_queue, 
+                                         running_queue,))
         
-        # the main thread will consume all elements from the queue, and once
-        # empty will allow for execution to continue on each of the agent threads
-        while True:   
-            # first, the wumpus moves - sample this from the model, as it is random
-            # it doesn't matter where the agent might be, or its action
-            wpos_new = pomdpProblem.sampleNextState([1, wpos], 0)[1]
-            # tell all agent threads where the wumpus is so they can produce an obs
-            for i in range(NUM_AGENTS):
-                wumpus_queue.put(wpos_new)
-            # now wait for the state queue to fill
-            while not state_rew_queue.full():
-                pass
-            # remove all items and assemble a state vector for drawer
-            for i in range(NUM_AGENTS):
-                item     = state_rew_queue.get() 
-                jstate[item[0]] = item[1]
-                jrewrd[item[0]] = item[2]
-                state_rew_queue.task_done()
-                print "MAIN: gathered item %d from state_rew_queue" % (i)
-            # at this point all agent threads that called join will resume                
-            jstate[NUM_AGENTS] = wpos_new
-            # iterate wpos
-            wpos = wpos_new
-            # calculate total cumulative reward for this instance
-            treward = 0
-            for i in range(NUM_AGENTS):
-                treward = treward + jrewrd[i]
-            cumrew = cumrew + treward*gamma**instance
-            # draw joint state
-            self.draw_state(jstate, treward, cumrew)
-            time.sleep(2)
-            # iterate
-            instance = instance + 1
+            # the main thread will consume all elements from the queue, and once
+            # empty will allow for execution to continue on each of the agent threads
+            # while True:
+
+            while instance <= 100:   
+
+                # tell the agents to keep going (there's probably a better way to do this)
+                for i in range(NUM_AGENTS):
+                    running_queue.put(True)
+
+                # first, the wumpus moves - sample this from the model, as it is random
+                # it doesn't matter where the agent might be, or its action
+                wpos_new = pomdpProblem.sampleNextState([1, wpos], 0)[1]
+                # tell all agent threads where the wumpus is so they can produce an obs
+                for i in range(NUM_AGENTS): 
+                    wumpus_queue.put(wpos_new)
+                # now wait for the state queue to fill
+                while not state_rew_queue.full():
+                    pass
+                # remove all items and assemble a state vector for drawer
+                for i in range(NUM_AGENTS):
+                    item            = state_rew_queue.get() 
+                    jstate[item[0]] = item[1]
+                    jrewrd[item[0]] = item[2]
+                    state_rew_queue.task_done()
+                    print "MAIN: gathered item %d from state_rew_queue" % (i)
                 
+                # at this point all agent threads that called join will resume           
+                jstate[NUM_AGENTS] = wpos_new
+                # iterate wpos
+                wpos = wpos_new
+                # calculate total cumulative reward for this instance
+                treward = 0
+                for i in range(NUM_AGENTS):
+                    treward = treward + jrewrd[i]
+                cumrew = cumrew + treward*gamma**instance            
+            
+                # draw joint state
+                self.draw_state(jstate, treward, cumrew)
+                time.sleep(2)
+                # iterate
+                instance = instance + 1
+            
+            # all instances finished, save cum rewards and reset for next run
+            stats.append(cumrew)       
+            run = run + 1
+        
+            # tell the agents to end (there's probably a better way to do this)
+            for i in range(NUM_AGENTS):
+                running_queue.put(False)
+
+        print stats;
                 
     '''
     agents thread function
     '''
-    def run_agent(self, agentid, state_rew_queue, wumpus_queue):
-        episoderunning = True
+    def run_agent(self, agentid, state_rew_queue, wumpus_queue, running_queue):
         
         # starting local belief state, and simulation local state
         currbelief = initBelief
@@ -326,8 +354,13 @@ class CatchExecGUI:
         cumrew     = 0
 
         # execution loop
-        while(episoderunning):
+        while True:
             
+            # see if we can end this agent now
+            episoderunning = running_queue.get();
+            running_queue.task_done();
+            running_queue.join();
+
             # extract action from direct controller - ie., 0-step LA
             exreward = valueFunction.V(currbelief)
             action   = valueFunction.directControl(currbelief)
@@ -399,6 +432,7 @@ class CatchExecGUI:
             # smooth the sim a little in case we're not stepping
             # time.sleep(1)
 
+          
 
 if __name__ == '__main__':
     CatchExecGUI()
