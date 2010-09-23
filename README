@@ -1,6 +1,8 @@
 libpomdp
 ========
 
+ATENTION: This is Mauricio Araya's Fork, not the original
+
 libpomdp (or libPOMDP) is an implementation of different offline and
 online Partially Observable Markov Decision Process (POMDP)
 approximation algorithms. At an early stage of development, libpomdp
