@@ -16,9 +16,8 @@ package libpomdp.general.java;
 
 // imports
 import org.math.array.*;
-import org.math.array.util.*; //dont't know why the above is not enough
 
-public class pomdpFlat implements pomdp {
+public class pomdpFlat implements Pomdp {
 
     // ------------------------------------------------------------------------
     // properties
@@ -52,7 +51,7 @@ public class pomdpFlat implements pomdp {
     private String obsStr[];
 
     // starting belief
-    private belStateFlat initBelief;
+    private BelStateFlat initBelief;
 
     // ------------------------------------------------------------------------
     // methods
@@ -78,7 +77,7 @@ public class pomdpFlat implements pomdp {
 	this.actStr = actStr;
 	this.obsStr = obsStr;
 	// set initial belief state
-	this.initBelief = new belStateFlat(init, 0.0);
+	this.initBelief = new BelStateFlat(init, 0.0);
 	// copy the model matrices
 	int a;
 	for(a = 0; a < nrAct; a++) {
@@ -97,16 +96,16 @@ public class pomdpFlat implements pomdp {
     // }
 
     // P(o|b,a) in vector form for all o's
-    public double[] P_Oba(belState b, int a) {
+    public double[] P_Oba(BelState b, int a) {
     	double Tb[]   = LinearAlgebra.times(T[a],b.getbPoint());
     	double Poba[] = LinearAlgebra.times(DoubleArray.transpose(O[a]),Tb);
     	return Poba;
     }
 
     /// tao(b,a,o)
-    public belState tao(belState b, int a, int o) {
+    public BelState tao(BelState b, int a, int o) {
 	double b1[], b2[];
-	belState bPrime;
+	BelState bPrime;
 	b1 = b.getbPoint();
 	b2 = LinearAlgebra.times(T[a], b1); // matrix by vector
 	b2 = LinearAlgebra.times(b2, DoubleArray.getColumnCopy(O[a],o)); // element-wise
@@ -119,14 +118,14 @@ public class pomdpFlat implements pomdp {
 	} else {
 	    // safe to normalize now
 	    b2 = LinearAlgebra.divide(b2,DoubleArray.sum(b2));    
-	    bPrime = new belStateFlat(b2, poba);
+	    bPrime = new BelStateFlat(b2, poba);
 	}
 	// return
 	return bPrime;
     }
 
     /// R(b,a)
-    public double Rba(belState bel, int a) {
+    public double Rba(BelState bel, int a) {
 	return LinearAlgebra.sum(LinearAlgebra.
 				 times(bel.getbPoint(), DoubleArray.getRowCopy(R,a)));
     }
@@ -179,7 +178,7 @@ public class pomdpFlat implements pomdp {
 	return obsStr[o];
     }
 
-    public belState getInit() {
+    public BelState getInit() {
 	return initBelief;
     }
 

@@ -15,11 +15,11 @@
 package libpomdp.general.java;
 
 // imports
-import symPerseusJava.*;
+import libpomdp.general.java.symbolic.*;
 import java.util.*;
 import org.math.array.*;
 
-public class pomdpAdd implements pomdp {
+public class PomdpAdd implements Pomdp {
     	
     // ------------------------------------------------------------------------
     // properties
@@ -77,7 +77,7 @@ public class pomdpAdd implements pomdp {
     private String actStr[];
 	
     // starting belief
-    private belStateAdd initBelief;
+    private BelStateAdd initBelief;
 
     // ParseSPUDD parser - Poupart's parsing class
     public ParseSPUDD problemAdd;
@@ -87,7 +87,7 @@ public class pomdpAdd implements pomdp {
     // ------------------------------------------------------------------------
 
     /// constructor
-    public pomdpAdd(String spuddfile) {
+    public PomdpAdd(String spuddfile) {
 	// parse SPUDD file
 	problemAdd = new ParseSPUDD(spuddfile);
 	problemAdd.parsePOMDP(false);
@@ -134,7 +134,7 @@ public class pomdpAdd implements pomdp {
 	    actStr[a] = problemAdd.actNames.get(a);
 	}
 	// set initial belief state
-	initBelief = new belStateAdd(problemAdd.init, staIds, 0.0);
+	initBelief = new BelStateAdd(problemAdd.init, staIds, 0.0);
 	// compute total nr of states and obs
 	totnrSta = IntegerArray.product(staArity);
         totnrObs = IntegerArray.product(obsArity);
@@ -146,16 +146,16 @@ public class pomdpAdd implements pomdp {
      * used to quicky identify zero-prob obs and
      * avoid bulding an or node for those beliefs
      */
-    public double[] P_Oba(belState bel, int a) {
+    public double[] P_Oba(BelState bel, int a) {
 	// obtain subclass and the dd for this belief
 	//DD b = ((belStateAdd)bel).bAdd;
 	// declarations
 	DD     b1[];
 	DD     pObadd;
 	double pOba[];
-	if (bel instanceof belStateAdd) {
+	if (bel instanceof BelStateAdd) {
 	    b1 = new DD[1];
-	    b1[0] = ((belStateAdd)bel).bAdd;
+	    b1[0] = ((BelStateAdd)bel).bAdd;
 	} else {
 	    b1 = ((BelStateFactoredADD)bel).marginals;
 	}
@@ -171,9 +171,9 @@ public class pomdpAdd implements pomdp {
      *  tao(b,a,o):
      *  compute new belief state from current and a,o pair
      */
-    public belState tao(belState bel, int a, int o) {
-	if (bel instanceof belStateAdd) {
-	    return regulartao ((belStateAdd)bel, a, o);
+    public BelState tao(BelState bel, int a, int o) {
+	if (bel instanceof BelStateAdd) {
+	    return regulartao ((BelStateAdd)bel, a, o);
 	} else {
 	    return factoredtao((BelStateFactoredADD)bel, a, o);
 	}
@@ -186,12 +186,12 @@ public class pomdpAdd implements pomdp {
      * this function re-computes poba to normalize the belief,
      * need to think of a clever way to avoid this...
      */
-    public belState regulartao(belStateAdd bel, int a, int o) {	    
+    public BelState regulartao(BelStateAdd bel, int a, int o) {	    
 	// obtain subclass and the dd for this belief 
 	DD b1 = bel.bAdd;
 	DD b2;
 	DD oProb;
-	belState bPrime;
+	BelState bPrime;
 	DD O_o[];
 	int oc[][];
 	// restrict the prime observation variables to the ones that occurred
@@ -212,7 +212,7 @@ public class pomdpAdd implements pomdp {
 	} else {
 	    // safe to normalize now
 	    b2 = OP.div(b2, oProb);	    
-	    bPrime = new belStateAdd(b2, staIds, oProb.getVal());
+	    bPrime = new BelStateAdd(b2, staIds, oProb.getVal());
 	}
 	// return
 	return bPrime;
@@ -224,12 +224,12 @@ public class pomdpAdd implements pomdp {
      *  uses DD representation and functions from Symbolic Perseus
      *  uses the product of marginals to approximate a belief
      */
-    public belState factoredtao(BelStateFactoredADD bel, int a, int o) {	    
+    public BelState factoredtao(BelStateFactoredADD bel, int a, int o) {	    
 	// declarations
 	DD       b1[] = bel.marginals;	
 	DD       b2[];
 	DD       b2u[] = new DD[nrStaV];
-	belState bPrime;
+	BelState bPrime;
 	DD       O_o[];
 	int      oc[][];	
 	// restrict the prime observation variables to the ones that occurred
@@ -250,12 +250,12 @@ public class pomdpAdd implements pomdp {
     /// R(b,a)
     /// Poupart's matlab code has a loop indexed over
     /// 1:length(POMDP.actions(actId).rewFn) - when would this be > 1?
-    public double Rba(belState bel, int a) {
+    public double Rba(BelState bel, int a) {
 	// obtain subclass and the dd for this belief
 	DD b;
 	DD m[];
-	if (bel instanceof belStateAdd) {
-	    b = ((belStateAdd)bel).bAdd;
+	if (bel instanceof BelStateAdd) {
+	    b = ((BelStateAdd)bel).bAdd;
 	    return OP.dotProductNoMem(b, R[a], staIds);
 	} else {
 	    m = ((BelStateFactoredADD)bel).marginals;
@@ -334,7 +334,7 @@ public class pomdpAdd implements pomdp {
     }
 
     /// get initial belief state
-    public belState getInit() {
+    public BelState getInit() {
 	return initBelief;
     }
 

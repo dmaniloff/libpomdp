@@ -9,8 +9,7 @@
 
 package libpomdp.general.java;
 
-// imports
-import symPerseusJava.*;
+import libpomdp.general.java.symbolic.*;
 import java.util.*;
 import org.math.array.*;
 

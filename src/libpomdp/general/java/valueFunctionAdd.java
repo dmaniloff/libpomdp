@@ -14,7 +14,7 @@
 package libpomdp.general.java;
 
 // imports
-import symPerseusJava.*;
+import libpomdp.general.java.symbolic.*;
 import org.math.array.*;
 import java.io.*;
 
@@ -53,14 +53,14 @@ public class valueFunctionAdd implements valueFunction, Serializable {
     }
 
     // return value of a belief state
-    public double V(belState bel) {
+    public double V(BelState bel) {
 	// declarations
 	DD     b;
 	DD     m[];
 	double dotProds[];
 	// compute dot products
-	if (bel instanceof belStateAdd) {
-	    b = ((belStateAdd)bel).bAdd; 
+	if (bel instanceof BelStateAdd) {
+	    b = ((BelStateAdd)bel).bAdd; 
 	    dotProds = OP.dotProductNoMem(b, vAdd, staIds);
 	} else {
 	    m = ((BelStateFactoredADD)bel).marginals;

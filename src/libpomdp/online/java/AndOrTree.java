@@ -24,7 +24,7 @@ public class AndOrTree {
     // ------------------------------------------------------------------------
 
     // pomdp problem specification
-    protected pomdp problem;
+    protected Pomdp problem;
 
     // expansion heursitic 
     protected expandHeuristic expH;
@@ -41,7 +41,7 @@ public class AndOrTree {
     // ------------------------------------------------------------------------
 
     /// constructor
-    public AndOrTree(pomdp prob, expandHeuristic h, valueFunction L, valueFunction U) {
+    public AndOrTree(Pomdp prob, expandHeuristic h, valueFunction L, valueFunction U) {
 	this.problem = prob;
 	this.expH = h;
 	this.offlineLower = L;
@@ -49,7 +49,7 @@ public class AndOrTree {
     }
 
     /// initializer
-    public void init(belState belief) {
+    public void init(BelState belief) {
 	this.root = new orNode();
 	this.root.init(belief, -1, null);
 	this.root.l = offlineLower.V(this.root.belief);

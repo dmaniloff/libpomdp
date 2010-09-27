@@ -60,7 +60,7 @@ public class andNode {
 
     /// initializer:
     /// needs a reference to problem to call Rba
-    public void init(int action, orNode parent, pomdp problem) {
+    public void init(int action, orNode parent, Pomdp problem) {
 	this.act              = action;
 	this.parent           = parent;
 	this.rba              = problem.Rba(parent.belief, action);

@@ -9,7 +9,7 @@
  --------------------------------------------------------------------------- */
 package libpomdp.general.java;
 
-public class belStateFlat implements belState {
+public class BelStateFlat implements BelState {
 
     // flat belief point
     private double bPoint[];
@@ -20,7 +20,7 @@ public class belStateFlat implements belState {
 
     // constructor
     // in case this is the initial belief, poba = 0.0
-    public belStateFlat(double[] bPoint, double poba) {
+    public BelStateFlat(double[] bPoint, double poba) {
 	this.bPoint = bPoint;
 	this.poba   = poba;
     }

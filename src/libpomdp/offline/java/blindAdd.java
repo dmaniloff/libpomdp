@@ -20,7 +20,7 @@ public class blindAdd {
     final int MAXITERATIONS = 500;
     final double EPSILON    = 1e-5;
     
-    public valueFunctionAdd getBlindAdd(pomdpAdd factoredProb) {
+    public valueFunctionAdd getBlindAdd(PomdpAdd factoredProb) {
 
 	// decls
 	DD[] adds;

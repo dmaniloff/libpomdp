@@ -11,7 +11,7 @@
 
 package libpomdp.general.java;
 
-public interface belState {
+public interface BelState {
 
     /// flat belief point
     public double[] getbPoint();

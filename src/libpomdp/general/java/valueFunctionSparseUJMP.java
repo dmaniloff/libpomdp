@@ -47,8 +47,8 @@ public class valueFunctionSparseUJMP implements valueFunction, Serializable {
     }
 
     // return value of a belief state
-    public double V(belState bel) {
-	DefaultSparseDoubleMatrix b = ((belStateSparseUJMP)bel).bSparse;
+    public double V(BelState bel) {
+	DefaultSparseDoubleMatrix b = ((BelStateSparseUJMP)bel).bSparse;
 	DefaultSparseDoubleMatrix dotProdsM  = (DefaultSparseDoubleMatrix) v.mtimes(b);
 	// need to convert for now to use Common.argmax
 	// there must be a way to avoid this!!

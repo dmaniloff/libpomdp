@@ -20,7 +20,7 @@ import org.ujmp.core.objectmatrix.impl.*;
 import org.ujmp.core.doublematrix.impl.*;
 
 
-public class pomdpSparseUJMP implements pomdp {
+public class pomdpSparseUJMP implements Pomdp {
 
     // ------------------------------------------------------------------------
     // properties
@@ -54,7 +54,7 @@ public class pomdpSparseUJMP implements pomdp {
     private String obsStr[];
 
     // starting belief
-    private belStateSparseUJMP initBelief;
+    private BelStateSparseUJMP initBelief;
 
     // ------------------------------------------------------------------------
     // methods
@@ -86,7 +86,7 @@ public class pomdpSparseUJMP implements pomdp {
 	// set initial belief state
 	double sv[] = Matrices.getArray(init);
 	this.initBelief = 
-	    new belStateSparseUJMP(new DefaultSparseDoubleMatrix(MatrixFactory.
+	    new BelStateSparseUJMP(new DefaultSparseDoubleMatrix(MatrixFactory.
 								 importFromArray(sv)), 0.0);
 	// copy the model matrices
 	for(int a = 0; a < nrAct; a++) {
@@ -103,9 +103,9 @@ public class pomdpSparseUJMP implements pomdp {
     } // constuctor
 
     // P(o|b,a) in vector form for all o's
-    public double[] P_Oba(belState b, int a) {
+    public double[] P_Oba(BelState b, int a) {
 	// convert this to use sparsity!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	DefaultSparseDoubleMatrix b1   = ((belStateSparseUJMP)b).bSparse;
+	DefaultSparseDoubleMatrix b1   = ((BelStateSparseUJMP)b).bSparse;
 	DefaultSparseDoubleMatrix Tb   = (DefaultSparseDoubleMatrix) T[a].mtimes(b1);
     	DefaultSparseDoubleMatrix Poba = (DefaultSparseDoubleMatrix) O[a].transpose().
 	    mtimes(Tb);
@@ -113,12 +113,12 @@ public class pomdpSparseUJMP implements pomdp {
     }
 
     /// tao(b,a,o)
-    public belState tao(belState b, int a, int o) {
+    public BelState tao(BelState b, int a, int o) {
 	long start = System.currentTimeMillis();
-	belState bPrime;
+	BelState bPrime;
 	DefaultSparseDoubleMatrix b1, b2;
 	
-	b1 = ((belStateSparseUJMP)b).bSparse;
+	b1 = ((BelStateSparseUJMP)b).bSparse;
 	// b1 comes in as a column vector, so transpose it and then times with T[a]
 	b2 = (DefaultSparseDoubleMatrix) b1.transpose().mtimes(T[a]); 
 	System.out.println("Elapsed in tao - T[a] * b1" + 
@@ -137,14 +137,14 @@ public class pomdpSparseUJMP implements pomdp {
 	} else {
 	    // safe to normalize now
 	    b2 = (DefaultSparseDoubleMatrix) b2.divide(poba);    
-	    bPrime = new belStateSparseUJMP(b2, poba);
+	    bPrime = new BelStateSparseUJMP(b2, poba);
 	}
 	// return
 	return bPrime;
     }
 
     /// R(b,a)
-    public double Rba(belState bel, int a) {
+    public double Rba(BelState bel, int a) {
 	return LinearAlgebra.sum(LinearAlgebra.
 				 times(bel.getbPoint(), R[a].toDoubleArray()[0]));
     }
@@ -183,7 +183,7 @@ public class pomdpSparseUJMP implements pomdp {
 	return obsStr[o];
     }
 
-    public belState getInit() {
+    public BelState getInit() {
 	return initBelief;
     }
 

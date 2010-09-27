@@ -44,7 +44,7 @@ public class valueFunctionFlat implements valueFunction, Serializable {
     }
 
     // return value of a belief state
-    public double V(belState bel) {
+    public double V(BelState bel) {
 	double b[] = bel.getbPoint();
 	double dotProds[] = LinearAlgebra.times(v, b);
 	int argmax = Common.argmax(dotProds);
@@ -61,7 +61,7 @@ public class valueFunctionFlat implements valueFunction, Serializable {
 
     // direct contol using this value function as a policy
     // actions start from 0
-    public int directControl(belState bel) {
+    public int directControl(BelState bel) {
 	double b[] = bel.getbPoint();
 	double dotProds[] = LinearAlgebra.times(v, b);
 	int argmax = Common.argmax(dotProds);

@@ -11,9 +11,9 @@
 package libpomdp.general.java;
 
 // imports
-import symPerseusJava.*;
-
-public class belStateAdd implements belState {
+import libpomdp.general.java.symbolic.*;
+ 
+public class BelStateAdd implements BelState {
     
     // main property is the DD itself
     public DD bAdd;
@@ -21,7 +21,7 @@ public class belStateAdd implements belState {
     // probability of reaching this belief when computing tao
     private double poba = -1.0;
 
-    // plain id that suuports this belief point
+    // plain id that supports this belief point
     private int planid = -1;
 
     // we need the state variable ids to call convert2array
@@ -29,7 +29,7 @@ public class belStateAdd implements belState {
 
     // constructor
     // in case this is the init belief, poba = 0.0
-    public belStateAdd(DD b, int staIds[], double poba) {
+    public BelStateAdd(DD b, int staIds[], double poba) {
 	this.bAdd   = b;
 	this.staIds = staIds;
 	this.poba   = poba;
@@ -37,7 +37,7 @@ public class belStateAdd implements belState {
 
     // compute this only if we actually need it
     public double[] getbPoint() {
-	return	OP.convert2array(bAdd, staIds);
+    	return(OP.convert2array(bAdd, staIds));
     }
 
     public double getpoba() {

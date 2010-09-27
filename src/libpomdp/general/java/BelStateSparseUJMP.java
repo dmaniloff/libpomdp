@@ -1,7 +1,7 @@
 /** ------------------------------------------------------------------------- *
  * libpomdp
  * ========
- * File: belStateSparseMTJ.java
+ * File:
  * Description: 
  * Copyright (c) 2009, 2010 Diego Maniloff 
  * W3: http://www.cs.uic.edu/~dmanilof
@@ -10,26 +10,24 @@
 package libpomdp.general.java;
 
 // imports
-import no.uib.cipr.matrix.*;
-import no.uib.cipr.matrix.sparse.*;
+import org.ujmp.core.doublematrix.impl.DefaultSparseDoubleMatrix;
 
-public class belStateSparseMTJ implements belState {
+public class BelStateSparseUJMP implements BelState {
 
-    // sparse representation of the belief
-    public SparseVector bSparse;
+    // main property, public for debug
+    public DefaultSparseDoubleMatrix bSparse;
 
     // flat belief point
-    private double bPoint[];
+    @SuppressWarnings("unused")
+	private double bPoint[];
 
-    // associated P(o|b,a)
     private double poba = -1.0;
 
-    // associated alpha vector id
     private int planid = -1;
 
     // constructor
     // in case this is the initial belief, poba = 0.0
-    public belStateSparseMTJ(SparseVector bSparse, double poba) {
+    public BelStateSparseUJMP(DefaultSparseDoubleMatrix bSparse, double poba) {
 	this.bSparse = bSparse;
 	this.poba    = poba;
     }
@@ -37,7 +35,10 @@ public class belStateSparseMTJ implements belState {
     // calling this method should be for debugging
     // purposes only, otherwise we loose the sparse rep
     public double[] getbPoint() {
-	return Matrices.getArray(bSparse);
+	if(bSparse.getSize()[0]>1)
+	    return bSparse.transpose().toDoubleArray()[0];
+	else
+	    return bSparse.toDoubleArray()[0];
     }
 
     public double getpoba() {
@@ -57,4 +58,4 @@ public class belStateSparseMTJ implements belState {
     }
 
 
-} // belStateSparseMTJ
+} // 

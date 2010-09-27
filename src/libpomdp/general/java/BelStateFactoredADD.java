@@ -10,10 +10,9 @@
 
 package libpomdp.general.java;
 
-// imports
-import symPerseusJava.*;
+import libpomdp.general.java.symbolic.*;
 
-public class BelStateFactoredADD implements belState {
+public class BelStateFactoredADD implements BelState {
     
     // main property is the DD array of marginals
     public DD marginals[];

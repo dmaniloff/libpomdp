@@ -9,7 +9,7 @@
  * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
 
-package libpomdp.general.java;
+package libpomdp.general.java.parsers;
 
 // imports
 import org.antlr.runtime.*;
@@ -19,7 +19,7 @@ public class dotalphaParserFlat {
 
     static Integer actions[];
     static Double  alphas[][];
-
+    
     public static void parse (String filename) throws Exception {
 	dotalphaLexer lex = new dotalphaLexer(new ANTLRFileStream(filename));
        	CommonTokenStream tokens = new CommonTokenStream(lex);

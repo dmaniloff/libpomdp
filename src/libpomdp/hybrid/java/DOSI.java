@@ -17,10 +17,10 @@ import org.math.array.*;
 public class DOSI implements backupHeuristic {
 
     // pomdp specification
-    private pomdp problem;
+    private Pomdp problem;
     
     // constructor
-    public DOSI(pomdp prob) {
+    public DOSI(Pomdp prob) {
 	this.problem = prob;
     }
 

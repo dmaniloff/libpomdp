@@ -18,7 +18,7 @@ import libpomdp.general.java.*;
 public class orNode {
     
     /// first property of an OR node is its belief state
-    public belState belief;
+    public BelState belief;
 
     /// observation that leads to this node
     private int obs;
@@ -102,7 +102,7 @@ public class orNode {
     // ------------------------------------------------------------------------
 
     /// initializer
-    public void init(belState belief, int observation, andNode parent) {
+    public void init(BelState belief, int observation, andNode parent) {
 	this.belief            = belief;
 	this.obs               = observation;
 	// parent and depth

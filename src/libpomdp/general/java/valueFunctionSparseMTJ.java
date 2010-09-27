@@ -45,9 +45,9 @@ public class valueFunctionSparseMTJ implements valueFunction, Serializable {
     }
 
     // return value of a belief state
-    public double V(belState bel) {
+    public double V(BelState bel) {
 	long start = System.currentTimeMillis();
-	SparseVector b = ((belStateSparseMTJ)bel).bSparse;
+	SparseVector b = ((BelStateSparseMTJ)bel).bSparse;
 	SparseVector dotProds = new SparseVector(v.numRows());
 	dotProds = (SparseVector) v.mult(b, dotProds);
 	// there must be a way to avoid this!!

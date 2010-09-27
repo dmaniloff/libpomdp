@@ -19,13 +19,13 @@ import java.util.*;
 public class aems2 implements expandHeuristic {
 
     /// main property is the pomdp spec
-    private pomdp problem;    
+    private Pomdp problem;    
 
     /// set the gen only once for every instance
     private Random gen = new Random(System.currentTimeMillis());
 
     /// constructor
-    public aems2 (pomdp prob) {
+    public aems2 (Pomdp prob) {
 	this.problem = prob;
     }
    

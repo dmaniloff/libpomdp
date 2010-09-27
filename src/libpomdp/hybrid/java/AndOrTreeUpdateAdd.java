@@ -24,19 +24,19 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
     // ------------------------------------------------------------------------
 
     /// work with ADD representation of the pomdp
-    pomdpAdd problem;
+    PomdpAdd problem;
 
     /// backup heuristic
     backupHeuristic bakH;
 
     /// same constructor with backup heuristic
-    public AndOrTreeUpdateAdd(pomdp prob, 
+    public AndOrTreeUpdateAdd(Pomdp prob, 
 			      expandHeuristic h, 
 			      backupHeuristic bakh, 
 			      valueFunction L, 
 			      valueFunction U) {
 	super(prob, h, L, U);
-	this.problem = (pomdpAdd) super.problem;
+	this.problem = (PomdpAdd) super.problem;
 	this.bakH    =  bakh;
     }
 
