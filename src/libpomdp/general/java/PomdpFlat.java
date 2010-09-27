@@ -17,7 +17,7 @@ package libpomdp.general.java;
 // imports
 import org.math.array.*;
 
-public class pomdpFlat implements Pomdp {
+public class PomdpFlat implements Pomdp {
 
     // ------------------------------------------------------------------------
     // properties
@@ -58,7 +58,7 @@ public class pomdpFlat implements Pomdp {
     // ------------------------------------------------------------------------
 
     // constructor
-    public pomdpFlat(double O[][], 
+    public PomdpFlat(double O[][], 
 		     double T[][], 
 		     double R[][],
 		     int nrSta, int nrAct, int nrObs, 

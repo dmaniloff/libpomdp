@@ -14,7 +14,7 @@ import libpomdp.general.java.*;
 import libpomdp.online.java.*;
 import org.math.array.*;
 
-public class DOSI implements backupHeuristic {
+public class DOSI implements BackupHeuristic {
 
     // pomdp specification
     private Pomdp problem;

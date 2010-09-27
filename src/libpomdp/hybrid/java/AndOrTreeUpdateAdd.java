@@ -13,8 +13,9 @@ package libpomdp.hybrid.java;
 // imports
 import libpomdp.general.java.*;
 import libpomdp.online.java.*;
-import symPerseusJava.*;
+import libpomdp.general.java.symbolic.*;
 import java.io.*;
+
 import org.math.array.*;
 
 public class AndOrTreeUpdateAdd extends AndOrTree {
@@ -27,14 +28,14 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
     PomdpAdd problem;
 
     /// backup heuristic
-    backupHeuristic bakH;
+    BackupHeuristic bakH;
 
     /// same constructor with backup heuristic
     public AndOrTreeUpdateAdd(Pomdp prob, 
 			      expandHeuristic h, 
-			      backupHeuristic bakh, 
-			      valueFunction L, 
-			      valueFunction U) {
+			      BackupHeuristic bakh, 
+			      ValueFunction L, 
+			      ValueFunction U) {
 	super(prob, h, L, U);
 	this.problem = (PomdpAdd) super.problem;
 	this.bakH    =  bakh;
@@ -212,7 +213,7 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 	DD gamma  = DDleaf.myNew(problem.getGamma());
 	DD gab    = DD.zero;		
 	int bestA = currentBestAction(); // consider caching this value maybe
-	DD lowerBound [] = ((valueFunctionAdd)offlineLower).getvAdd();
+	DD lowerBound [] = ((ValueFunctionAdd)offlineLower).getvAdd();
 	// \sum_o g_{a,o}^i
 	for(orNode o : root.children[bestA].children) {
 	    //if(o==null) continue;
@@ -236,7 +237,7 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
      * Using the current info from the tree, a backup operation is
      * reduced to computing a particular gab vector
      */
-    public valueFunction backupLowerAtNode(orNode on) {
+    public ValueFunction backupLowerAtNode(orNode on) {
 	// make sure this node is not in the fringe
 	if(null == on.children) {
 	    System.err.println("Attempted to backup a fringe node");
@@ -247,7 +248,7 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 	DD gab    = DD.zero;		
 	//int bestA = currentBestActionAtNode(on); // consider caching this value maybe
 	int obs   = 0;
-	DD lowerBound [] = ((valueFunctionAdd)offlineLower).getvAdd();
+	DD lowerBound [] = ((ValueFunctionAdd)offlineLower).getvAdd();
 	// \sum_o g_{a,o}^i
 	for(orNode o : on.children[on.oneStepBestAction].children) {
 	    if(o==null) {
@@ -270,7 +271,7 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 	gab = OP.mult(gamma, gab);
 	gab = OP.add(problem.R[on.oneStepBestAction], gab);
 	// add newly computed vector to the tree's offline lower bound - NO PRUNING FOR NOW
-	valueFunctionAdd newLB = new valueFunctionAdd(Common.append(lowerBound, gab), 
+	ValueFunctionAdd newLB = new ValueFunctionAdd(Common.append(lowerBound, gab), 
 				    problem.staIds,
 				    IntegerArray.merge(offlineLower.getActions(), 
 						       new int[] {on.oneStepBestAction}));
@@ -308,7 +309,7 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
     /// overriden here to print the backupHeuristic of each node
     /// output a dot-formatted file to print the tree
     /// starting from a given orNode
-    public void printdot(String filename) {
+    public void printdot(OutputStream filename) {
 	orNode root = this.root;
 	PrintStream out = null;
 	try {

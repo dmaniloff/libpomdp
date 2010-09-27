@@ -13,10 +13,9 @@ package libpomdp.offline.java;
 
 // imports
 import libpomdp.general.java.*;
-import symPerseusJava.*;
 import org.math.array.*;
 
-public class blindFlat {
+public class BlindFlat {
     // ------------------------------------------------------------------------
     // properties
     // ------------------------------------------------------------------------
@@ -32,7 +31,8 @@ public class blindFlat {
     // the computation of the blind policy is
     // done here because it seems that the convergence
     // checks should be different
-    private valueFunctionFlat getBlindFlat(pomdpFlat problem) {
+    @SuppressWarnings("unused")
+	private ValueFunctionFlat getBlindFlat(PomdpFlat problem) {
 	
 	double oldBlind[][];
 	double gTaA[];
@@ -77,7 +77,7 @@ public class blindFlat {
 	}
 
 	// build value functions
-	return new valueFunctionFlat(Blindv, Blinda);
+	return new ValueFunctionFlat(Blindv, Blinda);
 
     } // getBlindFlat
 

@@ -20,7 +20,7 @@ import org.ujmp.core.objectmatrix.impl.*;
 import org.ujmp.core.doublematrix.impl.*;
 
 
-public class pomdpSparseUJMP implements Pomdp {
+public class PomdpSparseUJMP implements Pomdp {
 
     // ------------------------------------------------------------------------
     // properties
@@ -61,7 +61,7 @@ public class pomdpSparseUJMP implements Pomdp {
     // ------------------------------------------------------------------------
 
     // constructor
-    public pomdpSparseUJMP(DenseMatrix  T[], 
+    public PomdpSparseUJMP(DenseMatrix  T[], 
 			   DenseMatrix  O[], 
 			   SparseVector R[],
 			   int          nrSta, 

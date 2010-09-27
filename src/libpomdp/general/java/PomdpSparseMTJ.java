@@ -29,7 +29,7 @@ package libpomdp.general.java;
 import no.uib.cipr.matrix.*;
 import no.uib.cipr.matrix.sparse.*;
 
-public class pomdpSparseMTJ implements Pomdp {
+public class PomdpSparseMTJ implements Pomdp {
 
     // ------------------------------------------------------------------------
     // properties
@@ -70,7 +70,7 @@ public class pomdpSparseMTJ implements Pomdp {
     // ------------------------------------------------------------------------
 
     /// constructor
-    public pomdpSparseMTJ(DenseMatrix  T[], 
+    public PomdpSparseMTJ(DenseMatrix  T[], 
 			  DenseMatrix  O[], 
 			  SparseVector R[],
 			  int          nrSta, 

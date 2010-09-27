@@ -11,16 +11,16 @@ package libpomdp.offline.java;
 
 // imports
 import libpomdp.general.java.*;
-import symPerseusJava.*;
+import libpomdp.general.java.symbolic.*;
 import org.math.array.*;
 
-public class blindAdd {
+public class BlindAdd {
 
     // parameters
     final int MAXITERATIONS = 500;
     final double EPSILON    = 1e-5;
     
-    public valueFunctionAdd getBlindAdd(PomdpAdd factoredProb) {
+    public ValueFunctionAdd getBlindAdd(PomdpAdd factoredProb) {
 
 	// decls
 	DD[] adds;
@@ -75,7 +75,7 @@ public class blindAdd {
 	} // blind loop
 
 	// return
-	return new valueFunctionAdd(alphas, factoredProb.staIds, policy);	     
+	return new ValueFunctionAdd(alphas, factoredProb.staIds, policy);	     
 
     } // getBlindAdd
 

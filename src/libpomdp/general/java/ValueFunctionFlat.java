@@ -13,7 +13,7 @@ package libpomdp.general.java;
 import org.math.array.*;
 import java.io.*;
 
-public class valueFunctionFlat implements valueFunction, Serializable {
+public class ValueFunctionFlat implements ValueFunction, Serializable {
     
     // ------------------------------------------------------------------------
     // properties
@@ -29,7 +29,7 @@ public class valueFunctionFlat implements valueFunction, Serializable {
     private int a[];
 
     // constructor
-    public valueFunctionFlat(double v[][], int a[]) {
+    public ValueFunctionFlat(double v[][], int a[]) {
 	this.v   = v; 
 	this.a   = a;
     }

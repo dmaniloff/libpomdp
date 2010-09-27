@@ -30,8 +30,8 @@ public class AndOrTree {
     protected expandHeuristic expH;
     
     // offline computed bounds
-    protected valueFunction offlineLower;
-    protected valueFunction offlineUpper;
+    protected ValueFunction offlineLower;
+    protected ValueFunction offlineUpper;
 
     // root of the tree
     protected orNode root;
@@ -41,7 +41,7 @@ public class AndOrTree {
     // ------------------------------------------------------------------------
 
     /// constructor
-    public AndOrTree(Pomdp prob, expandHeuristic h, valueFunction L, valueFunction U) {
+    public AndOrTree(Pomdp prob, expandHeuristic h, ValueFunction L, ValueFunction U) {
 	this.problem = prob;
 	this.expH = h;
 	this.offlineLower = L;
@@ -359,11 +359,11 @@ public class AndOrTree {
 	return Common.argmax(Lba);
     }
 
-    public valueFunction getLB() {
+    public ValueFunction getLB() {
 	return offlineLower;
     }
 
-    public valueFunction getUB() {
+    public ValueFunction getUB() {
 	return offlineUpper;
     }
 

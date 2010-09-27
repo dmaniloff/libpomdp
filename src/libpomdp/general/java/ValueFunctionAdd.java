@@ -18,7 +18,7 @@ import libpomdp.general.java.symbolic.*;
 import org.math.array.*;
 import java.io.*;
 
-public class valueFunctionAdd implements valueFunction, Serializable {
+public class ValueFunctionAdd implements ValueFunction, Serializable {
     
     // ------------------------------------------------------------------------
     // properties
@@ -37,7 +37,7 @@ public class valueFunctionAdd implements valueFunction, Serializable {
     private int a[];
 
     // constructor
-    public valueFunctionAdd(DD vAdd[], int staIds[], int a[]) {
+    public ValueFunctionAdd(DD vAdd[], int staIds[], int a[]) {
 	this.vAdd   = vAdd; 
 	this.a      = a;
 	this.staIds = staIds;

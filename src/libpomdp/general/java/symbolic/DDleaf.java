@@ -3,7 +3,7 @@ package libpomdp.general.java.symbolic;
 import java.lang.ref.*;
 import java.io.*;
 
-class DDleaf extends DD {
+public class DDleaf extends DD {
 		/**
 	 * 
 	 */
@@ -38,6 +38,7 @@ class DDleaf extends DD {
 				return leaf;
 		}
 
+		@SuppressWarnings("unchecked")
 		public static DD myNew(double val, int[][] config) {
 
 				// create new leaf

@@ -1,8 +1,8 @@
 /** ------------------------------------------------------------------------- *
  * libpomdp
  * ========
- * File: 
- * Description: value function representation using UJMP
+ * File: valueFunctionSparseMTJ.java
+ * Description: 
  * Copyright (c) 2009, 2010 Diego Maniloff 
  * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
@@ -10,30 +10,28 @@
 package libpomdp.general.java;
 
 // imports
-import org.math.array.*;
-import org.ujmp.core.*;
-import org.ujmp.core.calculation.Calculation.Ret;
-import org.ujmp.core.doublematrix.impl.*;
 import java.io.*;
+import no.uib.cipr.matrix.*;
+import no.uib.cipr.matrix.sparse.*;
 
-public class valueFunctionSparseUJMP implements valueFunction, Serializable {
+public class ValueFunctionSparseMTJ implements ValueFunction, Serializable {
     
     // ------------------------------------------------------------------------
     // properties
     // ------------------------------------------------------------------------
 
     // serial id
-    static final long serialVersionUID = 3L;
+    static final long serialVersionUID = 4L;
 
     // represent a value function via a Matrix object
-    private DefaultSparseDoubleMatrix v;
+    private CompColMatrix v;
 
     // actions associated to each alpha vector
     private int a[];
 
     // constructor
-    public valueFunctionSparseUJMP(DefaultSparseDoubleMatrix v, int a[]) {
-	this.v   = v; 
+    public ValueFunctionSparseMTJ(CompColMatrix v, int a[]) {
+	this.v   = v;
 	this.a   = a;
     }
 
@@ -48,22 +46,23 @@ public class valueFunctionSparseUJMP implements valueFunction, Serializable {
 
     // return value of a belief state
     public double V(BelState bel) {
-	DefaultSparseDoubleMatrix b = ((BelStateSparseUJMP)bel).bSparse;
-	DefaultSparseDoubleMatrix dotProdsM  = (DefaultSparseDoubleMatrix) v.mtimes(b);
-	// need to convert for now to use Common.argmax
+	long start = System.currentTimeMillis();
+	SparseVector b = ((BelStateSparseMTJ)bel).bSparse;
+	SparseVector dotProds = new SparseVector(v.numRows());
+	dotProds = (SparseVector) v.mult(b, dotProds);
 	// there must be a way to avoid this!!
-	double dotProds[] =  dotProdsM.toDoubleArray()[0];
-	int argmax        = Common.argmax(dotProds);	
+	int argmax = Common.argmax(Matrices.getArray(dotProds)); 
+	//Matrix argmax = dotProds.indexOfMax(Ret.NEW, 0);
 	// save the index of the alpha that supports this belief point
 	bel.setplanid(argmax);
-	double max = dotProds[argmax];
+	double max = dotProds.norm(Vector.Norm.Infinity);
+	System.out.println("elapsed in V: " + (System.currentTimeMillis() - start));
 	return max;
     }
 
     // return flat value function
-    // should not need to call this
     public double[][] getvFlat() {
-	return v.toDoubleArray();
+	return Matrices.getArray(v);
     }    
 
-} // 
+} // valueFunctionSparseMTJ
