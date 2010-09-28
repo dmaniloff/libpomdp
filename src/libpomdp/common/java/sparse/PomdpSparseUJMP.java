@@ -12,15 +12,14 @@ package libpomdp.common.java.sparse;
 // imports
 import libpomdp.common.java.BelState;
 import libpomdp.common.java.Pomdp;
+import no.uib.cipr.matrix.DenseMatrix;
+import no.uib.cipr.matrix.Matrices;
+import no.uib.cipr.matrix.sparse.SparseVector;
 
-import org.math.array.*;
-import org.math.array.util.*; 
-import no.uib.cipr.matrix.*;
-import no.uib.cipr.matrix.sparse.*;
-import org.ujmp.core.*;
+import org.math.array.LinearAlgebra;
+import org.ujmp.core.MatrixFactory;
 import org.ujmp.core.calculation.Calculation.Ret;
-import org.ujmp.core.objectmatrix.impl.*;
-import org.ujmp.core.doublematrix.impl.*;
+import org.ujmp.core.doublematrix.impl.DefaultSparseDoubleMatrix;
 
 
 public class PomdpSparseUJMP implements Pomdp {

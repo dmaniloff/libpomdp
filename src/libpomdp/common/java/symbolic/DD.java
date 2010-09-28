@@ -6,7 +6,8 @@
 
 package libpomdp.common.java.symbolic;
 
-import java.io.*;
+import java.io.PrintStream;
+import java.io.Serializable;
 
 public abstract class DD implements Serializable {
 		/**

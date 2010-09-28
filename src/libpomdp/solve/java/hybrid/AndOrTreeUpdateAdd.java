@@ -11,16 +11,23 @@
 package libpomdp.solve.java.hybrid;
 
 // imports
+import java.io.OutputStream;
+import java.io.PrintStream;
+
 import libpomdp.common.java.Pomdp;
 import libpomdp.common.java.ValueFunction;
 import libpomdp.common.java.add.PomdpAdd;
 import libpomdp.common.java.add.ValueFunctionAdd;
-import libpomdp.common.java.symbolic.*;
-import libpomdp.solve.java.online.*;
+import libpomdp.common.java.symbolic.DD;
+import libpomdp.common.java.symbolic.DDleaf;
+import libpomdp.common.java.symbolic.OP;
+import libpomdp.solve.java.online.AndOrTree;
+import libpomdp.solve.java.online.andNode;
+import libpomdp.solve.java.online.expandHeuristic;
+import libpomdp.solve.java.online.orNode;
 
-import java.io.*;
-
-import org.math.array.*;
+import org.math.array.DoubleArray;
+import org.math.array.IntegerArray;
 
 public class AndOrTreeUpdateAdd extends AndOrTree {
     

@@ -13,7 +13,7 @@
 package libpomdp.problems.catchproblem.java;
 
 // imports
-import java.io.*;
+import java.io.PrintStream;
 
 public class CatchTagGenerator {
 

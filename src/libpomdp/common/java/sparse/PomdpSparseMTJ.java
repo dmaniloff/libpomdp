@@ -28,8 +28,12 @@ package libpomdp.common.java.sparse;
 // imports
 import libpomdp.common.java.BelState;
 import libpomdp.common.java.Pomdp;
-import no.uib.cipr.matrix.*;
-import no.uib.cipr.matrix.sparse.*;
+import no.uib.cipr.matrix.DenseMatrix;
+import no.uib.cipr.matrix.Matrices;
+import no.uib.cipr.matrix.Vector;
+import no.uib.cipr.matrix.VectorEntry;
+import no.uib.cipr.matrix.sparse.CompColMatrix;
+import no.uib.cipr.matrix.sparse.SparseVector;
 
 public class PomdpSparseMTJ implements Pomdp {
 
@@ -119,7 +123,7 @@ public class PomdpSparseMTJ implements Pomdp {
 
     /// tao(b,a,o)
     public BelState tao(BelState b, int a, int o) {
-	long start = System.currentTimeMillis();
+	//long start = System.currentTimeMillis();
 	//System.out.println("made it to tao");
 	BelState bPrime;
 	// compute T[a]' * b1

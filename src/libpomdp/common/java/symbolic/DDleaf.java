@@ -1,7 +1,7 @@
 package libpomdp.common.java.symbolic;
 
-import java.lang.ref.*;
-import java.io.*;
+import java.io.PrintStream;
+import java.lang.ref.WeakReference;
 
 public class DDleaf extends DD {
 		/**
@@ -23,7 +23,6 @@ public class DDleaf extends DD {
 				this.config = config;
 		}
 
-		@SuppressWarnings("unchecked")
 		public static DD myNew(double val) {
 
 				// create new leaf
@@ -38,7 +37,6 @@ public class DDleaf extends DD {
 				return leaf;
 		}
 
-		@SuppressWarnings("unchecked")
 		public static DD myNew(double val, int[][] config) {
 
 				// create new leaf

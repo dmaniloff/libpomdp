@@ -11,17 +11,16 @@ package libpomdp.common.java.sparse;
 
 // imports
 import libpomdp.common.java.BelState;
-import no.uib.cipr.matrix.*;
-import no.uib.cipr.matrix.sparse.*;
+import no.uib.cipr.matrix.Matrices;
+import no.uib.cipr.matrix.sparse.SparseVector;
 
 public class BelStateSparseMTJ implements BelState {
 
     // sparse representation of the belief
     public SparseVector bSparse;
 
-    // flat belief point
-    @SuppressWarnings("unused")
-	private double bPoint[];
+    // flat belief point)
+	//  double bPoint[];
 
     // associated P(o|b,a)
     private double poba = -1.0;

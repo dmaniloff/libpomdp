@@ -15,8 +15,7 @@
 package libpomdp.problems.rocksample.java;
 
 // imports
-import java.io.*;
-import java.util.*;
+import java.io.PrintStream;
 
 public class RocksampleGen {
 

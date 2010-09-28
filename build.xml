@@ -36,20 +36,21 @@
     <!-- Create the build directory structure used by compile -->
     <mkdir dir="${build}"/>
   </target>
+  
+  <target name="grammars">
+    <!-- ANTRL is called with a java task, this should be changed to use antlr  -->
+    <java classname="org.antlr.Tool" classpathref="classpath">
+	<arg value="${src}/libpomdp/parser/java/DotPomdpMTJ.g"/>	
+    </java>
+    <java classname="org.antlr.Tool" classpathref="classpath">
+	<arg value="${src}/libpomdp/parser/java/DotAlpha.g"/>	
+    </java>
+  </target>
 
+  
   <target name="compile" depends="init"
 	  description="compile the source " >
     <!-- Compile the java code from ${src} into ${build} -->
-    <!-- antlr target="${src}/libpomdp/general/java/pomdp-parser/dotpomdpMTJ.g">  -->
-    <!--       <classpath refid="classpath"/> -->
-    <!--     </antlr> -->
-    <!-- ANTRL is called with a java task, this should be changed to use antlr  -->
-    <java classname="antlr.Tool" classpathref="classpath">
-	<arg value="${src}/libpomdp/parser/grammar/dotpomdpMTJ.g"/>	
-    </java>
-    <java classname="antlr.Tool" classpathref="classpath">
-	<arg value="${src}/libpomdp/parser/grammar/dotalpha.g"/>	
-    </java>
     <javac srcdir="${src}" destdir="${build}" classpathref="classpath"/>
   </target>
 

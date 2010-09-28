@@ -18,7 +18,8 @@ package libpomdp.common.java.flat;
 import libpomdp.common.java.BelState;
 import libpomdp.common.java.Pomdp;
 
-import org.math.array.*;
+import org.math.array.DoubleArray;
+import org.math.array.LinearAlgebra;
 
 public class PomdpFlat implements Pomdp {
 

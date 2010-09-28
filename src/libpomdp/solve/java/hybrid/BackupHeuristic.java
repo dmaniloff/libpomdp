@@ -10,7 +10,8 @@
 package libpomdp.solve.java.hybrid;
 
 // imports
-import libpomdp.solve.java.online.*;
+import libpomdp.solve.java.online.andNode;
+import libpomdp.solve.java.online.orNode;
 
 interface BackupHeuristic {
 

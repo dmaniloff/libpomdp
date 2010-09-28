@@ -10,12 +10,13 @@
 package libpomdp.common.java.flat;
 
 // imports
-import org.math.array.*;
-import java.io.*;
+import java.io.Serializable;
 
 import libpomdp.common.java.BelState;
 import libpomdp.common.java.Utils;
 import libpomdp.common.java.ValueFunction;
+
+import org.math.array.LinearAlgebra;
 
 public class ValueFunctionFlat implements ValueFunction, Serializable {
     

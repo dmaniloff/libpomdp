@@ -1,8 +1,11 @@
 package libpomdp.common.java.symbolic;
 
-import java.io.*;
-import java.util.*;
-import java.lang.*;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.StreamTokenizer;
+import java.util.HashMap;
+import java.util.Vector;
 
 public class ParseSPUDD {
     private HashMap existingDds;

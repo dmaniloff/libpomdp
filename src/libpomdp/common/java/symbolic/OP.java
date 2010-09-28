@@ -1,7 +1,14 @@
 package libpomdp.common.java.symbolic;
 
-import java.util.*;
-import java.io.*;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 public class OP {
 
@@ -97,7 +104,6 @@ public class OP {
 				return dd;
 		}
 
-		@SuppressWarnings("unchecked")
 		public static DD addN(Collection dds) {
 				DD ddSum = DD.zero;
 				Iterator ddIterator = dds.iterator();
@@ -329,7 +335,6 @@ public class OP {
 				return dd;
 		}
 
-		@SuppressWarnings("unchecked")
 		public static DD multN(Collection dds) {
 				DD ddProd = DD.one;
 				Iterator ddIterator = dds.iterator();
@@ -472,7 +477,6 @@ public class OP {
 		//////////////////////////////////////////////////////
 		// dotProductNoMem  (Set container, don't store results)
 		//////////////////////////////////////////////////////
-		@SuppressWarnings("unchecked")
 		public static double dotProductNoMem(DD dd1, DD dd2, SortedSet<Integer> vars) {
 
 				// should cache results to speed up things a little

@@ -16,7 +16,9 @@ package libpomdp.solve.java.offline;
 import libpomdp.common.java.flat.PomdpFlat;
 import libpomdp.common.java.flat.ValueFunctionFlat;
 
-import org.math.array.*;
+import org.math.array.DoubleArray;
+import org.math.array.IntegerArray;
+import org.math.array.LinearAlgebra;
 
 public class QmdpFlat {
     // ------------------------------------------------------------------------

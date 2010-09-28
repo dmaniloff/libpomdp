@@ -12,11 +12,12 @@
 package libpomdp.solve.java.online;
 
 // imports
+import java.util.Random;
+
 import libpomdp.common.java.Pomdp;
 import libpomdp.common.java.Utils;
 
-import org.math.array.*;
-import java.util.*;
+import org.math.array.DoubleArray;
 
 public class aems2 implements expandHeuristic {
 

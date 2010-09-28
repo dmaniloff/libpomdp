@@ -1,30 +1,12 @@
 package libpomdp.common.java.symbolic;
 
-import java.util.*;
-import java.lang.ref.*;
+import java.lang.ref.WeakReference;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Random;
+import java.util.Set;
 
-class CacheMap extends LinkedHashMap {
-		/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-		public int maxCapacity;
 
-		public CacheMap() {
-				super();
-				maxCapacity = 10000;
-		}
-
-		public CacheMap(int maxCapacity) {
-				super();
-				this.maxCapacity = maxCapacity;
-		}
-
-		@SuppressWarnings("unchecked")
-		protected boolean removeEldestEntry(Map.Entry eldest) {
-        return size() > maxCapacity;
-		}
-}
 
 public class Global {
 		public static int[] varDomSize = null;
@@ -141,10 +123,12 @@ public class Global {
 						Global.addHashtable.clear();
 						Global.leafHashtable.clear();
 						Global.nodeHashtable.clear();
+						/*
 						for (int k=0; k<10000; k++) {
 								DD dd1r = OP.restrict(dd1,config);
 								DD dd2r = OP.restrict(dd2,config);
 						}
+						*/
             //DD dd = OP.minAddVarElim(ddArray,varSet);
 						//dd1r.display();
 						//dd2r.display();

@@ -12,20 +12,21 @@
 package libpomdp.parser.java;
 
 // imports
-import org.antlr.runtime.*;
-import java.io.*;
+import org.antlr.runtime.ANTLRFileStream;
+import org.antlr.runtime.CommonTokenStream;
+import org.antlr.runtime.RecognitionException;
 
-public class dotpomdpParserSparseMTJ {
+public class DotPomdpParserSparseMTJ {
 
-    static pomdpSpecSparseMTJ dotpomdpSpec = null;
+    static PomdpSpecSparseMTJ dotpomdpSpec = null;
 
     public static void parse (String filename) throws Exception {
-	dotpomdpMTJLexer lex = new dotpomdpMTJLexer(new ANTLRFileStream(filename));
+	DotPomdpMTJLexer lex = new DotPomdpMTJLexer(new ANTLRFileStream(filename));
        	CommonTokenStream tokens = new CommonTokenStream(lex);
-        dotpomdpMTJParser parser = new dotpomdpMTJParser(tokens);
+        DotPomdpMTJParser parser = new DotPomdpMTJParser(tokens);
 
         try {
-            parser.dotpomdp();
+            parser.dotPomdp();
         } catch (RecognitionException e)  {
             e.printStackTrace();
         }
@@ -35,7 +36,7 @@ public class dotpomdpParserSparseMTJ {
 	
     }
 
-    public pomdpSpecSparseMTJ getSpec() {
+    public PomdpSpecSparseMTJ getSpec() {
 	return dotpomdpSpec;
     }
 }

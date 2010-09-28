@@ -10,15 +10,13 @@
 package libpomdp.common.java.sparse;
 
 // imports
-import org.math.array.*;
-import org.ujmp.core.*;
-import org.ujmp.core.calculation.Calculation.Ret;
-import org.ujmp.core.doublematrix.impl.*;
-import java.io.*;
+import java.io.Serializable;
 
 import libpomdp.common.java.BelState;
 import libpomdp.common.java.Utils;
 import libpomdp.common.java.ValueFunction;
+
+import org.ujmp.core.doublematrix.impl.DefaultSparseDoubleMatrix;
 
 public class ValueFunctionSparseUJMP implements ValueFunction, Serializable {
     

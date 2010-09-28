@@ -20,8 +20,7 @@ public class BelStateSparseUJMP implements BelState {
     public DefaultSparseDoubleMatrix bSparse;
 
     // flat belief point
-    @SuppressWarnings("unused")
-	private double bPoint[];
+	//private double bPoint[];
 
     private double poba = -1.0;
 

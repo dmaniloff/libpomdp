@@ -15,7 +15,7 @@ Up to now, libPOMDP has the following dependencies ...
 * jmatharray.jar from [3], 
 * the Universal Java Matrix Package [8],
 * matrix-toolkits-java [9].
-* antlr
+* antlr3
 
 Directories and files
 =====================

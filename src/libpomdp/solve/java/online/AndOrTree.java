@@ -12,15 +12,15 @@
 package libpomdp.solve.java.online;
 
 // imports
+import java.io.OutputStream;
+import java.io.PrintStream;
+
 import libpomdp.common.java.BelState;
 import libpomdp.common.java.Pomdp;
 import libpomdp.common.java.Utils;
 import libpomdp.common.java.ValueFunction;
 
-import java.util.*;
-import java.io.*;
-
-import org.math.array.*;
+import org.math.array.DoubleArray;
 
 public class AndOrTree {
     

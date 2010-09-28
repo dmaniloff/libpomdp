@@ -14,13 +14,13 @@
 package libpomdp.common.java.add;
 
 // imports
+import java.io.Serializable;
+
 import libpomdp.common.java.BelState;
 import libpomdp.common.java.Utils;
 import libpomdp.common.java.ValueFunction;
-import libpomdp.common.java.symbolic.*;
-
-import org.math.array.*;
-import java.io.*;
+import libpomdp.common.java.symbolic.DD;
+import libpomdp.common.java.symbolic.OP;
 
 public class ValueFunctionAdd implements ValueFunction, Serializable {
     

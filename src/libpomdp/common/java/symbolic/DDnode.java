@@ -1,7 +1,7 @@
 package libpomdp.common.java.symbolic;
 
-import java.lang.ref.*;
-import java.io.*;
+import java.io.PrintStream;
+import java.lang.ref.WeakReference;
 
 class DDnode extends DD {
 		/**
@@ -22,7 +22,6 @@ class DDnode extends DD {
                 this.sum = Double.NaN; // lazy temporary value
 		}
 
-    @SuppressWarnings("unchecked")
 	public static DD myNew(int var, DD[] children) {
 
 				// try to aggregate children

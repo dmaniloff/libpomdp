@@ -12,21 +12,25 @@
 package libpomdp.parser.java;
 
 // imports
-import org.antlr.runtime.*;
-import java.io.*;
+import libpomdp.common.java.ValueFunction;
+import libpomdp.common.java.flat.ValueFunctionFlat;
 
-public class dotalphaParserFlat {    
+import org.antlr.runtime.ANTLRFileStream;
+import org.antlr.runtime.CommonTokenStream;
+import org.antlr.runtime.RecognitionException;
+
+public class DotAlphaParserFlat {    
 
     static Integer actions[];
     static Double  alphas[][];
     
     public static void parse (String filename) throws Exception {
-	dotalphaLexer lex = new dotalphaLexer(new ANTLRFileStream(filename));
+	DotAlphaLexer lex = new DotAlphaLexer(new ANTLRFileStream(filename));
        	CommonTokenStream tokens = new CommonTokenStream(lex);
-        dotalphaParser parser = new dotalphaParser(tokens);
+        DotAlphaParser parser = new DotAlphaParser(tokens);
 
         try {
-            parser.dotalpha();
+            parser.dotAlpha();
         } catch (RecognitionException e)  {
             e.printStackTrace();
         }

@@ -11,7 +11,8 @@
 package libpomdp.common.java.add;
 
 import libpomdp.common.java.BelState;
-import libpomdp.common.java.symbolic.*;
+import libpomdp.common.java.symbolic.DD;
+import libpomdp.common.java.symbolic.OP;
 
 public class BelStateFactoredAdd implements BelState {
     

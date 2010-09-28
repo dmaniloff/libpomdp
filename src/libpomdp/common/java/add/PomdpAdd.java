@@ -15,12 +15,16 @@
 package libpomdp.common.java.add;
 
 // imports
+import java.util.ArrayList;
+
 import libpomdp.common.java.BelState;
 import libpomdp.common.java.Pomdp;
-import libpomdp.common.java.symbolic.*;
+import libpomdp.common.java.symbolic.DD;
+import libpomdp.common.java.symbolic.OP;
+import libpomdp.common.java.symbolic.ParseSPUDD;
 
-import java.util.*;
-import org.math.array.*;
+import org.math.array.DoubleArray;
+import org.math.array.IntegerArray;
 
 public class PomdpAdd implements Pomdp {
     	

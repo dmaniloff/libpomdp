@@ -8,7 +8,13 @@ package libpomdp.common.java.symbolic;
  */
 
 //package java.util;
-import java.util.*;
+import java.util.Collection;
+import java.util.ConcurrentModificationException;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.TreeMap;
 
 /**
  * <p>Hash table and linked list implementation of the <tt>Map</tt> interface,
@@ -189,7 +195,6 @@ public class LinkedHashMap extends HashMap {
      * @param  m the map whose mappings are to be placed in this map.
      * @throws NullPointerException if the specified map is null.
      */
-	@SuppressWarnings("unchecked")
 	public LinkedHashMap(Map m) {
         super(m);
         accessOrder = false;
@@ -335,7 +340,7 @@ public class LinkedHashMap extends HashMap {
         }
     }
 
-    @SuppressWarnings("unchecked")
+
 	private abstract class LinkedHashIterator implements Iterator {
 	Entry nextEntry    = header.after;
 	Entry lastReturned = null;
@@ -387,11 +392,9 @@ public class LinkedHashMap extends HashMap {
     }
 
     // These Overrides alter the behavior of superclass view iterator() methods
-    @SuppressWarnings("unchecked")
+
 	Iterator newKeyIterator()   { return new KeyIterator();   }
-    @SuppressWarnings("unchecked")
     Iterator newValueIterator() { return new ValueIterator(); }
-    @SuppressWarnings("unchecked")
     Iterator newEntryIterator() { return new EntryIterator(); }
 
     /**
@@ -464,7 +467,6 @@ public class LinkedHashMap extends HashMap {
      * @return   <tt>true</tt> if the eldest entry should be removed
      *           from the map; <tt>false</t> if it should be retained.
      */
-    @SuppressWarnings("unchecked")
 	protected boolean removeEldestEntry(Map.Entry eldest) {
         return false;
     }

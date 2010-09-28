@@ -12,9 +12,11 @@ package libpomdp.solve.java.offline;
 // imports
 import libpomdp.common.java.add.PomdpAdd;
 import libpomdp.common.java.add.ValueFunctionAdd;
-import libpomdp.common.java.symbolic.*;
+import libpomdp.common.java.symbolic.DD;
+import libpomdp.common.java.symbolic.DDleaf;
+import libpomdp.common.java.symbolic.OP;
 
-import org.math.array.*;
+import org.math.array.DoubleArray;
 
 public class BlindAdd {
 

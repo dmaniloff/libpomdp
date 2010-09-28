@@ -15,7 +15,9 @@ package libpomdp.solve.java.offline;
 import libpomdp.common.java.flat.PomdpFlat;
 import libpomdp.common.java.flat.ValueFunctionFlat;
 
-import org.math.array.*;
+import org.math.array.DoubleArray;
+import org.math.array.IntegerArray;
+import org.math.array.LinearAlgebra;
 
 public class BlindFlat {
     // ------------------------------------------------------------------------
@@ -33,7 +35,6 @@ public class BlindFlat {
     // the computation of the blind policy is
     // done here because it seems that the convergence
     // checks should be different
-    @SuppressWarnings("unused")
 	private ValueFunctionFlat getBlindFlat(PomdpFlat problem) {
 	
 	double oldBlind[][];

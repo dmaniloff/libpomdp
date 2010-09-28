@@ -9,8 +9,10 @@
 
 package libpomdp.common.java;
 
-import java.util.*;
-import org.math.array.*;
+import java.util.ArrayList;
+import java.util.Random;
+
+import org.math.array.DoubleArray;
 
 public class Utils {
 
