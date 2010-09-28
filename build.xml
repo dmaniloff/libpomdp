@@ -3,7 +3,7 @@
 <!--  * ========                                                                      -->
 <!--  * File: build.xml                                                               -->
 <!--  * Description:                                                                  -->
-<!--  * Copyright (c) 2009, 2010 Diego Maniloff                                       -->
+<!--  * Copyright (c) 2008, 2010 Diego Maniloff                                       -->
 <!--  * W3: http://www.cs.uic.edu/~dmanilof                                           -->
 <!--  ******************************************************************************* -->
 
@@ -16,11 +16,13 @@
   <property name="src"     location="src"/>
   <property name="build"   location="build"/>
   <property name="dist"    location="dist"/>
-  <property name="lib"     location="external"/>
+  <property name="lib"     location="lib"/>
 
-  <!-- external libraries classpath -->
+<!-- external libraries classpath 
+-->
   <path id="classpath">
-        <fileset dir="${lib}" />
+   <fileset dir="lib" />
+   <fileset dir="/usr/share/java/" />
 	<fileset dir="."      />
   </path>
 
@@ -42,11 +44,11 @@
     <!--       <classpath refid="classpath"/> -->
     <!--     </antlr> -->
     <!-- ANTRL is called with a java task, this should be changed to use antlr  -->
-    <java classname="org.antlr.Tool" classpathref="classpath">
-	<arg value="${src}/libpomdp/general/java/pomdp-parser/dotpomdpMTJ.g"/>	
+    <java classname="antlr.Tool" classpathref="classpath">
+	<arg value="${src}/libpomdp/parser/grammar/dotpomdpMTJ.g"/>	
     </java>
-    <java classname="org.antlr.Tool" classpathref="classpath">
-	<arg value="${src}/libpomdp/general/java/alpha-parser/dotalpha.g"/>	
+    <java classname="antlr.Tool" classpathref="classpath">
+	<arg value="${src}/libpomdp/parser/grammar/dotalpha.g"/>	
     </java>
     <javac srcdir="${src}" destdir="${build}" classpathref="classpath"/>
   </target>
