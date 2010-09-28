@@ -12,13 +12,13 @@
  * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
 
-package libpomdp.problems.rocksample;
+package libpomdp.problems.rocksample.generator;
 
 // imports
 import java.io.*;
 import java.util.*;
 
-public class rocksampleGen {
+public class RocksampleGen {
 
     // grid size
     private int n;
@@ -47,7 +47,7 @@ public class rocksampleGen {
     // n: n x n grid
     // k: k x 2 array with (j,i) positions of the k rocks
     // out: output filename
-    public rocksampleGen(int n, int k[][], int apos[], PrintStream out) {
+    public RocksampleGen(int n, int k[][], int apos[], PrintStream out) {
 	this.k   = k;
 	this.apos= apos;
 	this.n   = n;

@@ -15,6 +15,7 @@ package libpomdp.online.java;
 import libpomdp.general.java.*;
 import java.util.*;
 import java.io.*;
+
 import org.math.array.*;
 
 public class AndOrTree {
@@ -369,12 +370,11 @@ public class AndOrTree {
 
     /// output a dot-formatted file to print the tree
     /// starting from a given orNode
-    public void printdot(String filename) {
+    public void printdot(OutputStream filename) {
 	orNode root = this.root;
 	PrintStream out = null;
 	try {
-	    out = new 
-		PrintStream(filename);
+	    out = new PrintStream(filename);
 	}catch(Exception e) {
 	    System.err.println(e.toString());
 	}
