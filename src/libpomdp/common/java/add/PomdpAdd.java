@@ -21,7 +21,7 @@ import libpomdp.common.java.BelState;
 import libpomdp.common.java.Pomdp;
 import libpomdp.common.java.symbolic.DD;
 import libpomdp.common.java.symbolic.OP;
-import libpomdp.common.java.symbolic.ParseSPUDD;
+import libpomdp.parser.java.ParseSPUDD;
 
 import org.math.array.DoubleArray;
 import org.math.array.IntegerArray;

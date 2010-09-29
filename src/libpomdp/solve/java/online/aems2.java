@@ -81,7 +81,7 @@ public class aems2 implements expandHeuristic {
     /// be means of a depth value we could get rid of this
     /// product............
     public double h_bao(orNode o) {	
-	return problem.getGamma() * o.belief.getpoba();
+	return problem.getGamma() * o.belief.getPoba();
     }
 
     /// H*(b,a) = \max_o {H(b,a,o) H*(tao(b,a,o))}

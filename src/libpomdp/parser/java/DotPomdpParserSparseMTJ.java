@@ -21,9 +21,9 @@ public class DotPomdpParserSparseMTJ {
     static PomdpSpecSparseMTJ dotpomdpSpec = null;
 
     public static void parse (String filename) throws Exception {
-	DotPomdpMTJLexer lex = new DotPomdpMTJLexer(new ANTLRFileStream(filename));
+	DotPomdpLexer lex = new DotPomdpLexer(new ANTLRFileStream(filename));
        	CommonTokenStream tokens = new CommonTokenStream(lex);
-        DotPomdpMTJParser parser = new DotPomdpMTJParser(tokens);
+        DotPomdpParser parser = new DotPomdpParser(tokens);
 
         try {
             parser.dotPomdp();

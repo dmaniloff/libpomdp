@@ -73,7 +73,7 @@ public class ValueFunctionAdd implements ValueFunction, Serializable {
 	// find best vector
 	int argmax = Utils.argmax(dotProds);
 	// save the index of the alpha that supports this belief point
-	bel.setplanid(argmax);
+	bel.setAlpha(argmax);
 	return dotProds[argmax];
     }
 

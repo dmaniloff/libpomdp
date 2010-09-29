@@ -50,11 +50,11 @@ public class ValueFunctionFlat implements ValueFunction, Serializable {
 
     // return value of a belief state
     public double V(BelState bel) {
-	double b[] = bel.getbPoint();
+	double b[] = bel.getPoint();
 	double dotProds[] = LinearAlgebra.times(v, b);
 	int argmax = Utils.argmax(dotProds);
 	// save the index of the alpha that supports this belief point
-	bel.setplanid(argmax);
+	bel.setAlpha(argmax);
 	double max = dotProds[argmax];
 	return max;
     }
@@ -67,7 +67,7 @@ public class ValueFunctionFlat implements ValueFunction, Serializable {
     // direct contol using this value function as a policy
     // actions start from 0
     public int directControl(BelState bel) {
-	double b[] = bel.getbPoint();
+	double b[] = bel.getPoint();
 	double dotProds[] = LinearAlgebra.times(v, b);
 	int argmax = Utils.argmax(dotProds);
 	return a[argmax];

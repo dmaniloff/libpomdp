@@ -14,7 +14,7 @@ import libpomdp.common.java.BelState;
 import no.uib.cipr.matrix.Matrices;
 import no.uib.cipr.matrix.sparse.SparseVector;
 
-public class BelStateSparseMTJ implements BelState {
+public class BelStateSparse implements BelState {
 
     // sparse representation of the belief
     public SparseVector bSparse;
@@ -30,30 +30,30 @@ public class BelStateSparseMTJ implements BelState {
 
     // constructor
     // in case this is the initial belief, poba = 0.0
-    public BelStateSparseMTJ(SparseVector bSparse, double poba) {
+    public BelStateSparse(SparseVector bSparse, double poba) {
 	this.bSparse = bSparse;
 	this.poba    = poba;
     }
 
     // calling this method should be for debugging
     // purposes only, otherwise we loose the sparse rep
-    public double[] getbPoint() {
+    public double[] getPoint() {
 	return Matrices.getArray(bSparse);
     }
 
-    public double getpoba() {
+    public double getPoba() {
 	return poba;
     }
 
-    public void setpoba(double poba) {
+    public void setPoba(double poba) {
 	this.poba = poba;
     }
 
-    public int getplanid() {
+    public int getAlpha() {
 	return planid;
     }
 
-    public void setplanid(int planid) {
+    public void setAlpha(int planid) {
 	this.planid = planid;
     }
 

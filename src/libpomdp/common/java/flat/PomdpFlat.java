@@ -101,7 +101,7 @@ public class PomdpFlat implements Pomdp {
 
     // P(o|b,a) in vector form for all o's
     public double[] P_Oba(BelState b, int a) {
-    	double Tb[]   = LinearAlgebra.times(T[a],b.getbPoint());
+    	double Tb[]   = LinearAlgebra.times(T[a],b.getPoint());
     	double Poba[] = LinearAlgebra.times(DoubleArray.transpose(O[a]),Tb);
     	return Poba;
     }
@@ -110,7 +110,7 @@ public class PomdpFlat implements Pomdp {
     public BelState tao(BelState b, int a, int o) {
 	double b1[], b2[];
 	BelState bPrime;
-	b1 = b.getbPoint();
+	b1 = b.getPoint();
 	b2 = LinearAlgebra.times(T[a], b1); // matrix by vector
 	b2 = LinearAlgebra.times(b2, DoubleArray.getColumnCopy(O[a],o)); // element-wise
 	double poba = DoubleArray.sum(b2);
@@ -131,7 +131,7 @@ public class PomdpFlat implements Pomdp {
     /// R(b,a)
     public double Rba(BelState bel, int a) {
 	return LinearAlgebra.sum(LinearAlgebra.
-				 times(bel.getbPoint(), DoubleArray.getRowCopy(R,a)));
+				 times(bel.getPoint(), DoubleArray.getRowCopy(R,a)));
     }
 
     /// compare two belief vectors to a given accuracy - used??

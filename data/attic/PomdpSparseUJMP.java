@@ -148,7 +148,7 @@ public class PomdpSparseUJMP implements Pomdp {
     /// R(b,a)
     public double Rba(BelState bel, int a) {
 	return LinearAlgebra.sum(LinearAlgebra.
-				 times(bel.getbPoint(), R[a].toDoubleArray()[0]));
+				 times(bel.getPoint(), R[a].toDoubleArray()[0]));
     }
 
     public double[][] getT(int a) {

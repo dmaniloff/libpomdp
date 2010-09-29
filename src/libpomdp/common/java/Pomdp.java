@@ -13,7 +13,7 @@ public interface Pomdp {
 
     /// P(o|b,a) in vector form for all o's
     public double[] P_Oba(BelState b, int a);
-
+    
     /// tao(b,a,o)
     public BelState tao(BelState b, int a, int o);
 

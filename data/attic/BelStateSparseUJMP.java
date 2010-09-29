@@ -35,26 +35,26 @@ public class BelStateSparseUJMP implements BelState {
 
     // calling this method should be for debugging
     // purposes only, otherwise we loose the sparse rep
-    public double[] getbPoint() {
+    public double[] getPoint() {
 	if(bSparse.getSize()[0]>1)
 	    return bSparse.transpose().toDoubleArray()[0];
 	else
 	    return bSparse.toDoubleArray()[0];
     }
 
-    public double getpoba() {
+    public double getPoba() {
 	return poba;
     }
 
-    public void setpoba(double poba) {
+    public void setPoba(double poba) {
 	this.poba = poba;
     }
 
-    public int getplanid() {
+    public int getAlpha() {
 	return planid;
     }
 
-    public void setplanid(int planid) {
+    public void setAlpha(int planid) {
 	this.planid = planid;
     }
 

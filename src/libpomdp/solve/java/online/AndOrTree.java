@@ -108,7 +108,7 @@ public class AndOrTree {
 		} 
 		// initialize this node, set its poba
 		o.init(problem.tao(en.belief,action,observation), observation, a);
-		o.belief.setpoba(pOba[observation]);
+		o.belief.setPoba(pOba[observation]);
 		// compute upper and lower bounds for this node
 		o.u = offlineUpper.V(o.belief);
 		o.l = offlineLower.V(o.belief);		
@@ -232,8 +232,8 @@ public class AndOrTree {
 	    // get AND parent node
 	    a = n.getParent();
 	    // AND break
-	    if (updateL) a.l  += problem.getGamma() * n.belief.getpoba() * improvLower;
-	    if (updateU) a.u  += problem.getGamma() * n.belief.getpoba() * improvUpper; //  ???????????
+	    if (updateL) a.l  += problem.getGamma() * n.belief.getPoba() * improvLower;
+	    if (updateU) a.u  += problem.getGamma() * n.belief.getPoba() * improvUpper; //  ???????????
 	    // update best obs - this becomes a question of whether to continue pointing in the same
 	    // direction or not given the change in certainty along this path/branch
 	    //a.oStar = expH.oStarUpdate(a, n.getobs());
@@ -279,7 +279,7 @@ public class AndOrTree {
 	double Lba = 0;
 	for(orNode o : a.children) {
 	    // o.belief.getpoba() == 0 for null orNodes anyway
-	    if(o != null) Lba += o.belief.getpoba() * o.l;
+	    if(o != null) Lba += o.belief.getPoba() * o.l;
 	}
 	return a.rba + problem.getGamma() * Lba;
     }
@@ -289,7 +289,7 @@ public class AndOrTree {
 	double Uba = 0;
 	for(orNode o : a.children) {
 	    // o.belief.getpoba() == 0 for null orNodes anyway
-	    if(o != null) Uba += o.belief.getpoba() * o.u;
+	    if(o != null) Uba += o.belief.getPoba() * o.u;
 	}
 	return a.rba + problem.getGamma() * Uba;
     }
@@ -396,7 +396,7 @@ public class AndOrTree {
 	// print this node
 	String b = "";
 	b = "b=[\\n " + 
-	    DoubleArray.toString("%.2f",o.belief.getbPoint()) + 
+	    DoubleArray.toString("%.2f",o.belief.getPoint()) + 
 	    "]\\n";
 	out.format(o.hashCode() + "[label=\"" +
 		   //b +
@@ -438,7 +438,7 @@ public class AndOrTree {
 			   "P(o|b,a)= %.2f\\n" + 
 			   "H(b,a,o)= %.2f" +  
 			   "\"];\n",
-			   o.belief.getpoba(),
+			   o.belief.getPoba(),
 			   o.h_bao);
 	}
 	out.println();

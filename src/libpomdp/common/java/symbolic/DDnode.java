@@ -3,7 +3,7 @@ package libpomdp.common.java.symbolic;
 import java.io.PrintStream;
 import java.lang.ref.WeakReference;
 
-class DDnode extends DD {
+public class DDnode extends DD {
 		/**
 	 * 
 	 */

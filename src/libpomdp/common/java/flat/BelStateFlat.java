@@ -27,23 +27,23 @@ public class BelStateFlat implements BelState {
 	this.poba   = poba;
     }
 
-    public double[] getbPoint() {
+    public double[] getPoint() {
 	return bPoint;
     }
 
-    public double getpoba() {
+    public double getPoba() {
 	return poba;
     }
 
-    public void setpoba(double poba) {
+    public void setPoba(double poba) {
 	this.poba = poba;
     }
 
-    public int getplanid() {
+    public int getAlpha() {
 	return planid;
     }
 
-    public void setplanid(int planid) {
+    public void setAlpha(int planid) {
 	this.planid = planid;
     }
 

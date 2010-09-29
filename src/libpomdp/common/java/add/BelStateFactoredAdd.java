@@ -43,23 +43,23 @@ public class BelStateFactoredAdd implements BelState {
     }
 
     // compute this only if we actually need it
-    public double[] getbPoint() {
+    public double[] getPoint() {
 	return	OP.convert2array(OP.multN(marginals), staIds);
     }
 
-    public double getpoba() {
+    public double getPoba() {
 	return poba;
     }
 
-    public void setpoba(double poba) {
+    public void setPoba(double poba) {
 	this.poba = poba;
     }
 
-    public int getplanid() {
+    public int getAlpha() {
 	return planid;
     }
 
-    public void setplanid(int planid) {
+    public void setAlpha(int planid) {
 	this.planid = planid;
     }
 

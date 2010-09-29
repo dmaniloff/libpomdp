@@ -102,13 +102,13 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 		} 
 		// initialize this node with factored belief, set its poba		
 		o.init(problem.tao(en.belief,action,observation), observation, a);
-		o.belief.setpoba(pOba[observation]);		
+		o.belief.setPoba(pOba[observation]);		
 		// compute upper and lower bounds for this node
 		o.u = offlineUpper.V(o.belief);		
 		o.l = offlineLower.V(o.belief);
 		// save one valid plan id for this andNode
 		// may be saved multiple times, but it's ok
-		a.validPlanid = o.belief.getplanid();
+		a.validPlanid = o.belief.getAlpha();
 		// H(b)
 		o.h_b = expH.h_b(o);
 		// H(b,a,o)	
@@ -230,7 +230,7 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 	    //if(o==null) continue;
 	    // compute g_{a,o}^{planid}
 	    // problem.gao(lowerBound[o.belief.getplanid()], bestA, o.getobs()).display();
-	    gab = OP.add(gab, problem.gao(lowerBound[o.belief.getplanid()], bestA, o.getobs()));
+	    gab = OP.add(gab, problem.gao(lowerBound[o.belief.getAlpha()], bestA, o.getobs()));
 	}    
 	// multiply result by discount factor and add it to r_a
 	gab = OP.mult(gamma, gab);
@@ -271,7 +271,7 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 	    } else {
 		// compute g_{a,o}^{planid}
 		gab = OP.add(gab, problem.
-			     gao(lowerBound[o.belief.getplanid()], 
+			     gao(lowerBound[o.belief.getAlpha()], 
 				 on.oneStepBestAction, 
 				 obs));
 	    }
@@ -305,7 +305,7 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 	double expR = 0;
 	for(orNode o : root.children[bestA].children) {
 	    // null nodes do not contribute to this sum
-	    if(o!=null) expR += o.belief.getpoba() * o.subTreeSize;
+	    if(o!=null) expR += o.belief.getPoba() * o.subTreeSize;
 	}
 	return expR;
     } // expectedReuse
@@ -342,8 +342,8 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
     private void orprint(orNode o, PrintStream out) {
 	// print this node
 	String b = "";
-	if (o.belief.getbPoint().length < 4)
-	    b = "b=[" + DoubleArray.toString("%.2f",o.belief.getbPoint()) + "]\\n";
+	if (o.belief.getPoint().length < 4)
+	    b = "b=[" + DoubleArray.toString("%.2f",o.belief.getPoint()) + "]\\n";
 	out.format(o.hashCode() + "[label=\"" +
 		   //b +
 		   "U(b)= %.2f\\n" +
@@ -390,7 +390,7 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 			   "P(o|b,a)= %.2f\\n" + 
 			   "H(b,a,o)= %.2f" +  
 			   "\"];",
-			   o.belief.getpoba(),
+			   o.belief.getPoba(),
 			   o.h_bao);
 	}
 	out.println();

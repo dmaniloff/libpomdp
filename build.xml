@@ -40,7 +40,7 @@
   <target name="grammars">
     <!-- ANTRL is called with a java task, this should be changed to use antlr  -->
     <java classname="org.antlr.Tool" classpathref="classpath">
-	<arg value="${src}/libpomdp/parser/java/DotPomdpMTJ.g"/>	
+	<arg value="${src}/libpomdp/parser/java/DotPomdp.g"/>	
     </java>
     <java classname="org.antlr.Tool" classpathref="classpath">
 	<arg value="${src}/libpomdp/parser/java/DotAlpha.g"/>	

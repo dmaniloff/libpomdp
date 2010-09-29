@@ -20,7 +20,7 @@ import no.uib.cipr.matrix.Vector;
 import no.uib.cipr.matrix.sparse.CompColMatrix;
 import no.uib.cipr.matrix.sparse.SparseVector;
 
-public class ValueFunctionSparseMTJ implements ValueFunction, Serializable {
+public class ValueFunctionSparse implements ValueFunction, Serializable {
     
     // ------------------------------------------------------------------------
     // properties
@@ -36,7 +36,7 @@ public class ValueFunctionSparseMTJ implements ValueFunction, Serializable {
     private int a[];
 
     // constructor
-    public ValueFunctionSparseMTJ(CompColMatrix v, int a[]) {
+    public ValueFunctionSparse(CompColMatrix v, int a[]) {
 	this.v   = v;
 	this.a   = a;
     }
@@ -53,14 +53,14 @@ public class ValueFunctionSparseMTJ implements ValueFunction, Serializable {
     // return value of a belief state
     public double V(BelState bel) {
 	long start = System.currentTimeMillis();
-	SparseVector b = ((BelStateSparseMTJ)bel).bSparse;
+	SparseVector b = ((BelStateSparse)bel).bSparse;
 	SparseVector dotProds = new SparseVector(v.numRows());
 	dotProds = (SparseVector) v.mult(b, dotProds);
 	// there must be a way to avoid this!!
 	int argmax = Utils.argmax(Matrices.getArray(dotProds)); 
 	//Matrix argmax = dotProds.indexOfMax(Ret.NEW, 0);
 	// save the index of the alpha that supports this belief point
-	bel.setplanid(argmax);
+	bel.setAlpha(argmax);
 	double max = dotProds.norm(Vector.Norm.Infinity);
 	System.out.println("elapsed in V: " + (System.currentTimeMillis() - start));
 	return max;

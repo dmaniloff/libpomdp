@@ -57,7 +57,7 @@ public class ValueFunctionSparseUJMP implements ValueFunction, Serializable {
 	double dotProds[] =  dotProdsM.toDoubleArray()[0];
 	int argmax        = Utils.argmax(dotProds);	
 	// save the index of the alpha that supports this belief point
-	bel.setplanid(argmax);
+	bel.setAlpha(argmax);
 	double max = dotProds[argmax];
 	return max;
     }
