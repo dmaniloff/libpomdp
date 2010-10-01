@@ -28,14 +28,13 @@ Contents:
 Directories and files
 =====================
 
-README           - this file
-doc/		 - documentation, still in progress
-external/        - external dependencies
-general/         - general POMDP interfaces 
-hybrid/          - implementation of hybrid POMDP algorithms
-offline/         - implementation of offline POMDP algorithms
-online/          - implementation of online POMDP algorithms
-problems/	 - POMDP problems 
+README		       - this file
+external/    	       - dependencies
+src/libpomdp/general/  - general POMDP interfaces 
+src/libpomdp/hybrid/   - implementation of hybrid POMDP algorithms
+src/libpomdp/offline/  - implementation of offline POMDP algorithms
+src/libpomdp/online/   - implementation of online POMDP algorithms
+src/libpomdp/problems/ - POMDP problems 
 
 Implemented algorithms
 ======================
@@ -43,7 +42,7 @@ Implemented algorithms
 
 Documentation
 =============
-
+On its way.
 
 References
 ==========
