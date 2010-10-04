@@ -52,5 +52,5 @@ problem_name = problem_name{1}{end};
 problem_name = textscan(problem_name, '%s', 'Delimiter', '.');
 problem_name = problem_name{1}{end};
 
-save [output_dir, '/blindAdd_', problem_name, '.mat'] lBound;
-save [output_dir, '/qmdpAdd_', problem_name, '.mat']  uBound;
+save [output_dir, '/', problem_name, '_blind_ADD.mat'] lBound;
+save [output_dir, '/', problem_name, '_qmdp_ADD.mat']  uBound;
