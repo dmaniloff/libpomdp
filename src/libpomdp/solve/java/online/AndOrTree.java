@@ -15,10 +15,13 @@ package libpomdp.solve.java.online;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
-import libpomdp.common.java.BelState;
+import libpomdp.common.java.BeliefState;
 import libpomdp.common.java.Pomdp;
 import libpomdp.common.java.Utils;
 import libpomdp.common.java.ValueFunction;
+
+import no.uib.cipr.matrix.DenseMatrix;
+import no.uib.cipr.matrix.Matrices;
 
 import org.math.array.DoubleArray;
 
@@ -54,7 +57,7 @@ public class AndOrTree {
     }
 
     /// initializer
-    public void init(BelState belief) {
+    public void init(BeliefState belief) {
 	this.root = new orNode();
 	this.root.init(belief, -1, null);
 	this.root.l = offlineLower.V(this.root.belief);
@@ -79,8 +82,8 @@ public class AndOrTree {
  	double old_l = en.l;
 	double old_u = en.u;	
 	// allocate space for the children AND nodes (do we have to do this here?)
-	en.children = new andNode[problem.getnrAct()];
-	for(action=0; action<problem.getnrAct(); action++) 
+	en.children = new andNode[problem.nrActions()];
+	for(action=0; action<problem.nrActions(); action++) 
 	    en.children[action] = new andNode();
 	// iterate through them
 	// start actions at zero here
@@ -89,11 +92,11 @@ public class AndOrTree {
 	    // initialize this node, precompute Rba
 	    a.init(action, en, problem);
 	    // allocate space for the children OR nodes (do we have to do this here?)
-	    a.children = new orNode[problem.getnrObs()];
-	    for(observation=0; observation<problem.getnrObs(); observation++)
+	    a.children = new orNode[problem.nrObservations()];
+	    for(observation=0; observation<problem.nrObservations(); observation++)
 		a.children[observation] = new orNode();
 	    // pre-compute observation probabilities
-	    pOba = problem.P_Oba(en.belief, action);
+	    pOba = Matrices.getArray(problem.sampleObservationProbs(en.belief, action));
 	    // iterate through new fringe nodes
 	    // start observations at zero 
 	    observation = 0;
@@ -107,7 +110,7 @@ public class AndOrTree {
 		    continue;
 		} 
 		// initialize this node, set its poba
-		o.init(problem.tao(en.belief,action,observation), observation, a);
+		o.init(problem.sampleNextBelief(en.belief,action,observation), observation, a);
 		o.belief.setPoba(pOba[observation]);
 		// compute upper and lower bounds for this node
 		o.u = offlineUpper.V(o.belief);
@@ -154,7 +157,7 @@ public class AndOrTree {
 	// update reference to best fringe node in the subtree of en
 	en.bStar = en.children[en.aStar].bStar;
 	// the number of nodes under en increases by |A||O|
-	en.subTreeSize += problem.getnrAct() * problem.getnrObs();
+	en.subTreeSize += problem.nrActions() * problem.nrObservations();
 	// one-step improvement
 	en.oneStepDeltaLower = en.l - old_l;
 	en.oneStepDeltaUpper = en.u - old_u;
@@ -198,7 +201,7 @@ public class AndOrTree {
 	    // update reference to best fringe node in the subtree of en
 	    o.bStar = o.children[o.aStar].bStar;
 	    // increase subtree size by the branching factor |A||O|
-	    o.subTreeSize += problem.getnrAct() * problem.getnrObs();
+	    o.subTreeSize += problem.nrActions() * problem.nrObservations();
 	    // iterate
 	    n = o;
 	}
@@ -268,7 +271,7 @@ public class AndOrTree {
 	    // update reference to best fringe node in the subtree of en
 	    o.bStar = o.children[o.aStar].bStar;
 	    // increase subtree size by the branching factor |A||O|
-	    o.subTreeSize += problem.getnrAct() * problem.getnrObs();
+	    o.subTreeSize += problem.nrActions() * problem.nrObservations();
 	    // iterate
 	    n = o;
 	}
@@ -331,7 +334,7 @@ public class AndOrTree {
     /// of expansion in the whole tree
     public int currentBestAction() {
 	// construct array with L(b,a)
-	double Lba[] = new double[problem.getnrAct()];
+	double Lba[] = new double[problem.nrActions()];
 	for(andNode a : root.children)
 	    Lba[a.getAct()] = a.l;
 	return Utils.argmax(Lba);
@@ -358,7 +361,7 @@ public class AndOrTree {
     /// rooted at on
     public int currentBestActionAtNode(orNode on) {
 	// construct array with L(b,a)
-	double Lba[] = new double[problem.getnrAct()];
+	double Lba[] = new double[problem.nrActions()];
 	for(andNode a : on.children)
 	    Lba[a.getAct()] = a.l;
 	return Utils.argmax(Lba);
@@ -396,7 +399,7 @@ public class AndOrTree {
 	// print this node
 	String b = "";
 	b = "b=[\\n " + 
-	    DoubleArray.toString("%.2f",o.belief.getPoint()) + 
+	    DoubleArray.toString("%.2f",Matrices.getArray(o.belief.getPoint())) + 
 	    "]\\n";
 	out.format(o.hashCode() + "[label=\"" +
 		   //b +
@@ -425,7 +428,7 @@ public class AndOrTree {
     protected void andprint(andNode a, PrintStream out) {
 	// print this node
 	out.format(a.hashCode() + "[label=\"" + 
-		   "a=" + problem.getactStr(a.getAct()) + "\\n" + 	
+		   "a=" + problem.getActionString(a.getAct()) + "\\n" + 	
 		   "U(b,a)= %.2f\\n" +
 		   "L(b,a)= %.2f" +
 		   "\"];\n", a.u, a.l);
@@ -434,7 +437,7 @@ public class AndOrTree {
 	    if (!(o==null))		
 		out.format(a.hashCode() + "->" + o.hashCode() + 
 			   "[label=\"" +
-			   "obs: " + problem.getobsStr(o.getobs()) + "\\n" +
+			   "obs: " + problem.getObservationString(o.getobs()) + "\\n" +
 			   "P(o|b,a)= %.2f\\n" + 
 			   "H(b,a,o)= %.2f" +  
 			   "\"];\n",

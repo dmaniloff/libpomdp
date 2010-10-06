@@ -47,10 +47,10 @@ public class aems2 implements expandHeuristic {
     /// other branches as well we compute it
     /// at the orNode level
     public double[] h_ba(orNode o) {
-	double UbA[] = new double[problem.getnrAct()];
+	double UbA[] = new double[problem.nrActions()];
 	double Hba[];
 	for(andNode a : o.children) UbA[a.getAct()] = a.u;
-	Hba = DoubleArray.fill(problem.getnrAct(), 0.0);
+	Hba = DoubleArray.fill(problem.nrActions(), 0.0);
 	// compute maximum upper bound
 	// set the chosen action's Hba value to 1
 	int aStar = Utils.argmax(UbA);
@@ -96,14 +96,14 @@ public class aems2 implements expandHeuristic {
 
     /// o* = argmax_o {H(b,a,o) H*(tao(b,a,o))}
     public int oStar(andNode a) {
-	double HbaoHostar[] = new double[problem.getnrObs()];	
+	double HbaoHostar[] = new double[problem.nrObservations()];	
 	//for(orNode o : a.children) HbaoHostar[o.getobs()] = o.h_bao * o.hStar;
 	//return Common.argmax(HbaoHostar);
 
 	// STILL TO THINK ABOUT:
 	//int nullCount=0;
 	//for(orNode o : a.children) 
-	for(int o=0; o<problem.getnrObs(); o++) {
+	for(int o=0; o<problem.nrObservations(); o++) {
 	    if(a.children[o] != null) {
 		HbaoHostar[o] = a.children[o].h_bao * a.children[o].hStar;
 	    } else {

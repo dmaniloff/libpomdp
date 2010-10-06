@@ -12,7 +12,7 @@ package libpomdp.common.java.sparse;
 // imports
 import java.io.Serializable;
 
-import libpomdp.common.java.BelState;
+import libpomdp.common.java.BeliefState;
 import libpomdp.common.java.Utils;
 import libpomdp.common.java.ValueFunction;
 import no.uib.cipr.matrix.Matrices;
@@ -37,8 +37,8 @@ public class ValueFunctionSparse implements ValueFunction, Serializable {
 
     // constructor
     public ValueFunctionSparse(CompColMatrix v, int a[]) {
-	this.v   = v;
-	this.a   = a;
+    	this.v   = v;
+		this.a   = a;
     }
 
     // ------------------------------------------------------------------------
@@ -51,24 +51,24 @@ public class ValueFunctionSparse implements ValueFunction, Serializable {
     }
 
     // return value of a belief state
-    public double V(BelState bel) {
-	long start = System.currentTimeMillis();
-	SparseVector b = ((BelStateSparse)bel).bSparse;
-	SparseVector dotProds = new SparseVector(v.numRows());
-	dotProds = (SparseVector) v.mult(b, dotProds);
-	// there must be a way to avoid this!!
-	int argmax = Utils.argmax(Matrices.getArray(dotProds)); 
-	//Matrix argmax = dotProds.indexOfMax(Ret.NEW, 0);
-	// save the index of the alpha that supports this belief point
-	bel.setAlpha(argmax);
-	double max = dotProds.norm(Vector.Norm.Infinity);
-	System.out.println("elapsed in V: " + (System.currentTimeMillis() - start));
-	return max;
+    public double V(BeliefState bel) {
+    	long start = System.currentTimeMillis();
+    	SparseVector b = ((BeliefStateSparse)bel).bSparse;
+    	SparseVector dotProds = new SparseVector(v.numRows());
+    	dotProds = (SparseVector) v.mult(b, dotProds);
+    	// there must be a way to avoid this!!
+    	int argmax = Utils.argmax(Matrices.getArray(dotProds)); 
+    	//Matrix argmax = dotProds.indexOfMax(Ret.NEW, 0);
+    	// save the index of the alpha that supports this belief point
+		bel.setAlpha(argmax);
+		double max = dotProds.norm(Vector.Norm.Infinity);
+		System.out.println("elapsed in V: " + (System.currentTimeMillis() - start));
+		return max;
     }
 
     // return flat value function
     public double[][] getvFlat() {
-	return Matrices.getArray(v);
+		return Matrices.getArray(v);
     }    
 
 } // valueFunctionSparseMTJ

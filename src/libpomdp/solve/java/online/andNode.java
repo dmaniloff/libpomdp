@@ -63,7 +63,7 @@ public class andNode {
     public void init(int action, orNode parent, Pomdp problem) {
 	this.act              = action;
 	this.parent           = parent;
-	this.rba              = problem.Rba(parent.belief, action);
+	this.rba              = problem.sampleReward(parent.belief, action);
 	this.bStar            = null;
 	this.bakCandidate     = null;
 	this.bakHeuristicStar = -1;

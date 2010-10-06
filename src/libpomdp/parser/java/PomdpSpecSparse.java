@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import no.uib.cipr.matrix.DenseMatrix;
 import no.uib.cipr.matrix.sparse.SparseVector;
 
-public class PomdpSpecSparseMTJ implements Serializable{
+public class PomdpSpecSparse implements Serializable{
 
     // serial id
     static final long serialVersionUID = 1L;

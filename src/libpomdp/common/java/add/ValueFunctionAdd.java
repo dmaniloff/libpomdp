@@ -16,7 +16,7 @@ package libpomdp.common.java.add;
 // imports
 import java.io.Serializable;
 
-import libpomdp.common.java.BelState;
+import libpomdp.common.java.BeliefState;
 import libpomdp.common.java.Utils;
 import libpomdp.common.java.ValueFunction;
 import libpomdp.common.java.symbolic.DD;
@@ -57,7 +57,7 @@ public class ValueFunctionAdd implements ValueFunction, Serializable {
     }
 
     // return value of a belief state
-    public double V(BelState bel) {
+    public double V(BeliefState bel) {
 	// declarations
 	DD     b;
 	DD     m[];

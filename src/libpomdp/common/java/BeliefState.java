@@ -11,10 +11,12 @@
 
 package libpomdp.common.java;
 
-public interface BelState {
+import no.uib.cipr.matrix.Vector;
+
+public interface BeliefState {
 
     /// flat belief point
-    public double[] getPoint();
+    public Vector getPoint();
 
     /// reachability prob = P(o|b,a)
     /// that is associated with the computation of tao(b,a,o)

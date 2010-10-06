@@ -26,10 +26,9 @@
 package libpomdp.common.java.sparse;
 
 // imports
-import libpomdp.common.java.BelState;
+import libpomdp.common.java.BeliefState;
 import libpomdp.common.java.Pomdp;
 import no.uib.cipr.matrix.DenseMatrix;
-import no.uib.cipr.matrix.Matrices;
 import no.uib.cipr.matrix.Vector;
 import no.uib.cipr.matrix.VectorEntry;
 import no.uib.cipr.matrix.sparse.CompColMatrix;
@@ -51,13 +50,13 @@ public class PomdpSparse implements Pomdp {
     private int nrObs;
 
     // transition model: a x s x s'
-    CompColMatrix T[];
+    private CompColMatrix T[];
 
     // observation model: a x s' x o
-    CompColMatrix O[];
+    private CompColMatrix O[];
 
     // reward model: a x s'
-    SparseVector  R[];
+    private SparseVector  R[];
 
     // discount factor
     private double gamma;
@@ -69,7 +68,7 @@ public class PomdpSparse implements Pomdp {
     private String obsStr[];
 
     // starting belief
-    private BelStateSparse initBelief;
+    private BeliefStateSparse initBelief;
 
     // ------------------------------------------------------------------------
     // methods
@@ -99,7 +98,7 @@ public class PomdpSparse implements Pomdp {
 	this.obsStr = obsStr;
 
 	// set initial belief state
-	this.initBelief = new BelStateSparse(init, 0.0);
+	this.initBelief = new BeliefStateSparse(init, 0.0);
 
 	// copy the model matrices - transform from dense to comprow
 	// do we really need this? dense is in sparse form already...
@@ -112,22 +111,22 @@ public class PomdpSparse implements Pomdp {
 
     // P(o|b,a) in vector form for all o's
     // THIS IS NOT MAKING THE RIGHT USE OF SPARSITY
-    public double[] P_Oba(BelState b, int a) {
-	SparseVector  b1  = ((BelStateSparse)b).bSparse;
+    public SparseVector sampleObservationProbs(BeliefState b, int a) {
+	SparseVector  b1  = ((BeliefStateSparse)b).bSparse;
     	SparseVector  Tb  = new SparseVector(nrSta);
 	Tb                = (SparseVector) T[a].mult(b1, Tb);
     	SparseVector Poba = new SparseVector(nrObs);
 	Poba              = (SparseVector) O[a].transMult(Tb, Poba);
-    	return Matrices.getArray(Poba);
+    	return Poba;
     }
 
     /// tao(b,a,o)
-    public BelState tao(BelState b, int a, int o) {
+    public BeliefState sampleNextBelief(BeliefState b, int a, int o) {
 	//long start = System.currentTimeMillis();
 	//System.out.println("made it to tao");
-	BelState bPrime;
+	BeliefState bPrime;
 	// compute T[a]' * b1
-	SparseVector b1   = ((BelStateSparse)b).bSparse;
+	SparseVector b1   = ((BeliefStateSparse)b).bSparse;
 	SparseVector b2   = new SparseVector(nrSta);
 	b2 = (SparseVector) T[a].transMult(b1, b2);
 	//System.out.println("Elapsed in tao - T[a] * b1" + (System.currentTimeMillis() - start));
@@ -147,7 +146,7 @@ public class PomdpSparse implements Pomdp {
 	} else {
 	    // safe to normalize now
 	    b2 = b2.scale(1.0/poba);    
-	    bPrime = new BelStateSparse(b2, poba);
+	    bPrime = new BeliefStateSparse(b2, poba);
 	}
 	//System.out.println("Elapsed in tao" + (System.currentTimeMillis() - start));
 	// return
@@ -155,45 +154,30 @@ public class PomdpSparse implements Pomdp {
     }
 
     /// R(b,a)
-    public double Rba(BelState bel, int a) {
-	SparseVector b = ((BelStateSparse)bel).bSparse;
+    public double sampleReward(BeliefState bel, int a) {
+	SparseVector b = ((BeliefStateSparse)bel).bSparse;
 	return b.dot(R[a]);
     }
 
-    public double[][] getT(int a) {
-	// this is used by mdp.java and there
-	// we need an s x s' matrix T_a
-    	return Matrices.getArray(T[a]);
-    }
-    
-    public double[][] getO(int a) {
-	// this is used by mdp.java and there
-	// we need an s x s' matrix T_a
-    	return Matrices.getArray(O[a]);
-    }
-
     // not part of the interface, to replace getT
-    public CompColMatrix T(int a) {
+    public CompColMatrix getSparseTransition(int a) {
 	return T[a];
     }
 
-    public double[] getR(int a) {
-    	return Matrices.getArray(R[a]);
-    }
 
-    public SparseVector R(int a) {
+    public SparseVector getSparseRho(int a) {
 	return R[a];
     }
 
-    public int getnrSta() {
+    public int nrStates() {
 	return nrSta;
     }
 
-    public int getnrAct() {
+    public int nrActions() {
 	return nrAct;
     }
 
-    public int getnrObs() {
+    public int nrObservations() {
 	return nrObs;
     }
 
@@ -201,17 +185,29 @@ public class PomdpSparse implements Pomdp {
 	return gamma;
     }
 
-    public String getactStr(int a) {
+    public String getActionString(int a) {
 	return actStr[a];
     }
 
-    public String getobsStr(int o) {	
+    public String getObservationString(int o) {	
 	return obsStr[o];
     }
 
-    public BelState getInit() {
+    public BeliefState getInitialBelief() {
 	return initBelief;
     }
+
+	public CompColMatrix getObservationProbs(int a) {
+		return O[a];
+	}
+
+	public SparseVector getRewardValues(int a) {
+		return R[a];
+	}
+
+	public CompColMatrix getTransitionProbs(int a) {
+		return T[a];
+	}
 
 } // pomdpSparseMTJ
 

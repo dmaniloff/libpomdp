@@ -17,11 +17,14 @@ package libpomdp.common.java.add;
 // imports
 import java.util.ArrayList;
 
-import libpomdp.common.java.BelState;
+import libpomdp.common.java.BeliefState;
 import libpomdp.common.java.Pomdp;
 import libpomdp.common.java.symbolic.DD;
 import libpomdp.common.java.symbolic.OP;
 import libpomdp.parser.java.ParseSPUDD;
+import no.uib.cipr.matrix.DenseMatrix;
+import no.uib.cipr.matrix.DenseVector;
+import no.uib.cipr.matrix.Vector;
 
 import org.math.array.DoubleArray;
 import org.math.array.IntegerArray;
@@ -153,7 +156,7 @@ public class PomdpAdd implements Pomdp {
      * used to quicky identify zero-prob obs and
      * avoid bulding an or node for those beliefs
      */
-    public double[] P_Oba(BelState bel, int a) {
+    public Vector sampleObservationProbs(BeliefState bel, int a) {
 	// obtain subclass and the dd for this belief
 	//DD b = ((belStateAdd)bel).bAdd;
 	// declarations
@@ -171,14 +174,14 @@ public class PomdpAdd implements Pomdp {
 	int[] svars = IntegerArray.merge(staIds, staIdsPr);
 	pObadd      = OP.addMultVarElim(vars, svars);
 	pOba        = OP.convert2array(pObadd, obsIdsPr);
-	return pOba;
+	return new DenseVector(pOba);
     }
 
     /**
      *  tao(b,a,o):
      *  compute new belief state from current and a,o pair
      */
-    public BelState tao(BelState bel, int a, int o) {
+    public BeliefState sampleNextBelief(BeliefState bel, int a, int o) {
 	if (bel instanceof BelStateAdd) {
 	    return regulartao ((BelStateAdd)bel, a, o);
 	} else {
@@ -193,12 +196,12 @@ public class PomdpAdd implements Pomdp {
      * this function re-computes poba to normalize the belief,
      * need to think of a clever way to avoid this...
      */
-    public BelState regulartao(BelStateAdd bel, int a, int o) {	    
+    public BeliefState regulartao(BelStateAdd bel, int a, int o) {	    
 	// obtain subclass and the dd for this belief 
 	DD b1 = bel.bAdd;
 	DD b2;
 	DD oProb;
-	BelState bPrime;
+	BeliefState bPrime;
 	DD O_o[];
 	int oc[][];
 	// restrict the prime observation variables to the ones that occurred
@@ -231,12 +234,12 @@ public class PomdpAdd implements Pomdp {
      *  uses DD representation and functions from Symbolic Perseus
      *  uses the product of marginals to approximate a belief
      */
-    public BelState factoredtao(BelStateFactoredAdd bel, int a, int o) {	    
+    public BeliefState factoredtao(BelStateFactoredAdd bel, int a, int o) {	    
 	// declarations
 	DD       b1[] = bel.marginals;	
 	DD       b2[];
 	DD       b2u[] = new DD[nrStaV];
-	BelState bPrime;
+	BeliefState bPrime;
 	DD       O_o[];
 	int      oc[][];	
 	// restrict the prime observation variables to the ones that occurred
@@ -257,7 +260,7 @@ public class PomdpAdd implements Pomdp {
     /// R(b,a)
     /// Poupart's matlab code has a loop indexed over
     /// 1:length(POMDP.actions(actId).rewFn) - when would this be > 1?
-    public double Rba(BelState bel, int a) {
+    public double sampleReward(BeliefState bel, int a) {
 	// obtain subclass and the dd for this belief
 	DD b;
 	DD m[];
@@ -272,7 +275,7 @@ public class PomdpAdd implements Pomdp {
 
     /// return s x s' matrix with T[a]
     /// to be used by mdp.java
-    public double[][] getT(int a) {
+    public DenseMatrix getTransitionProbs(int a) {
 	int vars[]     = IntegerArray.merge(staIds, staIdsPr);	
 	double T_a_v[] = OP.convert2array(OP.multN(T[a]),vars);
 	//	double T_a[][] = new double[totnrSta][totnrSta];
@@ -286,12 +289,12 @@ public class PomdpAdd implements Pomdp {
 	}
 	// transpose so that we have s' x s and maintain Spaans convention
 	//return DoubleArray.transpose(T_a);
-	return T_a;
+	return new DenseMatrix(T_a);
     }
 
     /// return s' x o matrix with O[a]
     /// this will prob become part of the interface as well...
-    public double[][] getO(int a) {
+    public DenseMatrix getObservationProbs(int a) {
 	int vars[]     = IntegerArray.merge(staIdsPr, obsIdsPr);	
 	double O_a_v[] = OP.convert2array(OP.multN(O[a]),vars);
 	//	double O_a[][] = new double[totnrSta][totnrSta];
@@ -304,13 +307,13 @@ public class PomdpAdd implements Pomdp {
 	    }
 	}
 	// return
-	return O_a;
+	return new DenseMatrix(O_a);
     }
     
     /// R(s,a)
-    public double[] getR(int a) {
-	DD R = 	OP.sub(problemAdd.reward, problemAdd.actCosts.get(a));
-	return OP.convert2array(R, staIds);
+    public Vector getRewardValues(int a) {
+    	DD R = 	OP.sub(problemAdd.reward, problemAdd.actCosts.get(a));
+    	return new DenseVector(OP.convert2array(R, staIds));
     }
 
     /// R(s,a), s given in factored form
@@ -320,18 +323,18 @@ public class PomdpAdd implements Pomdp {
 
     /// nrSta is the product of the arity of
     /// each state variable in the DBN
-    public int getnrSta() {
+    public int nrStates() {
         return totnrSta;
     }
 
     /// nrAct
-    public int getnrAct() {
+    public int nrActions() {
         return nrAct;
     }
 
     /// nrObs is the product of the arity of
     /// each observation variable in the DBN
-    public int getnrObs() {
+    public int nrObservations() {
         return totnrObs;
     }
 
@@ -341,18 +344,18 @@ public class PomdpAdd implements Pomdp {
     }
 
     /// get initial belief state
-    public BelState getInit() {
+    public BeliefState getInitialBelief() {
 	return initBelief;
     }
 
     // takes an action starting from 0
-    public String getactStr(int a) {
+    public String getActionString(int a) {
         return actStr[a];
     }
     
     /// string describing the values each obs var took
     /// the observation starts from 0
-    public String getobsStr(int o) {
+    public String getObservationString(int o) {
         int[] a = sdecode(o, nrObsV, obsArity);
 	String v="";
 	int c;

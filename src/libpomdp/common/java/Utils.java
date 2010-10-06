@@ -12,6 +12,9 @@ package libpomdp.common.java;
 import java.util.ArrayList;
 import java.util.Random;
 
+import no.uib.cipr.matrix.DenseMatrix;
+import no.uib.cipr.matrix.DenseVector;
+
 import org.math.array.DoubleArray;
 
 public class Utils {
@@ -30,6 +33,13 @@ public class Utils {
 	return d.length-1;
     }
 		
+    
+    public static DenseVector getUniformDistribution(int siz){
+    	double[] uni=new double[siz];
+    	for(int i=0;i<siz;i++)
+    		uni[i]=1.0/siz;
+		return (new DenseVector(uni));
+    }
     
     /// randomized argmax
     public static int argmax(double v[]) {
@@ -68,9 +78,7 @@ public class Utils {
 	//if (repi.size() > 1) System.out.println("will rand, check!!");
 	r = gen.nextInt(repi.size());
 	// return chosen index
+	new DenseMatrix(r, r);
 	return repi.get(r);
-
     } // argmax2
-
-
 } // Common

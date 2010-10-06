@@ -10,7 +10,7 @@
 package libpomdp.common.java.sparse;
 
 // imports
-import libpomdp.common.java.BelState;
+import libpomdp.common.java.BeliefState;
 
 import org.ujmp.core.doublematrix.impl.DefaultSparseDoubleMatrix;
 

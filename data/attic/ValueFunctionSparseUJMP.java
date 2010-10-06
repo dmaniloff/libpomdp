@@ -12,7 +12,7 @@ package libpomdp.common.java.sparse;
 // imports
 import java.io.Serializable;
 
-import libpomdp.common.java.BelState;
+import libpomdp.common.java.BeliefState;
 import libpomdp.common.java.Utils;
 import libpomdp.common.java.ValueFunction;
 

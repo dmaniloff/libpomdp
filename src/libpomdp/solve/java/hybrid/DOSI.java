@@ -35,7 +35,7 @@ public class DOSI implements BackupHeuristic {
     /// no need for a counterpart with an orNode argument
     public orNode bakStar(andNode a) {
 	// form array with bakHeuristic
-	double bh[] = new double[problem.getnrObs()];
+	double bh[] = new double[problem.nrObservations()];
 	for(orNode o : a.children) bh[o.getobs()] = o.bakHeuristic;	
 	return a.children[Utils.argmax(bh)];
 

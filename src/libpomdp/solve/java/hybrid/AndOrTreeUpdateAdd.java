@@ -26,6 +26,8 @@ import libpomdp.solve.java.online.andNode;
 import libpomdp.solve.java.online.expandHeuristic;
 import libpomdp.solve.java.online.orNode;
 
+import no.uib.cipr.matrix.Matrices;
+
 import org.math.array.DoubleArray;
 import org.math.array.IntegerArray;
 
@@ -40,6 +42,9 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 
     /// backup heuristic
     BackupHeuristic bakH;
+
+	@SuppressWarnings("unused")
+	private String be;
 
     /// same constructor with backup heuristic
     public AndOrTreeUpdateAdd(Pomdp prob, 
@@ -72,8 +77,8 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
  	double old_l = en.l;
 	double old_u = en.u;
 	// allocate space for the children AND nodes (do we have to do this here?)
-	en.children = new andNode[problem.getnrAct()];
-	for(action=0; action<problem.getnrAct(); action++) 
+	en.children = new andNode[problem.nrActions()];
+	for(action=0; action<problem.nrActions(); action++) 
 	    en.children[action] = new andNode();
 
 	// iterate through them
@@ -83,11 +88,11 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 	    // initialize this node, precompute Rba
 	    a.init(action, en, problem);
 	    // allocate space for the children OR nodes (do we have to do this here?)
-	    a.children = new orNode[problem.getnrObs()];
-	    for(observation=0; observation<problem.getnrObs(); observation++)
+	    a.children = new orNode[problem.nrObservations()];
+	    for(observation=0; observation<problem.nrObservations(); observation++)
 		a.children[observation] = new orNode();
 	    // pre-compute observation probabilities
-	    pOba = problem.P_Oba(en.belief, action);
+	    pOba = Matrices.getArray(problem.sampleObservationProbs(en.belief, action));
 	    // iterate through new fringe nodes
 	    // start observations at zero 
 	    observation = 0;
@@ -101,7 +106,7 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 		    continue;
 		} 
 		// initialize this node with factored belief, set its poba		
-		o.init(problem.tao(en.belief,action,observation), observation, a);
+		o.init(problem.sampleNextBelief(en.belief,action,observation), observation, a);
 		o.belief.setPoba(pOba[observation]);		
 		// compute upper and lower bounds for this node
 		o.u = offlineUpper.V(o.belief);		
@@ -154,7 +159,7 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 	// update reference to best fringe node in the subtree of en
 	en.bStar = en.children[en.aStar].bStar;
 	// the number of nodes under en increases by |A||O|
-	en.subTreeSize += problem.getnrAct() * problem.getnrObs();	
+	en.subTreeSize += problem.nrActions() * problem.nrObservations();	
 	// one-step improvement
 	en.oneStepDeltaLower = en.l - old_l;
 	en.oneStepDeltaUpper = en.u - old_u;
@@ -209,7 +214,7 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 	    // update reference of backup candidate and its H value
 	    o.bakCandidate = bakH.updateBakStar(o, a.getAct());
 	    // increase subtree size by the branching factor |A||O|
-	    o.subTreeSize += problem.getnrAct() * problem.getnrObs();
+	    o.subTreeSize += problem.nrActions() * problem.nrObservations();
 	    // iterate
 	    n = n.getParent().getParent();
 	}
@@ -314,7 +319,7 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
     /// correct the extra |A||O| in subTreeSize of root node
     public double expectedReuseRatio() {
 	return expectedReuse() / 
-	    (root.subTreeSize - problem.getnrObs() * problem.getnrAct());
+	    (root.subTreeSize - problem.nrObservations() * problem.nrActions());
     } // expectedReuseRatio
 	
     /// overriden here to print the backupHeuristic of each node
@@ -340,10 +345,10 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 
     /// print orNode
     private void orprint(orNode o, PrintStream out) {
+	be = "";
 	// print this node
-	String b = "";
-	if (o.belief.getPoint().length < 4)
-	    b = "b=[" + DoubleArray.toString("%.2f",o.belief.getPoint()) + "]\\n";
+	if (o.belief.getPoint().size() < 4)
+	    be = "b=[" + DoubleArray.toString("%.2f",Matrices.getArray(o.belief.getPoint())) + "]\\n";
 	out.format(o.hashCode() + "[label=\"" +
 		   //b +
 		   "U(b)= %.2f\\n" +
@@ -376,7 +381,7 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
     protected void andprint(andNode a, PrintStream out) {
 	// print this node
 	out.format(a.hashCode() + "[label=\"" + 
-		   "a=" + problem.getactStr(a.getAct()) + "\\n" + 	
+		   "a=" + problem.getActionString(a.getAct()) + "\\n" + 	
 		   "U(b,a)= %.2f\\n" +
 		   "L(b,a)= %.2f" +
 		   "\"];\n", a.u, a.l);
@@ -386,7 +391,7 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 	    if (!(o==null))
 		out.format(a.hashCode() + "->" + o.hashCode() + 
 			   "[label=\"" +
-			   "obs: " + problem.getobsStr(o.getobs()) + "\\n" +
+			   "obs: " + problem.getObservationString(o.getobs()) + "\\n" +
 			   "P(o|b,a)= %.2f\\n" + 
 			   "H(b,a,o)= %.2f" +  
 			   "\"];",

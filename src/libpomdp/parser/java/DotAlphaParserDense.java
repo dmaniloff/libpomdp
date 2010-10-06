@@ -12,31 +12,46 @@
 package libpomdp.parser.java;
 
 // imports
+import libpomdp.common.java.ValueFunction;
+import libpomdp.common.java.dense.ValueFunctionDense;
+
 import org.antlr.runtime.ANTLRFileStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.RecognitionException;
 
-public class DotPomdpParserSparseMTJ {
+public class DotAlphaParserDense {    
 
-    static PomdpSpecSparseMTJ dotpomdpSpec = null;
-
+    static Integer actions[];
+    static Double  alphas[][];
+    
     public static void parse (String filename) throws Exception {
-	DotPomdpLexer lex = new DotPomdpLexer(new ANTLRFileStream(filename));
+	DotAlphaLexer lex = new DotAlphaLexer(new ANTLRFileStream(filename));
        	CommonTokenStream tokens = new CommonTokenStream(lex);
-        DotPomdpParser parser = new DotPomdpParser(tokens);
+        DotAlphaParser parser = new DotAlphaParser(tokens);
 
         try {
-            parser.dotPomdp();
+            parser.dotAlpha();
         } catch (RecognitionException e)  {
             e.printStackTrace();
         }
-
-	dotpomdpSpec = parser.getSpec();
-
 	
+	actions = parser.getActions();
+	alphas  = parser.getAlphas();
     }
 
-    public PomdpSpecSparseMTJ getSpec() {
-	return dotpomdpSpec;
+    public ValueFunction getValueFunction() {
+	int s = actions.length;
+	int d = alphas[0].length;
+	int a[] = new int[s];
+	double v[][] = new double[s][d];
+
+	// convert from Integer to int and Double to double
+	for (int i=0; i<s; i++) {
+	    a[i] = actions[i].intValue();
+	    for (int j=0; j<d; j++) v[i][j] = alphas[i][j].doubleValue();
+	}
+	// generate flat value function
+	return new ValueFunctionDense(v, a);
     }
+
 }

@@ -28,21 +28,21 @@ public class BlindAdd {
 
 	// decls
 	DD[] adds;
-	double deltas[] = new double[factoredProb.getnrAct()];
+	double deltas[] = new double[factoredProb.nrActions()];
 	double maxdelta;
 
 	// allocate a alpha vectors
-	DD alphas[]     = new DD[factoredProb.getnrAct()];
-	DD old_alphas[] = new DD[factoredProb.getnrAct()];
+	DD alphas[]     = new DD[factoredProb.nrActions()];
+	DD old_alphas[] = new DD[factoredProb.nrActions()];
 
 	// allocate policy - one vec per action
-	int policy[]    = new int [factoredProb.getnrAct()];
+	int policy[]    = new int [factoredProb.nrActions()];
 	DD ddDiscFact   = DDleaf.myNew(factoredProb.getGamma());
 
 
 	// initialize alphas and policy
 	// \alpha_0 = \min_s {R(s,a} / (1-\gamma)
-	for (int a=0; a<factoredProb.getnrAct(); a++) {
+	for (int a=0; a<factoredProb.nrActions(); a++) {
 	    alphas[a] = DDleaf.myNew(OP.minAll(factoredProb.R[a]));
 	    policy[a] = a;
 	}
@@ -53,7 +53,7 @@ public class BlindAdd {
 	    // prime vars forward in the |A| alphas
 	    alphas = OP.primeVarsN(alphas, factoredProb.getnrTotV());
 
-	    for(int a=0; a<factoredProb.getnrAct(); a++) {
+	    for(int a=0; a<factoredProb.nrActions(); a++) {
 		// concat all ADDs into one array        
 		adds                = new DD[1+factoredProb.T[a].length+1];
 		adds[0]             = ddDiscFact;
@@ -66,7 +66,7 @@ public class BlindAdd {
 	    }
    
 	    // convergence check 
-	    for(int a=0; a<factoredProb.getnrAct(); a++) {
+	    for(int a=0; a<factoredProb.nrActions(); a++) {
 		deltas[a] = OP.maxAll(OP.abs(OP.sub(old_alphas[a], alphas[a])));
 		//deltas[a] = OP.maxAll(OP.abs(OP.subNoMem(old_alphas[a], alphas[a])));
 	    }

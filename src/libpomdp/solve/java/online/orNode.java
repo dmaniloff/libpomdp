@@ -13,12 +13,12 @@
 package libpomdp.solve.java.online;
 
 // imports
-import libpomdp.common.java.BelState;
+import libpomdp.common.java.BeliefState;
 
 public class orNode {
     
     /// first property of an OR node is its belief state
-    public BelState belief;
+    public BeliefState belief;
 
     /// observation that leads to this node
     private int obs;
@@ -102,7 +102,7 @@ public class orNode {
     // ------------------------------------------------------------------------
 
     /// initializer
-    public void init(BelState belief, int observation, andNode parent) {
+    public void init(BeliefState belief, int observation, andNode parent) {
 	this.belief            = belief;
 	this.obs               = observation;
 	// parent and depth

@@ -9,43 +9,48 @@
 
 package libpomdp.common.java;
 
+import no.uib.cipr.matrix.Matrix;
+import no.uib.cipr.matrix.Vector;
+
 public interface Pomdp {
 
     /// P(o|b,a) in vector form for all o's
-    public double[] P_Oba(BelState b, int a);
+    public Vector sampleObservationProbs(BeliefState b, int a);
     
     /// tao(b,a,o)
-    public BelState tao(BelState b, int a, int o);
+    public BeliefState sampleNextBelief(BeliefState b, int a, int o);
 
-    /// R(b,a)
-    public double Rba(BelState b, int a);
+    ///R(b,a)
+    public double sampleReward(BeliefState b, int a);
 
     /// T(s,a,s'): s x s' matrix
     /// will generally be used by mdp.java
-    public double[][] getT(int a);
+    public Matrix getTransitionProbs(int a);
 
+    public Matrix getObservationProbs(int a);
+    
     /// R(s,a): 1 x s vector
-    public double[] getR(int a);
+    public Vector getRewardValues(int a);
 
     /// nrSta: total # of states
-    public int getnrSta();
+    public int nrStates();
 
     /// nrAct: # of actions
-    public int getnrAct();
+    public int nrActions();
 
     /// nrObs: total # of observations
-    public int getnrObs();
+    public int nrObservations();
 
     /// \gamma
     public double getGamma();
 
     /// initial belief state
-    public BelState getInit();
+    public BeliefState getInitialBelief();
 
     /// action names
-    public String getactStr(int a);
+    public String getActionString(int a);
 
     /// observation names
-    public String getobsStr(int o);
+    public String getObservationString(int o);
 
 } // pomdp

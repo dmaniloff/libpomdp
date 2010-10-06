@@ -12,14 +12,16 @@
 package libpomdp.solve.java.offline;
 
 // imports
-import libpomdp.common.java.flat.PomdpFlat;
-import libpomdp.common.java.flat.ValueFunctionFlat;
+import libpomdp.common.java.dense.PomdpDense;
+import libpomdp.common.java.dense.ValueFunctionDense;
+
+import no.uib.cipr.matrix.Matrices;
 
 import org.math.array.DoubleArray;
 import org.math.array.IntegerArray;
 import org.math.array.LinearAlgebra;
 
-public class BlindFlat {
+public class BlindDense {
     // ------------------------------------------------------------------------
     // properties
     // ------------------------------------------------------------------------
@@ -35,7 +37,7 @@ public class BlindFlat {
     // the computation of the blind policy is
     // done here because it seems that the convergence
     // checks should be different
-	private ValueFunctionFlat getBlindFlat(PomdpFlat problem) {
+	private ValueFunctionDense getBlindFlat(PomdpDense problem) {
 	
 	double oldBlind[][];
 	double gTaA[];
@@ -45,26 +47,26 @@ public class BlindFlat {
 	double conv;
 	
 	// Blind is |A| x |S| - initialize each \alpha^a_{0} to \min_s {R(s,a)/(1-\gamma)}
-	double Blindv[][] = new double[problem.getnrAct()][problem.getnrSta()];
-	int Blinda[]      = IntegerArray.fill(problem.getnrAct(), -1);
+	double Blindv[][] = new double[problem.nrActions()][problem.nrStates()];
+	int Blinda[]      = IntegerArray.fill(problem.nrActions(), -1);
 
-	for(int a=0; a<problem.getnrAct(); a++) {
+	for(int a=0; a<problem.nrActions(); a++) {
 	    Blindv[a] = 
-		DoubleArray.fill(problem.getnrSta(), 
-				 DoubleArray.min(problem.getR(a))/(1.0-problem.getGamma()));
+		DoubleArray.fill(problem.nrStates(), 
+				 DoubleArray.min(Matrices.getArray(problem.getRewardValues(a)))/(1.0-problem.getGamma()));
 	}
 
 		      
 	for(int iter=0; iter<MAX_ITER; iter++) {
 	    // copy old values
 	    oldBlind = DoubleArray.copy(Blindv);
-	    for(int a=0; a<problem.getnrAct(); a++) {
+	    for(int a=0; a<problem.nrActions(); a++) {
 
 		// Blind:
 		// \alpha_a = R(s,a) + \gamma \sum_{s'} {T(s,a,s') \alpha^a_{t-1}(s')
-		gTaA = LinearAlgebra.times(LinearAlgebra.times(problem.getT(a), Blindv[a]),
+		gTaA = LinearAlgebra.times(LinearAlgebra.times(Matrices.getArray(problem.getTransitionProbs(a)), Blindv[a]),
 					   problem.getGamma());
-		Blindv[a]  = LinearAlgebra.plus(problem.getR(a), gTaA);
+		Blindv[a]  = LinearAlgebra.plus(Matrices.getArray(problem.getRewardValues(a)), gTaA);
 		Blinda[a]  = a;
 	    }
 	    
@@ -80,7 +82,7 @@ public class BlindFlat {
 	}
 
 	// build value functions
-	return new ValueFunctionFlat(Blindv, Blinda);
+	return new ValueFunctionDense(Blindv, Blinda);
 
     } // getBlindFlat
 

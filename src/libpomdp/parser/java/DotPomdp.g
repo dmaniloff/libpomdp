@@ -52,7 +52,8 @@ tokens {
     package libpomdp.parser.java;
 
     // we're using mtj to store the data
-    import no.uib.cipr.matrix.*;    
+    import no.uib.cipr.matrix.*;
+    import libpomdp.common.java.Utils;  
     import no.uib.cipr.matrix.sparse.*;   
 }
 
@@ -151,6 +152,9 @@ dotPomdp
       start_state 
         {
             // make sure the start state is a distribution
+            if (dotPomdpSpec.startState==null){
+            	dotPomdpSpec.startState=new SparseVector(Utils.getUniformDistribution(dotPomdpSpec.nrSta));
+            }
             System.out.println("Successfully parsed start state");
             if (dotPomdpSpec.startState.norm(Vector.Norm.One) - 1.0 > THRESHOLD)
                 err("Start state not a distribution" + dotPomdpSpec.startState.norm(Vector.Norm.One));

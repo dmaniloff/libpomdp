@@ -13,8 +13,10 @@
 package libpomdp.solve.java.offline;
 
 // imports
-import libpomdp.common.java.flat.PomdpFlat;
-import libpomdp.common.java.flat.ValueFunctionFlat;
+import libpomdp.common.java.dense.PomdpDense;
+import libpomdp.common.java.dense.ValueFunctionDense;
+
+import no.uib.cipr.matrix.Matrices;
 
 import org.math.array.DoubleArray;
 import org.math.array.IntegerArray;
@@ -34,16 +36,16 @@ public class QmdpFlat {
     // ------------------------------------------------------------------------
 
     /// compute Vmdp and Qmdp
-    public ValueFunctionFlat getqmdpFlat(PomdpFlat problem) {
+    public ValueFunctionDense getqmdpFlat(PomdpDense problem) {
 	
 	// Vmdp.v is always 1 x |S|
-	double Vmdpv[][] = new double[1][problem.getnrSta()];
+	double Vmdpv[][] = new double[1][problem.nrStates()];
 	// this is equiv to init with max_a R(s,a)
-	Vmdpv[0]         = DoubleArray.fill(problem.getnrSta(), 0.0); 
+	Vmdpv[0]         = DoubleArray.fill(problem.nrStates(), 0.0); 
 
 	// Qmdp is |A| x |S|
-	double Qmdpv[][] = new double[problem.getnrAct()][problem.getnrSta()];
-	int    Qmdpa[]   = new int [problem.getnrAct()];
+	double Qmdpv[][] = new double[problem.nrActions()][problem.nrStates()];
+	int    Qmdpa[]   = new int [problem.nrActions()];
 
 	// declarations
 	double oldVmdp[];
@@ -53,18 +55,18 @@ public class QmdpFlat {
 
 	for(int iter=0; iter<MAX_ITER; iter++) {
 	    // initialize Qmdp - this may not be necessary
-	    Qmdpv = DoubleArray.fill(problem.getnrAct(), problem.getnrSta(), 0.0);
-	    Qmdpa = IntegerArray.fill(problem.getnrAct(), -1);
+	    Qmdpv = DoubleArray.fill(problem.nrActions(), problem.nrStates(), 0.0);
+	    Qmdpa = IntegerArray.fill(problem.nrActions(), -1);
 
 	    // asynchronous update
 	    oldVmdp = DoubleArray.copy(Vmdpv[0]);
 	    	    
-	    for(int a=0; a<problem.getnrAct(); a++) {
+	    for(int a=0; a<problem.nrActions(); a++) {
 		// Qmdp:
 		// Q_a = R(s,a) + \gamma \sum_{s'} {T(s,a,s') Vmdp_{t-1}(s')
-		gTaV = LinearAlgebra.times(LinearAlgebra.times(problem.getT(a), oldVmdp),
+		gTaV = LinearAlgebra.times(LinearAlgebra.times(Matrices.getArray(problem.getTransitionProbs(a)), oldVmdp),
 					   problem.getGamma());
-		Qmdpv[a] = LinearAlgebra.plus(problem.getR(a), gTaV);
+		Qmdpv[a] = LinearAlgebra.plus(Matrices.getArray(problem.getRewardValues(a)), gTaV);
 		Qmdpa[a] = a; // remember actions here start from 0!!		
 	    }
 
@@ -81,7 +83,7 @@ public class QmdpFlat {
 		break;
 	}
 
-	return new ValueFunctionFlat(Qmdpv, Qmdpa);
+	return new ValueFunctionDense(Qmdpv, Qmdpa);
 
     } // getqmdpFlat
 

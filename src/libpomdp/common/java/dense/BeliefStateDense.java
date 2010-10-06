@@ -7,14 +7,16 @@
  * Copyright (c) 2009, 2010 Diego Maniloff 
  * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
-package libpomdp.common.java.flat;
+package libpomdp.common.java.dense;
 
-import libpomdp.common.java.BelState;
+import no.uib.cipr.matrix.DenseVector;
+import no.uib.cipr.matrix.Vector;
+import libpomdp.common.java.BeliefState;
 
-public class BelStateFlat implements BelState {
+public class BeliefStateDense implements BeliefState {
 
     // flat belief point
-    private double bPoint[];
+    private DenseVector point;
 
     private double poba = -1.0;
 
@@ -22,29 +24,33 @@ public class BelStateFlat implements BelState {
 
     // constructor
     // in case this is the initial belief, poba = 0.0
-    public BelStateFlat(double[] bPoint, double poba) {
-	this.bPoint = bPoint;
-	this.poba   = poba;
+    public BeliefStateDense(Vector point, double poba) {
+    	this.point = new DenseVector(point);
+    	this.poba   = poba;
     }
 
-    public double[] getPoint() {
-	return bPoint;
+    public BeliefStateDense(double point[], double poba) {
+    	this(new DenseVector(point),poba);
+    }
+
+	public DenseVector getPoint() {
+    	return point;
     }
 
     public double getPoba() {
-	return poba;
+    	return poba;
     }
 
     public void setPoba(double poba) {
-	this.poba = poba;
+    	this.poba = poba;
     }
 
     public int getAlpha() {
-	return planid;
+    	return planid;
     }
 
     public void setAlpha(int planid) {
-	this.planid = planid;
+    	this.planid = planid;
     }
 
 

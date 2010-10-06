@@ -11,11 +11,13 @@
 package libpomdp.common.java.add;
 
 // imports
-import libpomdp.common.java.BelState;
+import no.uib.cipr.matrix.DenseVector;
+import no.uib.cipr.matrix.Vector;
+import libpomdp.common.java.BeliefState;
 import libpomdp.common.java.symbolic.DD;
 import libpomdp.common.java.symbolic.OP;
  
-public class BelStateAdd implements BelState {
+public class BelStateAdd implements BeliefState {
     
     // main property is the DD itself
     public DD bAdd;
@@ -38,8 +40,8 @@ public class BelStateAdd implements BelState {
     }
 
     // compute this only if we actually need it
-    public double[] getPoint() {
-    	return(OP.convert2array(bAdd, staIds));
+    public Vector getPoint() {
+    	return(new DenseVector(OP.convert2array(bAdd, staIds)));
     }
 
     public double getPoba() {

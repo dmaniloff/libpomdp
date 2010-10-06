@@ -16,7 +16,7 @@ public interface ValueFunction {
     public int[] getActions();
 
     // value of a belief according to this value function
-    public double V(BelState b);
+    public double V(BeliefState b);
 
     // flat representation
     public double[][] getvFlat();
