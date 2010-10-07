@@ -24,7 +24,6 @@ public class DotPomdpParserSparse {
 	DotPomdpLexer lex = new DotPomdpLexer(new ANTLRFileStream(filename));
        	CommonTokenStream tokens = new CommonTokenStream(lex);
         DotPomdpParser parser = new DotPomdpParser(tokens);
-
         try {
             parser.dotPomdp();
         } catch (RecognitionException e)  {

@@ -1,4 +1,4 @@
-// $ANTLR 3.0.1 /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g 2010-10-06 18:38:46
+// $ANTLR 3.0.1 /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g 2010-10-07 15:03:33
 
     package libpomdp.parser.java;
 
@@ -77,6 +77,12 @@ public class DotPomdpParser extends Parser {
             }
         }
 
+    	private int matrixContext;
+    	
+    	private static final int MC_TRANSITION = 0;
+    	private static final int MC_TRANSITION_ROW = 1;
+    	private static final int MC_OBSERVATION = 2;
+    	private static final int MC_OBSERVATION_ROW = 3;
         // main structure
         private PomdpSpecSparse dotPomdpSpec = new PomdpSpecSparse();
 
@@ -96,19 +102,24 @@ public class DotPomdpParser extends Parser {
 
 
     // $ANTLR start dotPomdp
-    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:129:1: dotPomdp : preamble start_state param_list ;
+    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:135:1: dotPomdp : preamble start_state param_list ;
     public final void dotPomdp() throws RecognitionException {
         try {
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:130:5: ( preamble start_state param_list )
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:130:7: preamble start_state param_list
+            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:136:5: ( preamble start_state param_list )
+            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:137:9: preamble start_state param_list
             {
-            pushFollow(FOLLOW_preamble_in_dotPomdp768);
+
+                  		System.out.println("PARSER: Parsing preamble...");
+                    
+            pushFollow(FOLLOW_preamble_in_dotPomdp796);
             preamble();
             _fsp--;
 
 
+                    	System.out.println("PARSER: Summary -> states "+dotPomdpSpec.nrSta);
+                    	System.out.println("                -> observations "+dotPomdpSpec.nrObs);
+                    	System.out.println("                -> actions "+dotPomdpSpec.nrAct);
                         // we can now initialize the data structures for T, O, R
-                        System.out.println("Successfully parsed preamble");            
                         /* initialize |A| s x s' dense matrices (they're actually sparse)
                            T: <action> : <start-state> : <end-state> prob  */
                         dotPomdpSpec.T = new DenseMatrix[dotPomdpSpec.nrAct];
@@ -125,28 +136,29 @@ public class DotPomdpParser extends Parser {
                            R: <action> : <start-state> : * : * float */
                         dotPomdpSpec.R = new SparseVector[dotPomdpSpec.nrAct];
                         for(int a=0; a<dotPomdpSpec.nrAct; a++) 
-                            dotPomdpSpec.R[a] = new SparseVector(dotPomdpSpec.nrSta);        
+                            dotPomdpSpec.R[a] = new SparseVector(dotPomdpSpec.nrSta);
+                        System.out.println("PARSER: Parsing starting state/belief...");   
                     
-            pushFollow(FOLLOW_start_state_in_dotPomdp786);
+            pushFollow(FOLLOW_start_state_in_dotPomdp814);
             start_state();
             _fsp--;
 
 
                         // make sure the start state is a distribution
-                        if (dotPomdpSpec.startState==null){
-                        	dotPomdpSpec.startState=new SparseVector(Utils.getUniformDistribution(dotPomdpSpec.nrSta));
-                        }
-                        System.out.println("Successfully parsed start state");
+                        
+                        //System.out.println("Successfully parsed start state");
                         if (dotPomdpSpec.startState.norm(Vector.Norm.One) - 1.0 > THRESHOLD)
                             err("Start state not a distribution" + dotPomdpSpec.startState.norm(Vector.Norm.One));
+                        System.out.println("PARSER: Parsing parameters...");
                     
-            pushFollow(FOLLOW_param_list_in_dotPomdp805);
+            pushFollow(FOLLOW_param_list_in_dotPomdp833);
             param_list();
             _fsp--;
 
 
                         // there should be a check for the parameter distros here...
-                        System.out.println("Successfully parsed parameters");
+                        // System.out.println("Successfully parsed parameters");
+                        System.out.println("PARSER: [DONE]");
                         
                     
 
@@ -165,13 +177,13 @@ public class DotPomdpParser extends Parser {
 
 
     // $ANTLR start preamble
-    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:170:1: preamble : ( param_type )* ;
+    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:183:1: preamble : ( param_type )* ;
     public final void preamble() throws RecognitionException {
         try {
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:171:5: ( ( param_type )* )
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:171:7: ( param_type )*
+            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:184:5: ( ( param_type )* )
+            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:184:7: ( param_type )*
             {
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:171:7: ( param_type )*
+            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:184:7: ( param_type )*
             loop1:
             do {
                 int alt1=2;
@@ -184,9 +196,9 @@ public class DotPomdpParser extends Parser {
 
                 switch (alt1) {
             	case 1 :
-            	    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:171:7: param_type
+            	    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:184:7: param_type
             	    {
-            	    pushFollow(FOLLOW_param_type_in_preamble841);
+            	    pushFollow(FOLLOW_param_type_in_preamble869);
             	    param_type();
             	    _fsp--;
 
@@ -215,10 +227,10 @@ public class DotPomdpParser extends Parser {
 
 
     // $ANTLR start param_type
-    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:174:1: param_type : ( discount_param | value_param | state_param | action_param | obs_param );
+    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:187:1: param_type : ( discount_param | value_param | state_param | action_param | obs_param );
     public final void param_type() throws RecognitionException {
         try {
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:175:5: ( discount_param | value_param | state_param | action_param | obs_param )
+            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:188:5: ( discount_param | value_param | state_param | action_param | obs_param )
             int alt2=5;
             switch ( input.LA(1) ) {
             case DISCOUNTTOK:
@@ -248,16 +260,16 @@ public class DotPomdpParser extends Parser {
                 break;
             default:
                 NoViableAltException nvae =
-                    new NoViableAltException("174:1: param_type : ( discount_param | value_param | state_param | action_param | obs_param );", 2, 0, input);
+                    new NoViableAltException("187:1: param_type : ( discount_param | value_param | state_param | action_param | obs_param );", 2, 0, input);
 
                 throw nvae;
             }
 
             switch (alt2) {
                 case 1 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:175:7: discount_param
+                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:188:7: discount_param
                     {
-                    pushFollow(FOLLOW_discount_param_in_param_type873);
+                    pushFollow(FOLLOW_discount_param_in_param_type901);
                     discount_param();
                     _fsp--;
 
@@ -265,9 +277,9 @@ public class DotPomdpParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:176:7: value_param
+                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:189:7: value_param
                     {
-                    pushFollow(FOLLOW_value_param_in_param_type881);
+                    pushFollow(FOLLOW_value_param_in_param_type909);
                     value_param();
                     _fsp--;
 
@@ -275,9 +287,9 @@ public class DotPomdpParser extends Parser {
                     }
                     break;
                 case 3 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:177:7: state_param
+                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:190:7: state_param
                     {
-                    pushFollow(FOLLOW_state_param_in_param_type889);
+                    pushFollow(FOLLOW_state_param_in_param_type917);
                     state_param();
                     _fsp--;
 
@@ -285,9 +297,9 @@ public class DotPomdpParser extends Parser {
                     }
                     break;
                 case 4 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:178:7: action_param
+                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:191:7: action_param
                     {
-                    pushFollow(FOLLOW_action_param_in_param_type897);
+                    pushFollow(FOLLOW_action_param_in_param_type925);
                     action_param();
                     _fsp--;
 
@@ -295,9 +307,9 @@ public class DotPomdpParser extends Parser {
                     }
                     break;
                 case 5 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:179:7: obs_param
+                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:192:7: obs_param
                     {
-                    pushFollow(FOLLOW_obs_param_in_param_type905);
+                    pushFollow(FOLLOW_obs_param_in_param_type933);
                     obs_param();
                     _fsp--;
 
@@ -319,18 +331,18 @@ public class DotPomdpParser extends Parser {
 
 
     // $ANTLR start discount_param
-    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:183:1: discount_param : DISCOUNTTOK COLONTOK FLOAT ;
+    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:196:1: discount_param : DISCOUNTTOK COLONTOK FLOAT ;
     public final void discount_param() throws RecognitionException {
         Token FLOAT1=null;
 
         try {
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:184:5: ( DISCOUNTTOK COLONTOK FLOAT )
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:184:7: DISCOUNTTOK COLONTOK FLOAT
+            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:197:5: ( DISCOUNTTOK COLONTOK FLOAT )
+            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:197:7: DISCOUNTTOK COLONTOK FLOAT
             {
-            match(input,DISCOUNTTOK,FOLLOW_DISCOUNTTOK_in_discount_param925); 
-            match(input,COLONTOK,FOLLOW_COLONTOK_in_discount_param927); 
+            match(input,DISCOUNTTOK,FOLLOW_DISCOUNTTOK_in_discount_param953); 
+            match(input,COLONTOK,FOLLOW_COLONTOK_in_discount_param955); 
             FLOAT1=(Token)input.LT(1);
-            match(input,FLOAT,FOLLOW_FLOAT_in_discount_param929); 
+            match(input,FLOAT,FOLLOW_FLOAT_in_discount_param957); 
             // set discount factor in global problem struct
                    dotPomdpSpec.discount = Double.parseDouble(FLOAT1.getText());
 
@@ -349,15 +361,15 @@ public class DotPomdpParser extends Parser {
 
 
     // $ANTLR start value_param
-    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:189:1: value_param : VALUESTOK COLONTOK value_tail ;
+    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:202:1: value_param : VALUESTOK COLONTOK value_tail ;
     public final void value_param() throws RecognitionException {
         try {
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:190:5: ( VALUESTOK COLONTOK value_tail )
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:190:7: VALUESTOK COLONTOK value_tail
+            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:203:5: ( VALUESTOK COLONTOK value_tail )
+            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:203:7: VALUESTOK COLONTOK value_tail
             {
-            match(input,VALUESTOK,FOLLOW_VALUESTOK_in_value_param959); 
-            match(input,COLONTOK,FOLLOW_COLONTOK_in_value_param961); 
-            pushFollow(FOLLOW_value_tail_in_value_param963);
+            match(input,VALUESTOK,FOLLOW_VALUESTOK_in_value_param987); 
+            match(input,COLONTOK,FOLLOW_COLONTOK_in_value_param989); 
+            pushFollow(FOLLOW_value_tail_in_value_param991);
             value_tail();
             _fsp--;
 
@@ -377,25 +389,43 @@ public class DotPomdpParser extends Parser {
 
 
     // $ANTLR start value_tail
-    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:193:1: value_tail : ( REWARDTOK | COSTTOK );
+    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:206:1: value_tail : ( REWARDTOK | COSTTOK );
     public final void value_tail() throws RecognitionException {
         try {
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:194:5: ( REWARDTOK | COSTTOK )
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:
-            {
-            if ( (input.LA(1)>=REWARDTOK && input.LA(1)<=COSTTOK) ) {
-                input.consume();
-                errorRecovery=false;
+            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:207:5: ( REWARDTOK | COSTTOK )
+            int alt3=2;
+            int LA3_0 = input.LA(1);
+
+            if ( (LA3_0==REWARDTOK) ) {
+                alt3=1;
+            }
+            else if ( (LA3_0==COSTTOK) ) {
+                alt3=2;
             }
             else {
-                MismatchedSetException mse =
-                    new MismatchedSetException(null,input);
-                recoverFromMismatchedSet(input,mse,FOLLOW_set_in_value_tail0);    throw mse;
+                NoViableAltException nvae =
+                    new NoViableAltException("206:1: value_tail : ( REWARDTOK | COSTTOK );", 3, 0, input);
+
+                throw nvae;
             }
+            switch (alt3) {
+                case 1 :
+                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:207:7: REWARDTOK
+                    {
+                    match(input,REWARDTOK,FOLLOW_REWARDTOK_in_value_tail1014); 
 
+                    }
+                    break;
+                case 2 :
+                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:208:7: COSTTOK
+                    {
+                    match(input,COSTTOK,FOLLOW_COSTTOK_in_value_tail1022); 
+                    err("PARSER: Costs are not supported... sure that you want to use costs?");
+
+                    }
+                    break;
 
             }
-
         }
         catch (RecognitionException re) {
             reportError(re);
@@ -409,15 +439,15 @@ public class DotPomdpParser extends Parser {
 
 
     // $ANTLR start state_param
-    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:198:1: state_param : STATESTOK COLONTOK state_tail ;
+    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:212:1: state_param : STATESTOK COLONTOK state_tail ;
     public final void state_param() throws RecognitionException {
         try {
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:199:5: ( STATESTOK COLONTOK state_tail )
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:199:7: STATESTOK COLONTOK state_tail
+            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:213:5: ( STATESTOK COLONTOK state_tail )
+            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:213:7: STATESTOK COLONTOK state_tail
             {
-            match(input,STATESTOK,FOLLOW_STATESTOK_in_state_param1016); 
-            match(input,COLONTOK,FOLLOW_COLONTOK_in_state_param1018); 
-            pushFollow(FOLLOW_state_tail_in_state_param1020);
+            match(input,STATESTOK,FOLLOW_STATESTOK_in_state_param1055); 
+            match(input,COLONTOK,FOLLOW_COLONTOK_in_state_param1057); 
+            pushFollow(FOLLOW_state_tail_in_state_param1059);
             state_tail();
             _fsp--;
 
@@ -437,43 +467,43 @@ public class DotPomdpParser extends Parser {
 
 
     // $ANTLR start state_tail
-    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:202:1: state_tail : ( INT | ident_list );
+    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:216:1: state_tail : ( INT | ident_list );
     public final void state_tail() throws RecognitionException {
         Token INT2=null;
         ArrayList<String> ident_list3 = null;
 
 
         try {
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:203:5: ( INT | ident_list )
-            int alt3=2;
-            int LA3_0 = input.LA(1);
+            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:217:5: ( INT | ident_list )
+            int alt4=2;
+            int LA4_0 = input.LA(1);
 
-            if ( (LA3_0==INT) ) {
-                alt3=1;
+            if ( (LA4_0==INT) ) {
+                alt4=1;
             }
-            else if ( (LA3_0==STRING) ) {
-                alt3=2;
+            else if ( (LA4_0==STRING) ) {
+                alt4=2;
             }
             else {
                 NoViableAltException nvae =
-                    new NoViableAltException("202:1: state_tail : ( INT | ident_list );", 3, 0, input);
+                    new NoViableAltException("216:1: state_tail : ( INT | ident_list );", 4, 0, input);
 
                 throw nvae;
             }
-            switch (alt3) {
+            switch (alt4) {
                 case 1 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:203:7: INT
+                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:217:7: INT
                     {
                     INT2=(Token)input.LT(1);
-                    match(input,INT,FOLLOW_INT_in_state_tail1043); 
+                    match(input,INT,FOLLOW_INT_in_state_tail1082); 
                     dotPomdpSpec.nrSta   = Integer.parseInt(INT2.getText());
 
                     }
                     break;
                 case 2 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:206:7: ident_list
+                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:220:7: ident_list
                     {
-                    pushFollow(FOLLOW_ident_list_in_state_tail1070);
+                    pushFollow(FOLLOW_ident_list_in_state_tail1109);
                     ident_list3=ident_list();
                     _fsp--;
 
@@ -497,15 +527,15 @@ public class DotPomdpParser extends Parser {
 
 
     // $ANTLR start action_param
-    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:212:1: action_param : ACTIONSTOK COLONTOK action_tail ;
+    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:226:1: action_param : ACTIONSTOK COLONTOK action_tail ;
     public final void action_param() throws RecognitionException {
         try {
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:213:5: ( ACTIONSTOK COLONTOK action_tail )
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:213:7: ACTIONSTOK COLONTOK action_tail
+            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:227:5: ( ACTIONSTOK COLONTOK action_tail )
+            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:227:7: ACTIONSTOK COLONTOK action_tail
             {
-            match(input,ACTIONSTOK,FOLLOW_ACTIONSTOK_in_action_param1111); 
-            match(input,COLONTOK,FOLLOW_COLONTOK_in_action_param1113); 
-            pushFollow(FOLLOW_action_tail_in_action_param1115);
+            match(input,ACTIONSTOK,FOLLOW_ACTIONSTOK_in_action_param1150); 
+            match(input,COLONTOK,FOLLOW_COLONTOK_in_action_param1152); 
+            pushFollow(FOLLOW_action_tail_in_action_param1154);
             action_tail();
             _fsp--;
 
@@ -525,43 +555,43 @@ public class DotPomdpParser extends Parser {
 
 
     // $ANTLR start action_tail
-    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:216:1: action_tail : ( INT | ident_list );
+    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:230:1: action_tail : ( INT | ident_list );
     public final void action_tail() throws RecognitionException {
         Token INT4=null;
         ArrayList<String> ident_list5 = null;
 
 
         try {
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:217:5: ( INT | ident_list )
-            int alt4=2;
-            int LA4_0 = input.LA(1);
+            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:231:5: ( INT | ident_list )
+            int alt5=2;
+            int LA5_0 = input.LA(1);
 
-            if ( (LA4_0==INT) ) {
-                alt4=1;
+            if ( (LA5_0==INT) ) {
+                alt5=1;
             }
-            else if ( (LA4_0==STRING) ) {
-                alt4=2;
+            else if ( (LA5_0==STRING) ) {
+                alt5=2;
             }
             else {
                 NoViableAltException nvae =
-                    new NoViableAltException("216:1: action_tail : ( INT | ident_list );", 4, 0, input);
+                    new NoViableAltException("230:1: action_tail : ( INT | ident_list );", 5, 0, input);
 
                 throw nvae;
             }
-            switch (alt4) {
+            switch (alt5) {
                 case 1 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:217:7: INT
+                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:231:7: INT
                     {
                     INT4=(Token)input.LT(1);
-                    match(input,INT,FOLLOW_INT_in_action_tail1138); 
+                    match(input,INT,FOLLOW_INT_in_action_tail1177); 
                     dotPomdpSpec.nrAct   = Integer.parseInt(INT4.getText());
 
                     }
                     break;
                 case 2 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:220:7: ident_list
+                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:234:7: ident_list
                     {
-                    pushFollow(FOLLOW_ident_list_in_action_tail1165);
+                    pushFollow(FOLLOW_ident_list_in_action_tail1204);
                     ident_list5=ident_list();
                     _fsp--;
 
@@ -585,15 +615,15 @@ public class DotPomdpParser extends Parser {
 
 
     // $ANTLR start obs_param
-    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:226:1: obs_param : OBSERVATIONSTOK COLONTOK obs_param_tail ;
+    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:240:1: obs_param : OBSERVATIONSTOK COLONTOK obs_param_tail ;
     public final void obs_param() throws RecognitionException {
         try {
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:227:5: ( OBSERVATIONSTOK COLONTOK obs_param_tail )
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:227:7: OBSERVATIONSTOK COLONTOK obs_param_tail
+            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:241:5: ( OBSERVATIONSTOK COLONTOK obs_param_tail )
+            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:241:7: OBSERVATIONSTOK COLONTOK obs_param_tail
             {
-            match(input,OBSERVATIONSTOK,FOLLOW_OBSERVATIONSTOK_in_obs_param1202); 
-            match(input,COLONTOK,FOLLOW_COLONTOK_in_obs_param1204); 
-            pushFollow(FOLLOW_obs_param_tail_in_obs_param1206);
+            match(input,OBSERVATIONSTOK,FOLLOW_OBSERVATIONSTOK_in_obs_param1241); 
+            match(input,COLONTOK,FOLLOW_COLONTOK_in_obs_param1243); 
+            pushFollow(FOLLOW_obs_param_tail_in_obs_param1245);
             obs_param_tail();
             _fsp--;
 
@@ -613,43 +643,43 @@ public class DotPomdpParser extends Parser {
 
 
     // $ANTLR start obs_param_tail
-    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:230:1: obs_param_tail : ( INT | ident_list );
+    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:244:1: obs_param_tail : ( INT | ident_list );
     public final void obs_param_tail() throws RecognitionException {
         Token INT6=null;
         ArrayList<String> ident_list7 = null;
 
 
         try {
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:231:5: ( INT | ident_list )
-            int alt5=2;
-            int LA5_0 = input.LA(1);
+            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:245:5: ( INT | ident_list )
+            int alt6=2;
+            int LA6_0 = input.LA(1);
 
-            if ( (LA5_0==INT) ) {
-                alt5=1;
+            if ( (LA6_0==INT) ) {
+                alt6=1;
             }
-            else if ( (LA5_0==STRING) ) {
-                alt5=2;
+            else if ( (LA6_0==STRING) ) {
+                alt6=2;
             }
             else {
                 NoViableAltException nvae =
-                    new NoViableAltException("230:1: obs_param_tail : ( INT | ident_list );", 5, 0, input);
+                    new NoViableAltException("244:1: obs_param_tail : ( INT | ident_list );", 6, 0, input);
 
                 throw nvae;
             }
-            switch (alt5) {
+            switch (alt6) {
                 case 1 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:231:7: INT
+                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:245:7: INT
                     {
                     INT6=(Token)input.LT(1);
-                    match(input,INT,FOLLOW_INT_in_obs_param_tail1224); 
+                    match(input,INT,FOLLOW_INT_in_obs_param_tail1263); 
                     dotPomdpSpec.nrObs   = Integer.parseInt(INT6.getText());
 
                     }
                     break;
                 case 2 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:234:7: ident_list
+                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:248:7: ident_list
                     {
-                    pushFollow(FOLLOW_ident_list_in_obs_param_tail1251);
+                    pushFollow(FOLLOW_ident_list_in_obs_param_tail1290);
                     ident_list7=ident_list();
                     _fsp--;
 
@@ -673,36 +703,31 @@ public class DotPomdpParser extends Parser {
 
 
     // $ANTLR start start_state
-    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:240:1: start_state : ( STARTTOK COLONTOK prob_vector | STARTTOK COLONTOK STRING | STARTTOK INCLUDETOK COLONTOK start_state_list | STARTTOK EXCLUDETOK COLONTOK start_state_list | );
+    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:254:1: start_state : ( STARTTOK COLONTOK prob_vector | STARTTOK COLONTOK STRING | STARTTOK INCLUDETOK COLONTOK start_state_list | STARTTOK EXCLUDETOK COLONTOK start_state_list | );
     public final void start_state() throws RecognitionException {
         SparseVector prob_vector8 = null;
 
 
         try {
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:241:5: ( STARTTOK COLONTOK prob_vector | STARTTOK COLONTOK STRING | STARTTOK INCLUDETOK COLONTOK start_state_list | STARTTOK EXCLUDETOK COLONTOK start_state_list | )
-            int alt6=5;
-            int LA6_0 = input.LA(1);
+            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:255:5: ( STARTTOK COLONTOK prob_vector | STARTTOK COLONTOK STRING | STARTTOK INCLUDETOK COLONTOK start_state_list | STARTTOK EXCLUDETOK COLONTOK start_state_list | )
+            int alt7=5;
+            int LA7_0 = input.LA(1);
 
-            if ( (LA6_0==STARTTOK) ) {
+            if ( (LA7_0==STARTTOK) ) {
                 switch ( input.LA(2) ) {
-                case INCLUDETOK:
-                    {
-                    alt6=3;
-                    }
-                    break;
                 case COLONTOK:
                     {
-                    int LA6_4 = input.LA(3);
+                    int LA7_3 = input.LA(3);
 
-                    if ( (LA6_4==STRING) ) {
-                        alt6=2;
+                    if ( (LA7_3==STRING) ) {
+                        alt7=2;
                     }
-                    else if ( (LA6_4==INT||LA6_4==FLOAT) ) {
-                        alt6=1;
+                    else if ( (LA7_3==INT||LA7_3==FLOAT) ) {
+                        alt7=1;
                     }
                     else {
                         NoViableAltException nvae =
-                            new NoViableAltException("240:1: start_state : ( STARTTOK COLONTOK prob_vector | STARTTOK COLONTOK STRING | STARTTOK INCLUDETOK COLONTOK start_state_list | STARTTOK EXCLUDETOK COLONTOK start_state_list | );", 6, 4, input);
+                            new NoViableAltException("254:1: start_state : ( STARTTOK COLONTOK prob_vector | STARTTOK COLONTOK STRING | STARTTOK INCLUDETOK COLONTOK start_state_list | STARTTOK EXCLUDETOK COLONTOK start_state_list | );", 7, 3, input);
 
                         throw nvae;
                     }
@@ -710,84 +735,94 @@ public class DotPomdpParser extends Parser {
                     break;
                 case EXCLUDETOK:
                     {
-                    alt6=4;
+                    alt7=4;
+                    }
+                    break;
+                case INCLUDETOK:
+                    {
+                    alt7=3;
                     }
                     break;
                 default:
                     NoViableAltException nvae =
-                        new NoViableAltException("240:1: start_state : ( STARTTOK COLONTOK prob_vector | STARTTOK COLONTOK STRING | STARTTOK INCLUDETOK COLONTOK start_state_list | STARTTOK EXCLUDETOK COLONTOK start_state_list | );", 6, 1, input);
+                        new NoViableAltException("254:1: start_state : ( STARTTOK COLONTOK prob_vector | STARTTOK COLONTOK STRING | STARTTOK INCLUDETOK COLONTOK start_state_list | STARTTOK EXCLUDETOK COLONTOK start_state_list | );", 7, 1, input);
 
                     throw nvae;
                 }
 
             }
-            else if ( (LA6_0==EOF||(LA6_0>=TTOK && LA6_0<=RTOK)) ) {
-                alt6=5;
+            else if ( (LA7_0==EOF||(LA7_0>=TTOK && LA7_0<=RTOK)) ) {
+                alt7=5;
             }
             else {
                 NoViableAltException nvae =
-                    new NoViableAltException("240:1: start_state : ( STARTTOK COLONTOK prob_vector | STARTTOK COLONTOK STRING | STARTTOK INCLUDETOK COLONTOK start_state_list | STARTTOK EXCLUDETOK COLONTOK start_state_list | );", 6, 0, input);
+                    new NoViableAltException("254:1: start_state : ( STARTTOK COLONTOK prob_vector | STARTTOK COLONTOK STRING | STARTTOK INCLUDETOK COLONTOK start_state_list | STARTTOK EXCLUDETOK COLONTOK start_state_list | );", 7, 0, input);
 
                 throw nvae;
             }
-            switch (alt6) {
+            switch (alt7) {
                 case 1 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:241:7: STARTTOK COLONTOK prob_vector
+                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:255:7: STARTTOK COLONTOK prob_vector
                     {
-                    match(input,STARTTOK,FOLLOW_STARTTOK_in_start_state1292); 
-                    match(input,COLONTOK,FOLLOW_COLONTOK_in_start_state1294); 
-                    pushFollow(FOLLOW_prob_vector_in_start_state1296);
+                    match(input,STARTTOK,FOLLOW_STARTTOK_in_start_state1331); 
+                    match(input,COLONTOK,FOLLOW_COLONTOK_in_start_state1333); 
+                    pushFollow(FOLLOW_prob_vector_in_start_state1335);
                     prob_vector8=prob_vector();
                     _fsp--;
 
 
-                                System.out.println("ENTERED the first case for start state");
+                                //System.out.println("ENTERED the first case for start state");
                                 dotPomdpSpec.startState = prob_vector8;
                             
 
                     }
                     break;
                 case 2 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:247:7: STARTTOK COLONTOK STRING
+                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:261:7: STARTTOK COLONTOK STRING
                     {
-                    match(input,STARTTOK,FOLLOW_STARTTOK_in_start_state1323); 
-                    match(input,COLONTOK,FOLLOW_COLONTOK_in_start_state1325); 
-                    match(input,STRING,FOLLOW_STRING_in_start_state1327); 
-                    err("unsopported feature");
+                    match(input,STARTTOK,FOLLOW_STARTTOK_in_start_state1362); 
+                    match(input,COLONTOK,FOLLOW_COLONTOK_in_start_state1364); 
+                    match(input,STRING,FOLLOW_STRING_in_start_state1366); 
+                    err("PARSER: MDPs are not supported yet, only POMDPs");
 
                     }
                     break;
                 case 3 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:249:7: STARTTOK INCLUDETOK COLONTOK start_state_list
+                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:263:7: STARTTOK INCLUDETOK COLONTOK start_state_list
                     {
-                    match(input,STARTTOK,FOLLOW_STARTTOK_in_start_state1345); 
-                    match(input,INCLUDETOK,FOLLOW_INCLUDETOK_in_start_state1347); 
-                    match(input,COLONTOK,FOLLOW_COLONTOK_in_start_state1349); 
-                    pushFollow(FOLLOW_start_state_list_in_start_state1351);
+                    match(input,STARTTOK,FOLLOW_STARTTOK_in_start_state1384); 
+                    match(input,INCLUDETOK,FOLLOW_INCLUDETOK_in_start_state1386); 
+                    match(input,COLONTOK,FOLLOW_COLONTOK_in_start_state1388); 
+                    pushFollow(FOLLOW_start_state_list_in_start_state1390);
                     start_state_list();
                     _fsp--;
 
-                    err("unsopported feature");
+                    err("PARSER: Include and exclude features are not supported yet");
 
                     }
                     break;
                 case 4 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:251:7: STARTTOK EXCLUDETOK COLONTOK start_state_list
+                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:265:7: STARTTOK EXCLUDETOK COLONTOK start_state_list
                     {
-                    match(input,STARTTOK,FOLLOW_STARTTOK_in_start_state1370); 
-                    match(input,EXCLUDETOK,FOLLOW_EXCLUDETOK_in_start_state1372); 
-                    match(input,COLONTOK,FOLLOW_COLONTOK_in_start_state1374); 
-                    pushFollow(FOLLOW_start_state_list_in_start_state1376);
+                    match(input,STARTTOK,FOLLOW_STARTTOK_in_start_state1409); 
+                    match(input,EXCLUDETOK,FOLLOW_EXCLUDETOK_in_start_state1411); 
+                    match(input,COLONTOK,FOLLOW_COLONTOK_in_start_state1413); 
+                    pushFollow(FOLLOW_start_state_list_in_start_state1415);
                     start_state_list();
                     _fsp--;
 
-                    err("unsopported feature");
+                    err("PARSER: Include and exclude features are not supported yet");
 
                     }
                     break;
                 case 5 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:254:5: 
+                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:268:6: 
                     {
+
+                        	// Empty start state means uniform belief
+                        	dotPomdpSpec.startState=new SparseVector(Utils.getUniformDistribution(dotPomdpSpec.nrSta));
+                        	
+
                     }
                     break;
 
@@ -805,29 +840,29 @@ public class DotPomdpParser extends Parser {
 
 
     // $ANTLR start start_state_list
-    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:256:1: start_state_list : ( state )+ ;
+    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:274:1: start_state_list : ( state )+ ;
     public final void start_state_list() throws RecognitionException {
         try {
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:257:5: ( ( state )+ )
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:257:7: ( state )+
+            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:275:5: ( ( state )+ )
+            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:275:7: ( state )+
             {
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:257:7: ( state )+
-            int cnt7=0;
-            loop7:
+            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:275:7: ( state )+
+            int cnt8=0;
+            loop8:
             do {
-                int alt7=2;
-                int LA7_0 = input.LA(1);
+                int alt8=2;
+                int LA8_0 = input.LA(1);
 
-                if ( (LA7_0==ASTERICKTOK||(LA7_0>=STRING && LA7_0<=INT)) ) {
-                    alt7=1;
+                if ( (LA8_0==ASTERICKTOK||(LA8_0>=STRING && LA8_0<=INT)) ) {
+                    alt8=1;
                 }
 
 
-                switch (alt7) {
+                switch (alt8) {
             	case 1 :
-            	    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:257:7: state
+            	    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:275:7: state
             	    {
-            	    pushFollow(FOLLOW_state_in_start_state_list1417);
+            	    pushFollow(FOLLOW_state_in_start_state_list1463);
             	    state();
             	    _fsp--;
 
@@ -836,12 +871,12 @@ public class DotPomdpParser extends Parser {
             	    break;
 
             	default :
-            	    if ( cnt7 >= 1 ) break loop7;
+            	    if ( cnt8 >= 1 ) break loop8;
                         EarlyExitException eee =
-                            new EarlyExitException(7, input);
+                            new EarlyExitException(8, input);
                         throw eee;
                 }
-                cnt7++;
+                cnt8++;
             } while (true);
 
 
@@ -860,28 +895,28 @@ public class DotPomdpParser extends Parser {
 
 
     // $ANTLR start param_list
-    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:260:1: param_list : ( param_spec )* ;
+    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:278:1: param_list : ( param_spec )* ;
     public final void param_list() throws RecognitionException {
         try {
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:261:5: ( ( param_spec )* )
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:261:7: ( param_spec )*
+            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:279:5: ( ( param_spec )* )
+            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:279:7: ( param_spec )*
             {
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:261:7: ( param_spec )*
-            loop8:
+            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:279:7: ( param_spec )*
+            loop9:
             do {
-                int alt8=2;
-                int LA8_0 = input.LA(1);
+                int alt9=2;
+                int LA9_0 = input.LA(1);
 
-                if ( ((LA8_0>=TTOK && LA8_0<=RTOK)) ) {
-                    alt8=1;
+                if ( ((LA9_0>=TTOK && LA9_0<=RTOK)) ) {
+                    alt9=1;
                 }
 
 
-                switch (alt8) {
+                switch (alt9) {
             	case 1 :
-            	    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:261:7: param_spec
+            	    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:279:7: param_spec
             	    {
-            	    pushFollow(FOLLOW_param_spec_in_param_list1440);
+            	    pushFollow(FOLLOW_param_spec_in_param_list1486);
             	    param_spec();
             	    _fsp--;
 
@@ -890,7 +925,7 @@ public class DotPomdpParser extends Parser {
             	    break;
 
             	default :
-            	    break loop8;
+            	    break loop9;
                 }
             } while (true);
 
@@ -910,39 +945,39 @@ public class DotPomdpParser extends Parser {
 
 
     // $ANTLR start param_spec
-    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:264:1: param_spec : ( trans_prob_spec | obs_prob_spec | reward_spec );
+    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:282:1: param_spec : ( trans_prob_spec | obs_prob_spec | reward_spec );
     public final void param_spec() throws RecognitionException {
         try {
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:265:5: ( trans_prob_spec | obs_prob_spec | reward_spec )
-            int alt9=3;
+            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:283:5: ( trans_prob_spec | obs_prob_spec | reward_spec )
+            int alt10=3;
             switch ( input.LA(1) ) {
             case TTOK:
                 {
-                alt9=1;
+                alt10=1;
                 }
                 break;
             case OTOK:
                 {
-                alt9=2;
+                alt10=2;
                 }
                 break;
             case RTOK:
                 {
-                alt9=3;
+                alt10=3;
                 }
                 break;
             default:
                 NoViableAltException nvae =
-                    new NoViableAltException("264:1: param_spec : ( trans_prob_spec | obs_prob_spec | reward_spec );", 9, 0, input);
+                    new NoViableAltException("282:1: param_spec : ( trans_prob_spec | obs_prob_spec | reward_spec );", 10, 0, input);
 
                 throw nvae;
             }
 
-            switch (alt9) {
+            switch (alt10) {
                 case 1 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:265:7: trans_prob_spec
+                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:283:7: trans_prob_spec
                     {
-                    pushFollow(FOLLOW_trans_prob_spec_in_param_spec1463);
+                    pushFollow(FOLLOW_trans_prob_spec_in_param_spec1509);
                     trans_prob_spec();
                     _fsp--;
 
@@ -950,9 +985,9 @@ public class DotPomdpParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:266:7: obs_prob_spec
+                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:284:7: obs_prob_spec
                     {
-                    pushFollow(FOLLOW_obs_prob_spec_in_param_spec1471);
+                    pushFollow(FOLLOW_obs_prob_spec_in_param_spec1517);
                     obs_prob_spec();
                     _fsp--;
 
@@ -960,9 +995,9 @@ public class DotPomdpParser extends Parser {
                     }
                     break;
                 case 3 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:267:7: reward_spec
+                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:285:7: reward_spec
                     {
-                    pushFollow(FOLLOW_reward_spec_in_param_spec1480);
+                    pushFollow(FOLLOW_reward_spec_in_param_spec1526);
                     reward_spec();
                     _fsp--;
 
@@ -984,15 +1019,15 @@ public class DotPomdpParser extends Parser {
 
 
     // $ANTLR start trans_prob_spec
-    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:270:1: trans_prob_spec : TTOK COLONTOK trans_spec_tail ;
+    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:288:1: trans_prob_spec : TTOK COLONTOK trans_spec_tail ;
     public final void trans_prob_spec() throws RecognitionException {
         try {
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:271:5: ( TTOK COLONTOK trans_spec_tail )
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:271:7: TTOK COLONTOK trans_spec_tail
+            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:289:5: ( TTOK COLONTOK trans_spec_tail )
+            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:289:7: TTOK COLONTOK trans_spec_tail
             {
-            match(input,TTOK,FOLLOW_TTOK_in_trans_prob_spec1502); 
-            match(input,COLONTOK,FOLLOW_COLONTOK_in_trans_prob_spec1504); 
-            pushFollow(FOLLOW_trans_spec_tail_in_trans_prob_spec1506);
+            match(input,TTOK,FOLLOW_TTOK_in_trans_prob_spec1548); 
+            match(input,COLONTOK,FOLLOW_COLONTOK_in_trans_prob_spec1550); 
+            pushFollow(FOLLOW_trans_spec_tail_in_trans_prob_spec1552);
             trans_spec_tail();
             _fsp--;
 
@@ -1012,7 +1047,7 @@ public class DotPomdpParser extends Parser {
 
 
     // $ANTLR start trans_spec_tail
-    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:274:1: trans_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state prob | paction COLONTOK state u_matrix | paction ui_matrix );
+    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:292:1: trans_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state prob | paction COLONTOK state u_matrix | paction ui_matrix );
     public final void trans_spec_tail() throws RecognitionException {
         state_return s_1 = null;
 
@@ -1024,32 +1059,38 @@ public class DotPomdpParser extends Parser {
 
         ArrayList<Integer> paction11 = null;
 
-        DenseMatrix ui_matrix12 = null;
+        state_return state12 = null;
+
+        DenseMatrix u_matrix13 = null;
+
+        ArrayList<Integer> paction14 = null;
+
+        DenseMatrix ui_matrix15 = null;
 
 
         try {
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:275:5: ( paction COLONTOK s_1= state COLONTOK s_2= state prob | paction COLONTOK state u_matrix | paction ui_matrix )
-            int alt10=3;
+            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:293:5: ( paction COLONTOK s_1= state COLONTOK s_2= state prob | paction COLONTOK state u_matrix | paction ui_matrix )
+            int alt11=3;
             switch ( input.LA(1) ) {
             case INT:
                 {
-                int LA10_1 = input.LA(2);
+                int LA11_1 = input.LA(2);
 
-                if ( (LA10_1==COLONTOK) ) {
+                if ( (LA11_1==COLONTOK) ) {
                     switch ( input.LA(3) ) {
                     case INT:
                         {
-                        int LA10_6 = input.LA(4);
+                        int LA11_6 = input.LA(4);
 
-                        if ( (LA10_6==UNIFORMTOK||LA10_6==RESETTOK||LA10_6==INT||LA10_6==FLOAT) ) {
-                            alt10=2;
+                        if ( (LA11_6==UNIFORMTOK||LA11_6==RESETTOK||LA11_6==INT||LA11_6==FLOAT) ) {
+                            alt11=2;
                         }
-                        else if ( (LA10_6==COLONTOK) ) {
-                            alt10=1;
+                        else if ( (LA11_6==COLONTOK) ) {
+                            alt11=1;
                         }
                         else {
                             NoViableAltException nvae =
-                                new NoViableAltException("274:1: trans_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state prob | paction COLONTOK state u_matrix | paction ui_matrix );", 10, 6, input);
+                                new NoViableAltException("292:1: trans_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state prob | paction COLONTOK state u_matrix | paction ui_matrix );", 11, 6, input);
 
                             throw nvae;
                         }
@@ -1057,17 +1098,17 @@ public class DotPomdpParser extends Parser {
                         break;
                     case STRING:
                         {
-                        int LA10_7 = input.LA(4);
+                        int LA11_7 = input.LA(4);
 
-                        if ( (LA10_7==UNIFORMTOK||LA10_7==RESETTOK||LA10_7==INT||LA10_7==FLOAT) ) {
-                            alt10=2;
+                        if ( (LA11_7==UNIFORMTOK||LA11_7==RESETTOK||LA11_7==INT||LA11_7==FLOAT) ) {
+                            alt11=2;
                         }
-                        else if ( (LA10_7==COLONTOK) ) {
-                            alt10=1;
+                        else if ( (LA11_7==COLONTOK) ) {
+                            alt11=1;
                         }
                         else {
                             NoViableAltException nvae =
-                                new NoViableAltException("274:1: trans_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state prob | paction COLONTOK state u_matrix | paction ui_matrix );", 10, 7, input);
+                                new NoViableAltException("292:1: trans_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state prob | paction COLONTOK state u_matrix | paction ui_matrix );", 11, 7, input);
 
                             throw nvae;
                         }
@@ -1075,17 +1116,17 @@ public class DotPomdpParser extends Parser {
                         break;
                     case ASTERICKTOK:
                         {
-                        int LA10_8 = input.LA(4);
+                        int LA11_8 = input.LA(4);
 
-                        if ( (LA10_8==UNIFORMTOK||LA10_8==RESETTOK||LA10_8==INT||LA10_8==FLOAT) ) {
-                            alt10=2;
+                        if ( (LA11_8==UNIFORMTOK||LA11_8==RESETTOK||LA11_8==INT||LA11_8==FLOAT) ) {
+                            alt11=2;
                         }
-                        else if ( (LA10_8==COLONTOK) ) {
-                            alt10=1;
+                        else if ( (LA11_8==COLONTOK) ) {
+                            alt11=1;
                         }
                         else {
                             NoViableAltException nvae =
-                                new NoViableAltException("274:1: trans_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state prob | paction COLONTOK state u_matrix | paction ui_matrix );", 10, 8, input);
+                                new NoViableAltException("292:1: trans_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state prob | paction COLONTOK state u_matrix | paction ui_matrix );", 11, 8, input);
 
                             throw nvae;
                         }
@@ -1093,18 +1134,18 @@ public class DotPomdpParser extends Parser {
                         break;
                     default:
                         NoViableAltException nvae =
-                            new NoViableAltException("274:1: trans_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state prob | paction COLONTOK state u_matrix | paction ui_matrix );", 10, 4, input);
+                            new NoViableAltException("292:1: trans_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state prob | paction COLONTOK state u_matrix | paction ui_matrix );", 11, 4, input);
 
                         throw nvae;
                     }
 
                 }
-                else if ( ((LA10_1>=UNIFORMTOK && LA10_1<=IDENTITYTOK)||LA10_1==INT||LA10_1==FLOAT) ) {
-                    alt10=3;
+                else if ( ((LA11_1>=UNIFORMTOK && LA11_1<=IDENTITYTOK)||LA11_1==INT||LA11_1==FLOAT) ) {
+                    alt11=3;
                 }
                 else {
                     NoViableAltException nvae =
-                        new NoViableAltException("274:1: trans_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state prob | paction COLONTOK state u_matrix | paction ui_matrix );", 10, 1, input);
+                        new NoViableAltException("292:1: trans_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state prob | paction COLONTOK state u_matrix | paction ui_matrix );", 11, 1, input);
 
                     throw nvae;
                 }
@@ -1112,26 +1153,23 @@ public class DotPomdpParser extends Parser {
                 break;
             case STRING:
                 {
-                int LA10_2 = input.LA(2);
+                int LA11_2 = input.LA(2);
 
-                if ( ((LA10_2>=UNIFORMTOK && LA10_2<=IDENTITYTOK)||LA10_2==INT||LA10_2==FLOAT) ) {
-                    alt10=3;
-                }
-                else if ( (LA10_2==COLONTOK) ) {
+                if ( (LA11_2==COLONTOK) ) {
                     switch ( input.LA(3) ) {
                     case INT:
                         {
-                        int LA10_6 = input.LA(4);
+                        int LA11_6 = input.LA(4);
 
-                        if ( (LA10_6==UNIFORMTOK||LA10_6==RESETTOK||LA10_6==INT||LA10_6==FLOAT) ) {
-                            alt10=2;
+                        if ( (LA11_6==UNIFORMTOK||LA11_6==RESETTOK||LA11_6==INT||LA11_6==FLOAT) ) {
+                            alt11=2;
                         }
-                        else if ( (LA10_6==COLONTOK) ) {
-                            alt10=1;
+                        else if ( (LA11_6==COLONTOK) ) {
+                            alt11=1;
                         }
                         else {
                             NoViableAltException nvae =
-                                new NoViableAltException("274:1: trans_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state prob | paction COLONTOK state u_matrix | paction ui_matrix );", 10, 6, input);
+                                new NoViableAltException("292:1: trans_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state prob | paction COLONTOK state u_matrix | paction ui_matrix );", 11, 6, input);
 
                             throw nvae;
                         }
@@ -1139,17 +1177,17 @@ public class DotPomdpParser extends Parser {
                         break;
                     case STRING:
                         {
-                        int LA10_7 = input.LA(4);
+                        int LA11_7 = input.LA(4);
 
-                        if ( (LA10_7==UNIFORMTOK||LA10_7==RESETTOK||LA10_7==INT||LA10_7==FLOAT) ) {
-                            alt10=2;
+                        if ( (LA11_7==UNIFORMTOK||LA11_7==RESETTOK||LA11_7==INT||LA11_7==FLOAT) ) {
+                            alt11=2;
                         }
-                        else if ( (LA10_7==COLONTOK) ) {
-                            alt10=1;
+                        else if ( (LA11_7==COLONTOK) ) {
+                            alt11=1;
                         }
                         else {
                             NoViableAltException nvae =
-                                new NoViableAltException("274:1: trans_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state prob | paction COLONTOK state u_matrix | paction ui_matrix );", 10, 7, input);
+                                new NoViableAltException("292:1: trans_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state prob | paction COLONTOK state u_matrix | paction ui_matrix );", 11, 7, input);
 
                             throw nvae;
                         }
@@ -1157,17 +1195,17 @@ public class DotPomdpParser extends Parser {
                         break;
                     case ASTERICKTOK:
                         {
-                        int LA10_8 = input.LA(4);
+                        int LA11_8 = input.LA(4);
 
-                        if ( (LA10_8==UNIFORMTOK||LA10_8==RESETTOK||LA10_8==INT||LA10_8==FLOAT) ) {
-                            alt10=2;
+                        if ( (LA11_8==UNIFORMTOK||LA11_8==RESETTOK||LA11_8==INT||LA11_8==FLOAT) ) {
+                            alt11=2;
                         }
-                        else if ( (LA10_8==COLONTOK) ) {
-                            alt10=1;
+                        else if ( (LA11_8==COLONTOK) ) {
+                            alt11=1;
                         }
                         else {
                             NoViableAltException nvae =
-                                new NoViableAltException("274:1: trans_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state prob | paction COLONTOK state u_matrix | paction ui_matrix );", 10, 8, input);
+                                new NoViableAltException("292:1: trans_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state prob | paction COLONTOK state u_matrix | paction ui_matrix );", 11, 8, input);
 
                             throw nvae;
                         }
@@ -1175,15 +1213,18 @@ public class DotPomdpParser extends Parser {
                         break;
                     default:
                         NoViableAltException nvae =
-                            new NoViableAltException("274:1: trans_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state prob | paction COLONTOK state u_matrix | paction ui_matrix );", 10, 4, input);
+                            new NoViableAltException("292:1: trans_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state prob | paction COLONTOK state u_matrix | paction ui_matrix );", 11, 4, input);
 
                         throw nvae;
                     }
 
                 }
+                else if ( ((LA11_2>=UNIFORMTOK && LA11_2<=IDENTITYTOK)||LA11_2==INT||LA11_2==FLOAT) ) {
+                    alt11=3;
+                }
                 else {
                     NoViableAltException nvae =
-                        new NoViableAltException("274:1: trans_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state prob | paction COLONTOK state u_matrix | paction ui_matrix );", 10, 2, input);
+                        new NoViableAltException("292:1: trans_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state prob | paction COLONTOK state u_matrix | paction ui_matrix );", 11, 2, input);
 
                     throw nvae;
                 }
@@ -1191,26 +1232,23 @@ public class DotPomdpParser extends Parser {
                 break;
             case ASTERICKTOK:
                 {
-                int LA10_3 = input.LA(2);
+                int LA11_3 = input.LA(2);
 
-                if ( ((LA10_3>=UNIFORMTOK && LA10_3<=IDENTITYTOK)||LA10_3==INT||LA10_3==FLOAT) ) {
-                    alt10=3;
-                }
-                else if ( (LA10_3==COLONTOK) ) {
+                if ( (LA11_3==COLONTOK) ) {
                     switch ( input.LA(3) ) {
                     case INT:
                         {
-                        int LA10_6 = input.LA(4);
+                        int LA11_6 = input.LA(4);
 
-                        if ( (LA10_6==UNIFORMTOK||LA10_6==RESETTOK||LA10_6==INT||LA10_6==FLOAT) ) {
-                            alt10=2;
+                        if ( (LA11_6==UNIFORMTOK||LA11_6==RESETTOK||LA11_6==INT||LA11_6==FLOAT) ) {
+                            alt11=2;
                         }
-                        else if ( (LA10_6==COLONTOK) ) {
-                            alt10=1;
+                        else if ( (LA11_6==COLONTOK) ) {
+                            alt11=1;
                         }
                         else {
                             NoViableAltException nvae =
-                                new NoViableAltException("274:1: trans_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state prob | paction COLONTOK state u_matrix | paction ui_matrix );", 10, 6, input);
+                                new NoViableAltException("292:1: trans_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state prob | paction COLONTOK state u_matrix | paction ui_matrix );", 11, 6, input);
 
                             throw nvae;
                         }
@@ -1218,17 +1256,17 @@ public class DotPomdpParser extends Parser {
                         break;
                     case STRING:
                         {
-                        int LA10_7 = input.LA(4);
+                        int LA11_7 = input.LA(4);
 
-                        if ( (LA10_7==UNIFORMTOK||LA10_7==RESETTOK||LA10_7==INT||LA10_7==FLOAT) ) {
-                            alt10=2;
+                        if ( (LA11_7==UNIFORMTOK||LA11_7==RESETTOK||LA11_7==INT||LA11_7==FLOAT) ) {
+                            alt11=2;
                         }
-                        else if ( (LA10_7==COLONTOK) ) {
-                            alt10=1;
+                        else if ( (LA11_7==COLONTOK) ) {
+                            alt11=1;
                         }
                         else {
                             NoViableAltException nvae =
-                                new NoViableAltException("274:1: trans_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state prob | paction COLONTOK state u_matrix | paction ui_matrix );", 10, 7, input);
+                                new NoViableAltException("292:1: trans_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state prob | paction COLONTOK state u_matrix | paction ui_matrix );", 11, 7, input);
 
                             throw nvae;
                         }
@@ -1236,17 +1274,17 @@ public class DotPomdpParser extends Parser {
                         break;
                     case ASTERICKTOK:
                         {
-                        int LA10_8 = input.LA(4);
+                        int LA11_8 = input.LA(4);
 
-                        if ( (LA10_8==UNIFORMTOK||LA10_8==RESETTOK||LA10_8==INT||LA10_8==FLOAT) ) {
-                            alt10=2;
+                        if ( (LA11_8==UNIFORMTOK||LA11_8==RESETTOK||LA11_8==INT||LA11_8==FLOAT) ) {
+                            alt11=2;
                         }
-                        else if ( (LA10_8==COLONTOK) ) {
-                            alt10=1;
+                        else if ( (LA11_8==COLONTOK) ) {
+                            alt11=1;
                         }
                         else {
                             NoViableAltException nvae =
-                                new NoViableAltException("274:1: trans_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state prob | paction COLONTOK state u_matrix | paction ui_matrix );", 10, 8, input);
+                                new NoViableAltException("292:1: trans_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state prob | paction COLONTOK state u_matrix | paction ui_matrix );", 11, 8, input);
 
                             throw nvae;
                         }
@@ -1254,15 +1292,18 @@ public class DotPomdpParser extends Parser {
                         break;
                     default:
                         NoViableAltException nvae =
-                            new NoViableAltException("274:1: trans_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state prob | paction COLONTOK state u_matrix | paction ui_matrix );", 10, 4, input);
+                            new NoViableAltException("292:1: trans_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state prob | paction COLONTOK state u_matrix | paction ui_matrix );", 11, 4, input);
 
                         throw nvae;
                     }
 
                 }
+                else if ( ((LA11_3>=UNIFORMTOK && LA11_3<=IDENTITYTOK)||LA11_3==INT||LA11_3==FLOAT) ) {
+                    alt11=3;
+                }
                 else {
                     NoViableAltException nvae =
-                        new NoViableAltException("274:1: trans_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state prob | paction COLONTOK state u_matrix | paction ui_matrix );", 10, 3, input);
+                        new NoViableAltException("292:1: trans_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state prob | paction COLONTOK state u_matrix | paction ui_matrix );", 11, 3, input);
 
                     throw nvae;
                 }
@@ -1270,30 +1311,30 @@ public class DotPomdpParser extends Parser {
                 break;
             default:
                 NoViableAltException nvae =
-                    new NoViableAltException("274:1: trans_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state prob | paction COLONTOK state u_matrix | paction ui_matrix );", 10, 0, input);
+                    new NoViableAltException("292:1: trans_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state prob | paction COLONTOK state u_matrix | paction ui_matrix );", 11, 0, input);
 
                 throw nvae;
             }
 
-            switch (alt10) {
+            switch (alt11) {
                 case 1 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:275:7: paction COLONTOK s_1= state COLONTOK s_2= state prob
+                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:293:7: paction COLONTOK s_1= state COLONTOK s_2= state prob
                     {
-                    pushFollow(FOLLOW_paction_in_trans_spec_tail1528);
+                    pushFollow(FOLLOW_paction_in_trans_spec_tail1574);
                     paction10=paction();
                     _fsp--;
 
-                    match(input,COLONTOK,FOLLOW_COLONTOK_in_trans_spec_tail1530); 
-                    pushFollow(FOLLOW_state_in_trans_spec_tail1534);
+                    match(input,COLONTOK,FOLLOW_COLONTOK_in_trans_spec_tail1576); 
+                    pushFollow(FOLLOW_state_in_trans_spec_tail1580);
                     s_1=state();
                     _fsp--;
 
-                    match(input,COLONTOK,FOLLOW_COLONTOK_in_trans_spec_tail1536); 
-                    pushFollow(FOLLOW_state_in_trans_spec_tail1540);
+                    match(input,COLONTOK,FOLLOW_COLONTOK_in_trans_spec_tail1582); 
+                    pushFollow(FOLLOW_state_in_trans_spec_tail1586);
                     s_2=state();
                     _fsp--;
 
-                    pushFollow(FOLLOW_prob_in_trans_spec_tail1542);
+                    pushFollow(FOLLOW_prob_in_trans_spec_tail1588);
                     prob9=prob();
                     _fsp--;
 
@@ -1308,37 +1349,46 @@ public class DotPomdpParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:284:7: paction COLONTOK state u_matrix
+                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:302:7: paction COLONTOK state u_matrix
                     {
-                    pushFollow(FOLLOW_paction_in_trans_spec_tail1570);
-                    paction();
+                    pushFollow(FOLLOW_paction_in_trans_spec_tail1616);
+                    paction11=paction();
                     _fsp--;
 
-                    match(input,COLONTOK,FOLLOW_COLONTOK_in_trans_spec_tail1572); 
-                    pushFollow(FOLLOW_state_in_trans_spec_tail1574);
-                    state();
+                    match(input,COLONTOK,FOLLOW_COLONTOK_in_trans_spec_tail1618); 
+                    pushFollow(FOLLOW_state_in_trans_spec_tail1620);
+                    state12=state();
                     _fsp--;
 
-                    pushFollow(FOLLOW_u_matrix_in_trans_spec_tail1576);
-                    u_matrix();
+                    pushFollow(FOLLOW_u_matrix_in_trans_spec_tail1622);
+                    u_matrix13=u_matrix();
                     _fsp--;
 
-                    err("unsopported feature");
+
+                            	matrixContext=MC_TRANSITION_ROW;
+                            	for(int a : paction11)	
+                            		for (int s : state12.l)
+                            			for (int i=0;i<dotPomdpSpec.nrSta;i++)
+                            				dotPomdpSpec.T[a].set(s,i,u_matrix13.get(i,0));
+                            
 
                     }
                     break;
                 case 3 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:286:7: paction ui_matrix
+                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:310:7: paction ui_matrix
                     {
-                    pushFollow(FOLLOW_paction_in_trans_spec_tail1595);
-                    paction11=paction();
+                    pushFollow(FOLLOW_paction_in_trans_spec_tail1641);
+                    paction14=paction();
                     _fsp--;
 
-                    pushFollow(FOLLOW_ui_matrix_in_trans_spec_tail1597);
-                    ui_matrix12=ui_matrix();
+                    pushFollow(FOLLOW_ui_matrix_in_trans_spec_tail1643);
+                    ui_matrix15=ui_matrix();
                     _fsp--;
 
-                    for(int a : paction11) dotPomdpSpec.T[a] = ui_matrix12;
+
+                            matrixContext=MC_TRANSITION;
+                            for(int a : paction14) dotPomdpSpec.T[a] = ui_matrix15;
+                            
 
                     }
                     break;
@@ -1357,15 +1407,15 @@ public class DotPomdpParser extends Parser {
 
 
     // $ANTLR start obs_prob_spec
-    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:291:1: obs_prob_spec : OTOK COLONTOK obs_spec_tail ;
+    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:318:1: obs_prob_spec : OTOK COLONTOK obs_spec_tail ;
     public final void obs_prob_spec() throws RecognitionException {
         try {
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:292:5: ( OTOK COLONTOK obs_spec_tail )
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:292:7: OTOK COLONTOK obs_spec_tail
+            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:319:5: ( OTOK COLONTOK obs_spec_tail )
+            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:319:7: OTOK COLONTOK obs_spec_tail
             {
-            match(input,OTOK,FOLLOW_OTOK_in_obs_prob_spec1635); 
-            match(input,COLONTOK,FOLLOW_COLONTOK_in_obs_prob_spec1637); 
-            pushFollow(FOLLOW_obs_spec_tail_in_obs_prob_spec1639);
+            match(input,OTOK,FOLLOW_OTOK_in_obs_prob_spec1681); 
+            match(input,COLONTOK,FOLLOW_COLONTOK_in_obs_prob_spec1683); 
+            pushFollow(FOLLOW_obs_spec_tail_in_obs_prob_spec1685);
             obs_spec_tail();
             _fsp--;
 
@@ -1385,40 +1435,50 @@ public class DotPomdpParser extends Parser {
 
 
     // $ANTLR start obs_spec_tail
-    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:295:1: obs_spec_tail : ( paction COLONTOK state COLONTOK obs prob | paction COLONTOK state u_matrix | paction u_matrix );
+    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:322:1: obs_spec_tail : ( paction COLONTOK state COLONTOK obs prob | paction COLONTOK state u_matrix | paction u_matrix );
     public final void obs_spec_tail() throws RecognitionException {
-        ArrayList<Integer> paction13 = null;
+        ArrayList<Integer> paction16 = null;
 
-        state_return state14 = null;
+        state_return state17 = null;
 
-        obs_return obs15 = null;
+        obs_return obs18 = null;
 
-        double prob16 = 0.0;
+        double prob19 = 0.0;
+
+        ArrayList<Integer> paction20 = null;
+
+        state_return state21 = null;
+
+        DenseMatrix u_matrix22 = null;
+
+        ArrayList<Integer> paction23 = null;
+
+        DenseMatrix u_matrix24 = null;
 
 
         try {
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:296:5: ( paction COLONTOK state COLONTOK obs prob | paction COLONTOK state u_matrix | paction u_matrix )
-            int alt11=3;
+            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:323:5: ( paction COLONTOK state COLONTOK obs prob | paction COLONTOK state u_matrix | paction u_matrix )
+            int alt12=3;
             switch ( input.LA(1) ) {
             case INT:
                 {
-                int LA11_1 = input.LA(2);
+                int LA12_1 = input.LA(2);
 
-                if ( (LA11_1==COLONTOK) ) {
+                if ( (LA12_1==COLONTOK) ) {
                     switch ( input.LA(3) ) {
                     case INT:
                         {
-                        int LA11_6 = input.LA(4);
+                        int LA12_6 = input.LA(4);
 
-                        if ( (LA11_6==COLONTOK) ) {
-                            alt11=1;
+                        if ( (LA12_6==COLONTOK) ) {
+                            alt12=1;
                         }
-                        else if ( (LA11_6==UNIFORMTOK||LA11_6==RESETTOK||LA11_6==INT||LA11_6==FLOAT) ) {
-                            alt11=2;
+                        else if ( (LA12_6==UNIFORMTOK||LA12_6==RESETTOK||LA12_6==INT||LA12_6==FLOAT) ) {
+                            alt12=2;
                         }
                         else {
                             NoViableAltException nvae =
-                                new NoViableAltException("295:1: obs_spec_tail : ( paction COLONTOK state COLONTOK obs prob | paction COLONTOK state u_matrix | paction u_matrix );", 11, 6, input);
+                                new NoViableAltException("322:1: obs_spec_tail : ( paction COLONTOK state COLONTOK obs prob | paction COLONTOK state u_matrix | paction u_matrix );", 12, 6, input);
 
                             throw nvae;
                         }
@@ -1426,17 +1486,17 @@ public class DotPomdpParser extends Parser {
                         break;
                     case STRING:
                         {
-                        int LA11_7 = input.LA(4);
+                        int LA12_7 = input.LA(4);
 
-                        if ( (LA11_7==COLONTOK) ) {
-                            alt11=1;
+                        if ( (LA12_7==COLONTOK) ) {
+                            alt12=1;
                         }
-                        else if ( (LA11_7==UNIFORMTOK||LA11_7==RESETTOK||LA11_7==INT||LA11_7==FLOAT) ) {
-                            alt11=2;
+                        else if ( (LA12_7==UNIFORMTOK||LA12_7==RESETTOK||LA12_7==INT||LA12_7==FLOAT) ) {
+                            alt12=2;
                         }
                         else {
                             NoViableAltException nvae =
-                                new NoViableAltException("295:1: obs_spec_tail : ( paction COLONTOK state COLONTOK obs prob | paction COLONTOK state u_matrix | paction u_matrix );", 11, 7, input);
+                                new NoViableAltException("322:1: obs_spec_tail : ( paction COLONTOK state COLONTOK obs prob | paction COLONTOK state u_matrix | paction u_matrix );", 12, 7, input);
 
                             throw nvae;
                         }
@@ -1444,17 +1504,17 @@ public class DotPomdpParser extends Parser {
                         break;
                     case ASTERICKTOK:
                         {
-                        int LA11_8 = input.LA(4);
+                        int LA12_8 = input.LA(4);
 
-                        if ( (LA11_8==COLONTOK) ) {
-                            alt11=1;
+                        if ( (LA12_8==COLONTOK) ) {
+                            alt12=1;
                         }
-                        else if ( (LA11_8==UNIFORMTOK||LA11_8==RESETTOK||LA11_8==INT||LA11_8==FLOAT) ) {
-                            alt11=2;
+                        else if ( (LA12_8==UNIFORMTOK||LA12_8==RESETTOK||LA12_8==INT||LA12_8==FLOAT) ) {
+                            alt12=2;
                         }
                         else {
                             NoViableAltException nvae =
-                                new NoViableAltException("295:1: obs_spec_tail : ( paction COLONTOK state COLONTOK obs prob | paction COLONTOK state u_matrix | paction u_matrix );", 11, 8, input);
+                                new NoViableAltException("322:1: obs_spec_tail : ( paction COLONTOK state COLONTOK obs prob | paction COLONTOK state u_matrix | paction u_matrix );", 12, 8, input);
 
                             throw nvae;
                         }
@@ -1462,18 +1522,18 @@ public class DotPomdpParser extends Parser {
                         break;
                     default:
                         NoViableAltException nvae =
-                            new NoViableAltException("295:1: obs_spec_tail : ( paction COLONTOK state COLONTOK obs prob | paction COLONTOK state u_matrix | paction u_matrix );", 11, 4, input);
+                            new NoViableAltException("322:1: obs_spec_tail : ( paction COLONTOK state COLONTOK obs prob | paction COLONTOK state u_matrix | paction u_matrix );", 12, 4, input);
 
                         throw nvae;
                     }
 
                 }
-                else if ( (LA11_1==UNIFORMTOK||LA11_1==RESETTOK||LA11_1==INT||LA11_1==FLOAT) ) {
-                    alt11=3;
+                else if ( (LA12_1==UNIFORMTOK||LA12_1==RESETTOK||LA12_1==INT||LA12_1==FLOAT) ) {
+                    alt12=3;
                 }
                 else {
                     NoViableAltException nvae =
-                        new NoViableAltException("295:1: obs_spec_tail : ( paction COLONTOK state COLONTOK obs prob | paction COLONTOK state u_matrix | paction u_matrix );", 11, 1, input);
+                        new NoViableAltException("322:1: obs_spec_tail : ( paction COLONTOK state COLONTOK obs prob | paction COLONTOK state u_matrix | paction u_matrix );", 12, 1, input);
 
                     throw nvae;
                 }
@@ -1481,23 +1541,26 @@ public class DotPomdpParser extends Parser {
                 break;
             case STRING:
                 {
-                int LA11_2 = input.LA(2);
+                int LA12_2 = input.LA(2);
 
-                if ( (LA11_2==COLONTOK) ) {
+                if ( (LA12_2==UNIFORMTOK||LA12_2==RESETTOK||LA12_2==INT||LA12_2==FLOAT) ) {
+                    alt12=3;
+                }
+                else if ( (LA12_2==COLONTOK) ) {
                     switch ( input.LA(3) ) {
                     case INT:
                         {
-                        int LA11_6 = input.LA(4);
+                        int LA12_6 = input.LA(4);
 
-                        if ( (LA11_6==COLONTOK) ) {
-                            alt11=1;
+                        if ( (LA12_6==COLONTOK) ) {
+                            alt12=1;
                         }
-                        else if ( (LA11_6==UNIFORMTOK||LA11_6==RESETTOK||LA11_6==INT||LA11_6==FLOAT) ) {
-                            alt11=2;
+                        else if ( (LA12_6==UNIFORMTOK||LA12_6==RESETTOK||LA12_6==INT||LA12_6==FLOAT) ) {
+                            alt12=2;
                         }
                         else {
                             NoViableAltException nvae =
-                                new NoViableAltException("295:1: obs_spec_tail : ( paction COLONTOK state COLONTOK obs prob | paction COLONTOK state u_matrix | paction u_matrix );", 11, 6, input);
+                                new NoViableAltException("322:1: obs_spec_tail : ( paction COLONTOK state COLONTOK obs prob | paction COLONTOK state u_matrix | paction u_matrix );", 12, 6, input);
 
                             throw nvae;
                         }
@@ -1505,17 +1568,17 @@ public class DotPomdpParser extends Parser {
                         break;
                     case STRING:
                         {
-                        int LA11_7 = input.LA(4);
+                        int LA12_7 = input.LA(4);
 
-                        if ( (LA11_7==COLONTOK) ) {
-                            alt11=1;
+                        if ( (LA12_7==COLONTOK) ) {
+                            alt12=1;
                         }
-                        else if ( (LA11_7==UNIFORMTOK||LA11_7==RESETTOK||LA11_7==INT||LA11_7==FLOAT) ) {
-                            alt11=2;
+                        else if ( (LA12_7==UNIFORMTOK||LA12_7==RESETTOK||LA12_7==INT||LA12_7==FLOAT) ) {
+                            alt12=2;
                         }
                         else {
                             NoViableAltException nvae =
-                                new NoViableAltException("295:1: obs_spec_tail : ( paction COLONTOK state COLONTOK obs prob | paction COLONTOK state u_matrix | paction u_matrix );", 11, 7, input);
+                                new NoViableAltException("322:1: obs_spec_tail : ( paction COLONTOK state COLONTOK obs prob | paction COLONTOK state u_matrix | paction u_matrix );", 12, 7, input);
 
                             throw nvae;
                         }
@@ -1523,17 +1586,17 @@ public class DotPomdpParser extends Parser {
                         break;
                     case ASTERICKTOK:
                         {
-                        int LA11_8 = input.LA(4);
+                        int LA12_8 = input.LA(4);
 
-                        if ( (LA11_8==COLONTOK) ) {
-                            alt11=1;
+                        if ( (LA12_8==COLONTOK) ) {
+                            alt12=1;
                         }
-                        else if ( (LA11_8==UNIFORMTOK||LA11_8==RESETTOK||LA11_8==INT||LA11_8==FLOAT) ) {
-                            alt11=2;
+                        else if ( (LA12_8==UNIFORMTOK||LA12_8==RESETTOK||LA12_8==INT||LA12_8==FLOAT) ) {
+                            alt12=2;
                         }
                         else {
                             NoViableAltException nvae =
-                                new NoViableAltException("295:1: obs_spec_tail : ( paction COLONTOK state COLONTOK obs prob | paction COLONTOK state u_matrix | paction u_matrix );", 11, 8, input);
+                                new NoViableAltException("322:1: obs_spec_tail : ( paction COLONTOK state COLONTOK obs prob | paction COLONTOK state u_matrix | paction u_matrix );", 12, 8, input);
 
                             throw nvae;
                         }
@@ -1541,18 +1604,15 @@ public class DotPomdpParser extends Parser {
                         break;
                     default:
                         NoViableAltException nvae =
-                            new NoViableAltException("295:1: obs_spec_tail : ( paction COLONTOK state COLONTOK obs prob | paction COLONTOK state u_matrix | paction u_matrix );", 11, 4, input);
+                            new NoViableAltException("322:1: obs_spec_tail : ( paction COLONTOK state COLONTOK obs prob | paction COLONTOK state u_matrix | paction u_matrix );", 12, 4, input);
 
                         throw nvae;
                     }
 
                 }
-                else if ( (LA11_2==UNIFORMTOK||LA11_2==RESETTOK||LA11_2==INT||LA11_2==FLOAT) ) {
-                    alt11=3;
-                }
                 else {
                     NoViableAltException nvae =
-                        new NoViableAltException("295:1: obs_spec_tail : ( paction COLONTOK state COLONTOK obs prob | paction COLONTOK state u_matrix | paction u_matrix );", 11, 2, input);
+                        new NoViableAltException("322:1: obs_spec_tail : ( paction COLONTOK state COLONTOK obs prob | paction COLONTOK state u_matrix | paction u_matrix );", 12, 2, input);
 
                     throw nvae;
                 }
@@ -1560,23 +1620,26 @@ public class DotPomdpParser extends Parser {
                 break;
             case ASTERICKTOK:
                 {
-                int LA11_3 = input.LA(2);
+                int LA12_3 = input.LA(2);
 
-                if ( (LA11_3==COLONTOK) ) {
+                if ( (LA12_3==UNIFORMTOK||LA12_3==RESETTOK||LA12_3==INT||LA12_3==FLOAT) ) {
+                    alt12=3;
+                }
+                else if ( (LA12_3==COLONTOK) ) {
                     switch ( input.LA(3) ) {
                     case INT:
                         {
-                        int LA11_6 = input.LA(4);
+                        int LA12_6 = input.LA(4);
 
-                        if ( (LA11_6==COLONTOK) ) {
-                            alt11=1;
+                        if ( (LA12_6==COLONTOK) ) {
+                            alt12=1;
                         }
-                        else if ( (LA11_6==UNIFORMTOK||LA11_6==RESETTOK||LA11_6==INT||LA11_6==FLOAT) ) {
-                            alt11=2;
+                        else if ( (LA12_6==UNIFORMTOK||LA12_6==RESETTOK||LA12_6==INT||LA12_6==FLOAT) ) {
+                            alt12=2;
                         }
                         else {
                             NoViableAltException nvae =
-                                new NoViableAltException("295:1: obs_spec_tail : ( paction COLONTOK state COLONTOK obs prob | paction COLONTOK state u_matrix | paction u_matrix );", 11, 6, input);
+                                new NoViableAltException("322:1: obs_spec_tail : ( paction COLONTOK state COLONTOK obs prob | paction COLONTOK state u_matrix | paction u_matrix );", 12, 6, input);
 
                             throw nvae;
                         }
@@ -1584,17 +1647,17 @@ public class DotPomdpParser extends Parser {
                         break;
                     case STRING:
                         {
-                        int LA11_7 = input.LA(4);
+                        int LA12_7 = input.LA(4);
 
-                        if ( (LA11_7==COLONTOK) ) {
-                            alt11=1;
+                        if ( (LA12_7==COLONTOK) ) {
+                            alt12=1;
                         }
-                        else if ( (LA11_7==UNIFORMTOK||LA11_7==RESETTOK||LA11_7==INT||LA11_7==FLOAT) ) {
-                            alt11=2;
+                        else if ( (LA12_7==UNIFORMTOK||LA12_7==RESETTOK||LA12_7==INT||LA12_7==FLOAT) ) {
+                            alt12=2;
                         }
                         else {
                             NoViableAltException nvae =
-                                new NoViableAltException("295:1: obs_spec_tail : ( paction COLONTOK state COLONTOK obs prob | paction COLONTOK state u_matrix | paction u_matrix );", 11, 7, input);
+                                new NoViableAltException("322:1: obs_spec_tail : ( paction COLONTOK state COLONTOK obs prob | paction COLONTOK state u_matrix | paction u_matrix );", 12, 7, input);
 
                             throw nvae;
                         }
@@ -1602,17 +1665,17 @@ public class DotPomdpParser extends Parser {
                         break;
                     case ASTERICKTOK:
                         {
-                        int LA11_8 = input.LA(4);
+                        int LA12_8 = input.LA(4);
 
-                        if ( (LA11_8==COLONTOK) ) {
-                            alt11=1;
+                        if ( (LA12_8==COLONTOK) ) {
+                            alt12=1;
                         }
-                        else if ( (LA11_8==UNIFORMTOK||LA11_8==RESETTOK||LA11_8==INT||LA11_8==FLOAT) ) {
-                            alt11=2;
+                        else if ( (LA12_8==UNIFORMTOK||LA12_8==RESETTOK||LA12_8==INT||LA12_8==FLOAT) ) {
+                            alt12=2;
                         }
                         else {
                             NoViableAltException nvae =
-                                new NoViableAltException("295:1: obs_spec_tail : ( paction COLONTOK state COLONTOK obs prob | paction COLONTOK state u_matrix | paction u_matrix );", 11, 8, input);
+                                new NoViableAltException("322:1: obs_spec_tail : ( paction COLONTOK state COLONTOK obs prob | paction COLONTOK state u_matrix | paction u_matrix );", 12, 8, input);
 
                             throw nvae;
                         }
@@ -1620,18 +1683,15 @@ public class DotPomdpParser extends Parser {
                         break;
                     default:
                         NoViableAltException nvae =
-                            new NoViableAltException("295:1: obs_spec_tail : ( paction COLONTOK state COLONTOK obs prob | paction COLONTOK state u_matrix | paction u_matrix );", 11, 4, input);
+                            new NoViableAltException("322:1: obs_spec_tail : ( paction COLONTOK state COLONTOK obs prob | paction COLONTOK state u_matrix | paction u_matrix );", 12, 4, input);
 
                         throw nvae;
                     }
 
                 }
-                else if ( (LA11_3==UNIFORMTOK||LA11_3==RESETTOK||LA11_3==INT||LA11_3==FLOAT) ) {
-                    alt11=3;
-                }
                 else {
                     NoViableAltException nvae =
-                        new NoViableAltException("295:1: obs_spec_tail : ( paction COLONTOK state COLONTOK obs prob | paction COLONTOK state u_matrix | paction u_matrix );", 11, 3, input);
+                        new NoViableAltException("322:1: obs_spec_tail : ( paction COLONTOK state COLONTOK obs prob | paction COLONTOK state u_matrix | paction u_matrix );", 12, 3, input);
 
                     throw nvae;
                 }
@@ -1639,74 +1699,83 @@ public class DotPomdpParser extends Parser {
                 break;
             default:
                 NoViableAltException nvae =
-                    new NoViableAltException("295:1: obs_spec_tail : ( paction COLONTOK state COLONTOK obs prob | paction COLONTOK state u_matrix | paction u_matrix );", 11, 0, input);
+                    new NoViableAltException("322:1: obs_spec_tail : ( paction COLONTOK state COLONTOK obs prob | paction COLONTOK state u_matrix | paction u_matrix );", 12, 0, input);
 
                 throw nvae;
             }
 
-            switch (alt11) {
+            switch (alt12) {
                 case 1 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:296:7: paction COLONTOK state COLONTOK obs prob
+                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:323:7: paction COLONTOK state COLONTOK obs prob
                     {
-                    pushFollow(FOLLOW_paction_in_obs_spec_tail1658);
-                    paction13=paction();
+                    pushFollow(FOLLOW_paction_in_obs_spec_tail1704);
+                    paction16=paction();
                     _fsp--;
 
-                    match(input,COLONTOK,FOLLOW_COLONTOK_in_obs_spec_tail1660); 
-                    pushFollow(FOLLOW_state_in_obs_spec_tail1662);
-                    state14=state();
+                    match(input,COLONTOK,FOLLOW_COLONTOK_in_obs_spec_tail1706); 
+                    pushFollow(FOLLOW_state_in_obs_spec_tail1708);
+                    state17=state();
                     _fsp--;
 
-                    match(input,COLONTOK,FOLLOW_COLONTOK_in_obs_spec_tail1664); 
-                    pushFollow(FOLLOW_obs_in_obs_spec_tail1666);
-                    obs15=obs();
+                    match(input,COLONTOK,FOLLOW_COLONTOK_in_obs_spec_tail1710); 
+                    pushFollow(FOLLOW_obs_in_obs_spec_tail1712);
+                    obs18=obs();
                     _fsp--;
 
-                    pushFollow(FOLLOW_prob_in_obs_spec_tail1668);
-                    prob16=prob();
+                    pushFollow(FOLLOW_prob_in_obs_spec_tail1714);
+                    prob19=prob();
                     _fsp--;
 
 
-                                for(int a : paction13)
-                                    for(int s2 : state14.l)
-                                        for(int o : obs15.l)
-                                            dotPomdpSpec.O[a].set(s2, o, prob16);
+                                for(int a : paction16)
+                                    for(int s2 : state17.l)
+                                        for(int o : obs18.l)
+                                            dotPomdpSpec.O[a].set(s2, o, prob19);
                             
 
                     }
                     break;
                 case 2 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:304:7: paction COLONTOK state u_matrix
+                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:331:7: paction COLONTOK state u_matrix
                     {
-                    pushFollow(FOLLOW_paction_in_obs_spec_tail1695);
-                    paction();
+                    pushFollow(FOLLOW_paction_in_obs_spec_tail1741);
+                    paction20=paction();
                     _fsp--;
 
-                    match(input,COLONTOK,FOLLOW_COLONTOK_in_obs_spec_tail1697); 
-                    pushFollow(FOLLOW_state_in_obs_spec_tail1699);
-                    state();
+                    match(input,COLONTOK,FOLLOW_COLONTOK_in_obs_spec_tail1743); 
+                    pushFollow(FOLLOW_state_in_obs_spec_tail1745);
+                    state21=state();
                     _fsp--;
 
-                    pushFollow(FOLLOW_u_matrix_in_obs_spec_tail1701);
-                    u_matrix();
+                    pushFollow(FOLLOW_u_matrix_in_obs_spec_tail1747);
+                    u_matrix22=u_matrix();
                     _fsp--;
 
-                    err("unsopported feature");
+
+                            	matrixContext=MC_OBSERVATION_ROW;
+                            	for(int a : paction20)	
+                            		for (int s : state21.l)
+                            			for (int i=0;i<dotPomdpSpec.nrObs;i++)
+                            				dotPomdpSpec.O[a].set(s,i,u_matrix22.get(i,0));
+                            	
 
                     }
                     break;
                 case 3 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:306:7: paction u_matrix
+                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:339:7: paction u_matrix
                     {
-                    pushFollow(FOLLOW_paction_in_obs_spec_tail1719);
-                    paction();
+                    pushFollow(FOLLOW_paction_in_obs_spec_tail1766);
+                    paction23=paction();
                     _fsp--;
 
-                    pushFollow(FOLLOW_u_matrix_in_obs_spec_tail1721);
-                    u_matrix();
+                    pushFollow(FOLLOW_u_matrix_in_obs_spec_tail1768);
+                    u_matrix24=u_matrix();
                     _fsp--;
 
-                    err("unsopported feature");
+
+                            	matrixContext=MC_OBSERVATION;
+                            	for(int a : paction23) dotPomdpSpec.O[a] = u_matrix24;
+                            
 
                     }
                     break;
@@ -1725,15 +1794,15 @@ public class DotPomdpParser extends Parser {
 
 
     // $ANTLR start reward_spec
-    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:310:1: reward_spec : RTOK COLONTOK reward_spec_tail ;
+    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:347:1: reward_spec : RTOK COLONTOK reward_spec_tail ;
     public final void reward_spec() throws RecognitionException {
         try {
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:311:5: ( RTOK COLONTOK reward_spec_tail )
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:311:7: RTOK COLONTOK reward_spec_tail
+            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:348:5: ( RTOK COLONTOK reward_spec_tail )
+            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:348:7: RTOK COLONTOK reward_spec_tail
             {
-            match(input,RTOK,FOLLOW_RTOK_in_reward_spec1752); 
-            match(input,COLONTOK,FOLLOW_COLONTOK_in_reward_spec1754); 
-            pushFollow(FOLLOW_reward_spec_tail_in_reward_spec1756);
+            match(input,RTOK,FOLLOW_RTOK_in_reward_spec1808); 
+            match(input,COLONTOK,FOLLOW_COLONTOK_in_reward_spec1810); 
+            pushFollow(FOLLOW_reward_spec_tail_in_reward_spec1812);
             reward_spec_tail();
             _fsp--;
 
@@ -1753,48 +1822,48 @@ public class DotPomdpParser extends Parser {
 
 
     // $ANTLR start reward_spec_tail
-    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:314:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );
+    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:351:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );
     public final void reward_spec_tail() throws RecognitionException {
         state_return s_1 = null;
 
         state_return s_2 = null;
 
-        obs_return obs17 = null;
+        obs_return obs25 = null;
 
-        double number18 = 0.0;
+        double number26 = 0.0;
 
-        ArrayList<Integer> paction19 = null;
+        ArrayList<Integer> paction27 = null;
 
 
         try {
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:315:5: ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix )
-            int alt12=3;
+            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:352:5: ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix )
+            int alt13=3;
             switch ( input.LA(1) ) {
             case INT:
                 {
-                int LA12_1 = input.LA(2);
+                int LA13_1 = input.LA(2);
 
-                if ( (LA12_1==COLONTOK) ) {
+                if ( (LA13_1==COLONTOK) ) {
                     switch ( input.LA(3) ) {
                     case INT:
                         {
-                        int LA12_5 = input.LA(4);
+                        int LA13_5 = input.LA(4);
 
-                        if ( (LA12_5==COLONTOK) ) {
+                        if ( (LA13_5==COLONTOK) ) {
                             switch ( input.LA(5) ) {
                             case INT:
                                 {
-                                int LA12_10 = input.LA(6);
+                                int LA13_10 = input.LA(6);
 
-                                if ( (LA12_10==COLONTOK) ) {
-                                    alt12=1;
+                                if ( (LA13_10==COLONTOK) ) {
+                                    alt13=1;
                                 }
-                                else if ( ((LA12_10>=PLUSTOK && LA12_10<=MINUSTOK)||LA12_10==INT||LA12_10==FLOAT) ) {
-                                    alt12=2;
+                                else if ( ((LA13_10>=PLUSTOK && LA13_10<=MINUSTOK)||LA13_10==INT||LA13_10==FLOAT) ) {
+                                    alt13=2;
                                 }
                                 else {
                                     NoViableAltException nvae =
-                                        new NoViableAltException("314:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 12, 10, input);
+                                        new NoViableAltException("351:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 13, 10, input);
 
                                     throw nvae;
                                 }
@@ -1802,17 +1871,17 @@ public class DotPomdpParser extends Parser {
                                 break;
                             case STRING:
                                 {
-                                int LA12_11 = input.LA(6);
+                                int LA13_11 = input.LA(6);
 
-                                if ( ((LA12_11>=PLUSTOK && LA12_11<=MINUSTOK)||LA12_11==INT||LA12_11==FLOAT) ) {
-                                    alt12=2;
+                                if ( (LA13_11==COLONTOK) ) {
+                                    alt13=1;
                                 }
-                                else if ( (LA12_11==COLONTOK) ) {
-                                    alt12=1;
+                                else if ( ((LA13_11>=PLUSTOK && LA13_11<=MINUSTOK)||LA13_11==INT||LA13_11==FLOAT) ) {
+                                    alt13=2;
                                 }
                                 else {
                                     NoViableAltException nvae =
-                                        new NoViableAltException("314:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 12, 11, input);
+                                        new NoViableAltException("351:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 13, 11, input);
 
                                     throw nvae;
                                 }
@@ -1820,17 +1889,17 @@ public class DotPomdpParser extends Parser {
                                 break;
                             case ASTERICKTOK:
                                 {
-                                int LA12_12 = input.LA(6);
+                                int LA13_12 = input.LA(6);
 
-                                if ( ((LA12_12>=PLUSTOK && LA12_12<=MINUSTOK)||LA12_12==INT||LA12_12==FLOAT) ) {
-                                    alt12=2;
+                                if ( (LA13_12==COLONTOK) ) {
+                                    alt13=1;
                                 }
-                                else if ( (LA12_12==COLONTOK) ) {
-                                    alt12=1;
+                                else if ( ((LA13_12>=PLUSTOK && LA13_12<=MINUSTOK)||LA13_12==INT||LA13_12==FLOAT) ) {
+                                    alt13=2;
                                 }
                                 else {
                                     NoViableAltException nvae =
-                                        new NoViableAltException("314:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 12, 12, input);
+                                        new NoViableAltException("351:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 13, 12, input);
 
                                     throw nvae;
                                 }
@@ -1838,18 +1907,18 @@ public class DotPomdpParser extends Parser {
                                 break;
                             default:
                                 NoViableAltException nvae =
-                                    new NoViableAltException("314:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 12, 8, input);
+                                    new NoViableAltException("351:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 13, 8, input);
 
                                 throw nvae;
                             }
 
                         }
-                        else if ( ((LA12_5>=PLUSTOK && LA12_5<=MINUSTOK)||LA12_5==INT||LA12_5==FLOAT) ) {
-                            alt12=3;
+                        else if ( ((LA13_5>=PLUSTOK && LA13_5<=MINUSTOK)||LA13_5==INT||LA13_5==FLOAT) ) {
+                            alt13=3;
                         }
                         else {
                             NoViableAltException nvae =
-                                new NoViableAltException("314:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 12, 5, input);
+                                new NoViableAltException("351:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 13, 5, input);
 
                             throw nvae;
                         }
@@ -1857,23 +1926,23 @@ public class DotPomdpParser extends Parser {
                         break;
                     case STRING:
                         {
-                        int LA12_6 = input.LA(4);
+                        int LA13_6 = input.LA(4);
 
-                        if ( (LA12_6==COLONTOK) ) {
+                        if ( (LA13_6==COLONTOK) ) {
                             switch ( input.LA(5) ) {
                             case INT:
                                 {
-                                int LA12_10 = input.LA(6);
+                                int LA13_10 = input.LA(6);
 
-                                if ( (LA12_10==COLONTOK) ) {
-                                    alt12=1;
+                                if ( (LA13_10==COLONTOK) ) {
+                                    alt13=1;
                                 }
-                                else if ( ((LA12_10>=PLUSTOK && LA12_10<=MINUSTOK)||LA12_10==INT||LA12_10==FLOAT) ) {
-                                    alt12=2;
+                                else if ( ((LA13_10>=PLUSTOK && LA13_10<=MINUSTOK)||LA13_10==INT||LA13_10==FLOAT) ) {
+                                    alt13=2;
                                 }
                                 else {
                                     NoViableAltException nvae =
-                                        new NoViableAltException("314:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 12, 10, input);
+                                        new NoViableAltException("351:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 13, 10, input);
 
                                     throw nvae;
                                 }
@@ -1881,17 +1950,17 @@ public class DotPomdpParser extends Parser {
                                 break;
                             case STRING:
                                 {
-                                int LA12_11 = input.LA(6);
+                                int LA13_11 = input.LA(6);
 
-                                if ( ((LA12_11>=PLUSTOK && LA12_11<=MINUSTOK)||LA12_11==INT||LA12_11==FLOAT) ) {
-                                    alt12=2;
+                                if ( (LA13_11==COLONTOK) ) {
+                                    alt13=1;
                                 }
-                                else if ( (LA12_11==COLONTOK) ) {
-                                    alt12=1;
+                                else if ( ((LA13_11>=PLUSTOK && LA13_11<=MINUSTOK)||LA13_11==INT||LA13_11==FLOAT) ) {
+                                    alt13=2;
                                 }
                                 else {
                                     NoViableAltException nvae =
-                                        new NoViableAltException("314:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 12, 11, input);
+                                        new NoViableAltException("351:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 13, 11, input);
 
                                     throw nvae;
                                 }
@@ -1899,17 +1968,17 @@ public class DotPomdpParser extends Parser {
                                 break;
                             case ASTERICKTOK:
                                 {
-                                int LA12_12 = input.LA(6);
+                                int LA13_12 = input.LA(6);
 
-                                if ( ((LA12_12>=PLUSTOK && LA12_12<=MINUSTOK)||LA12_12==INT||LA12_12==FLOAT) ) {
-                                    alt12=2;
+                                if ( (LA13_12==COLONTOK) ) {
+                                    alt13=1;
                                 }
-                                else if ( (LA12_12==COLONTOK) ) {
-                                    alt12=1;
+                                else if ( ((LA13_12>=PLUSTOK && LA13_12<=MINUSTOK)||LA13_12==INT||LA13_12==FLOAT) ) {
+                                    alt13=2;
                                 }
                                 else {
                                     NoViableAltException nvae =
-                                        new NoViableAltException("314:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 12, 12, input);
+                                        new NoViableAltException("351:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 13, 12, input);
 
                                     throw nvae;
                                 }
@@ -1917,18 +1986,18 @@ public class DotPomdpParser extends Parser {
                                 break;
                             default:
                                 NoViableAltException nvae =
-                                    new NoViableAltException("314:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 12, 8, input);
+                                    new NoViableAltException("351:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 13, 8, input);
 
                                 throw nvae;
                             }
 
                         }
-                        else if ( ((LA12_6>=PLUSTOK && LA12_6<=MINUSTOK)||LA12_6==INT||LA12_6==FLOAT) ) {
-                            alt12=3;
+                        else if ( ((LA13_6>=PLUSTOK && LA13_6<=MINUSTOK)||LA13_6==INT||LA13_6==FLOAT) ) {
+                            alt13=3;
                         }
                         else {
                             NoViableAltException nvae =
-                                new NoViableAltException("314:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 12, 6, input);
+                                new NoViableAltException("351:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 13, 6, input);
 
                             throw nvae;
                         }
@@ -1936,23 +2005,23 @@ public class DotPomdpParser extends Parser {
                         break;
                     case ASTERICKTOK:
                         {
-                        int LA12_7 = input.LA(4);
+                        int LA13_7 = input.LA(4);
 
-                        if ( (LA12_7==COLONTOK) ) {
+                        if ( (LA13_7==COLONTOK) ) {
                             switch ( input.LA(5) ) {
                             case INT:
                                 {
-                                int LA12_10 = input.LA(6);
+                                int LA13_10 = input.LA(6);
 
-                                if ( (LA12_10==COLONTOK) ) {
-                                    alt12=1;
+                                if ( (LA13_10==COLONTOK) ) {
+                                    alt13=1;
                                 }
-                                else if ( ((LA12_10>=PLUSTOK && LA12_10<=MINUSTOK)||LA12_10==INT||LA12_10==FLOAT) ) {
-                                    alt12=2;
+                                else if ( ((LA13_10>=PLUSTOK && LA13_10<=MINUSTOK)||LA13_10==INT||LA13_10==FLOAT) ) {
+                                    alt13=2;
                                 }
                                 else {
                                     NoViableAltException nvae =
-                                        new NoViableAltException("314:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 12, 10, input);
+                                        new NoViableAltException("351:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 13, 10, input);
 
                                     throw nvae;
                                 }
@@ -1960,17 +2029,17 @@ public class DotPomdpParser extends Parser {
                                 break;
                             case STRING:
                                 {
-                                int LA12_11 = input.LA(6);
+                                int LA13_11 = input.LA(6);
 
-                                if ( ((LA12_11>=PLUSTOK && LA12_11<=MINUSTOK)||LA12_11==INT||LA12_11==FLOAT) ) {
-                                    alt12=2;
+                                if ( (LA13_11==COLONTOK) ) {
+                                    alt13=1;
                                 }
-                                else if ( (LA12_11==COLONTOK) ) {
-                                    alt12=1;
+                                else if ( ((LA13_11>=PLUSTOK && LA13_11<=MINUSTOK)||LA13_11==INT||LA13_11==FLOAT) ) {
+                                    alt13=2;
                                 }
                                 else {
                                     NoViableAltException nvae =
-                                        new NoViableAltException("314:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 12, 11, input);
+                                        new NoViableAltException("351:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 13, 11, input);
 
                                     throw nvae;
                                 }
@@ -1978,17 +2047,17 @@ public class DotPomdpParser extends Parser {
                                 break;
                             case ASTERICKTOK:
                                 {
-                                int LA12_12 = input.LA(6);
+                                int LA13_12 = input.LA(6);
 
-                                if ( ((LA12_12>=PLUSTOK && LA12_12<=MINUSTOK)||LA12_12==INT||LA12_12==FLOAT) ) {
-                                    alt12=2;
+                                if ( (LA13_12==COLONTOK) ) {
+                                    alt13=1;
                                 }
-                                else if ( (LA12_12==COLONTOK) ) {
-                                    alt12=1;
+                                else if ( ((LA13_12>=PLUSTOK && LA13_12<=MINUSTOK)||LA13_12==INT||LA13_12==FLOAT) ) {
+                                    alt13=2;
                                 }
                                 else {
                                     NoViableAltException nvae =
-                                        new NoViableAltException("314:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 12, 12, input);
+                                        new NoViableAltException("351:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 13, 12, input);
 
                                     throw nvae;
                                 }
@@ -1996,18 +2065,18 @@ public class DotPomdpParser extends Parser {
                                 break;
                             default:
                                 NoViableAltException nvae =
-                                    new NoViableAltException("314:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 12, 8, input);
+                                    new NoViableAltException("351:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 13, 8, input);
 
                                 throw nvae;
                             }
 
                         }
-                        else if ( ((LA12_7>=PLUSTOK && LA12_7<=MINUSTOK)||LA12_7==INT||LA12_7==FLOAT) ) {
-                            alt12=3;
+                        else if ( ((LA13_7>=PLUSTOK && LA13_7<=MINUSTOK)||LA13_7==INT||LA13_7==FLOAT) ) {
+                            alt13=3;
                         }
                         else {
                             NoViableAltException nvae =
-                                new NoViableAltException("314:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 12, 7, input);
+                                new NoViableAltException("351:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 13, 7, input);
 
                             throw nvae;
                         }
@@ -2015,7 +2084,7 @@ public class DotPomdpParser extends Parser {
                         break;
                     default:
                         NoViableAltException nvae =
-                            new NoViableAltException("314:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 12, 4, input);
+                            new NoViableAltException("351:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 13, 4, input);
 
                         throw nvae;
                     }
@@ -2023,7 +2092,7 @@ public class DotPomdpParser extends Parser {
                 }
                 else {
                     NoViableAltException nvae =
-                        new NoViableAltException("314:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 12, 1, input);
+                        new NoViableAltException("351:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 13, 1, input);
 
                     throw nvae;
                 }
@@ -2031,29 +2100,29 @@ public class DotPomdpParser extends Parser {
                 break;
             case STRING:
                 {
-                int LA12_2 = input.LA(2);
+                int LA13_2 = input.LA(2);
 
-                if ( (LA12_2==COLONTOK) ) {
+                if ( (LA13_2==COLONTOK) ) {
                     switch ( input.LA(3) ) {
                     case INT:
                         {
-                        int LA12_5 = input.LA(4);
+                        int LA13_5 = input.LA(4);
 
-                        if ( (LA12_5==COLONTOK) ) {
+                        if ( (LA13_5==COLONTOK) ) {
                             switch ( input.LA(5) ) {
                             case INT:
                                 {
-                                int LA12_10 = input.LA(6);
+                                int LA13_10 = input.LA(6);
 
-                                if ( (LA12_10==COLONTOK) ) {
-                                    alt12=1;
+                                if ( (LA13_10==COLONTOK) ) {
+                                    alt13=1;
                                 }
-                                else if ( ((LA12_10>=PLUSTOK && LA12_10<=MINUSTOK)||LA12_10==INT||LA12_10==FLOAT) ) {
-                                    alt12=2;
+                                else if ( ((LA13_10>=PLUSTOK && LA13_10<=MINUSTOK)||LA13_10==INT||LA13_10==FLOAT) ) {
+                                    alt13=2;
                                 }
                                 else {
                                     NoViableAltException nvae =
-                                        new NoViableAltException("314:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 12, 10, input);
+                                        new NoViableAltException("351:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 13, 10, input);
 
                                     throw nvae;
                                 }
@@ -2061,17 +2130,17 @@ public class DotPomdpParser extends Parser {
                                 break;
                             case STRING:
                                 {
-                                int LA12_11 = input.LA(6);
+                                int LA13_11 = input.LA(6);
 
-                                if ( ((LA12_11>=PLUSTOK && LA12_11<=MINUSTOK)||LA12_11==INT||LA12_11==FLOAT) ) {
-                                    alt12=2;
+                                if ( (LA13_11==COLONTOK) ) {
+                                    alt13=1;
                                 }
-                                else if ( (LA12_11==COLONTOK) ) {
-                                    alt12=1;
+                                else if ( ((LA13_11>=PLUSTOK && LA13_11<=MINUSTOK)||LA13_11==INT||LA13_11==FLOAT) ) {
+                                    alt13=2;
                                 }
                                 else {
                                     NoViableAltException nvae =
-                                        new NoViableAltException("314:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 12, 11, input);
+                                        new NoViableAltException("351:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 13, 11, input);
 
                                     throw nvae;
                                 }
@@ -2079,17 +2148,17 @@ public class DotPomdpParser extends Parser {
                                 break;
                             case ASTERICKTOK:
                                 {
-                                int LA12_12 = input.LA(6);
+                                int LA13_12 = input.LA(6);
 
-                                if ( ((LA12_12>=PLUSTOK && LA12_12<=MINUSTOK)||LA12_12==INT||LA12_12==FLOAT) ) {
-                                    alt12=2;
+                                if ( (LA13_12==COLONTOK) ) {
+                                    alt13=1;
                                 }
-                                else if ( (LA12_12==COLONTOK) ) {
-                                    alt12=1;
+                                else if ( ((LA13_12>=PLUSTOK && LA13_12<=MINUSTOK)||LA13_12==INT||LA13_12==FLOAT) ) {
+                                    alt13=2;
                                 }
                                 else {
                                     NoViableAltException nvae =
-                                        new NoViableAltException("314:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 12, 12, input);
+                                        new NoViableAltException("351:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 13, 12, input);
 
                                     throw nvae;
                                 }
@@ -2097,18 +2166,18 @@ public class DotPomdpParser extends Parser {
                                 break;
                             default:
                                 NoViableAltException nvae =
-                                    new NoViableAltException("314:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 12, 8, input);
+                                    new NoViableAltException("351:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 13, 8, input);
 
                                 throw nvae;
                             }
 
                         }
-                        else if ( ((LA12_5>=PLUSTOK && LA12_5<=MINUSTOK)||LA12_5==INT||LA12_5==FLOAT) ) {
-                            alt12=3;
+                        else if ( ((LA13_5>=PLUSTOK && LA13_5<=MINUSTOK)||LA13_5==INT||LA13_5==FLOAT) ) {
+                            alt13=3;
                         }
                         else {
                             NoViableAltException nvae =
-                                new NoViableAltException("314:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 12, 5, input);
+                                new NoViableAltException("351:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 13, 5, input);
 
                             throw nvae;
                         }
@@ -2116,23 +2185,23 @@ public class DotPomdpParser extends Parser {
                         break;
                     case STRING:
                         {
-                        int LA12_6 = input.LA(4);
+                        int LA13_6 = input.LA(4);
 
-                        if ( (LA12_6==COLONTOK) ) {
+                        if ( (LA13_6==COLONTOK) ) {
                             switch ( input.LA(5) ) {
                             case INT:
                                 {
-                                int LA12_10 = input.LA(6);
+                                int LA13_10 = input.LA(6);
 
-                                if ( (LA12_10==COLONTOK) ) {
-                                    alt12=1;
+                                if ( (LA13_10==COLONTOK) ) {
+                                    alt13=1;
                                 }
-                                else if ( ((LA12_10>=PLUSTOK && LA12_10<=MINUSTOK)||LA12_10==INT||LA12_10==FLOAT) ) {
-                                    alt12=2;
+                                else if ( ((LA13_10>=PLUSTOK && LA13_10<=MINUSTOK)||LA13_10==INT||LA13_10==FLOAT) ) {
+                                    alt13=2;
                                 }
                                 else {
                                     NoViableAltException nvae =
-                                        new NoViableAltException("314:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 12, 10, input);
+                                        new NoViableAltException("351:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 13, 10, input);
 
                                     throw nvae;
                                 }
@@ -2140,17 +2209,17 @@ public class DotPomdpParser extends Parser {
                                 break;
                             case STRING:
                                 {
-                                int LA12_11 = input.LA(6);
+                                int LA13_11 = input.LA(6);
 
-                                if ( ((LA12_11>=PLUSTOK && LA12_11<=MINUSTOK)||LA12_11==INT||LA12_11==FLOAT) ) {
-                                    alt12=2;
+                                if ( (LA13_11==COLONTOK) ) {
+                                    alt13=1;
                                 }
-                                else if ( (LA12_11==COLONTOK) ) {
-                                    alt12=1;
+                                else if ( ((LA13_11>=PLUSTOK && LA13_11<=MINUSTOK)||LA13_11==INT||LA13_11==FLOAT) ) {
+                                    alt13=2;
                                 }
                                 else {
                                     NoViableAltException nvae =
-                                        new NoViableAltException("314:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 12, 11, input);
+                                        new NoViableAltException("351:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 13, 11, input);
 
                                     throw nvae;
                                 }
@@ -2158,17 +2227,17 @@ public class DotPomdpParser extends Parser {
                                 break;
                             case ASTERICKTOK:
                                 {
-                                int LA12_12 = input.LA(6);
+                                int LA13_12 = input.LA(6);
 
-                                if ( ((LA12_12>=PLUSTOK && LA12_12<=MINUSTOK)||LA12_12==INT||LA12_12==FLOAT) ) {
-                                    alt12=2;
+                                if ( (LA13_12==COLONTOK) ) {
+                                    alt13=1;
                                 }
-                                else if ( (LA12_12==COLONTOK) ) {
-                                    alt12=1;
+                                else if ( ((LA13_12>=PLUSTOK && LA13_12<=MINUSTOK)||LA13_12==INT||LA13_12==FLOAT) ) {
+                                    alt13=2;
                                 }
                                 else {
                                     NoViableAltException nvae =
-                                        new NoViableAltException("314:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 12, 12, input);
+                                        new NoViableAltException("351:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 13, 12, input);
 
                                     throw nvae;
                                 }
@@ -2176,18 +2245,18 @@ public class DotPomdpParser extends Parser {
                                 break;
                             default:
                                 NoViableAltException nvae =
-                                    new NoViableAltException("314:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 12, 8, input);
+                                    new NoViableAltException("351:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 13, 8, input);
 
                                 throw nvae;
                             }
 
                         }
-                        else if ( ((LA12_6>=PLUSTOK && LA12_6<=MINUSTOK)||LA12_6==INT||LA12_6==FLOAT) ) {
-                            alt12=3;
+                        else if ( ((LA13_6>=PLUSTOK && LA13_6<=MINUSTOK)||LA13_6==INT||LA13_6==FLOAT) ) {
+                            alt13=3;
                         }
                         else {
                             NoViableAltException nvae =
-                                new NoViableAltException("314:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 12, 6, input);
+                                new NoViableAltException("351:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 13, 6, input);
 
                             throw nvae;
                         }
@@ -2195,23 +2264,23 @@ public class DotPomdpParser extends Parser {
                         break;
                     case ASTERICKTOK:
                         {
-                        int LA12_7 = input.LA(4);
+                        int LA13_7 = input.LA(4);
 
-                        if ( (LA12_7==COLONTOK) ) {
+                        if ( (LA13_7==COLONTOK) ) {
                             switch ( input.LA(5) ) {
                             case INT:
                                 {
-                                int LA12_10 = input.LA(6);
+                                int LA13_10 = input.LA(6);
 
-                                if ( (LA12_10==COLONTOK) ) {
-                                    alt12=1;
+                                if ( (LA13_10==COLONTOK) ) {
+                                    alt13=1;
                                 }
-                                else if ( ((LA12_10>=PLUSTOK && LA12_10<=MINUSTOK)||LA12_10==INT||LA12_10==FLOAT) ) {
-                                    alt12=2;
+                                else if ( ((LA13_10>=PLUSTOK && LA13_10<=MINUSTOK)||LA13_10==INT||LA13_10==FLOAT) ) {
+                                    alt13=2;
                                 }
                                 else {
                                     NoViableAltException nvae =
-                                        new NoViableAltException("314:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 12, 10, input);
+                                        new NoViableAltException("351:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 13, 10, input);
 
                                     throw nvae;
                                 }
@@ -2219,17 +2288,17 @@ public class DotPomdpParser extends Parser {
                                 break;
                             case STRING:
                                 {
-                                int LA12_11 = input.LA(6);
+                                int LA13_11 = input.LA(6);
 
-                                if ( ((LA12_11>=PLUSTOK && LA12_11<=MINUSTOK)||LA12_11==INT||LA12_11==FLOAT) ) {
-                                    alt12=2;
+                                if ( (LA13_11==COLONTOK) ) {
+                                    alt13=1;
                                 }
-                                else if ( (LA12_11==COLONTOK) ) {
-                                    alt12=1;
+                                else if ( ((LA13_11>=PLUSTOK && LA13_11<=MINUSTOK)||LA13_11==INT||LA13_11==FLOAT) ) {
+                                    alt13=2;
                                 }
                                 else {
                                     NoViableAltException nvae =
-                                        new NoViableAltException("314:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 12, 11, input);
+                                        new NoViableAltException("351:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 13, 11, input);
 
                                     throw nvae;
                                 }
@@ -2237,17 +2306,17 @@ public class DotPomdpParser extends Parser {
                                 break;
                             case ASTERICKTOK:
                                 {
-                                int LA12_12 = input.LA(6);
+                                int LA13_12 = input.LA(6);
 
-                                if ( ((LA12_12>=PLUSTOK && LA12_12<=MINUSTOK)||LA12_12==INT||LA12_12==FLOAT) ) {
-                                    alt12=2;
+                                if ( (LA13_12==COLONTOK) ) {
+                                    alt13=1;
                                 }
-                                else if ( (LA12_12==COLONTOK) ) {
-                                    alt12=1;
+                                else if ( ((LA13_12>=PLUSTOK && LA13_12<=MINUSTOK)||LA13_12==INT||LA13_12==FLOAT) ) {
+                                    alt13=2;
                                 }
                                 else {
                                     NoViableAltException nvae =
-                                        new NoViableAltException("314:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 12, 12, input);
+                                        new NoViableAltException("351:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 13, 12, input);
 
                                     throw nvae;
                                 }
@@ -2255,18 +2324,18 @@ public class DotPomdpParser extends Parser {
                                 break;
                             default:
                                 NoViableAltException nvae =
-                                    new NoViableAltException("314:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 12, 8, input);
+                                    new NoViableAltException("351:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 13, 8, input);
 
                                 throw nvae;
                             }
 
                         }
-                        else if ( ((LA12_7>=PLUSTOK && LA12_7<=MINUSTOK)||LA12_7==INT||LA12_7==FLOAT) ) {
-                            alt12=3;
+                        else if ( ((LA13_7>=PLUSTOK && LA13_7<=MINUSTOK)||LA13_7==INT||LA13_7==FLOAT) ) {
+                            alt13=3;
                         }
                         else {
                             NoViableAltException nvae =
-                                new NoViableAltException("314:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 12, 7, input);
+                                new NoViableAltException("351:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 13, 7, input);
 
                             throw nvae;
                         }
@@ -2274,7 +2343,7 @@ public class DotPomdpParser extends Parser {
                         break;
                     default:
                         NoViableAltException nvae =
-                            new NoViableAltException("314:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 12, 4, input);
+                            new NoViableAltException("351:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 13, 4, input);
 
                         throw nvae;
                     }
@@ -2282,7 +2351,7 @@ public class DotPomdpParser extends Parser {
                 }
                 else {
                     NoViableAltException nvae =
-                        new NoViableAltException("314:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 12, 2, input);
+                        new NoViableAltException("351:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 13, 2, input);
 
                     throw nvae;
                 }
@@ -2290,29 +2359,29 @@ public class DotPomdpParser extends Parser {
                 break;
             case ASTERICKTOK:
                 {
-                int LA12_3 = input.LA(2);
+                int LA13_3 = input.LA(2);
 
-                if ( (LA12_3==COLONTOK) ) {
+                if ( (LA13_3==COLONTOK) ) {
                     switch ( input.LA(3) ) {
                     case INT:
                         {
-                        int LA12_5 = input.LA(4);
+                        int LA13_5 = input.LA(4);
 
-                        if ( (LA12_5==COLONTOK) ) {
+                        if ( (LA13_5==COLONTOK) ) {
                             switch ( input.LA(5) ) {
                             case INT:
                                 {
-                                int LA12_10 = input.LA(6);
+                                int LA13_10 = input.LA(6);
 
-                                if ( (LA12_10==COLONTOK) ) {
-                                    alt12=1;
+                                if ( (LA13_10==COLONTOK) ) {
+                                    alt13=1;
                                 }
-                                else if ( ((LA12_10>=PLUSTOK && LA12_10<=MINUSTOK)||LA12_10==INT||LA12_10==FLOAT) ) {
-                                    alt12=2;
+                                else if ( ((LA13_10>=PLUSTOK && LA13_10<=MINUSTOK)||LA13_10==INT||LA13_10==FLOAT) ) {
+                                    alt13=2;
                                 }
                                 else {
                                     NoViableAltException nvae =
-                                        new NoViableAltException("314:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 12, 10, input);
+                                        new NoViableAltException("351:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 13, 10, input);
 
                                     throw nvae;
                                 }
@@ -2320,17 +2389,17 @@ public class DotPomdpParser extends Parser {
                                 break;
                             case STRING:
                                 {
-                                int LA12_11 = input.LA(6);
+                                int LA13_11 = input.LA(6);
 
-                                if ( ((LA12_11>=PLUSTOK && LA12_11<=MINUSTOK)||LA12_11==INT||LA12_11==FLOAT) ) {
-                                    alt12=2;
+                                if ( (LA13_11==COLONTOK) ) {
+                                    alt13=1;
                                 }
-                                else if ( (LA12_11==COLONTOK) ) {
-                                    alt12=1;
+                                else if ( ((LA13_11>=PLUSTOK && LA13_11<=MINUSTOK)||LA13_11==INT||LA13_11==FLOAT) ) {
+                                    alt13=2;
                                 }
                                 else {
                                     NoViableAltException nvae =
-                                        new NoViableAltException("314:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 12, 11, input);
+                                        new NoViableAltException("351:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 13, 11, input);
 
                                     throw nvae;
                                 }
@@ -2338,17 +2407,17 @@ public class DotPomdpParser extends Parser {
                                 break;
                             case ASTERICKTOK:
                                 {
-                                int LA12_12 = input.LA(6);
+                                int LA13_12 = input.LA(6);
 
-                                if ( ((LA12_12>=PLUSTOK && LA12_12<=MINUSTOK)||LA12_12==INT||LA12_12==FLOAT) ) {
-                                    alt12=2;
+                                if ( (LA13_12==COLONTOK) ) {
+                                    alt13=1;
                                 }
-                                else if ( (LA12_12==COLONTOK) ) {
-                                    alt12=1;
+                                else if ( ((LA13_12>=PLUSTOK && LA13_12<=MINUSTOK)||LA13_12==INT||LA13_12==FLOAT) ) {
+                                    alt13=2;
                                 }
                                 else {
                                     NoViableAltException nvae =
-                                        new NoViableAltException("314:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 12, 12, input);
+                                        new NoViableAltException("351:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 13, 12, input);
 
                                     throw nvae;
                                 }
@@ -2356,18 +2425,18 @@ public class DotPomdpParser extends Parser {
                                 break;
                             default:
                                 NoViableAltException nvae =
-                                    new NoViableAltException("314:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 12, 8, input);
+                                    new NoViableAltException("351:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 13, 8, input);
 
                                 throw nvae;
                             }
 
                         }
-                        else if ( ((LA12_5>=PLUSTOK && LA12_5<=MINUSTOK)||LA12_5==INT||LA12_5==FLOAT) ) {
-                            alt12=3;
+                        else if ( ((LA13_5>=PLUSTOK && LA13_5<=MINUSTOK)||LA13_5==INT||LA13_5==FLOAT) ) {
+                            alt13=3;
                         }
                         else {
                             NoViableAltException nvae =
-                                new NoViableAltException("314:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 12, 5, input);
+                                new NoViableAltException("351:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 13, 5, input);
 
                             throw nvae;
                         }
@@ -2375,23 +2444,23 @@ public class DotPomdpParser extends Parser {
                         break;
                     case STRING:
                         {
-                        int LA12_6 = input.LA(4);
+                        int LA13_6 = input.LA(4);
 
-                        if ( (LA12_6==COLONTOK) ) {
+                        if ( (LA13_6==COLONTOK) ) {
                             switch ( input.LA(5) ) {
                             case INT:
                                 {
-                                int LA12_10 = input.LA(6);
+                                int LA13_10 = input.LA(6);
 
-                                if ( (LA12_10==COLONTOK) ) {
-                                    alt12=1;
+                                if ( (LA13_10==COLONTOK) ) {
+                                    alt13=1;
                                 }
-                                else if ( ((LA12_10>=PLUSTOK && LA12_10<=MINUSTOK)||LA12_10==INT||LA12_10==FLOAT) ) {
-                                    alt12=2;
+                                else if ( ((LA13_10>=PLUSTOK && LA13_10<=MINUSTOK)||LA13_10==INT||LA13_10==FLOAT) ) {
+                                    alt13=2;
                                 }
                                 else {
                                     NoViableAltException nvae =
-                                        new NoViableAltException("314:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 12, 10, input);
+                                        new NoViableAltException("351:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 13, 10, input);
 
                                     throw nvae;
                                 }
@@ -2399,17 +2468,17 @@ public class DotPomdpParser extends Parser {
                                 break;
                             case STRING:
                                 {
-                                int LA12_11 = input.LA(6);
+                                int LA13_11 = input.LA(6);
 
-                                if ( ((LA12_11>=PLUSTOK && LA12_11<=MINUSTOK)||LA12_11==INT||LA12_11==FLOAT) ) {
-                                    alt12=2;
+                                if ( (LA13_11==COLONTOK) ) {
+                                    alt13=1;
                                 }
-                                else if ( (LA12_11==COLONTOK) ) {
-                                    alt12=1;
+                                else if ( ((LA13_11>=PLUSTOK && LA13_11<=MINUSTOK)||LA13_11==INT||LA13_11==FLOAT) ) {
+                                    alt13=2;
                                 }
                                 else {
                                     NoViableAltException nvae =
-                                        new NoViableAltException("314:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 12, 11, input);
+                                        new NoViableAltException("351:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 13, 11, input);
 
                                     throw nvae;
                                 }
@@ -2417,17 +2486,17 @@ public class DotPomdpParser extends Parser {
                                 break;
                             case ASTERICKTOK:
                                 {
-                                int LA12_12 = input.LA(6);
+                                int LA13_12 = input.LA(6);
 
-                                if ( ((LA12_12>=PLUSTOK && LA12_12<=MINUSTOK)||LA12_12==INT||LA12_12==FLOAT) ) {
-                                    alt12=2;
+                                if ( (LA13_12==COLONTOK) ) {
+                                    alt13=1;
                                 }
-                                else if ( (LA12_12==COLONTOK) ) {
-                                    alt12=1;
+                                else if ( ((LA13_12>=PLUSTOK && LA13_12<=MINUSTOK)||LA13_12==INT||LA13_12==FLOAT) ) {
+                                    alt13=2;
                                 }
                                 else {
                                     NoViableAltException nvae =
-                                        new NoViableAltException("314:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 12, 12, input);
+                                        new NoViableAltException("351:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 13, 12, input);
 
                                     throw nvae;
                                 }
@@ -2435,18 +2504,18 @@ public class DotPomdpParser extends Parser {
                                 break;
                             default:
                                 NoViableAltException nvae =
-                                    new NoViableAltException("314:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 12, 8, input);
+                                    new NoViableAltException("351:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 13, 8, input);
 
                                 throw nvae;
                             }
 
                         }
-                        else if ( ((LA12_6>=PLUSTOK && LA12_6<=MINUSTOK)||LA12_6==INT||LA12_6==FLOAT) ) {
-                            alt12=3;
+                        else if ( ((LA13_6>=PLUSTOK && LA13_6<=MINUSTOK)||LA13_6==INT||LA13_6==FLOAT) ) {
+                            alt13=3;
                         }
                         else {
                             NoViableAltException nvae =
-                                new NoViableAltException("314:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 12, 6, input);
+                                new NoViableAltException("351:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 13, 6, input);
 
                             throw nvae;
                         }
@@ -2454,23 +2523,23 @@ public class DotPomdpParser extends Parser {
                         break;
                     case ASTERICKTOK:
                         {
-                        int LA12_7 = input.LA(4);
+                        int LA13_7 = input.LA(4);
 
-                        if ( (LA12_7==COLONTOK) ) {
+                        if ( (LA13_7==COLONTOK) ) {
                             switch ( input.LA(5) ) {
                             case INT:
                                 {
-                                int LA12_10 = input.LA(6);
+                                int LA13_10 = input.LA(6);
 
-                                if ( (LA12_10==COLONTOK) ) {
-                                    alt12=1;
+                                if ( (LA13_10==COLONTOK) ) {
+                                    alt13=1;
                                 }
-                                else if ( ((LA12_10>=PLUSTOK && LA12_10<=MINUSTOK)||LA12_10==INT||LA12_10==FLOAT) ) {
-                                    alt12=2;
+                                else if ( ((LA13_10>=PLUSTOK && LA13_10<=MINUSTOK)||LA13_10==INT||LA13_10==FLOAT) ) {
+                                    alt13=2;
                                 }
                                 else {
                                     NoViableAltException nvae =
-                                        new NoViableAltException("314:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 12, 10, input);
+                                        new NoViableAltException("351:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 13, 10, input);
 
                                     throw nvae;
                                 }
@@ -2478,17 +2547,17 @@ public class DotPomdpParser extends Parser {
                                 break;
                             case STRING:
                                 {
-                                int LA12_11 = input.LA(6);
+                                int LA13_11 = input.LA(6);
 
-                                if ( ((LA12_11>=PLUSTOK && LA12_11<=MINUSTOK)||LA12_11==INT||LA12_11==FLOAT) ) {
-                                    alt12=2;
+                                if ( (LA13_11==COLONTOK) ) {
+                                    alt13=1;
                                 }
-                                else if ( (LA12_11==COLONTOK) ) {
-                                    alt12=1;
+                                else if ( ((LA13_11>=PLUSTOK && LA13_11<=MINUSTOK)||LA13_11==INT||LA13_11==FLOAT) ) {
+                                    alt13=2;
                                 }
                                 else {
                                     NoViableAltException nvae =
-                                        new NoViableAltException("314:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 12, 11, input);
+                                        new NoViableAltException("351:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 13, 11, input);
 
                                     throw nvae;
                                 }
@@ -2496,17 +2565,17 @@ public class DotPomdpParser extends Parser {
                                 break;
                             case ASTERICKTOK:
                                 {
-                                int LA12_12 = input.LA(6);
+                                int LA13_12 = input.LA(6);
 
-                                if ( ((LA12_12>=PLUSTOK && LA12_12<=MINUSTOK)||LA12_12==INT||LA12_12==FLOAT) ) {
-                                    alt12=2;
+                                if ( (LA13_12==COLONTOK) ) {
+                                    alt13=1;
                                 }
-                                else if ( (LA12_12==COLONTOK) ) {
-                                    alt12=1;
+                                else if ( ((LA13_12>=PLUSTOK && LA13_12<=MINUSTOK)||LA13_12==INT||LA13_12==FLOAT) ) {
+                                    alt13=2;
                                 }
                                 else {
                                     NoViableAltException nvae =
-                                        new NoViableAltException("314:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 12, 12, input);
+                                        new NoViableAltException("351:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 13, 12, input);
 
                                     throw nvae;
                                 }
@@ -2514,18 +2583,18 @@ public class DotPomdpParser extends Parser {
                                 break;
                             default:
                                 NoViableAltException nvae =
-                                    new NoViableAltException("314:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 12, 8, input);
+                                    new NoViableAltException("351:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 13, 8, input);
 
                                 throw nvae;
                             }
 
                         }
-                        else if ( ((LA12_7>=PLUSTOK && LA12_7<=MINUSTOK)||LA12_7==INT||LA12_7==FLOAT) ) {
-                            alt12=3;
+                        else if ( ((LA13_7>=PLUSTOK && LA13_7<=MINUSTOK)||LA13_7==INT||LA13_7==FLOAT) ) {
+                            alt13=3;
                         }
                         else {
                             NoViableAltException nvae =
-                                new NoViableAltException("314:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 12, 7, input);
+                                new NoViableAltException("351:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 13, 7, input);
 
                             throw nvae;
                         }
@@ -2533,7 +2602,7 @@ public class DotPomdpParser extends Parser {
                         break;
                     default:
                         NoViableAltException nvae =
-                            new NoViableAltException("314:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 12, 4, input);
+                            new NoViableAltException("351:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 13, 4, input);
 
                         throw nvae;
                     }
@@ -2541,7 +2610,7 @@ public class DotPomdpParser extends Parser {
                 }
                 else {
                     NoViableAltException nvae =
-                        new NoViableAltException("314:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 12, 3, input);
+                        new NoViableAltException("351:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 13, 3, input);
 
                     throw nvae;
                 }
@@ -2549,94 +2618,95 @@ public class DotPomdpParser extends Parser {
                 break;
             default:
                 NoViableAltException nvae =
-                    new NoViableAltException("314:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 12, 0, input);
+                    new NoViableAltException("351:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );", 13, 0, input);
 
                 throw nvae;
             }
 
-            switch (alt12) {
+            switch (alt13) {
                 case 1 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:315:7: paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number
+                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:352:7: paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number
                     {
-                    pushFollow(FOLLOW_paction_in_reward_spec_tail1774);
-                    paction19=paction();
+                    pushFollow(FOLLOW_paction_in_reward_spec_tail1830);
+                    paction27=paction();
                     _fsp--;
 
-                    match(input,COLONTOK,FOLLOW_COLONTOK_in_reward_spec_tail1776); 
-                    pushFollow(FOLLOW_state_in_reward_spec_tail1780);
+                    match(input,COLONTOK,FOLLOW_COLONTOK_in_reward_spec_tail1832); 
+                    pushFollow(FOLLOW_state_in_reward_spec_tail1836);
                     s_1=state();
                     _fsp--;
 
-                    match(input,COLONTOK,FOLLOW_COLONTOK_in_reward_spec_tail1782); 
-                    pushFollow(FOLLOW_state_in_reward_spec_tail1786);
+                    match(input,COLONTOK,FOLLOW_COLONTOK_in_reward_spec_tail1838); 
+                    pushFollow(FOLLOW_state_in_reward_spec_tail1842);
                     s_2=state();
                     _fsp--;
 
-                    match(input,COLONTOK,FOLLOW_COLONTOK_in_reward_spec_tail1788); 
-                    pushFollow(FOLLOW_obs_in_reward_spec_tail1790);
-                    obs17=obs();
+                    match(input,COLONTOK,FOLLOW_COLONTOK_in_reward_spec_tail1844); 
+                    pushFollow(FOLLOW_obs_in_reward_spec_tail1846);
+                    obs25=obs();
                     _fsp--;
 
-                    pushFollow(FOLLOW_number_in_reward_spec_tail1792);
-                    number18=number();
+                    pushFollow(FOLLOW_number_in_reward_spec_tail1848);
+                    number26=number();
                     _fsp--;
 
                                 
                                 if(input.toString(s_2.start,s_2.stop).compareTo(Character.toString('*'))!=0 || 
-                                            input.toString(obs17.start,obs17.stop).compareTo(Character.toString('*'))!=0){
+                                            input.toString(obs25.start,obs25.stop).compareTo(Character.toString('*'))!=0){
                                     err("We only allow for R(s,a) type rewards for now...");
-                                    //System.out.println(input.toString(s_2.start,s_2.stop) + input.toString(obs17.start,obs17.stop));
+                                    //System.out.println(input.toString(s_2.start,s_2.stop) + input.toString(obs25.start,obs25.stop));
                                 }
-                                //System.out.println("number is"+number18);
-                                for(int a : paction19)
+                                //System.out.println("number is"+number26);
+                                for(int a : paction27)
                                     for(int s1 : s_1.l) 
-                                        dotPomdpSpec.R[a].set(s1, number18);                   
+                                        dotPomdpSpec.R[a].set(s1, number26);                   
                             
 
                     }
                     break;
                 case 2 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:328:7: paction COLONTOK state COLONTOK state num_matrix
+                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:365:7: paction COLONTOK state COLONTOK state num_matrix
                     {
-                    pushFollow(FOLLOW_paction_in_reward_spec_tail1820);
+                    pushFollow(FOLLOW_paction_in_reward_spec_tail1876);
                     paction();
                     _fsp--;
 
-                    match(input,COLONTOK,FOLLOW_COLONTOK_in_reward_spec_tail1822); 
-                    pushFollow(FOLLOW_state_in_reward_spec_tail1824);
+                    match(input,COLONTOK,FOLLOW_COLONTOK_in_reward_spec_tail1878); 
+                    pushFollow(FOLLOW_state_in_reward_spec_tail1880);
                     state();
                     _fsp--;
 
-                    match(input,COLONTOK,FOLLOW_COLONTOK_in_reward_spec_tail1826); 
-                    pushFollow(FOLLOW_state_in_reward_spec_tail1828);
+                    match(input,COLONTOK,FOLLOW_COLONTOK_in_reward_spec_tail1882); 
+                    pushFollow(FOLLOW_state_in_reward_spec_tail1884);
                     state();
                     _fsp--;
 
-                    pushFollow(FOLLOW_num_matrix_in_reward_spec_tail1830);
+                    pushFollow(FOLLOW_num_matrix_in_reward_spec_tail1886);
                     num_matrix();
                     _fsp--;
 
-                    err("unsopported feature");
+
+                            err("unsupported feature COLONTOK state COLONTOK state num_matrix");
 
                     }
                     break;
                 case 3 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:330:7: paction COLONTOK state num_matrix
+                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:368:7: paction COLONTOK state num_matrix
                     {
-                    pushFollow(FOLLOW_paction_in_reward_spec_tail1848);
+                    pushFollow(FOLLOW_paction_in_reward_spec_tail1904);
                     paction();
                     _fsp--;
 
-                    match(input,COLONTOK,FOLLOW_COLONTOK_in_reward_spec_tail1850); 
-                    pushFollow(FOLLOW_state_in_reward_spec_tail1852);
+                    match(input,COLONTOK,FOLLOW_COLONTOK_in_reward_spec_tail1906); 
+                    pushFollow(FOLLOW_state_in_reward_spec_tail1908);
                     state();
                     _fsp--;
 
-                    pushFollow(FOLLOW_num_matrix_in_reward_spec_tail1854);
+                    pushFollow(FOLLOW_num_matrix_in_reward_spec_tail1910);
                     num_matrix();
                     _fsp--;
 
-                    err("unsopported feature");
+                    err("unsupported feature COLONTOK state num_matrix");
 
                     }
                     break;
@@ -2655,60 +2725,65 @@ public class DotPomdpParser extends Parser {
 
 
     // $ANTLR start ui_matrix
-    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:334:1: ui_matrix returns [DenseMatrix m] : ( UNIFORMTOK | IDENTITYTOK | prob_matrix );
+    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:372:1: ui_matrix returns [DenseMatrix m] : ( UNIFORMTOK | IDENTITYTOK | prob_matrix );
     public final DenseMatrix ui_matrix() throws RecognitionException {
         DenseMatrix m = null;
 
+        DenseMatrix prob_matrix28 = null;
+
+
         try {
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:335:5: ( UNIFORMTOK | IDENTITYTOK | prob_matrix )
-            int alt13=3;
+            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:373:5: ( UNIFORMTOK | IDENTITYTOK | prob_matrix )
+            int alt14=3;
             switch ( input.LA(1) ) {
             case UNIFORMTOK:
                 {
-                alt13=1;
+                alt14=1;
                 }
                 break;
             case IDENTITYTOK:
                 {
-                alt13=2;
+                alt14=2;
                 }
                 break;
             case INT:
             case FLOAT:
                 {
-                alt13=3;
+                alt14=3;
                 }
                 break;
             default:
                 NoViableAltException nvae =
-                    new NoViableAltException("334:1: ui_matrix returns [DenseMatrix m] : ( UNIFORMTOK | IDENTITYTOK | prob_matrix );", 13, 0, input);
+                    new NoViableAltException("372:1: ui_matrix returns [DenseMatrix m] : ( UNIFORMTOK | IDENTITYTOK | prob_matrix );", 14, 0, input);
 
                 throw nvae;
             }
 
-            switch (alt13) {
+            switch (alt14) {
                 case 1 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:335:7: UNIFORMTOK
+                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:373:7: UNIFORMTOK
                     {
-                    match(input,UNIFORMTOK,FOLLOW_UNIFORMTOK_in_ui_matrix1890); 
+                    match(input,UNIFORMTOK,FOLLOW_UNIFORMTOK_in_ui_matrix1946); 
+                    m = Utils.getUniformMatrix(dotPomdpSpec.nrSta,dotPomdpSpec.nrSta);
 
                     }
                     break;
                 case 2 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:336:7: IDENTITYTOK
+                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:375:7: IDENTITYTOK
                     {
-                    match(input,IDENTITYTOK,FOLLOW_IDENTITYTOK_in_ui_matrix1899); 
+                    match(input,IDENTITYTOK,FOLLOW_IDENTITYTOK_in_ui_matrix1962); 
                     m = Matrices.identity(dotPomdpSpec.nrSta);
 
                     }
                     break;
                 case 3 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:338:7: prob_matrix
+                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:377:7: prob_matrix
                     {
-                    pushFollow(FOLLOW_prob_matrix_in_ui_matrix1918);
-                    prob_matrix();
+                    pushFollow(FOLLOW_prob_matrix_in_ui_matrix1981);
+                    prob_matrix28=prob_matrix();
                     _fsp--;
 
+                    m = prob_matrix28;
 
                     }
                     break;
@@ -2727,57 +2802,83 @@ public class DotPomdpParser extends Parser {
 
 
     // $ANTLR start u_matrix
-    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:341:1: u_matrix : ( UNIFORMTOK | RESETTOK | prob_matrix );
-    public final void u_matrix() throws RecognitionException {
+    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:381:1: u_matrix returns [DenseMatrix m] : ( UNIFORMTOK | RESETTOK | prob_matrix );
+    public final DenseMatrix u_matrix() throws RecognitionException {
+        DenseMatrix m = null;
+
+        DenseMatrix prob_matrix29 = null;
+
+
         try {
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:342:5: ( UNIFORMTOK | RESETTOK | prob_matrix )
-            int alt14=3;
+            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:382:5: ( UNIFORMTOK | RESETTOK | prob_matrix )
+            int alt15=3;
             switch ( input.LA(1) ) {
             case UNIFORMTOK:
                 {
-                alt14=1;
+                alt15=1;
                 }
                 break;
             case RESETTOK:
                 {
-                alt14=2;
+                alt15=2;
                 }
                 break;
             case INT:
             case FLOAT:
                 {
-                alt14=3;
+                alt15=3;
                 }
                 break;
             default:
                 NoViableAltException nvae =
-                    new NoViableAltException("341:1: u_matrix : ( UNIFORMTOK | RESETTOK | prob_matrix );", 14, 0, input);
+                    new NoViableAltException("381:1: u_matrix returns [DenseMatrix m] : ( UNIFORMTOK | RESETTOK | prob_matrix );", 15, 0, input);
 
                 throw nvae;
             }
 
-            switch (alt14) {
+            switch (alt15) {
                 case 1 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:342:7: UNIFORMTOK
+                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:382:7: UNIFORMTOK
                     {
-                    match(input,UNIFORMTOK,FOLLOW_UNIFORMTOK_in_u_matrix1937); 
+                    match(input,UNIFORMTOK,FOLLOW_UNIFORMTOK_in_u_matrix2009); 
+
+                        	switch (matrixContext){
+                        	case MC_OBSERVATION: 
+                        		m = Utils.getUniformMatrix(dotPomdpSpec.nrSta,dotPomdpSpec.nrObs);
+                        		break;
+                        	case MC_TRANSITION:
+                        		m = Utils.getUniformMatrix(dotPomdpSpec.nrSta,dotPomdpSpec.nrSta);
+                        		break;
+                        	case MC_TRANSITION_ROW:
+                        		m = Utils.getUniformMatrix(1,dotPomdpSpec.nrSta);
+                        		break;
+                     		case MC_OBSERVATION_ROW:
+                        		m = Utils.getUniformMatrix(1,dotPomdpSpec.nrObs);
+                        		break;
+                        	default:
+                        		err("PARSER: wrong matrix context... umh? (UNIFORMTOK)");
+                        		break;
+                        	}
+                        	
 
                     }
                     break;
                 case 2 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:343:7: RESETTOK
+                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:402:7: RESETTOK
                     {
-                    match(input,RESETTOK,FOLLOW_RESETTOK_in_u_matrix1946); 
+                    match(input,RESETTOK,FOLLOW_RESETTOK_in_u_matrix2024); 
+                    err("PARSER: the reset feature is not supported yet");
 
                     }
                     break;
                 case 3 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:344:7: prob_matrix
+                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:404:7: prob_matrix
                     {
-                    pushFollow(FOLLOW_prob_matrix_in_u_matrix1954);
-                    prob_matrix();
+                    pushFollow(FOLLOW_prob_matrix_in_u_matrix2039);
+                    prob_matrix29=prob_matrix();
                     _fsp--;
 
+                    m = prob_matrix29;
 
                     }
                     break;
@@ -2790,80 +2891,52 @@ public class DotPomdpParser extends Parser {
         }
         finally {
         }
-        return ;
+        return m;
     }
     // $ANTLR end u_matrix
 
 
     // $ANTLR start prob_matrix
-    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:347:1: prob_matrix : ( prob )+ ;
-    public final void prob_matrix() throws RecognitionException {
-        try {
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:348:5: ( ( prob )+ )
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:348:7: ( prob )+
-            {
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:348:7: ( prob )+
-            int cnt15=0;
-            loop15:
-            do {
-                int alt15=2;
-                int LA15_0 = input.LA(1);
+    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:408:1: prob_matrix returns [DenseMatrix m] : ( prob )+ ;
+    public final DenseMatrix prob_matrix() throws RecognitionException {
+        DenseMatrix m = null;
 
-                if ( (LA15_0==INT||LA15_0==FLOAT) ) {
-                    alt15=1;
-                }
-
-
-                switch (alt15) {
-            	case 1 :
-            	    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:348:7: prob
-            	    {
-            	    pushFollow(FOLLOW_prob_in_prob_matrix1975);
-            	    prob();
-            	    _fsp--;
-
-
-            	    }
-            	    break;
-
-            	default :
-            	    if ( cnt15 >= 1 ) break loop15;
-                        EarlyExitException eee =
-                            new EarlyExitException(15, input);
-                        throw eee;
-                }
-                cnt15++;
-            } while (true);
-
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-        }
-        return ;
-    }
-    // $ANTLR end prob_matrix
-
-
-    // $ANTLR start prob_vector
-    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:351:1: prob_vector returns [SparseVector vector] : ( prob )+ ;
-    public final SparseVector prob_vector() throws RecognitionException {
-        SparseVector vector = null;
-
-        double prob20 = 0.0;
+        double prob30 = 0.0;
 
 
         try {
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:352:5: ( ( prob )+ )
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:354:9: ( prob )+
+            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:409:5: ( ( prob )+ )
+            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:410:6: ( prob )+
             {
-            int index = 0; vector = new SparseVector(dotPomdpSpec.nrSta);
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:355:9: ( prob )+
+
+                 int index = 0;
+                 int i_max,j_max;
+                 	switch (matrixContext){
+                	case MC_OBSERVATION:
+                	 	i_max = dotPomdpSpec.nrObs;
+                	 	j_max = dotPomdpSpec.nrSta;
+               			break;
+                	case MC_TRANSITION:
+                	 	i_max = dotPomdpSpec.nrSta;
+                	 	j_max = dotPomdpSpec.nrSta;
+                		break;
+                	case MC_TRANSITION_ROW:
+                	 	i_max = dotPomdpSpec.nrSta;
+                	 	j_max = 1;
+                		break;
+             		case MC_OBSERVATION_ROW:
+             		    i_max = dotPomdpSpec.nrObs;
+                	 	j_max = 1;
+                		break;
+                	default:
+                		err("PARSER: wrong matrix context... umh? (prob_matrix)");
+                		j_max=0;
+                		i_max=0;
+                		break;
+                	}   
+                 m = new DenseMatrix(i_max,j_max);
+                 
+            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:438:9: ( prob )+
             int cnt16=0;
             loop16:
             do {
@@ -2877,15 +2950,14 @@ public class DotPomdpParser extends Parser {
 
                 switch (alt16) {
             	case 1 :
-            	    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:355:10: prob
+            	    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:438:10: prob
             	    {
-            	    pushFollow(FOLLOW_prob_in_prob_vector2027);
-            	    prob20=prob();
+            	    pushFollow(FOLLOW_prob_in_prob_matrix2085);
+            	    prob30=prob();
             	    _fsp--;
 
 
-            	                // action here - the check for 0 actually doesn't matter
-            	                if (prob20 > 0.0) vector.set(index, prob20);
+            	            	if (prob30 > 0.0) m.set(index % i_max,index / i_max,prob30);
             	                index++;
             	            
 
@@ -2911,38 +2983,49 @@ public class DotPomdpParser extends Parser {
         }
         finally {
         }
-        return vector;
+        return m;
     }
-    // $ANTLR end prob_vector
+    // $ANTLR end prob_matrix
 
 
-    // $ANTLR start num_matrix
-    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:364:1: num_matrix : ( number )+ ;
-    public final void num_matrix() throws RecognitionException {
+    // $ANTLR start prob_vector
+    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:446:1: prob_vector returns [SparseVector vector] : ( prob )+ ;
+    public final SparseVector prob_vector() throws RecognitionException {
+        SparseVector vector = null;
+
+        double prob31 = 0.0;
+
+
         try {
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:365:5: ( ( number )+ )
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:365:7: ( number )+
+            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:447:5: ( ( prob )+ )
+            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:449:9: ( prob )+
             {
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:365:7: ( number )+
+            int index = 0; vector = new SparseVector(dotPomdpSpec.nrSta);
+            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:450:9: ( prob )+
             int cnt17=0;
             loop17:
             do {
                 int alt17=2;
                 int LA17_0 = input.LA(1);
 
-                if ( ((LA17_0>=PLUSTOK && LA17_0<=MINUSTOK)||LA17_0==INT||LA17_0==FLOAT) ) {
+                if ( (LA17_0==INT||LA17_0==FLOAT) ) {
                     alt17=1;
                 }
 
 
                 switch (alt17) {
             	case 1 :
-            	    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:365:7: number
+            	    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:450:10: prob
             	    {
-            	    pushFollow(FOLLOW_number_in_num_matrix2071);
-            	    number();
+            	    pushFollow(FOLLOW_prob_in_prob_vector2158);
+            	    prob31=prob();
             	    _fsp--;
 
+
+            	                // action here - the check for 0 actually doesn't matter
+            	                if (prob31 > 0.0) vector.set(index, prob31);
+            	                index++;
+            	            
 
             	    }
             	    break;
@@ -2966,6 +3049,68 @@ public class DotPomdpParser extends Parser {
         }
         finally {
         }
+        return vector;
+    }
+    // $ANTLR end prob_vector
+
+
+    // $ANTLR start num_matrix
+    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:459:1: num_matrix : ( number )+ ;
+    public final void num_matrix() throws RecognitionException {
+        try {
+            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:460:5: ( ( number )+ )
+            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:460:12: ( number )+
+            {
+
+                 int index = 0;
+                 int i_max;
+                 
+            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:464:9: ( number )+
+            int cnt18=0;
+            loop18:
+            do {
+                int alt18=2;
+                int LA18_0 = input.LA(1);
+
+                if ( ((LA18_0>=PLUSTOK && LA18_0<=MINUSTOK)||LA18_0==INT||LA18_0==FLOAT) ) {
+                    alt18=1;
+                }
+
+
+                switch (alt18) {
+            	case 1 :
+            	    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:464:10: number
+            	    {
+            	    pushFollow(FOLLOW_number_in_num_matrix2219);
+            	    number();
+            	    _fsp--;
+
+
+            	                index++;
+            	            
+
+            	    }
+            	    break;
+
+            	default :
+            	    if ( cnt18 >= 1 ) break loop18;
+                        EarlyExitException eee =
+                            new EarlyExitException(18, input);
+                        throw eee;
+                }
+                cnt18++;
+            } while (true);
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+        }
         return ;
     }
     // $ANTLR end num_matrix
@@ -2975,63 +3120,63 @@ public class DotPomdpParser extends Parser {
     };
 
     // $ANTLR start state
-    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:368:1: state returns [ArrayList<Integer> l = new ArrayList<Integer>()] : ( INT | STRING | ASTERICKTOK );
+    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:471:1: state returns [ArrayList<Integer> l = new ArrayList<Integer>()] : ( INT | STRING | ASTERICKTOK );
     public final state_return state() throws RecognitionException {
         state_return retval = new state_return();
         retval.start = input.LT(1);
 
-        Token INT21=null;
-        Token STRING22=null;
+        Token INT32=null;
+        Token STRING33=null;
 
         try {
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:369:5: ( INT | STRING | ASTERICKTOK )
-            int alt18=3;
+            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:472:5: ( INT | STRING | ASTERICKTOK )
+            int alt19=3;
             switch ( input.LA(1) ) {
             case INT:
                 {
-                alt18=1;
+                alt19=1;
                 }
                 break;
             case STRING:
                 {
-                alt18=2;
+                alt19=2;
                 }
                 break;
             case ASTERICKTOK:
                 {
-                alt18=3;
+                alt19=3;
                 }
                 break;
             default:
                 NoViableAltException nvae =
-                    new NoViableAltException("368:1: state returns [ArrayList<Integer> l = new ArrayList<Integer>()] : ( INT | STRING | ASTERICKTOK );", 18, 0, input);
+                    new NoViableAltException("471:1: state returns [ArrayList<Integer> l = new ArrayList<Integer>()] : ( INT | STRING | ASTERICKTOK );", 19, 0, input);
 
                 throw nvae;
             }
 
-            switch (alt18) {
+            switch (alt19) {
                 case 1 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:370:9: INT
+                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:473:9: INT
                     {
-                    INT21=(Token)input.LT(1);
-                    match(input,INT,FOLLOW_INT_in_state2101); 
-                    retval.l.add(Integer.parseInt(INT21.getText()));
+                    INT32=(Token)input.LT(1);
+                    match(input,INT,FOLLOW_INT_in_state2270); 
+                    retval.l.add(Integer.parseInt(INT32.getText()));
 
                     }
                     break;
                 case 2 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:373:9: STRING
+                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:476:9: STRING
                     {
-                    STRING22=(Token)input.LT(1);
-                    match(input,STRING,FOLLOW_STRING_in_state2129); 
-                    retval.l.add(dotPomdpSpec.staList.indexOf(STRING22.getText()));
+                    STRING33=(Token)input.LT(1);
+                    match(input,STRING,FOLLOW_STRING_in_state2298); 
+                    retval.l.add(dotPomdpSpec.staList.indexOf(STRING33.getText()));
 
                     }
                     break;
                 case 3 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:376:9: ASTERICKTOK
+                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:479:9: ASTERICKTOK
                     {
-                    match(input,ASTERICKTOK,FOLLOW_ASTERICKTOK_in_state2156); 
+                    match(input,ASTERICKTOK,FOLLOW_ASTERICKTOK_in_state2325); 
                     for(int s=0; s<dotPomdpSpec.nrSta; s++) retval.l.add(s);
 
                     }
@@ -3053,62 +3198,62 @@ public class DotPomdpParser extends Parser {
 
 
     // $ANTLR start paction
-    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:380:1: paction returns [ArrayList<Integer> l = new ArrayList<Integer>()] : ( INT | STRING | ASTERICKTOK );
+    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:483:1: paction returns [ArrayList<Integer> l = new ArrayList<Integer>()] : ( INT | STRING | ASTERICKTOK );
     public final ArrayList<Integer> paction() throws RecognitionException {
         ArrayList<Integer> l =  new ArrayList<Integer>();
 
-        Token INT23=null;
-        Token STRING24=null;
+        Token INT34=null;
+        Token STRING35=null;
 
         try {
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:381:5: ( INT | STRING | ASTERICKTOK )
-            int alt19=3;
+            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:484:5: ( INT | STRING | ASTERICKTOK )
+            int alt20=3;
             switch ( input.LA(1) ) {
             case INT:
                 {
-                alt19=1;
+                alt20=1;
                 }
                 break;
             case STRING:
                 {
-                alt19=2;
+                alt20=2;
                 }
                 break;
             case ASTERICKTOK:
                 {
-                alt19=3;
+                alt20=3;
                 }
                 break;
             default:
                 NoViableAltException nvae =
-                    new NoViableAltException("380:1: paction returns [ArrayList<Integer> l = new ArrayList<Integer>()] : ( INT | STRING | ASTERICKTOK );", 19, 0, input);
+                    new NoViableAltException("483:1: paction returns [ArrayList<Integer> l = new ArrayList<Integer>()] : ( INT | STRING | ASTERICKTOK );", 20, 0, input);
 
                 throw nvae;
             }
 
-            switch (alt19) {
+            switch (alt20) {
                 case 1 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:382:9: INT
+                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:485:9: INT
                     {
-                    INT23=(Token)input.LT(1);
-                    match(input,INT,FOLLOW_INT_in_paction2198); 
-                    l.add(Integer.parseInt(INT23.getText()));
+                    INT34=(Token)input.LT(1);
+                    match(input,INT,FOLLOW_INT_in_paction2367); 
+                    l.add(Integer.parseInt(INT34.getText()));
 
                     }
                     break;
                 case 2 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:385:9: STRING
+                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:488:9: STRING
                     {
-                    STRING24=(Token)input.LT(1);
-                    match(input,STRING,FOLLOW_STRING_in_paction2226); 
-                    l.add(dotPomdpSpec.actList.indexOf(STRING24.getText()));
+                    STRING35=(Token)input.LT(1);
+                    match(input,STRING,FOLLOW_STRING_in_paction2395); 
+                    l.add(dotPomdpSpec.actList.indexOf(STRING35.getText()));
 
                     }
                     break;
                 case 3 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:388:9: ASTERICKTOK
+                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:491:9: ASTERICKTOK
                     {
-                    match(input,ASTERICKTOK,FOLLOW_ASTERICKTOK_in_paction2253); 
+                    match(input,ASTERICKTOK,FOLLOW_ASTERICKTOK_in_paction2422); 
                     for(int a=0; a<dotPomdpSpec.nrAct; a++) l.add(a);
 
                     }
@@ -3131,63 +3276,63 @@ public class DotPomdpParser extends Parser {
     };
 
     // $ANTLR start obs
-    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:392:1: obs returns [ArrayList<Integer> l = new ArrayList<Integer>()] : ( INT | STRING | ASTERICKTOK );
+    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:495:1: obs returns [ArrayList<Integer> l = new ArrayList<Integer>()] : ( INT | STRING | ASTERICKTOK );
     public final obs_return obs() throws RecognitionException {
         obs_return retval = new obs_return();
         retval.start = input.LT(1);
 
-        Token INT25=null;
-        Token STRING26=null;
+        Token INT36=null;
+        Token STRING37=null;
 
         try {
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:393:5: ( INT | STRING | ASTERICKTOK )
-            int alt20=3;
+            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:496:5: ( INT | STRING | ASTERICKTOK )
+            int alt21=3;
             switch ( input.LA(1) ) {
             case INT:
                 {
-                alt20=1;
+                alt21=1;
                 }
                 break;
             case STRING:
                 {
-                alt20=2;
+                alt21=2;
                 }
                 break;
             case ASTERICKTOK:
                 {
-                alt20=3;
+                alt21=3;
                 }
                 break;
             default:
                 NoViableAltException nvae =
-                    new NoViableAltException("392:1: obs returns [ArrayList<Integer> l = new ArrayList<Integer>()] : ( INT | STRING | ASTERICKTOK );", 20, 0, input);
+                    new NoViableAltException("495:1: obs returns [ArrayList<Integer> l = new ArrayList<Integer>()] : ( INT | STRING | ASTERICKTOK );", 21, 0, input);
 
                 throw nvae;
             }
 
-            switch (alt20) {
+            switch (alt21) {
                 case 1 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:394:9: INT
+                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:497:9: INT
                     {
-                    INT25=(Token)input.LT(1);
-                    match(input,INT,FOLLOW_INT_in_obs2296); 
-                    retval.l.add(Integer.parseInt(INT25.getText()));
+                    INT36=(Token)input.LT(1);
+                    match(input,INT,FOLLOW_INT_in_obs2465); 
+                    retval.l.add(Integer.parseInt(INT36.getText()));
 
                     }
                     break;
                 case 2 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:397:9: STRING
+                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:500:9: STRING
                     {
-                    STRING26=(Token)input.LT(1);
-                    match(input,STRING,FOLLOW_STRING_in_obs2324); 
-                    retval.l.add(dotPomdpSpec.obsList.indexOf(STRING26.getText()));
+                    STRING37=(Token)input.LT(1);
+                    match(input,STRING,FOLLOW_STRING_in_obs2493); 
+                    retval.l.add(dotPomdpSpec.obsList.indexOf(STRING37.getText()));
 
                     }
                     break;
                 case 3 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:400:9: ASTERICKTOK
+                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:503:9: ASTERICKTOK
                     {
-                    match(input,ASTERICKTOK,FOLLOW_ASTERICKTOK_in_obs2351); 
+                    match(input,ASTERICKTOK,FOLLOW_ASTERICKTOK_in_obs2520); 
                     for(int o=0; o<dotPomdpSpec.nrObs; o++) retval.l.add(o);
 
                     }
@@ -3209,47 +3354,47 @@ public class DotPomdpParser extends Parser {
 
 
     // $ANTLR start ident_list
-    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:404:1: ident_list returns [ArrayList<String> list] : ( STRING )+ ;
+    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:507:1: ident_list returns [ArrayList<String> list] : ( STRING )+ ;
     public final ArrayList<String> ident_list() throws RecognitionException {
         ArrayList<String> list = null;
 
-        Token STRING27=null;
+        Token STRING38=null;
 
         try {
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:405:5: ( ( STRING )+ )
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:406:9: ( STRING )+
+            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:508:5: ( ( STRING )+ )
+            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:509:9: ( STRING )+
             {
             list = new ArrayList<String>();
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:407:9: ( STRING )+
-            int cnt21=0;
-            loop21:
+            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:510:9: ( STRING )+
+            int cnt22=0;
+            loop22:
             do {
-                int alt21=2;
-                int LA21_0 = input.LA(1);
+                int alt22=2;
+                int LA22_0 = input.LA(1);
 
-                if ( (LA21_0==STRING) ) {
-                    alt21=1;
+                if ( (LA22_0==STRING) ) {
+                    alt22=1;
                 }
 
 
-                switch (alt21) {
+                switch (alt22) {
             	case 1 :
-            	    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:407:10: STRING
+            	    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:510:10: STRING
             	    {
-            	    STRING27=(Token)input.LT(1);
-            	    match(input,STRING,FOLLOW_STRING_in_ident_list2407); 
-            	    list.add(STRING27.getText());
+            	    STRING38=(Token)input.LT(1);
+            	    match(input,STRING,FOLLOW_STRING_in_ident_list2576); 
+            	    list.add(STRING38.getText());
 
             	    }
             	    break;
 
             	default :
-            	    if ( cnt21 >= 1 ) break loop21;
+            	    if ( cnt22 >= 1 ) break loop22;
                         EarlyExitException eee =
-                            new EarlyExitException(21, input);
+                            new EarlyExitException(22, input);
                         throw eee;
                 }
-                cnt21++;
+                cnt22++;
             } while (true);
 
 
@@ -3268,46 +3413,46 @@ public class DotPomdpParser extends Parser {
 
 
     // $ANTLR start prob
-    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:412:1: prob returns [double p] : ( INT | FLOAT );
+    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:515:1: prob returns [double p] : ( INT | FLOAT );
     public final double prob() throws RecognitionException {
         double p = 0.0;
 
-        Token INT28=null;
-        Token FLOAT29=null;
+        Token INT39=null;
+        Token FLOAT40=null;
 
         try {
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:413:5: ( INT | FLOAT )
-            int alt22=2;
-            int LA22_0 = input.LA(1);
+            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:516:5: ( INT | FLOAT )
+            int alt23=2;
+            int LA23_0 = input.LA(1);
 
-            if ( (LA22_0==INT) ) {
-                alt22=1;
+            if ( (LA23_0==INT) ) {
+                alt23=1;
             }
-            else if ( (LA22_0==FLOAT) ) {
-                alt22=2;
+            else if ( (LA23_0==FLOAT) ) {
+                alt23=2;
             }
             else {
                 NoViableAltException nvae =
-                    new NoViableAltException("412:1: prob returns [double p] : ( INT | FLOAT );", 22, 0, input);
+                    new NoViableAltException("515:1: prob returns [double p] : ( INT | FLOAT );", 23, 0, input);
 
                 throw nvae;
             }
-            switch (alt22) {
+            switch (alt23) {
                 case 1 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:413:7: INT
+                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:516:7: INT
                     {
-                    INT28=(Token)input.LT(1);
-                    match(input,INT,FOLLOW_INT_in_prob2455); 
-                    p = Double.parseDouble(INT28.getText());
+                    INT39=(Token)input.LT(1);
+                    match(input,INT,FOLLOW_INT_in_prob2624); 
+                    p = Double.parseDouble(INT39.getText());
 
                     }
                     break;
                 case 2 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:415:7: FLOAT
+                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:518:7: FLOAT
                     {
-                    FLOAT29=(Token)input.LT(1);
-                    match(input,FLOAT,FOLLOW_FLOAT_in_prob2473); 
-                    p = Double.parseDouble(FLOAT29.getText());
+                    FLOAT40=(Token)input.LT(1);
+                    match(input,FLOAT,FOLLOW_FLOAT_in_prob2642); 
+                    p = Double.parseDouble(FLOAT40.getText());
 
                     }
                     break;
@@ -3326,34 +3471,34 @@ public class DotPomdpParser extends Parser {
 
 
     // $ANTLR start number
-    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:419:1: number returns [double n] : ( optional_sign INT | optional_sign FLOAT );
+    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:522:1: number returns [double n] : ( optional_sign INT | optional_sign FLOAT );
     public final double number() throws RecognitionException {
         double n = 0.0;
 
-        Token INT31=null;
-        Token FLOAT33=null;
-        int optional_sign30 = 0;
+        Token INT42=null;
+        Token FLOAT44=null;
+        int optional_sign41 = 0;
 
-        int optional_sign32 = 0;
+        int optional_sign43 = 0;
 
 
         try {
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:420:5: ( optional_sign INT | optional_sign FLOAT )
-            int alt23=2;
+            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:523:5: ( optional_sign INT | optional_sign FLOAT )
+            int alt24=2;
             switch ( input.LA(1) ) {
             case PLUSTOK:
                 {
-                int LA23_1 = input.LA(2);
+                int LA24_1 = input.LA(2);
 
-                if ( (LA23_1==FLOAT) ) {
-                    alt23=2;
+                if ( (LA24_1==INT) ) {
+                    alt24=1;
                 }
-                else if ( (LA23_1==INT) ) {
-                    alt23=1;
+                else if ( (LA24_1==FLOAT) ) {
+                    alt24=2;
                 }
                 else {
                     NoViableAltException nvae =
-                        new NoViableAltException("419:1: number returns [double n] : ( optional_sign INT | optional_sign FLOAT );", 23, 1, input);
+                        new NoViableAltException("522:1: number returns [double n] : ( optional_sign INT | optional_sign FLOAT );", 24, 1, input);
 
                     throw nvae;
                 }
@@ -3361,17 +3506,17 @@ public class DotPomdpParser extends Parser {
                 break;
             case MINUSTOK:
                 {
-                int LA23_2 = input.LA(2);
+                int LA24_2 = input.LA(2);
 
-                if ( (LA23_2==FLOAT) ) {
-                    alt23=2;
+                if ( (LA24_2==FLOAT) ) {
+                    alt24=2;
                 }
-                else if ( (LA23_2==INT) ) {
-                    alt23=1;
+                else if ( (LA24_2==INT) ) {
+                    alt24=1;
                 }
                 else {
                     NoViableAltException nvae =
-                        new NoViableAltException("419:1: number returns [double n] : ( optional_sign INT | optional_sign FLOAT );", 23, 2, input);
+                        new NoViableAltException("522:1: number returns [double n] : ( optional_sign INT | optional_sign FLOAT );", 24, 2, input);
 
                     throw nvae;
                 }
@@ -3379,45 +3524,45 @@ public class DotPomdpParser extends Parser {
                 break;
             case INT:
                 {
-                alt23=1;
+                alt24=1;
                 }
                 break;
             case FLOAT:
                 {
-                alt23=2;
+                alt24=2;
                 }
                 break;
             default:
                 NoViableAltException nvae =
-                    new NoViableAltException("419:1: number returns [double n] : ( optional_sign INT | optional_sign FLOAT );", 23, 0, input);
+                    new NoViableAltException("522:1: number returns [double n] : ( optional_sign INT | optional_sign FLOAT );", 24, 0, input);
 
                 throw nvae;
             }
 
-            switch (alt23) {
+            switch (alt24) {
                 case 1 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:420:7: optional_sign INT
+                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:523:7: optional_sign INT
                     {
-                    pushFollow(FOLLOW_optional_sign_in_number2516);
-                    optional_sign30=optional_sign();
+                    pushFollow(FOLLOW_optional_sign_in_number2685);
+                    optional_sign41=optional_sign();
                     _fsp--;
 
-                    INT31=(Token)input.LT(1);
-                    match(input,INT,FOLLOW_INT_in_number2518); 
-                    n = optional_sign30 * Double.parseDouble(INT31.getText());
+                    INT42=(Token)input.LT(1);
+                    match(input,INT,FOLLOW_INT_in_number2687); 
+                    n = optional_sign41 * Double.parseDouble(INT42.getText());
 
                     }
                     break;
                 case 2 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:422:7: optional_sign FLOAT
+                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:525:7: optional_sign FLOAT
                     {
-                    pushFollow(FOLLOW_optional_sign_in_number2537);
-                    optional_sign32=optional_sign();
+                    pushFollow(FOLLOW_optional_sign_in_number2706);
+                    optional_sign43=optional_sign();
                     _fsp--;
 
-                    FLOAT33=(Token)input.LT(1);
-                    match(input,FLOAT,FOLLOW_FLOAT_in_number2539); 
-                    n = optional_sign32 * Double.parseDouble(FLOAT33.getText());
+                    FLOAT44=(Token)input.LT(1);
+                    match(input,FLOAT,FOLLOW_FLOAT_in_number2708); 
+                    n = optional_sign43 * Double.parseDouble(FLOAT44.getText());
 
                     }
                     break;
@@ -3436,56 +3581,56 @@ public class DotPomdpParser extends Parser {
 
 
     // $ANTLR start optional_sign
-    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:426:1: optional_sign returns [int s] : ( PLUSTOK | MINUSTOK | );
+    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:529:1: optional_sign returns [int s] : ( PLUSTOK | MINUSTOK | );
     public final int optional_sign() throws RecognitionException {
         int s = 0;
 
         try {
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:427:5: ( PLUSTOK | MINUSTOK | )
-            int alt24=3;
+            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:530:5: ( PLUSTOK | MINUSTOK | )
+            int alt25=3;
             switch ( input.LA(1) ) {
             case PLUSTOK:
                 {
-                alt24=1;
+                alt25=1;
                 }
                 break;
             case MINUSTOK:
                 {
-                alt24=2;
+                alt25=2;
                 }
                 break;
             case INT:
             case FLOAT:
                 {
-                alt24=3;
+                alt25=3;
                 }
                 break;
             default:
                 NoViableAltException nvae =
-                    new NoViableAltException("426:1: optional_sign returns [int s] : ( PLUSTOK | MINUSTOK | );", 24, 0, input);
+                    new NoViableAltException("529:1: optional_sign returns [int s] : ( PLUSTOK | MINUSTOK | );", 25, 0, input);
 
                 throw nvae;
             }
 
-            switch (alt24) {
+            switch (alt25) {
                 case 1 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:427:7: PLUSTOK
+                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:530:7: PLUSTOK
                     {
-                    match(input,PLUSTOK,FOLLOW_PLUSTOK_in_optional_sign2571); 
+                    match(input,PLUSTOK,FOLLOW_PLUSTOK_in_optional_sign2740); 
                     s = 1;
 
                     }
                     break;
                 case 2 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:429:7: MINUSTOK
+                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:532:7: MINUSTOK
                     {
-                    match(input,MINUSTOK,FOLLOW_MINUSTOK_in_optional_sign2589); 
+                    match(input,MINUSTOK,FOLLOW_MINUSTOK_in_optional_sign2758); 
                     s = -1;
 
                     }
                     break;
                 case 3 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:432:9: 
+                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:535:9: 
                     {
                     s = 1;
 
@@ -3507,133 +3652,134 @@ public class DotPomdpParser extends Parser {
 
  
 
-    public static final BitSet FOLLOW_preamble_in_dotPomdp768 = new BitSet(new long[]{0x0000000000010E02L});
-    public static final BitSet FOLLOW_start_state_in_dotPomdp786 = new BitSet(new long[]{0x0000000000000E02L});
-    public static final BitSet FOLLOW_param_list_in_dotPomdp805 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_param_type_in_preamble841 = new BitSet(new long[]{0x00000000000001F2L});
-    public static final BitSet FOLLOW_discount_param_in_param_type873 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_value_param_in_param_type881 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_state_param_in_param_type889 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_action_param_in_param_type897 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_obs_param_in_param_type905 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_DISCOUNTTOK_in_discount_param925 = new BitSet(new long[]{0x0000000000100000L});
-    public static final BitSet FOLLOW_COLONTOK_in_discount_param927 = new BitSet(new long[]{0x0000000008000000L});
-    public static final BitSet FOLLOW_FLOAT_in_discount_param929 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_VALUESTOK_in_value_param959 = new BitSet(new long[]{0x0000000000100000L});
-    public static final BitSet FOLLOW_COLONTOK_in_value_param961 = new BitSet(new long[]{0x000000000000C000L});
-    public static final BitSet FOLLOW_value_tail_in_value_param963 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_set_in_value_tail0 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_STATESTOK_in_state_param1016 = new BitSet(new long[]{0x0000000000100000L});
-    public static final BitSet FOLLOW_COLONTOK_in_state_param1018 = new BitSet(new long[]{0x0000000003000000L});
-    public static final BitSet FOLLOW_state_tail_in_state_param1020 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_INT_in_state_tail1043 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ident_list_in_state_tail1070 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ACTIONSTOK_in_action_param1111 = new BitSet(new long[]{0x0000000000100000L});
-    public static final BitSet FOLLOW_COLONTOK_in_action_param1113 = new BitSet(new long[]{0x0000000003000000L});
-    public static final BitSet FOLLOW_action_tail_in_action_param1115 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_INT_in_action_tail1138 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ident_list_in_action_tail1165 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_OBSERVATIONSTOK_in_obs_param1202 = new BitSet(new long[]{0x0000000000100000L});
-    public static final BitSet FOLLOW_COLONTOK_in_obs_param1204 = new BitSet(new long[]{0x0000000003000000L});
-    public static final BitSet FOLLOW_obs_param_tail_in_obs_param1206 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_INT_in_obs_param_tail1224 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ident_list_in_obs_param_tail1251 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_STARTTOK_in_start_state1292 = new BitSet(new long[]{0x0000000000100000L});
-    public static final BitSet FOLLOW_COLONTOK_in_start_state1294 = new BitSet(new long[]{0x000000000A000000L});
-    public static final BitSet FOLLOW_prob_vector_in_start_state1296 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_STARTTOK_in_start_state1323 = new BitSet(new long[]{0x0000000000100000L});
-    public static final BitSet FOLLOW_COLONTOK_in_start_state1325 = new BitSet(new long[]{0x0000000001000000L});
-    public static final BitSet FOLLOW_STRING_in_start_state1327 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_STARTTOK_in_start_state1345 = new BitSet(new long[]{0x0000000000020000L});
-    public static final BitSet FOLLOW_INCLUDETOK_in_start_state1347 = new BitSet(new long[]{0x0000000000100000L});
-    public static final BitSet FOLLOW_COLONTOK_in_start_state1349 = new BitSet(new long[]{0x0000000003200000L});
-    public static final BitSet FOLLOW_start_state_list_in_start_state1351 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_STARTTOK_in_start_state1370 = new BitSet(new long[]{0x0000000000040000L});
-    public static final BitSet FOLLOW_EXCLUDETOK_in_start_state1372 = new BitSet(new long[]{0x0000000000100000L});
-    public static final BitSet FOLLOW_COLONTOK_in_start_state1374 = new BitSet(new long[]{0x0000000003200000L});
-    public static final BitSet FOLLOW_start_state_list_in_start_state1376 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_state_in_start_state_list1417 = new BitSet(new long[]{0x0000000003200002L});
-    public static final BitSet FOLLOW_param_spec_in_param_list1440 = new BitSet(new long[]{0x0000000000000E02L});
-    public static final BitSet FOLLOW_trans_prob_spec_in_param_spec1463 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_obs_prob_spec_in_param_spec1471 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_reward_spec_in_param_spec1480 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_TTOK_in_trans_prob_spec1502 = new BitSet(new long[]{0x0000000000100000L});
-    public static final BitSet FOLLOW_COLONTOK_in_trans_prob_spec1504 = new BitSet(new long[]{0x0000000003200000L});
-    public static final BitSet FOLLOW_trans_spec_tail_in_trans_prob_spec1506 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_paction_in_trans_spec_tail1528 = new BitSet(new long[]{0x0000000000100000L});
-    public static final BitSet FOLLOW_COLONTOK_in_trans_spec_tail1530 = new BitSet(new long[]{0x0000000003200000L});
-    public static final BitSet FOLLOW_state_in_trans_spec_tail1534 = new BitSet(new long[]{0x0000000000100000L});
-    public static final BitSet FOLLOW_COLONTOK_in_trans_spec_tail1536 = new BitSet(new long[]{0x0000000003200000L});
-    public static final BitSet FOLLOW_state_in_trans_spec_tail1540 = new BitSet(new long[]{0x000000000A000000L});
-    public static final BitSet FOLLOW_prob_in_trans_spec_tail1542 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_paction_in_trans_spec_tail1570 = new BitSet(new long[]{0x0000000000100000L});
-    public static final BitSet FOLLOW_COLONTOK_in_trans_spec_tail1572 = new BitSet(new long[]{0x0000000003200000L});
-    public static final BitSet FOLLOW_state_in_trans_spec_tail1574 = new BitSet(new long[]{0x000000000A081000L});
-    public static final BitSet FOLLOW_u_matrix_in_trans_spec_tail1576 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_paction_in_trans_spec_tail1595 = new BitSet(new long[]{0x000000000A003000L});
-    public static final BitSet FOLLOW_ui_matrix_in_trans_spec_tail1597 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_OTOK_in_obs_prob_spec1635 = new BitSet(new long[]{0x0000000000100000L});
-    public static final BitSet FOLLOW_COLONTOK_in_obs_prob_spec1637 = new BitSet(new long[]{0x0000000003200000L});
-    public static final BitSet FOLLOW_obs_spec_tail_in_obs_prob_spec1639 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_paction_in_obs_spec_tail1658 = new BitSet(new long[]{0x0000000000100000L});
-    public static final BitSet FOLLOW_COLONTOK_in_obs_spec_tail1660 = new BitSet(new long[]{0x0000000003200000L});
-    public static final BitSet FOLLOW_state_in_obs_spec_tail1662 = new BitSet(new long[]{0x0000000000100000L});
-    public static final BitSet FOLLOW_COLONTOK_in_obs_spec_tail1664 = new BitSet(new long[]{0x0000000003200000L});
-    public static final BitSet FOLLOW_obs_in_obs_spec_tail1666 = new BitSet(new long[]{0x000000000A000000L});
-    public static final BitSet FOLLOW_prob_in_obs_spec_tail1668 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_paction_in_obs_spec_tail1695 = new BitSet(new long[]{0x0000000000100000L});
-    public static final BitSet FOLLOW_COLONTOK_in_obs_spec_tail1697 = new BitSet(new long[]{0x0000000003200000L});
-    public static final BitSet FOLLOW_state_in_obs_spec_tail1699 = new BitSet(new long[]{0x000000000A081000L});
-    public static final BitSet FOLLOW_u_matrix_in_obs_spec_tail1701 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_paction_in_obs_spec_tail1719 = new BitSet(new long[]{0x000000000A081000L});
-    public static final BitSet FOLLOW_u_matrix_in_obs_spec_tail1721 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_RTOK_in_reward_spec1752 = new BitSet(new long[]{0x0000000000100000L});
-    public static final BitSet FOLLOW_COLONTOK_in_reward_spec1754 = new BitSet(new long[]{0x0000000003200000L});
-    public static final BitSet FOLLOW_reward_spec_tail_in_reward_spec1756 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_paction_in_reward_spec_tail1774 = new BitSet(new long[]{0x0000000000100000L});
-    public static final BitSet FOLLOW_COLONTOK_in_reward_spec_tail1776 = new BitSet(new long[]{0x0000000003200000L});
-    public static final BitSet FOLLOW_state_in_reward_spec_tail1780 = new BitSet(new long[]{0x0000000000100000L});
-    public static final BitSet FOLLOW_COLONTOK_in_reward_spec_tail1782 = new BitSet(new long[]{0x0000000003200000L});
-    public static final BitSet FOLLOW_state_in_reward_spec_tail1786 = new BitSet(new long[]{0x0000000000100000L});
-    public static final BitSet FOLLOW_COLONTOK_in_reward_spec_tail1788 = new BitSet(new long[]{0x0000000003200000L});
-    public static final BitSet FOLLOW_obs_in_reward_spec_tail1790 = new BitSet(new long[]{0x0000000002C00000L});
-    public static final BitSet FOLLOW_number_in_reward_spec_tail1792 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_paction_in_reward_spec_tail1820 = new BitSet(new long[]{0x0000000000100000L});
-    public static final BitSet FOLLOW_COLONTOK_in_reward_spec_tail1822 = new BitSet(new long[]{0x0000000003200000L});
-    public static final BitSet FOLLOW_state_in_reward_spec_tail1824 = new BitSet(new long[]{0x0000000000100000L});
-    public static final BitSet FOLLOW_COLONTOK_in_reward_spec_tail1826 = new BitSet(new long[]{0x0000000003200000L});
-    public static final BitSet FOLLOW_state_in_reward_spec_tail1828 = new BitSet(new long[]{0x0000000002C00000L});
-    public static final BitSet FOLLOW_num_matrix_in_reward_spec_tail1830 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_paction_in_reward_spec_tail1848 = new BitSet(new long[]{0x0000000000100000L});
-    public static final BitSet FOLLOW_COLONTOK_in_reward_spec_tail1850 = new BitSet(new long[]{0x0000000003200000L});
-    public static final BitSet FOLLOW_state_in_reward_spec_tail1852 = new BitSet(new long[]{0x0000000002C00000L});
-    public static final BitSet FOLLOW_num_matrix_in_reward_spec_tail1854 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_UNIFORMTOK_in_ui_matrix1890 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_IDENTITYTOK_in_ui_matrix1899 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_prob_matrix_in_ui_matrix1918 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_UNIFORMTOK_in_u_matrix1937 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_RESETTOK_in_u_matrix1946 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_prob_matrix_in_u_matrix1954 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_prob_in_prob_matrix1975 = new BitSet(new long[]{0x000000000A000002L});
-    public static final BitSet FOLLOW_prob_in_prob_vector2027 = new BitSet(new long[]{0x000000000A000002L});
-    public static final BitSet FOLLOW_number_in_num_matrix2071 = new BitSet(new long[]{0x0000000002C00002L});
-    public static final BitSet FOLLOW_INT_in_state2101 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_STRING_in_state2129 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ASTERICKTOK_in_state2156 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_INT_in_paction2198 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_STRING_in_paction2226 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ASTERICKTOK_in_paction2253 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_INT_in_obs2296 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_STRING_in_obs2324 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ASTERICKTOK_in_obs2351 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_STRING_in_ident_list2407 = new BitSet(new long[]{0x0000000001000002L});
-    public static final BitSet FOLLOW_INT_in_prob2455 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_FLOAT_in_prob2473 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_optional_sign_in_number2516 = new BitSet(new long[]{0x0000000002000000L});
-    public static final BitSet FOLLOW_INT_in_number2518 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_optional_sign_in_number2537 = new BitSet(new long[]{0x0000000008000000L});
-    public static final BitSet FOLLOW_FLOAT_in_number2539 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_PLUSTOK_in_optional_sign2571 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_MINUSTOK_in_optional_sign2589 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_preamble_in_dotPomdp796 = new BitSet(new long[]{0x0000000000010E02L});
+    public static final BitSet FOLLOW_start_state_in_dotPomdp814 = new BitSet(new long[]{0x0000000000000E02L});
+    public static final BitSet FOLLOW_param_list_in_dotPomdp833 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_param_type_in_preamble869 = new BitSet(new long[]{0x00000000000001F2L});
+    public static final BitSet FOLLOW_discount_param_in_param_type901 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_value_param_in_param_type909 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_state_param_in_param_type917 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_action_param_in_param_type925 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_obs_param_in_param_type933 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_DISCOUNTTOK_in_discount_param953 = new BitSet(new long[]{0x0000000000100000L});
+    public static final BitSet FOLLOW_COLONTOK_in_discount_param955 = new BitSet(new long[]{0x0000000008000000L});
+    public static final BitSet FOLLOW_FLOAT_in_discount_param957 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_VALUESTOK_in_value_param987 = new BitSet(new long[]{0x0000000000100000L});
+    public static final BitSet FOLLOW_COLONTOK_in_value_param989 = new BitSet(new long[]{0x000000000000C000L});
+    public static final BitSet FOLLOW_value_tail_in_value_param991 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_REWARDTOK_in_value_tail1014 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_COSTTOK_in_value_tail1022 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_STATESTOK_in_state_param1055 = new BitSet(new long[]{0x0000000000100000L});
+    public static final BitSet FOLLOW_COLONTOK_in_state_param1057 = new BitSet(new long[]{0x0000000003000000L});
+    public static final BitSet FOLLOW_state_tail_in_state_param1059 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_INT_in_state_tail1082 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ident_list_in_state_tail1109 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ACTIONSTOK_in_action_param1150 = new BitSet(new long[]{0x0000000000100000L});
+    public static final BitSet FOLLOW_COLONTOK_in_action_param1152 = new BitSet(new long[]{0x0000000003000000L});
+    public static final BitSet FOLLOW_action_tail_in_action_param1154 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_INT_in_action_tail1177 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ident_list_in_action_tail1204 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_OBSERVATIONSTOK_in_obs_param1241 = new BitSet(new long[]{0x0000000000100000L});
+    public static final BitSet FOLLOW_COLONTOK_in_obs_param1243 = new BitSet(new long[]{0x0000000003000000L});
+    public static final BitSet FOLLOW_obs_param_tail_in_obs_param1245 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_INT_in_obs_param_tail1263 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ident_list_in_obs_param_tail1290 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_STARTTOK_in_start_state1331 = new BitSet(new long[]{0x0000000000100000L});
+    public static final BitSet FOLLOW_COLONTOK_in_start_state1333 = new BitSet(new long[]{0x000000000A000000L});
+    public static final BitSet FOLLOW_prob_vector_in_start_state1335 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_STARTTOK_in_start_state1362 = new BitSet(new long[]{0x0000000000100000L});
+    public static final BitSet FOLLOW_COLONTOK_in_start_state1364 = new BitSet(new long[]{0x0000000001000000L});
+    public static final BitSet FOLLOW_STRING_in_start_state1366 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_STARTTOK_in_start_state1384 = new BitSet(new long[]{0x0000000000020000L});
+    public static final BitSet FOLLOW_INCLUDETOK_in_start_state1386 = new BitSet(new long[]{0x0000000000100000L});
+    public static final BitSet FOLLOW_COLONTOK_in_start_state1388 = new BitSet(new long[]{0x0000000003200000L});
+    public static final BitSet FOLLOW_start_state_list_in_start_state1390 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_STARTTOK_in_start_state1409 = new BitSet(new long[]{0x0000000000040000L});
+    public static final BitSet FOLLOW_EXCLUDETOK_in_start_state1411 = new BitSet(new long[]{0x0000000000100000L});
+    public static final BitSet FOLLOW_COLONTOK_in_start_state1413 = new BitSet(new long[]{0x0000000003200000L});
+    public static final BitSet FOLLOW_start_state_list_in_start_state1415 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_state_in_start_state_list1463 = new BitSet(new long[]{0x0000000003200002L});
+    public static final BitSet FOLLOW_param_spec_in_param_list1486 = new BitSet(new long[]{0x0000000000000E02L});
+    public static final BitSet FOLLOW_trans_prob_spec_in_param_spec1509 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_obs_prob_spec_in_param_spec1517 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_reward_spec_in_param_spec1526 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_TTOK_in_trans_prob_spec1548 = new BitSet(new long[]{0x0000000000100000L});
+    public static final BitSet FOLLOW_COLONTOK_in_trans_prob_spec1550 = new BitSet(new long[]{0x0000000003200000L});
+    public static final BitSet FOLLOW_trans_spec_tail_in_trans_prob_spec1552 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_paction_in_trans_spec_tail1574 = new BitSet(new long[]{0x0000000000100000L});
+    public static final BitSet FOLLOW_COLONTOK_in_trans_spec_tail1576 = new BitSet(new long[]{0x0000000003200000L});
+    public static final BitSet FOLLOW_state_in_trans_spec_tail1580 = new BitSet(new long[]{0x0000000000100000L});
+    public static final BitSet FOLLOW_COLONTOK_in_trans_spec_tail1582 = new BitSet(new long[]{0x0000000003200000L});
+    public static final BitSet FOLLOW_state_in_trans_spec_tail1586 = new BitSet(new long[]{0x000000000A000000L});
+    public static final BitSet FOLLOW_prob_in_trans_spec_tail1588 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_paction_in_trans_spec_tail1616 = new BitSet(new long[]{0x0000000000100000L});
+    public static final BitSet FOLLOW_COLONTOK_in_trans_spec_tail1618 = new BitSet(new long[]{0x0000000003200000L});
+    public static final BitSet FOLLOW_state_in_trans_spec_tail1620 = new BitSet(new long[]{0x000000000A081000L});
+    public static final BitSet FOLLOW_u_matrix_in_trans_spec_tail1622 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_paction_in_trans_spec_tail1641 = new BitSet(new long[]{0x000000000A003000L});
+    public static final BitSet FOLLOW_ui_matrix_in_trans_spec_tail1643 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_OTOK_in_obs_prob_spec1681 = new BitSet(new long[]{0x0000000000100000L});
+    public static final BitSet FOLLOW_COLONTOK_in_obs_prob_spec1683 = new BitSet(new long[]{0x0000000003200000L});
+    public static final BitSet FOLLOW_obs_spec_tail_in_obs_prob_spec1685 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_paction_in_obs_spec_tail1704 = new BitSet(new long[]{0x0000000000100000L});
+    public static final BitSet FOLLOW_COLONTOK_in_obs_spec_tail1706 = new BitSet(new long[]{0x0000000003200000L});
+    public static final BitSet FOLLOW_state_in_obs_spec_tail1708 = new BitSet(new long[]{0x0000000000100000L});
+    public static final BitSet FOLLOW_COLONTOK_in_obs_spec_tail1710 = new BitSet(new long[]{0x0000000003200000L});
+    public static final BitSet FOLLOW_obs_in_obs_spec_tail1712 = new BitSet(new long[]{0x000000000A000000L});
+    public static final BitSet FOLLOW_prob_in_obs_spec_tail1714 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_paction_in_obs_spec_tail1741 = new BitSet(new long[]{0x0000000000100000L});
+    public static final BitSet FOLLOW_COLONTOK_in_obs_spec_tail1743 = new BitSet(new long[]{0x0000000003200000L});
+    public static final BitSet FOLLOW_state_in_obs_spec_tail1745 = new BitSet(new long[]{0x000000000A081000L});
+    public static final BitSet FOLLOW_u_matrix_in_obs_spec_tail1747 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_paction_in_obs_spec_tail1766 = new BitSet(new long[]{0x000000000A081000L});
+    public static final BitSet FOLLOW_u_matrix_in_obs_spec_tail1768 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_RTOK_in_reward_spec1808 = new BitSet(new long[]{0x0000000000100000L});
+    public static final BitSet FOLLOW_COLONTOK_in_reward_spec1810 = new BitSet(new long[]{0x0000000003200000L});
+    public static final BitSet FOLLOW_reward_spec_tail_in_reward_spec1812 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_paction_in_reward_spec_tail1830 = new BitSet(new long[]{0x0000000000100000L});
+    public static final BitSet FOLLOW_COLONTOK_in_reward_spec_tail1832 = new BitSet(new long[]{0x0000000003200000L});
+    public static final BitSet FOLLOW_state_in_reward_spec_tail1836 = new BitSet(new long[]{0x0000000000100000L});
+    public static final BitSet FOLLOW_COLONTOK_in_reward_spec_tail1838 = new BitSet(new long[]{0x0000000003200000L});
+    public static final BitSet FOLLOW_state_in_reward_spec_tail1842 = new BitSet(new long[]{0x0000000000100000L});
+    public static final BitSet FOLLOW_COLONTOK_in_reward_spec_tail1844 = new BitSet(new long[]{0x0000000003200000L});
+    public static final BitSet FOLLOW_obs_in_reward_spec_tail1846 = new BitSet(new long[]{0x0000000002C00000L});
+    public static final BitSet FOLLOW_number_in_reward_spec_tail1848 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_paction_in_reward_spec_tail1876 = new BitSet(new long[]{0x0000000000100000L});
+    public static final BitSet FOLLOW_COLONTOK_in_reward_spec_tail1878 = new BitSet(new long[]{0x0000000003200000L});
+    public static final BitSet FOLLOW_state_in_reward_spec_tail1880 = new BitSet(new long[]{0x0000000000100000L});
+    public static final BitSet FOLLOW_COLONTOK_in_reward_spec_tail1882 = new BitSet(new long[]{0x0000000003200000L});
+    public static final BitSet FOLLOW_state_in_reward_spec_tail1884 = new BitSet(new long[]{0x0000000002C00000L});
+    public static final BitSet FOLLOW_num_matrix_in_reward_spec_tail1886 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_paction_in_reward_spec_tail1904 = new BitSet(new long[]{0x0000000000100000L});
+    public static final BitSet FOLLOW_COLONTOK_in_reward_spec_tail1906 = new BitSet(new long[]{0x0000000003200000L});
+    public static final BitSet FOLLOW_state_in_reward_spec_tail1908 = new BitSet(new long[]{0x0000000002C00000L});
+    public static final BitSet FOLLOW_num_matrix_in_reward_spec_tail1910 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_UNIFORMTOK_in_ui_matrix1946 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_IDENTITYTOK_in_ui_matrix1962 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_prob_matrix_in_ui_matrix1981 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_UNIFORMTOK_in_u_matrix2009 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_RESETTOK_in_u_matrix2024 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_prob_matrix_in_u_matrix2039 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_prob_in_prob_matrix2085 = new BitSet(new long[]{0x000000000A000002L});
+    public static final BitSet FOLLOW_prob_in_prob_vector2158 = new BitSet(new long[]{0x000000000A000002L});
+    public static final BitSet FOLLOW_number_in_num_matrix2219 = new BitSet(new long[]{0x0000000002C00002L});
+    public static final BitSet FOLLOW_INT_in_state2270 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_STRING_in_state2298 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ASTERICKTOK_in_state2325 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_INT_in_paction2367 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_STRING_in_paction2395 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ASTERICKTOK_in_paction2422 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_INT_in_obs2465 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_STRING_in_obs2493 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ASTERICKTOK_in_obs2520 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_STRING_in_ident_list2576 = new BitSet(new long[]{0x0000000001000002L});
+    public static final BitSet FOLLOW_INT_in_prob2624 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_FLOAT_in_prob2642 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_optional_sign_in_number2685 = new BitSet(new long[]{0x0000000002000000L});
+    public static final BitSet FOLLOW_INT_in_number2687 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_optional_sign_in_number2706 = new BitSet(new long[]{0x0000000008000000L});
+    public static final BitSet FOLLOW_FLOAT_in_number2708 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_PLUSTOK_in_optional_sign2740 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_MINUSTOK_in_optional_sign2758 = new BitSet(new long[]{0x0000000000000002L});
 
 }

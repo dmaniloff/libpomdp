@@ -1,4 +1,4 @@
-// $ANTLR 3.0.1 /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotAlpha.g 2010-10-06 18:38:49
+// $ANTLR 3.0.1 /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotAlpha.g 2010-10-07 15:03:39
 
     package libpomdp.parser.java;
 

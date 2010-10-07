@@ -41,6 +41,14 @@ public class Utils {
 		return (new DenseVector(uni));
     }
     
+    public static DenseMatrix getUniformMatrix(int siz,int siz2){
+    	double[][] uni=new double[siz][siz2];
+    	for(int i=0;i<siz;i++)
+    		for(int j=0;j<siz2;j++)
+    			uni[i][j]=1.0/siz2;
+    	return (new DenseMatrix(uni));
+    }
+    
     /// randomized argmax
     public static int argmax(double v[]) {
 	// declarations
