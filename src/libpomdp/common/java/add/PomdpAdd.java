@@ -18,13 +18,12 @@ package libpomdp.common.java.add;
 import java.util.ArrayList;
 
 import libpomdp.common.java.BeliefState;
+import libpomdp.common.java.CustomMatrix;
+import libpomdp.common.java.CustomVector;
 import libpomdp.common.java.Pomdp;
 import libpomdp.common.java.symbolic.DD;
 import libpomdp.common.java.symbolic.OP;
 import libpomdp.parser.java.ParseSPUDD;
-import no.uib.cipr.matrix.DenseMatrix;
-import no.uib.cipr.matrix.DenseVector;
-import no.uib.cipr.matrix.Vector;
 
 import org.math.array.DoubleArray;
 import org.math.array.IntegerArray;
@@ -156,7 +155,7 @@ public class PomdpAdd implements Pomdp {
      * used to quicky identify zero-prob obs and
      * avoid bulding an or node for those beliefs
      */
-    public Vector sampleObservationProbs(BeliefState bel, int a) {
+    public CustomVector sampleObservationProbs(BeliefState bel, int a) {
 	// obtain subclass and the dd for this belief
 	//DD b = ((belStateAdd)bel).bAdd;
 	// declarations
@@ -174,7 +173,7 @@ public class PomdpAdd implements Pomdp {
 	int[] svars = IntegerArray.merge(staIds, staIdsPr);
 	pObadd      = OP.addMultVarElim(vars, svars);
 	pOba        = OP.convert2array(pObadd, obsIdsPr);
-	return new DenseVector(pOba);
+	return new CustomVector(pOba);
     }
 
     /**
@@ -275,7 +274,7 @@ public class PomdpAdd implements Pomdp {
 
     /// return s x s' matrix with T[a]
     /// to be used by mdp.java
-    public DenseMatrix getTransitionProbs(int a) {
+    public CustomMatrix getTransitionProbs(int a) {
 	int vars[]     = IntegerArray.merge(staIds, staIdsPr);	
 	double T_a_v[] = OP.convert2array(OP.multN(T[a]),vars);
 	//	double T_a[][] = new double[totnrSta][totnrSta];
@@ -289,12 +288,12 @@ public class PomdpAdd implements Pomdp {
 	}
 	// transpose so that we have s' x s and maintain Spaans convention
 	//return DoubleArray.transpose(T_a);
-	return new DenseMatrix(T_a);
+	return new CustomMatrix(T_a);
     }
 
     /// return s' x o matrix with O[a]
     /// this will prob become part of the interface as well...
-    public DenseMatrix getObservationProbs(int a) {
+    public CustomMatrix getObservationProbs(int a) {
 	int vars[]     = IntegerArray.merge(staIdsPr, obsIdsPr);	
 	double O_a_v[] = OP.convert2array(OP.multN(O[a]),vars);
 	//	double O_a[][] = new double[totnrSta][totnrSta];
@@ -307,13 +306,13 @@ public class PomdpAdd implements Pomdp {
 	    }
 	}
 	// return
-	return new DenseMatrix(O_a);
+	return new CustomMatrix(O_a);
     }
     
     /// R(s,a)
-    public Vector getRewardValues(int a) {
+    public CustomVector getRewardValues(int a) {
     	DD R = 	OP.sub(problemAdd.reward, problemAdd.actCosts.get(a));
-    	return new DenseVector(OP.convert2array(R, staIds));
+    	return new CustomVector(OP.convert2array(R, staIds));
     }
 
     /// R(s,a), s given in factored form

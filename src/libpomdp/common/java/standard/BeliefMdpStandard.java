@@ -1,47 +1,45 @@
-package libpomdp.common.java.sparse;
+package libpomdp.common.java.standard;
 
-import no.uib.cipr.matrix.DenseMatrix;
-import no.uib.cipr.matrix.Matrices;
-import no.uib.cipr.matrix.Matrix;
-import no.uib.cipr.matrix.sparse.CompColMatrix;
-import no.uib.cipr.matrix.sparse.SparseVector;
+
 import libpomdp.common.java.BeliefMdp;
 import libpomdp.common.java.BeliefState;
+import libpomdp.common.java.CustomMatrix;
+import libpomdp.common.java.CustomVector;
 import libpomdp.common.java.Pomdp;
 
-public class BeliefMdpSparse implements BeliefMdp {
+public class BeliefMdpStandard implements BeliefMdp {
 
-	PomdpSparse pom;
-	CompColMatrix tau[][];
+	PomdpStandard pom;
+	CustomMatrix tau[][];
 	
-	public BeliefMdpSparse(DenseMatrix O[], 
-		     DenseMatrix T[], 
-		     SparseVector R[],
+	public BeliefMdpStandard(CustomMatrix O[], 
+		     CustomMatrix T[], 
+		     CustomVector R[],
 		     int nrSta, int nrAct, int nrObs, 
 		     double gamma,
+		     String staStr[],
 		     String actStr[],
 		     String obsStr[],
-		     SparseVector init) {
-		this(new PomdpSparse(O, T, R, nrSta, nrAct, nrObs, gamma, actStr, obsStr, init));
+		     CustomVector init) {
+		this(new PomdpStandard(O, T, R, nrSta, nrAct, nrObs, gamma,staStr, actStr, obsStr, init));
 	}
 	
-	public BeliefMdpSparse(PomdpSparse pom) {
+	public BeliefMdpStandard(PomdpStandard pom) {
 		this.pom = pom;
 		init();
 	}
 	
 	private void init(){
-		// TODO: Not Using Sparsity... :(
-		tau=new CompColMatrix[nrObservations()][nrActions()];
+		tau=new CustomMatrix[nrObservations()][nrActions()];
 		for (int a=0;a<nrActions();a++){
-			CompColMatrix tMat=this.getTransitionProbs(a);
-			CompColMatrix oMat=this.getObservationProbs(a);
+			CustomMatrix tMat=this.getTransitionProbs(a);
+			CustomMatrix oMat=this.getObservationProbs(a);
 			for (int o=0;o<nrObservations();o++){
-				DenseMatrix oDiag=new DenseMatrix(nrStates(),nrStates());
+				CustomMatrix oDiag=new CustomMatrix(nrStates(),nrStates());
 				for (int s=0;s<nrStates();s++){
-					Matrices.zeroColumns(oDiag, oMat.get(o,s), s);
+					oDiag.set(s,s,oMat.get(o,s));
 				}
-				tau[o][a]=new CompColMatrix(oDiag.mult(tMat,tau[o][a]));
+				tau[o][a]=oDiag.mult(tMat);
 			}
 		}
 	}
@@ -50,8 +48,8 @@ public class BeliefMdpSparse implements BeliefMdp {
 		return pom;
 	}
 
-	public Matrix getTau(int a, int o) {
-		return(tau[o][a]);
+	public CustomMatrix getTau(int a, int o) {
+		return(tau[o][a].copy());
 	}
 
 	public String getActionString(int a) {
@@ -66,7 +64,7 @@ public class BeliefMdpSparse implements BeliefMdp {
 		return pom.getInitialBelief();
 	}
 
-	public CompColMatrix getObservationProbs(int a) {
+	public CustomMatrix getObservationProbs(int a) {
 		return pom.getObservationProbs(a);
 	}
 
@@ -74,11 +72,11 @@ public class BeliefMdpSparse implements BeliefMdp {
 		return pom.getObservationString(o);
 	}
 
-	public SparseVector getRewardValues(int a) {
+	public CustomVector getRewardValues(int a) {
 		return pom.getRewardValues(a);
 	}
 
-	public CompColMatrix getTransitionProbs(int a) {
+	public CustomMatrix getTransitionProbs(int a) {
 		return pom.getTransitionProbs(a);
 	}
 
@@ -94,7 +92,7 @@ public class BeliefMdpSparse implements BeliefMdp {
 		return pom.nrStates();
 	}
 
-	public SparseVector sampleObservationProbs(BeliefState b, int a) {
+	public CustomVector sampleObservationProbs(BeliefState b, int a) {
 		return pom.sampleObservationProbs(b, a);
 	}
 

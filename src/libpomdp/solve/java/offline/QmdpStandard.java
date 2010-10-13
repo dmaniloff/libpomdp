@@ -13,16 +13,15 @@
 package libpomdp.solve.java.offline;
 
 // imports
-import libpomdp.common.java.dense.PomdpDense;
-import libpomdp.common.java.dense.ValueFunctionDense;
 
-import no.uib.cipr.matrix.Matrices;
+import libpomdp.common.java.standard.PomdpStandard;
+import libpomdp.common.java.standard.ValueFunctionStandard;
 
 import org.math.array.DoubleArray;
 import org.math.array.IntegerArray;
 import org.math.array.LinearAlgebra;
 
-public class QmdpFlat {
+public class QmdpStandard {
     // ------------------------------------------------------------------------
     // properties
     // ------------------------------------------------------------------------
@@ -36,7 +35,7 @@ public class QmdpFlat {
     // ------------------------------------------------------------------------
 
     /// compute Vmdp and Qmdp
-    public ValueFunctionDense getqmdpFlat(PomdpDense problem) {
+    public ValueFunctionStandard getqmdpFlat(PomdpStandard problem) {
 	
 	// Vmdp.v is always 1 x |S|
 	double Vmdpv[][] = new double[1][problem.nrStates()];
@@ -64,9 +63,9 @@ public class QmdpFlat {
 	    for(int a=0; a<problem.nrActions(); a++) {
 		// Qmdp:
 		// Q_a = R(s,a) + \gamma \sum_{s'} {T(s,a,s') Vmdp_{t-1}(s')
-		gTaV = LinearAlgebra.times(LinearAlgebra.times(Matrices.getArray(problem.getTransitionProbs(a)), oldVmdp),
+		gTaV = LinearAlgebra.times(LinearAlgebra.times(problem.getTransitionProbs(a).getArray(), oldVmdp),
 					   problem.getGamma());
-		Qmdpv[a] = LinearAlgebra.plus(Matrices.getArray(problem.getRewardValues(a)), gTaV);
+		Qmdpv[a] = LinearAlgebra.plus(problem.getRewardValues(a).getArray(), gTaV);
 		Qmdpa[a] = a; // remember actions here start from 0!!		
 	    }
 
@@ -82,8 +81,7 @@ public class QmdpFlat {
 	    if (conv <= EPSILON)
 		break;
 	}
-
-	return new ValueFunctionDense(Qmdpv, Qmdpa);
+	return new ValueFunctionStandard(Qmdpv, Qmdpa);
 
     } // getqmdpFlat
 

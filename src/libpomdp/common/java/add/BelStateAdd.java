@@ -10,10 +10,8 @@
 
 package libpomdp.common.java.add;
 
-// imports
-import no.uib.cipr.matrix.DenseVector;
-import no.uib.cipr.matrix.Vector;
 import libpomdp.common.java.BeliefState;
+import libpomdp.common.java.CustomVector;
 import libpomdp.common.java.symbolic.DD;
 import libpomdp.common.java.symbolic.OP;
  
@@ -40,8 +38,8 @@ public class BelStateAdd implements BeliefState {
     }
 
     // compute this only if we actually need it
-    public Vector getPoint() {
-    	return(new DenseVector(OP.convert2array(bAdd, staIds)));
+    public CustomVector getPoint() {
+    	return(new CustomVector(OP.convert2array(bAdd, staIds)));
     }
 
     public double getPoba() {

@@ -9,13 +9,11 @@
 
 package libpomdp.common.java;
 
-import no.uib.cipr.matrix.Matrix;
-import no.uib.cipr.matrix.Vector;
 
 public interface Pomdp {
 
     /// P(o|b,a) in vector form for all o's
-    public Vector sampleObservationProbs(BeliefState b, int a);
+    public CustomVector sampleObservationProbs(BeliefState b, int a);
     
     /// tao(b,a,o)
     public BeliefState sampleNextBelief(BeliefState b, int a, int o);
@@ -25,12 +23,12 @@ public interface Pomdp {
 
     /// T(s,a,s'): s x s' matrix
     /// will generally be used by mdp.java
-    public Matrix getTransitionProbs(int a);
+    public CustomMatrix getTransitionProbs(int a);
 
-    public Matrix getObservationProbs(int a);
+    public CustomMatrix getObservationProbs(int a);
     
     /// R(s,a): 1 x s vector
-    public Vector getRewardValues(int a);
+    public CustomVector getRewardValues(int a);
 
     /// nrSta: total # of states
     public int nrStates();

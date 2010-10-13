@@ -15,15 +15,12 @@ package libpomdp.solve.java.online;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
+import org.math.array.DoubleArray;
+
 import libpomdp.common.java.BeliefState;
 import libpomdp.common.java.Pomdp;
 import libpomdp.common.java.Utils;
 import libpomdp.common.java.ValueFunction;
-
-import no.uib.cipr.matrix.DenseMatrix;
-import no.uib.cipr.matrix.Matrices;
-
-import org.math.array.DoubleArray;
 
 public class AndOrTree {
     
@@ -96,7 +93,7 @@ public class AndOrTree {
 	    for(observation=0; observation<problem.nrObservations(); observation++)
 		a.children[observation] = new orNode();
 	    // pre-compute observation probabilities
-	    pOba = Matrices.getArray(problem.sampleObservationProbs(en.belief, action));
+	    pOba = problem.sampleObservationProbs(en.belief, action).getArray();
 	    // iterate through new fringe nodes
 	    // start observations at zero 
 	    observation = 0;
@@ -399,7 +396,7 @@ public class AndOrTree {
 	// print this node
 	String b = "";
 	b = "b=[\\n " + 
-	    DoubleArray.toString("%.2f",Matrices.getArray(o.belief.getPoint())) + 
+	    DoubleArray.toString("%.2f",o.belief.getPoint().getArray()) + 
 	    "]\\n";
 	out.format(o.hashCode() + "[label=\"" +
 		   //b +

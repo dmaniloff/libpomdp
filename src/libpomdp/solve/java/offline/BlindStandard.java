@@ -12,16 +12,13 @@
 package libpomdp.solve.java.offline;
 
 // imports
-import libpomdp.common.java.dense.PomdpDense;
-import libpomdp.common.java.dense.ValueFunctionDense;
+import libpomdp.common.java.CustomVector;
+import libpomdp.common.java.Utils;
+import libpomdp.common.java.standard.PomdpStandard;
+import libpomdp.common.java.standard.ValueFunctionStandard;
 
-import no.uib.cipr.matrix.Matrices;
 
-import org.math.array.DoubleArray;
-import org.math.array.IntegerArray;
-import org.math.array.LinearAlgebra;
-
-public class BlindDense {
+public class BlindStandard {
     // ------------------------------------------------------------------------
     // properties
     // ------------------------------------------------------------------------
@@ -37,52 +34,47 @@ public class BlindDense {
     // the computation of the blind policy is
     // done here because it seems that the convergence
     // checks should be different
-	private ValueFunctionDense getBlindFlat(PomdpDense problem) {
-	
-	double oldBlind[][];
-	double gTaA[];
-
+	public ValueFunctionStandard getBlindFlat(PomdpStandard problem) {
 	// delta now is a matrix
-	double delta[][], dists[];
 	double conv;
 	
 	// Blind is |A| x |S| - initialize each \alpha^a_{0} to \min_s {R(s,a)/(1-\gamma)}
-	double Blindv[][] = new double[problem.nrActions()][problem.nrStates()];
-	int Blinda[]      = IntegerArray.fill(problem.nrActions(), -1);
-
+	ValueFunctionStandard iniv;
+	ValueFunctionStandard oldv;
+	ValueFunctionStandard newv;
+	iniv= new ValueFunctionStandard(problem.nrStates());
+	
 	for(int a=0; a<problem.nrActions(); a++) {
-	    Blindv[a] = 
-		DoubleArray.fill(problem.nrStates(), 
-				 DoubleArray.min(Matrices.getArray(problem.getRewardValues(a)))/(1.0-problem.getGamma()));
+		CustomVector vr=problem.getRewardValues(a).copy();
+		double factor=1.0/(1.0-problem.getGamma());
+		vr.scale(factor);
+		double varr[]=vr.getArray();
+		int idx=Utils.argmin(varr);
+	    iniv.push(CustomVector.getHomogene(problem.nrStates(),vr.get(idx)),a);
 	}
 
-		      
+	oldv=iniv.copy();
+	newv=iniv.copy();
 	for(int iter=0; iter<MAX_ITER; iter++) {
-	    // copy old values
-	    oldBlind = DoubleArray.copy(Blindv);
+		conv=Double.NEGATIVE_INFINITY;
 	    for(int a=0; a<problem.nrActions(); a++) {
-
-		// Blind:
-		// \alpha_a = R(s,a) + \gamma \sum_{s'} {T(s,a,s') \alpha^a_{t-1}(s')
-		gTaA = LinearAlgebra.times(LinearAlgebra.times(Matrices.getArray(problem.getTransitionProbs(a)), Blindv[a]),
-					   problem.getGamma());
-		Blindv[a]  = LinearAlgebra.plus(Matrices.getArray(problem.getRewardValues(a)), gTaA);
-		Blinda[a]  = a;
-	    }
-	    
-	    // convergence check
-	    delta = LinearAlgebra.minus(Blindv, oldBlind);
-	    delta = LinearAlgebra.raise(delta, 2.0);
-	    dists = DoubleArray.sum(DoubleArray.transpose(delta));
-	    //System.out.println(DoubleArray.toString(delta));
-	    conv  = DoubleArray.max(dists);
+	    	CustomVector vec=newv.getVector(a);
+	    	vec=problem.getTransitionProbs(a).mult(problem.getGamma(),vec);
+	    	vec.add(problem.getRewardValues(a));
+	    	CustomVector perf=oldv.getVector(a).copy();
+	    	perf.add(-1.0,vec);
+	    	double a_value = perf.norm(2.0);
+	    	if (a_value > conv)
+	    		conv=a_value;
+	    } 
 	    System.out.println("Max euclid dist at iteration " + iter + " is: " + conv);
 	    if (conv <= EPSILON)
 		break;
+	    oldv= newv.copy();
 	}
 
 	// build value functions
-	return new ValueFunctionDense(Blindv, Blinda);
+	return newv;
 
     } // getBlindFlat
 

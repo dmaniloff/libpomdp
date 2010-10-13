@@ -26,8 +26,6 @@ import libpomdp.solve.java.online.andNode;
 import libpomdp.solve.java.online.expandHeuristic;
 import libpomdp.solve.java.online.orNode;
 
-import no.uib.cipr.matrix.Matrices;
-
 import org.math.array.DoubleArray;
 import org.math.array.IntegerArray;
 
@@ -43,7 +41,6 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
     /// backup heuristic
     BackupHeuristic bakH;
 
-	@SuppressWarnings("unused")
 	private String be;
 
     /// same constructor with backup heuristic
@@ -92,7 +89,7 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 	    for(observation=0; observation<problem.nrObservations(); observation++)
 		a.children[observation] = new orNode();
 	    // pre-compute observation probabilities
-	    pOba = Matrices.getArray(problem.sampleObservationProbs(en.belief, action));
+	    pOba = (problem.sampleObservationProbs(en.belief, action)).getArray();
 	    // iterate through new fringe nodes
 	    // start observations at zero 
 	    observation = 0;
@@ -345,11 +342,11 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 
     /// print orNode
     private void orprint(orNode o, PrintStream out) {
-	be = "";
-	// print this node
+    	setBe("");
+    	// print this node
 	if (o.belief.getPoint().size() < 4)
-	    be = "b=[" + DoubleArray.toString("%.2f",Matrices.getArray(o.belief.getPoint())) + "]\\n";
-	out.format(o.hashCode() + "[label=\"" +
+	    setBe("b=[" + DoubleArray.toString("%.2f",o.belief.getPoint().getArray()) + "]\\n");
+		out.format(o.hashCode() + "[label=\"" +
 		   //b +
 		   "U(b)= %.2f\\n" +
 		   "L(b)= %.2f\\n" + 
@@ -407,6 +404,14 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 	// recurse
 	for(orNode o : a.children) if(!(o==null)) orprint(o,out);
     }
+
+	public void setBe(String be) {
+		this.be = be;
+	}
+
+	public String getBe() {
+		return be;
+	}
 
 
 } // AndOrTreeUpdateAdd

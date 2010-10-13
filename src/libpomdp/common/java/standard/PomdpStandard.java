@@ -6,7 +6,7 @@
  *              sparse matrices and vectors. This class can be constructed
  *              from a pomdpSpecSparseMTJ object after parsing a .POMDP file.
  *              Sparse matriced by matrix-toolkits-java, 
- *              every matrix will be CompColMatrix:
+ *              every matrix will be CustomMatrix:
  *              
  * S =
  *  (3,1)        1
@@ -23,18 +23,15 @@
  * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
 
-package libpomdp.common.java.sparse;
+package libpomdp.common.java.standard;
 
 // imports
 import libpomdp.common.java.BeliefState;
+import libpomdp.common.java.CustomMatrix;
+import libpomdp.common.java.CustomVector;
 import libpomdp.common.java.Pomdp;
-import no.uib.cipr.matrix.DenseMatrix;
-import no.uib.cipr.matrix.Vector;
-import no.uib.cipr.matrix.VectorEntry;
-import no.uib.cipr.matrix.sparse.CompColMatrix;
-import no.uib.cipr.matrix.sparse.SparseVector;
 
-public class PomdpSparse implements Pomdp {
+public class PomdpStandard implements Pomdp {
 
     // ------------------------------------------------------------------------
     // properties
@@ -50,13 +47,13 @@ public class PomdpSparse implements Pomdp {
     private int nrObs;
 
     // transition model: a x s x s'
-    private CompColMatrix T[];
+    private CustomMatrix T[];
 
     // observation model: a x s' x o
-    private CompColMatrix O[];
+    private CustomMatrix O[];
 
     // reward model: a x s'
-    private SparseVector  R[];
+    private CustomVector  R[];
 
     // discount factor
     private double gamma;
@@ -68,55 +65,59 @@ public class PomdpSparse implements Pomdp {
     private String obsStr[];
 
     // starting belief
-    private BeliefStateSparse initBelief;
+    private BeliefStateStandard initBelief;
+
+	private String staStr[];
 
     // ------------------------------------------------------------------------
     // methods
     // ------------------------------------------------------------------------
 
     /// constructor
-    public PomdpSparse(DenseMatrix  T[], 
-			  DenseMatrix  O[], 
-			  SparseVector R[],
+    public PomdpStandard(CustomMatrix[]  O, 
+			  CustomMatrix[]  T, 
+			  CustomVector[]  R,
 			  int          nrSta, 
 			  int          nrAct, 
 			  int          nrObs, 
 			  double       gamma,
+			  String 	   staStr[],
 			  String       actStr[],
 			  String       obsStr[],
-			  SparseVector init) {
+			  CustomVector init) {
 
 	// allocate space for the pomdp models
 	this.nrSta  = nrSta;
 	this.nrAct  = nrAct;
 	this.nrObs  = nrObs;
-	this.T      = new CompColMatrix[nrAct];
-	this.O      = new CompColMatrix[nrAct];
-	this.R      = R;
+	this.T      = new CustomMatrix[nrAct];
+	this.O      = new CustomMatrix[nrAct];
+	this.R      = new CustomVector[nrAct];
 	this.gamma  = gamma;
+	this.staStr = staStr;
 	this.actStr = actStr;
 	this.obsStr = obsStr;
 
 	// set initial belief state
-	this.initBelief = new BeliefStateSparse(init, 0.0);
+	this.initBelief = new BeliefStateStandard(init, 0.0);
 
 	// copy the model matrices - transform from dense to comprow
 	// do we really need this? dense is in sparse form already...
 	int a;
 	for(a = 0; a < nrAct; a++) {
-	    this.T[a] = new CompColMatrix(T[a]);
-	    this.O[a] = new CompColMatrix(O[a]);	    
+		this.R[a] = new CustomVector(R[a]);
+	    this.T[a] = new CustomMatrix(O[a]);
+	    this.O[a] = new CustomMatrix(T[a]);	    
 	}
     } // constructor
 
     // P(o|b,a) in vector form for all o's
-    // THIS IS NOT MAKING THE RIGHT USE OF SPARSITY
-    public SparseVector sampleObservationProbs(BeliefState b, int a) {
-	SparseVector  b1  = ((BeliefStateSparse)b).bSparse;
-    	SparseVector  Tb  = new SparseVector(nrSta);
-	Tb                = (SparseVector) T[a].mult(b1, Tb);
-    	SparseVector Poba = new SparseVector(nrObs);
-	Poba              = (SparseVector) O[a].transMult(Tb, Poba);
+    public CustomVector sampleObservationProbs(BeliefState b, int a) {
+    	CustomVector  b1  = b.getPoint();
+    	CustomVector  Tb  = new CustomVector(nrSta);
+    	Tb=T[a].mult(b1);
+    	CustomVector Poba = new CustomVector(nrObs);
+		Poba = O[a].transMult(Tb);
     	return Poba;
     }
 
@@ -126,18 +127,17 @@ public class PomdpSparse implements Pomdp {
 	//System.out.println("made it to tao");
 	BeliefState bPrime;
 	// compute T[a]' * b1
-	SparseVector b1   = ((BeliefStateSparse)b).bSparse;
-	SparseVector b2   = new SparseVector(nrSta);
-	b2 = (SparseVector) T[a].transMult(b1, b2);
+	CustomVector b1   = b.getPoint();
+	CustomVector b2   = new CustomVector(nrSta);
+	b2 = T[a].transMult(b1);
 	//System.out.println("Elapsed in tao - T[a] * b1" + (System.currentTimeMillis() - start));
 	
 	// element-wise product with O[a](:,o)
-	for (VectorEntry e : b2)
-	    b2.set(e.index(), e.get() * O[a].get(e.index(),o));
+	b2.elementMult(O[a].getColumn(o));
 	//System.out.println("Elapsed in tao - O[a] .* b2" + (System.currentTimeMillis() - start));
 
 	// compute P(o|b,a) - norm1 is the sum of the absolute values
-	double poba = b2.norm(Vector.Norm.One);
+	double poba = b2.norm(1.0);
 	// make sure we can normalize
 	if (poba < 0.00001) {
 	    //System.err.println("Zero prob observation - resetting to init");
@@ -146,7 +146,7 @@ public class PomdpSparse implements Pomdp {
 	} else {
 	    // safe to normalize now
 	    b2 = b2.scale(1.0/poba);    
-	    bPrime = new BeliefStateSparse(b2, poba);
+	    bPrime = new BeliefStateStandard(b2, poba);
 	}
 	//System.out.println("Elapsed in tao" + (System.currentTimeMillis() - start));
 	// return
@@ -155,18 +155,8 @@ public class PomdpSparse implements Pomdp {
 
     /// R(b,a)
     public double sampleReward(BeliefState bel, int a) {
-	SparseVector b = ((BeliefStateSparse)bel).bSparse;
+	CustomVector b = ((BeliefStateStandard)bel).bSparse;
 	return b.dot(R[a]);
-    }
-
-    // not part of the interface, to replace getT
-    public CompColMatrix getSparseTransition(int a) {
-	return T[a];
-    }
-
-
-    public SparseVector getSparseRho(int a) {
-	return R[a];
     }
 
     public int nrStates() {
@@ -194,19 +184,23 @@ public class PomdpSparse implements Pomdp {
     }
 
     public BeliefState getInitialBelief() {
-	return initBelief;
+	return initBelief.copy();
     }
 
-	public CompColMatrix getObservationProbs(int a) {
-		return O[a];
+	public CustomMatrix getObservationProbs(int a) {
+		return O[a].copy();
 	}
 
-	public SparseVector getRewardValues(int a) {
-		return R[a];
+	public CustomVector getRewardValues(int a) {
+		return R[a].copy();
 	}
 
-	public CompColMatrix getTransitionProbs(int a) {
-		return T[a];
+	public CustomMatrix getTransitionProbs(int a) {
+		return T[a].copy();
+	}
+
+	public String[] getStateString() {
+		return staStr;
 	}
 
 } // pomdpSparseMTJ

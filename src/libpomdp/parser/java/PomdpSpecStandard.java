@@ -15,14 +15,16 @@ package libpomdp.parser.java;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-import no.uib.cipr.matrix.DenseMatrix;
-import no.uib.cipr.matrix.sparse.SparseVector;
+import libpomdp.common.java.CustomMatrix;
+import libpomdp.common.java.CustomVector;
 
-public class PomdpSpecSparse implements Serializable{
+public class PomdpSpecStandard implements Serializable{
 
     // serial id
     static final long serialVersionUID = 1L;
-
+    
+    public boolean compReward;
+    
     // discount factor
     public double discount;
     
@@ -30,33 +32,38 @@ public class PomdpSpecSparse implements Serializable{
     public int nrSta;
     
     // state list in case given as such
-    public ArrayList staList;
+    public ArrayList<String> staList;
     
     // number of actions
     public int nrAct;
     
     // action list in case given as such
-    public ArrayList actList;
+    public ArrayList<String> actList;
     
     // number of observations
     public int nrObs;
     
     // list of observations in case given as such
-    public ArrayList obsList;
+    public ArrayList<String> obsList;
     
     // start state
-    public SparseVector startState;
+    public CustomVector startState;
 
     // transition matrices - a x s x s'
     // T: <action> : <start-state> : <end-state> %f
-    public DenseMatrix T[];
+    public CustomMatrix T[];
 
     // observation matrices - a x s' x o
     // O : <action> : <end-state> : <observation> %f
-    public DenseMatrix O[];
+    public CustomMatrix O[];
 
     // reward vectors - a x s
     // R: <action> : <start-state> : * : * %f
-    public SparseVector R[];
+    public CustomVector R[];
+    
+    public CustomMatrix fullR[][];
+    
+    
+    
 
 }

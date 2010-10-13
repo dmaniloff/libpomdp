@@ -1,5 +1,5 @@
 /** ------------------------------------------------------------------------- *
- * libpomdp
+  * libpomdp
  * ========
  * File: pomdpFlat.java
  * Description: class to represent a pomdp problem specification
@@ -21,6 +21,8 @@ import no.uib.cipr.matrix.DenseMatrix;
 import no.uib.cipr.matrix.DenseVector;
 import no.uib.cipr.matrix.Vector;
 import no.uib.cipr.matrix.VectorEntry;
+import no.uib.cipr.matrix.sparse.CompColMatrix;
+import no.uib.cipr.matrix.sparse.SparseVector;
 
 import org.math.array.DoubleArray;
 
@@ -72,7 +74,7 @@ public class PomdpDense implements Pomdp {
 		     String actStr[],
 		     String obsStr[],
 		     double init[]){
-    	this(new DenseMatrix[nrAct],new DenseMatrix[nrAct],new DenseVector[nrAct],nrSta,nrAct, nrObs,gamma, actStr, obsStr, new DenseVector(init));
+    	this(new CompColMatrix[nrAct],new CompColMatrix[nrAct],new SparseVector[nrAct],nrSta,nrAct, nrObs,gamma, actStr, obsStr, new DenseVector(init));
     	for(int a = 0; a < nrAct; a++) {
     		this.O[a] = new DenseMatrix(DoubleArray.getColumnsRangeCopy(O, a*nrObs, a*nrObs + nrObs-1));
    	    	this.T[a] = new DenseMatrix(DoubleArray.getColumnsRangeCopy(T, a*nrSta, a*nrSta + nrSta-1));
@@ -81,9 +83,9 @@ public class PomdpDense implements Pomdp {
     }
     
     // constructor
-    public PomdpDense(DenseMatrix O[], 
-		     DenseMatrix T[], 
-		     DenseVector R[],
+    public PomdpDense(CompColMatrix O[], 
+		     CompColMatrix T[], 
+		     SparseVector R[],
 		     int nrSta, int nrAct, int nrObs, 
 		     double gamma,
 		     String actStr[],
@@ -93,7 +95,8 @@ public class PomdpDense implements Pomdp {
 	this.nrSta  = nrSta;
 	this.nrAct  = nrAct;
 	this.nrObs  = nrObs;
-	this.O = O;
+	fot 
+	this.O=O;
 	this.T=T;
 	this.R=R;
 	//this.O      = new double [nrAct][nrSta][nrObs];
@@ -107,15 +110,7 @@ public class PomdpDense implements Pomdp {
 	
     }
 
-    // P(o|b,a)
-    // remember here that o's and a's start from zero
-    // public double P_oba(int o, double b[], int a) {
-    // 	double Tb[]   = LinearAlgebra.times(T[a],b);
-    // 	double Poba[] = LinearAlgebra.times(DoubleArray.transpose(O[a]),Tb);
-    // 	return Poba[o];
-    // }
-
-    // P(o|b,a) in vector form for all o's
+	// P(o|b,a) in vector form for all o's
     //public double[] sampleObservationProbs(BeliefState b, int a) {
     //	double Tb[]   = LinearAlgebra.times(T[a],b.getPoint());
     //	double Poba[] = LinearAlgebra.times(DoubleArray.transpose(O[a]),Tb);

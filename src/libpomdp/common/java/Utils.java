@@ -12,13 +12,22 @@ package libpomdp.common.java;
 import java.util.ArrayList;
 import java.util.Random;
 
-import no.uib.cipr.matrix.DenseMatrix;
-import no.uib.cipr.matrix.DenseVector;
-
 import org.math.array.DoubleArray;
 
 public class Utils {
+	
+	
+	public static int[] convertIntegers(ArrayList<Integer> integers)
+	{
+	    int[] ret = new int[integers.size()];
+	    for (int i=0; i < ret.length; i++)
+	    {
+	        ret[i] = integers.get(i).intValue();
+	    }
+	    return ret;
+	}
 
+	
     /// set the gen only once for every instance
     public static Random gen = new Random(System.currentTimeMillis());
 
@@ -32,22 +41,9 @@ public class Utils {
 		return i;
 	return d.length-1;
     }
-		
-    
-    public static DenseVector getUniformDistribution(int siz){
-    	double[] uni=new double[siz];
-    	for(int i=0;i<siz;i++)
-    		uni[i]=1.0/siz;
-		return (new DenseVector(uni));
-    }
-    
-    public static DenseMatrix getUniformMatrix(int siz,int siz2){
-    	double[][] uni=new double[siz][siz2];
-    	for(int i=0;i<siz;i++)
-    		for(int j=0;j<siz2;j++)
-    			uni[i][j]=1.0/siz2;
-    	return (new DenseMatrix(uni));
-    }
+	
+
+   
     
     /// randomized argmax
     public static int argmax(double v[]) {
@@ -86,7 +82,25 @@ public class Utils {
 	//if (repi.size() > 1) System.out.println("will rand, check!!");
 	r = gen.nextInt(repi.size());
 	// return chosen index
-	new DenseMatrix(r, r);
 	return repi.get(r);
     } // argmax2
+
+	public static int argmin(double[] v) {
+		// declarations
+		double minv = Double.POSITIVE_INFINITY;
+		int argmin  = -1;
+		int c;
+		for(c=0; c<v.length; c++) {
+		    if (v[c] < minv) {
+			minv   = v[c];
+			argmin = c;
+		    } 
+		    if (v[c] == minv) {
+			// randomly decide to change index - this will no be uniform!
+			if (gen.nextInt(2) == 0)
+			    argmin = c;
+		    }
+		}
+		return argmin;
+	}
 } // Common

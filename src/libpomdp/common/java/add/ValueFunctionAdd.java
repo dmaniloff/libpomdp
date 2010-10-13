@@ -17,6 +17,7 @@ package libpomdp.common.java.add;
 import java.io.Serializable;
 
 import libpomdp.common.java.BeliefState;
+import libpomdp.common.java.CustomVector;
 import libpomdp.common.java.Utils;
 import libpomdp.common.java.ValueFunction;
 import libpomdp.common.java.symbolic.DD;
@@ -78,13 +79,22 @@ public class ValueFunctionAdd implements ValueFunction, Serializable {
     }
 
     // return flat value function
-    public double[][] getvFlat() {
-	return OP.convert2array(vAdd, staIds);
-    }    
+    //public double[][] getvFlat() {
+	//return OP.convert2array(vAdd, staIds);
+    //}    
 
     // return Add representation of this value function
     public DD[] getvAdd() {
 	return vAdd;
     }
+
+	public CustomVector getVector(int idx) {
+		double[][] val=OP.convert2array(vAdd, staIds);
+		return new CustomVector(val[idx]);
+	}
+
+	public int size() {
+		return a.length;
+	}
 
 } // valueFunctionAdd
