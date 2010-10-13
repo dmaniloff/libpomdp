@@ -24,11 +24,20 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
     // ------------------------------------------------------------------------
 
     /// work with ADD representation of the pomdp
-    pomdpAdd problem;
+    private pomdpAdd problem;
 
     /// backup heuristic
-    backupHeuristic bakH;
+    private backupHeuristic bakH;
+    
+    /// need |A| fringe lists, one per action at the root
+    /// will think about the most efficient structure later
+    //public ArrayList<orNode> fringes[];
 
+    /// fringeSupportLists: |A| x |V^L|
+    /// histograms with counts of beliefs supported by
+    /// vector ids
+    public int fringeSupportLists[][];
+    
     /// same constructor with backup heuristic
     public AndOrTreeUpdateAdd(pomdp prob, 
 			      expandHeuristic h, 
@@ -38,20 +47,35 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 	super(prob, h, L, U);
 	this.problem = (pomdpAdd) super.problem;
 	this.bakH    =  bakh;
+	this.fringeSupportLists = IntegerArray.fill(problem.getnrAct(), offlineLower.getSize(), 0);
+	//this.fringes =  (ArrayList<orNode>[]) new ArrayList[problem.getnrAct()];
     }
 
     /**
      * expand(orNode en):
+     * 
      * one-step expansion of |A||O| orNodes
-     * fully overriden here to access internals and have
+     * fully overridden here to access internals and have
      * more control - allows for greater speed
      */
     public void expand(orNode en){
 	// make sure this node hasn't been expanded before
 	if (en.children != null) { 
-	    System.err.println("node cannot be expanded");
+	    System.err.println("node cannot be expanded, it already has children");
 	    return;
-	}	
+	}
+	
+	// allocate supportList for expanding node
+	// initialize at zero so we can accumulate
+	en.supportList = IntegerArray.fill(offlineLower.getSize(), 0);
+	
+	// in case this is the first expansion after init or a move
+	// initialize the fringes for each action - we may want to do this allocation elsewhere!!
+//	if (en.getdepth() == 0) {
+//	    fringes =   (ArrayList<orNode>[]) new ArrayList[problem.getnrAct()];
+//	    for (int a = 0; a < problem.getnrAct(); a++) fringes[a] = new ArrayList<orNode>();
+//	}
+	
 	// iterators
 	int action, observation;
 	// poba vector for each action
@@ -61,7 +85,7 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 	double old_u = en.u;
 	// allocate space for the children AND nodes (do we have to do this here?)
 	en.children = new andNode[problem.getnrAct()];
-	for(action=0; action<problem.getnrAct(); action++) 
+	for(action = 0; action < problem.getnrAct(); action++) 
 	    en.children[action] = new andNode();
 
 	// iterate through them
@@ -105,6 +129,14 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 		o.hStar = o.h_b;
 		// bStar is a reference to itself since o is a fringe node
 		o.bStar = o;
+		
+		if (en.getdepth() == 0)
+		    // if this is the first expansion, add each of these to the corresponding fringe 
+		    fringeSupportLists[action][o.belief.getplanid()]++; 
+		else	
+		    // fill in values for support list of the expanding node
+		    en.supportList[o.belief.getplanid()]++;
+		
 		// iterate
 		observation++;
 	    } // orNode loop
@@ -121,8 +153,8 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 	    
 	    // the backup candidate and bakheursitic stay as in the
 	    // initialization of the andNode since none of its children
-	    // can be backed-up given that they are all fringe nodes	    
-	    
+	    // can be backed-up given that they are all fringe nodes
+	   
 	    // iterate
 	    action++;
 	}  // andNode loop
@@ -160,13 +192,20 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 
 
     /**
-     * updateAncestors now keeps track of the best
-     * candidate node to backup
+     * updateAncestors:
+     * 
+     * now keeps track of the best candidate node to backup
+     * maintains |A| fringe lists
      */
     public void updateAncestors(orNode n) {
-	andNode a;
-	orNode  o;
-	while(n.hashCode() != this.root.hashCode()) {  
+	// make sure this is not the call after expanding the root
+	if (null == n.children) return;
+	andNode a = null;
+	orNode  o = null;
+	// store ref to the just expanded node
+	orNode orig = n;
+	//while(n.hashCode() != this.root.hashCode()) {
+	while(n.getdepth() != 0) {
 	    // get the AND parent node
 	    a = n.getParent();
 	    // update the andNode that is parent of n
@@ -201,9 +240,28 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 	    // iterate
 	    n = n.getParent().getParent();
 	}
-    } // (overriden) updateAncestors
+	// update the support list of the top action nodes
+	// within a cycle of expansions, these lists always have
+	// matching sizes
+	for (int i = 0; i < offlineLower.getSize(); i++) {
+	    fringeSupportLists[a.getAct()][i] += orig.supportList[i];
+	}
+	
+    } // (overridden) updateAncestors
+    
+    
+    /**
+     * moveTree:
+     * 
+     */
+    public void moveTree(orNode newroot) {
+	this.root = newroot;
+	this.root.disconnect();
+	// reset fringeSupportLists
+	this.fringeSupportLists = IntegerArray.fill(problem.getnrAct(), offlineLower.getSize(), 0);
+    } // (overridden) moveTree  
 
-
+    
     /**
      * backup the lower bound at the root node - not used for now
      */
@@ -223,13 +281,14 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 	// multiply result by discount factor and add it to r_a
 	gab = OP.mult(gamma, gab);
 	gab = OP.add(problem.R[bestA], gab);
-	return OP.convert2array(gab, problem.staIds);
+	return OP.convert2array(gab, problem.getstaIds());
 
     } // backupLowerAtRoot
 
 
     /**
      * backupLowerAtNode:
+     * 
      * backup the lower bound at the given orNode
      * and update the offline lower bound by adding the
      * new alpha vector to the value function representation
@@ -271,7 +330,7 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 	gab = OP.add(problem.R[on.oneStepBestAction], gab);
 	// add newly computed vector to the tree's offline lower bound - NO PRUNING FOR NOW
 	valueFunctionAdd newLB = new valueFunctionAdd(Common.append(lowerBound, gab), 
-				    problem.staIds,
+				    problem.getstaIds(),
 				    IntegerArray.merge(offlineLower.getActions(), 
 						       new int[] {on.oneStepBestAction}));
 	offlineLower = newLB;
