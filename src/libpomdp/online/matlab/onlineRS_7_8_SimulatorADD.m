@@ -9,49 +9,35 @@
 % Copyright (c) 2009, 2010 Diego Maniloff
 % W3: http://www.cs.uic.edu/~dmanilof
 % --------------------------------------------------------------------------- %
+
 %% preparation
-% clear
-clear java
-clear all
+
 % add dynamic classpath
-javaaddpath '../../external/jmatharray.jar'
-javaaddpath '../../external/symPerseusJava'
-javaaddpath '../../general/java'
-javaaddpath '../../problems/rocksample'
-javaaddpath '../../offline/java'
-javaaddpath '../../online/java'
+javaaddpath '../../../../external/jmatharray.jar'
+javaaddpath '../../../../external/symPerseusJava.jar'
+javaaddpath '../../../../dist/libpomdp.jar'
 
-% add to the matlab path
-% addpath     '../../../external/symPerseusMatlab' -end
-% addpath     '../../offline/matlab' -end
+% java imports
+import symPerseusJava.*;
+import libpomdp.general.java.*;
+import libpomdp.online.java.*;
+import libpomdp.offline.java.*;
+import libpomdp.hybrid.java.*;
+import libpomdp.problems.rocksample.*;
 
-%% load problem parameters - factored representation
+%% load problem
 factoredProb = pomdpAdd  ('../../problems/rocksample/7-8/RockSample_7_8.SPUDD');
-% symDD        = parsePOMDP('../../problems/rocksample/7-8/RockSample_7_8.SPUDD');
 
-%% compute offline lower and upper bounds
-% blindCalc = blindAdd;
-% lBound    = blindCalc.getBlindAdd(factoredProb);
-% 
-% % qmdpCalc  = qmdpAdd;
-% % uBound    = qmdpCalc.getqmdpAdd(factoredProb);
-% 
-% % use Poupart's QMDP solver
-% [Vqmdp qmdpP] = solveQMDP(symDD);
-% % uBound        = valueFunction(OP.convert2array(Vqmdp, factoredProb.staIds), qmdpP);
-% uBound        = valueFunctionAdd(Vqmdp, factoredProb.staIds, qmdpP);
-
-%% load them in case we have them saved
-load 'saved-data/rocksample/blindAdd_RockSample_7_8.mat';
-% load 'saved-data/qmdpAdd_RockSample_7_8.mat';
-load 'saved-data/rocksample/qmdpSymPerseus_RockSample_7_8.mat';
+%% load pre-computed offline bounds
+load '../../problems/rocksample/7-8/RockSample_7_8_blind_ADD.mat';
+load '../../problems/rocksample/7-8/RockSample_7_8_qmdp_ADD.mat';
 
 %% create heuristic search AND-OR tree
 % instantiate an aems2 heuristic object
 aems2h  = aems2(factoredProb);
 
 %% play the pomdp
-diary(['simulation-logs/rocksample/marginals/7-8-online-run-AEMS2-',date,'.log']);
+diary(['simulation-logs/rocksample/7-8-online-run-AEMS2-',date,'.log']);
 
 % rocksample parameters for the grapher
 GRID_SIZE         = 7;
@@ -61,10 +47,12 @@ drawer            = rocksampleGraph;
 NUM_ROCKS         = size(ROCK_POSITIONS,1);
 
 % parameters
+EPSILON_ACT_TH    = 1e-3;
 EPISODECOUNT      = 10;
 MAXPLANNINGTIME   = 1.0;
 MAXEPISODELENGTH  = 100;
 TOTALRUNS         = 2^NUM_ROCKS;
+USE_FACTORED_BELIEFS = 1
 
 % stats
 cumR              = [];
@@ -74,6 +62,17 @@ all.avreusedTs    = [];
 all.avexps        = [];
 all.avfoundeopt   = [];
 
+% print general config problem parameters
+fprintf(1, '+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++');
+fprintf(1, 'libpomdp log - config parameters');
+fprintf(1, '--------------------------------');
+fprintf(1, 'TOTALRUNS            = %d\n', TOTALRUNS);
+fprintf(1, 'EPISODECOUNT         = %d\n', EPISODECOUNT);
+fprintf(1, 'MAXEPISODELENGTH     = %d\n', MAXEPISODELENGTH);
+fprintf(1, 'MAXPLANNINGTIME      = %d\n', MAXPLANNINGTIME);
+fprintf(1, 'EPSILON_ACT_TH       = %d\n', EPSILON_ACT_TH);
+fprintf(1, 'USE_FACTORED_BELIEFS = %d\n', USE_FACTORED_BELIEFS);
+fprintf(1, '+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++');
 
 
 for run = 1:TOTALRUNS
@@ -93,14 +92,26 @@ for run = 1:TOTALRUNS
 
         fprintf(1, '********************** EPISODE %d of %d *********************\n', ep, EPISODECOUNT);
         
+        % are we approximating beliefs with the product of marginals?
+        if USE_FACTORED_BELIEFS
+          b_init    = javaArray('symPerseusJava.DD', 1);          
+          b_init(1) = factoredProb.getInit().bAdd;
+          b_init    = BelStateFactoredADD( ...
+              OP.marginals(b_init,factoredProb.getstaIds(),factoredProb.getstaIdsPr()), ...
+              factoredProb.getstaIds());
+        else
+          b_init    = factoredProb.getInit();
+        end
+        
         % re - initialize tree at starting belief
         aoTree = [];
         aoTree = AndOrTree(factoredProb, aems2h, lBound, uBound);
-        aoTree.init(factoredProb.getInit());
+        aoTree.init(b_init);
         rootNode = aoTree.getRoot();
 
         % starting state for this set of EPISODECOUNT episodes
-        factoredS = [factoredProb.staIds' ; 1 + SARTING_POS, 1 + bitget((run-1), NUM_ROCKS:-1:1)];
+        factoredS = [factoredProb.getstaIds()' ; ...
+            1 + SARTING_POS, 1 + bitget((run-1), NUM_ROCKS:-1:1)];
         
         % stats
         cumR = 0;
@@ -116,7 +127,8 @@ for run = 1:TOTALRUNS
             tc = cell(factoredProb.printS(factoredS));
             fprintf(1, 'Current world state is:         %s\n', tc{1});
             drawer.drawState(GRID_SIZE, ROCK_POSITIONS,factoredS);
-            if rootNode.belief.getClass.toString == 'class BelStateFactoredADD'
+            if rootNode.belief.getClass.toString == ...
+                    'class libpomdp.general.java.BelStateFactoredADD'
               fprintf(1, 'Current belief agree prob:      %d\n', ...                       
                       OP.evalN(rootNode.belief.marginals, factoredS));
             else
@@ -140,7 +152,7 @@ for run = 1:TOTALRUNS
                 % check whether we found an e-optimal action - there is another criteria
                 % here too!!
                 %if (abs(rootNode.u-rootNode.l) < 1e-3)
-                if (aoTree.currentBestActionIsOptimal(1e-3))
+                if (aoTree.currentBestActionIsOptimal(EPSILON_ACT_TH))
                     toc
                     fprintf(1, 'Found e-optimal action, aborting expansions\n');
                     fndO = fndO + 1;
@@ -156,9 +168,9 @@ for run = 1:TOTALRUNS
 
             % execute it and receive new o
             restrictedT = OP.restrictN(factoredProb.T(a), factoredS);
-            factoredS1  = OP.sampleMultinomial(restrictedT, factoredProb.staIdsPr);
+            factoredS1  = OP.sampleMultinomial(restrictedT, factoredProb.getstaIdsPr());
             restrictedO = OP.restrictN(factoredProb.O(a), [factoredS, factoredS1]);
-            factoredO   = OP.sampleMultinomial(restrictedO, factoredProb.obsIdsPr);
+            factoredO   = OP.sampleMultinomial(restrictedO, factoredProb.getobsIdsPr());
 
 
             % save stats
@@ -187,9 +199,9 @@ for run = 1:TOTALRUNS
             end
 
             % transform factoredO into absolute o 
-            o = factoredProb.sencode(factoredO(2,:), ...
-                                     factoredProb.getnrObsV(), ...
-                                     factoredProb.getobsArity()); 
+            o = Common.sencode(factoredO(2,:), ...
+                factoredProb.getnrObsV(), ...
+                factoredProb.getobsArity());
             % compute an exact update of the new belief we will move into...this should not matter for RS!
             % bPrime = factoredProb.factoredtao(rootNode.belief,a-1,o-1);
             % move the tree's root node
@@ -227,4 +239,4 @@ for run = 1:TOTALRUNS
 end % runs loop
 
 % save statistics before quitting
-save (['simulation-logs/rocksample/marginals/ALLSTATS-7-8-online-run-AEMS2-',date,'.mat'], 'all');
+save (['simulation-logs/rocksample/ALLSTATS-7-8-online-run-AEMS2-',date,'.mat'], 'all');
