@@ -82,9 +82,11 @@ public class AndOrTree {
 	action = 0;
 	for(andNode a : en.children) {
 	    // initialize this node, precompute Rba
-	    a.init(action, en, problem);
+	    a.init(action, en, problem.Rba(en.belief, action));
 	    // allocate space for the children OR nodes (do we have to do this here?)
+	    // could prob do both these operations as part of init
 	    a.children = new orNode[problem.getnrObs()];
+	    a.subTreeSize = problem.getnrObs();
 	    for(observation=0; observation<problem.getnrObs(); observation++)
 		a.children[observation] = new orNode();
 	    // pre-compute observation probabilities
@@ -164,6 +166,8 @@ public class AndOrTree {
      * update the ancestors of a given orNode
      */
     public void updateAncestors(orNode n) {
+	// make sure this is not the call after expanding the root
+	if (null == n.children) return;
 	andNode a;
 	orNode  o;
 	while(n.hashCode() != this.root.hashCode()) {  
