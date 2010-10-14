@@ -2,7 +2,7 @@
  * libpomdp
  * ========
  * File: Common.java
- * Description: useful general routines
+ * Description: useful general routines - everything in this class is static
  * Copyright (c) 2009, 2010 Diego Maniloff 
  * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
@@ -54,7 +54,7 @@ public class Common {
 
     // arternative, possibly slower, but more uniform
     public static int argmax2(double v[]) {
-	// decls	
+	// declarations	
 	ArrayList<Integer> repi = new ArrayList<Integer>();
 	int a,r;
 	double maxv;
@@ -100,6 +100,55 @@ public class Common {
 	DD[] last = new DD[1];
 	last[0]   = l;
 	return concat(first, last);
+    }
+    
+    /**
+     * sdecode:
+     * 
+     * map an assignment id from
+     * [0, IntegerArray.product(sizes)-1] to an array with
+     * the corresponding joint assignment of each variable
+     * when all entries in sizes are the same, this becomes a
+     * change of base
+     */
+    public static int[] sdecode(int sid, int n, int sizes[]) {
+	// make sure sid is in the right range
+	if (sid < 0 || sid > IntegerArray.product(sizes) - 1) {
+	    System.out.println("Error calling sdecode");
+	    return null;
+	}
+	// calculate joint assignment
+	int q  = sid;
+	int ja[] = IntegerArray.fill(n, 0);
+	for(int i=0; i<n; i++) {
+	    if (q==0) break;
+	    ja[i] = q % sizes[i];
+	    q = q / sizes[i];
+	}
+	// add 1 to each entry to comply with format
+	for(int i=0; i<n; i++) ja[i]++;
+	return ja;
+    }
+
+    /**
+     * sencode:
+     * 
+     * encode state, complement of sdecode
+     * receives factored state starting from 1
+     * and returns factored state in the same form
+     */ 
+    public static int sencode(int fstate[], int n, int sizes[]) {
+	// make sure fstate is in the right range
+	// subtract 1 for format
+	// for(int i=0; i<n; i++) fstate[i]--; // BUG HERE!
+	int s = 0;
+	int f = 1;
+	for(int i=0;i<n;i++) {
+	    s += f * (fstate[i] - 1); // remember that fstate starts from 1
+	    f *= sizes[i];
+	}
+	// back to format from 1
+	return s + 1;
     }
 
 } // Common
