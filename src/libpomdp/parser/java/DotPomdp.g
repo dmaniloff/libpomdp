@@ -77,13 +77,13 @@ tokens {
 	private static final int MC_OBSERVATION = 2;
 	private static final int MC_OBSERVATION_ROW = 3;
     // main structure
-    private PomdpSpecStandard dotPomdpSpec = new PomdpSpecStandard();
+    private PomdpSpecStd dotPomdpSpec = new PomdpSpecStd();
 
     // threshold for sums of distros
     final double THRESHOLD = 1e-5;
 
     // return main structure
-    public PomdpSpecStandard getSpec() {
+    public PomdpSpecStd getSpec() {
         return dotPomdpSpec;
     }
 
@@ -182,6 +182,7 @@ dotPomdp
 					//R[a]=new CustomVector(dotPomdpSpec.nrSta);
 					for (int s=0;s<dotPomdpSpec.nrSta;s++){
 						CustomMatrix prod=new CustomMatrix(dotPomdpSpec.nrSta,dotPomdpSpec.nrSta);
+						//System.out.println("O("+dotPomdpSpec.O[a].numRows()+","+dotPomdpSpec.O[a].numColumns()+") R("+dotPomdpSpec.fullR[a][s].numRows()+","+dotPomdpSpec.fullR[a][s].numColumns()+")");
 						prod=dotPomdpSpec.O[a].transBmult(dotPomdpSpec.fullR[a][s]);
 						double value=0;
 						for (int sp=0;sp<dotPomdpSpec.nrSta;sp++){

@@ -19,9 +19,8 @@ import libpomdp.common.java.BeliefState;
 import libpomdp.common.java.CustomVector;
 import libpomdp.common.java.Utils;
 import libpomdp.common.java.ValueFunction;
-
-import symPerseusJava.DD;
-import symPerseusJava.OP;
+import libpomdp.common.java.add.symbolic.DD;
+import libpomdp.common.java.add.symbolic.OP;
 
 public class ValueFunctionAdd implements ValueFunction, Serializable {
 
@@ -74,11 +73,13 @@ public class ValueFunctionAdd implements ValueFunction, Serializable {
         return dotProds[argmax];
     }
 
+
     @Override
     public CustomVector getVector(int idx) {
         double[][] val=OP.convert2array(vAdd, staIds);
         return new CustomVector(val[idx]);
     }
+
 
     // list of actions associated with each alpha
     @Override
@@ -86,11 +87,28 @@ public class ValueFunctionAdd implements ValueFunction, Serializable {
 	return a;
     }
 
+
     @Override
     public int size() {
-	return a.length;	
+	return a.length;
     }
 
+
+    @Override
+    public CustomVector getVectorRef(int idx) {
+	System.out.println("Warning: getVectorRef is not implemented for ADD representation, passing a copy...");
+	return getVectorCopy(idx);
+    }
+
+
+    @Override
+    public CustomVector getVectorCopy(int idx) {
+	double[][] val=OP.convert2array(vAdd, staIds);
+	return new CustomVector(val[idx]);
+    }
+
+
+    // unused?
     // return flat value function
     public double[][] getvFlat() {
 	return OP.convert2array(vAdd, staIds);
@@ -100,5 +118,6 @@ public class ValueFunctionAdd implements ValueFunction, Serializable {
     public DD[] getvAdd() {
 	return vAdd;
     }
+
 
 } // valueFunctionAdd

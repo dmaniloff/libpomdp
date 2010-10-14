@@ -12,14 +12,16 @@ package libpomdp.common.java;
 
 public interface ValueFunction {
     
-    // value of a belief according to this value function
     public double V(BeliefState b);
 
     public CustomVector getVector(int idx);
 
-    // list of actions associated with each alpha
     public int[] getActions();
 
     public int size();
+    
+    public CustomVector getVectorRef(int idx);
 
+    public CustomVector getVectorCopy(int idx);
+    
 } // ValueFunction

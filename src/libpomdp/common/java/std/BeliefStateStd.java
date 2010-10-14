@@ -7,18 +7,20 @@
  * Copyright (c) 2010 Mauricio Araya  
  --------------------------------------------------------------------------- */
 
-package libpomdp.common.java.standard;
+package libpomdp.common.java.std;
+
+// imports
+import java.io.Serializable;
 
 import libpomdp.common.java.BeliefState;
 import libpomdp.common.java.CustomVector;
 
-public class BeliefStateStandard implements BeliefState {
+public class BeliefStateStd implements BeliefState, Serializable {
+
+    private static final long serialVersionUID = 1232321752664518575L;
 
     // sparse representation of the belief
     public CustomVector bSparse;
-
-    // flat belief point)
-    //  double bPoint[];
 
     // associated P(o|b,a)
     private double poba = -1.0;
@@ -28,7 +30,7 @@ public class BeliefStateStandard implements BeliefState {
 
     // constructor
     // in case this is the initial belief, poba = 0.0
-    public BeliefStateStandard(CustomVector bSparse, double poba) {
+    public BeliefStateStd(CustomVector bSparse, double poba) {
 	this.bSparse = bSparse;
 	this.poba    = poba;
     }
@@ -40,31 +42,37 @@ public class BeliefStateStandard implements BeliefState {
 	return bSparse;
     }
 
+
     @Override
     public double getPoba() {
 	return poba;
     }
+
 
     @Override
     public void setPoba(double poba) {
 	this.poba = poba;
     }
 
+
     @Override
     public int getAlpha() {
 	return planid;
     }
+
 
     @Override
     public void setAlpha(int planid) {
 	this.planid = planid;
     }
 
+
     @Override
     public double getEntropy() {
 	// TODO Auto-generated method stub
 	return 0;
     }
+
 
     public BeliefState copy() {
 	return (new BeliefStateStandard(bSparse,poba));

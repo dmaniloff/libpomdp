@@ -7,7 +7,7 @@
  * Copyright (c) 2010 Mauricio Araya
  --------------------------------------------------------------------------- */
 
-package libpomdp.common.java.standard;
+package libpomdp.common.java.std;
 
 // imports
 import java.io.Serializable;
@@ -19,14 +19,16 @@ import libpomdp.common.java.Utils;
 import libpomdp.common.java.ValueFunction;
 
 
-public class ValueFunctionStandard implements ValueFunction, Serializable {
+public class ValueFunctionStd implements ValueFunction, Serializable {
+    
+    private static final long serialVersionUID = 999938545519704337L;
 
     // ------------------------------------------------------------------------
     // properties
     // ------------------------------------------------------------------------
 
     // serial id
-    static final long serialVersionUID = 4L;
+
 
     // represent a value function via a Matrix object
     private ArrayList <CustomVector> v;
@@ -37,23 +39,23 @@ public class ValueFunctionStandard implements ValueFunction, Serializable {
     private ArrayList <Integer> a;
 
     // constructor
-    public ValueFunctionStandard(int states) {
-	a=new ArrayList<Integer>();
-	v=new ArrayList<CustomVector>();
-	this.states=states;
+    public ValueFunctionStd(int states) {
+    	a=new ArrayList<Integer>();
+    	v=new ArrayList<CustomVector>();
+    	this.states=states;
     }
 
     // ------------------------------------------------------------------------
     // interface methods
     // ------------------------------------------------------------------------
 
-    public ValueFunctionStandard(double[][] v, int[] a) {
-	this(v[0].length);
-	for (int i=0;i<a.length;i++){
-	    push(v[i],a[i]);
-	}
-	// TODO Auto-generated constructor stub
+    public ValueFunctionStd(double[][] v, int[] a) {
+    	this(v[0].length);
+    	for (int i=0;i<a.length;i++){
+    		push(v[i],a[i]);
+    	}
     }
+
 
     // return value of a belief state
     @Override
@@ -75,10 +77,12 @@ public class ValueFunctionStandard implements ValueFunction, Serializable {
         return valmax;
     }
 
+
     @Override
     public CustomVector getVector(int idx) {
         return v.get(idx);
     }
+
 
     // list of actions associated with each alpha
     @Override
@@ -86,14 +90,17 @@ public class ValueFunctionStandard implements ValueFunction, Serializable {
 	return(Utils.convertIntegers(a));
     }
 
+
     @Override
     public int size() {
         return(v.size());
     }
 
+
     public int push(double list[],int a){
 	return push(new CustomVector(list),a);
     }
+
 
     public int push(CustomVector vec, int a) {
 	v.add(vec.copy());
@@ -101,11 +108,23 @@ public class ValueFunctionStandard implements ValueFunction, Serializable {
 	return(v.size()-1);
     }
 
-    public ValueFunctionStandard copy() {
-	ValueFunctionStandard newv=new ValueFunctionStandard(states);
+
+    public CustomVector getVectorRef(int idx) {
+	return v.get(idx);
+    } 
+	
+
+    public ValueFunctionStd copy() {
+	ValueFunctionStd newv=new ValueFunctionStd(states);
 	for (int i=0;i<v.size();i++)
 	    newv.push(v.get(i).copy(),a.get(i).intValue());
 	return newv;
     }
 
-} // ValueFunctionStandard
+
+    public CustomVector getVectorCopy(int idx) {
+	return(getVectorRef(idx).copy());
+    }
+
+
+} // ValueFunctionStd

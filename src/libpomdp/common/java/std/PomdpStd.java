@@ -23,10 +23,12 @@
  * Copyright (c) 2010 Mauricio Araya
  --------------------------------------------------------------------------- */
 
-package libpomdp.common.java.standard;
+package libpomdp.common.java.std;
 
 // imports
 import java.util.ArrayList;
+
+import java.io.Serializable;
 
 import libpomdp.common.java.BeliefState;
 import libpomdp.common.java.CustomMatrix;
@@ -35,7 +37,9 @@ import libpomdp.common.java.Pomdp;
 import libpomdp.parser.java.DotPomdpParserStandard;
 import libpomdp.parser.java.PomdpSpecStandard;
 
-public class PomdpStandard implements Pomdp {
+public class PomdpStd implements Pomdp, Serializable {
+
+    private static final long serialVersionUID = -5511401938934887929L;
 
     // ------------------------------------------------------------------------
     // properties
@@ -69,50 +73,24 @@ public class PomdpStandard implements Pomdp {
     private ArrayList<String> obsStr;
     
     // starting belief
-    private BeliefStateStandard initBelief;
+    private BeliefStateStd initBelief;
 
     // ------------------------------------------------------------------------
     // methods
     // ------------------------------------------------------------------------
 
-    /// constructor - need to integrate file reader....doing this for now.
-
-    public PomdpStandard(String pomdpFilename) {
-
-	// specs of the problem
-	PomdpSpecStandard prob = null;
-
-	// instantiate parser and parse
-	try {
-	    prob =
-		DotPomdpParserStandard.parse(pomdpFilename);
-	} catch (Exception e) {
-	    // TODO Auto-generated catch block
-	    e.printStackTrace();
-	}
-
-	init(prob.T,
-		prob.O,
-		prob.R,
-		prob.nrSta,
-		prob.nrAct,
-		prob.nrObs,
-		prob.discount,
-		prob.actList,
-		prob.obsList,
-		prob.startState);
-    }
-
-    private void init(CustomMatrix[]  T, 
-	    CustomMatrix[]  O, 
-	    CustomVector[]  R,
-	    int          nrSta, 
-	    int          nrAct, 
-	    int          nrObs, 
-	    double       gamma,
-	    ArrayList<String> actStr,
-	    ArrayList<String> obsStr,
-	    CustomVector init) {
+    /// constructor
+    public PomdpStd(CustomMatrix[]  O, 
+			  CustomMatrix[]  T, 
+			  CustomVector[]  R,
+			  int          nrSta, 
+			  int          nrAct, 
+			  int          nrObs, 
+			  double       gamma,
+			  String 	   staStr[],
+			  String       actStr[],
+			  String       obsStr[],
+			  CustomVector init) {
 
 	// allocate space for the pomdp models
 	this.nrSta  = nrSta;
@@ -126,7 +104,7 @@ public class PomdpStandard implements Pomdp {
 	this.obsStr = obsStr;
 
 	// set initial belief state
-	this.initBelief = new BeliefStateStandard(init, 0.0);
+	this.initBelief = new BeliefStateStd(init, 0.0);
 
 	// copy the model matrices 
 	// sneaky one here, i wonder how long this's been like that
@@ -163,7 +141,7 @@ public class PomdpStandard implements Pomdp {
 	} else {
 	    // safe to normalize now
 	    b2 = b2.scale(1.0/poba);    
-	    bPrime = new BeliefStateStandard(b2, poba);
+	    bPrime = new BeliefStateStd(b2, poba);
 	}
 	//System.out.println("Elapsed in tao" + (System.currentTimeMillis() - start));
 	// return
@@ -173,7 +151,7 @@ public class PomdpStandard implements Pomdp {
     /// R(b,a)
     @Override
     public double expectedImmediateReward(BeliefState bel, int a) {
-	CustomVector b = ((BeliefStateStandard)bel).bSparse;
+	CustomVector b = ((BeliefStateStd)bel).bSparse;
 	return b.dot(R[a]);
     }
 
@@ -242,5 +220,5 @@ public class PomdpStandard implements Pomdp {
 //	return staStr.;
 //    }
 
-} // PomdpStandard
+} // PomdpStd
 

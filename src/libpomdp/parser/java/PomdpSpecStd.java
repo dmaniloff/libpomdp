@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import libpomdp.common.java.CustomMatrix;
 import libpomdp.common.java.CustomVector;
 
-public class PomdpSpecStandard implements Serializable{
+public class PomdpSpecStd implements Serializable{
 
     // serial id
     static final long serialVersionUID = 1L;

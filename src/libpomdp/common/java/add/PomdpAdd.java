@@ -21,13 +21,13 @@ import libpomdp.common.java.CustomMatrix;
 import libpomdp.common.java.CustomVector;
 import libpomdp.common.java.Pomdp;
 import libpomdp.common.java.Utils;
+import libpomdp.common.java.add.symbolic.DD;
+import libpomdp.common.java.add.symbolic.OP;
+import libpomdp.parser.java.ParseSPUDD;
 
 import org.math.array.DoubleArray;
 import org.math.array.IntegerArray;
 
-import symPerseusJava.DD;
-import symPerseusJava.OP;
-import symPerseusJava.ParseSPUDD;
 
 public class PomdpAdd implements Pomdp {
     	

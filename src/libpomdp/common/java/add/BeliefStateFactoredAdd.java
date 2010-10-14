@@ -11,8 +11,8 @@ package libpomdp.common.java.add;
 
 import libpomdp.common.java.BeliefState;
 import libpomdp.common.java.CustomVector;
-import symPerseusJava.DD;
-import symPerseusJava.OP;
+import libpomdp.common.java.add.symbolic.DD;
+import libpomdp.common.java.add.symbolic.OP;
 
 public class BeliefStateFactoredAdd implements BeliefState {
     
