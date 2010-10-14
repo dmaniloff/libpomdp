@@ -29,10 +29,10 @@ public class pomdpAdd implements pomdp {
     private int nrStaV;
 
     // id of state variables
-    public int staIds[];
+    private int staIds[];
 
     // id of prime state variables
-    public int staIdsPr[];
+    private int staIdsPr[];
     
     // arity of state variables
     public int staArity[];
@@ -46,8 +46,8 @@ public class pomdpAdd implements pomdp {
     // id of observation variables
     public int obsIds[];
 
-    // of of prime observation variables
-    public int obsIdsPr[];
+    // id of prime observation variables
+    private int obsIdsPr[];
 
     // arity of observation variables
     private int obsArity[];
@@ -160,7 +160,7 @@ public class pomdpAdd implements pomdp {
 	    b1 = ((BelStateFactoredADD)bel).marginals;
 	}
 	// O_a * T_a * b1
-	DD[]  vars  = concat(b1, T[a], O[a]);
+	DD[]  vars  = Common.concat(b1, T[a], O[a]);
 	int[] svars = IntegerArray.merge(staIds, staIdsPr);
 	pObadd      = OP.addMultVarElim(vars, svars);
 	pOba        = OP.convert2array(pObadd, obsIdsPr);
@@ -195,10 +195,10 @@ public class pomdpAdd implements pomdp {
 	DD O_o[];
 	int oc[][];
 	// restrict the prime observation variables to the ones that occurred
-	oc  = IntegerArray.mergeRows(obsIdsPr, sdecode(o, nrObsV, obsArity));
+	oc  = IntegerArray.mergeRows(obsIdsPr, Common.sdecode(o, nrObsV, obsArity));
 	//System.out.println(IntegerArray.toString(oc));
 	O_o = OP.restrictN(O[a], oc); 
-	DD[] vars = concat(b1, T[a], O_o);
+	DD[] vars = Common.concat(b1, T[a], O_o);
     	// compute var elim on O * T * b
 	b2 = OP.addMultVarElim(vars, staIds);
 	// prime the b2 DD 
@@ -233,10 +233,10 @@ public class pomdpAdd implements pomdp {
 	DD       O_o[];
 	int      oc[][];	
 	// restrict the prime observation variables to the ones that occurred
-	oc  = IntegerArray.mergeRows(obsIdsPr, sdecode(o, nrObsV, obsArity));
+	oc  = IntegerArray.mergeRows(obsIdsPr, Common.sdecode(o, nrObsV, obsArity));
 	O_o = OP.restrictN(O[a], oc); 
 	// gather all necessary ADDs for variable elimination
-	DD[] vars = concat(b1, T[a], O_o);
+	DD[] vars = Common.concat(b1, T[a], O_o);
     	// compute var elim on O * T * b
 	b2 = OP.marginals(vars, staIdsPr, staIds);
 	// unprime the b2 DD 
@@ -346,7 +346,7 @@ public class pomdpAdd implements pomdp {
     /// string describing the values each obs var took
     /// the observation starts from 0
     public String getobsStr(int o) {
-        int[] a = sdecode(o, nrObsV, obsArity);
+        int[] a = Common.sdecode(o, nrObsV, obsArity);
 	String v="";
 	int c;
 	for(c=0; c<nrObsV; c++) {
@@ -397,7 +397,7 @@ public class pomdpAdd implements pomdp {
 	int factoredS[][];
 	for (int r=0; r<totnrSta; r++) {
 	    factoredS = IntegerArray.mergeRows(staIds, 
-					       sdecode(r,
+					       Common.sdecode(r,
 						       nrStaV,
 						       staArity));
 	    if (OP.eval(initBelief.bAdd, factoredS) > 0)
@@ -420,12 +420,25 @@ public class pomdpAdd implements pomdp {
 	return nrObsV;
     }
 
+    public int [] getobsIdsPr() {
+	return obsIdsPr;
+    }
+    
+    public int[] getstaIds() {
+	return staIds;
+    }
+    
+    public int[] getstaIdsPr() {
+	return staIdsPr;
+    }
+    
     public int[] getobsArity() {
 	return obsArity;
     }
 
     /// transform a given alpha vector with respect to an a,o pair
     /// g_{a,o}^i = \sum_{s'} O(o,s',a) T(s,a,s') \alpha^i(s')
+    /// might want to move this function to valuefunctionADD?
     public DD gao(DD alpha, int a, int o) {
 	DD gao;
 	DD primedAlpha;
@@ -435,9 +448,9 @@ public class pomdpAdd implements pomdp {
 	// alpha(s')
 	primedAlpha = OP.primeVars(alpha, nrTotV);
 	// restrict the O model to o
-	oc = IntegerArray.mergeRows(obsIdsPr, sdecode(o, nrObsV, obsArity));
+	oc = IntegerArray.mergeRows(obsIdsPr, Common.sdecode(o, nrObsV, obsArity));
 	O_o = OP.restrictN(O[a], oc); 
-	vars = concat(primedAlpha, T[a], O_o);
+	vars = Common.concat(primedAlpha, T[a], O_o);
     	// compute var elim on O * T * \alpha(s')
 	gao = OP.addMultVarElim(vars, staIdsPr);
 	return gao;
@@ -474,71 +487,4 @@ public class pomdpAdd implements pomdp {
 	return v;
     } // printO
 
-    /**
-     * sdecode
-     * map an assignment id from
-     * [0, IntegerArray.product(sizes)-1] to an array with
-     * the corresponding joint assignment of each variable
-     * when all entries in sizes are the same, this becomes a
-     * change of base
-     */
-    public int[] sdecode(int sid, int n, int sizes[]) {
-	// make sure sid is in the right range
-	if (sid < 0 || sid > IntegerArray.product(sizes) - 1) {
-	    System.out.println("Error calling sdecode");
-	    return null;
-	}
-	// calculate joint assignment
-	int q  = sid;
-	int ja[] = IntegerArray.fill(n, 0);
-	for(int i=0; i<n; i++) {
-	    if (q==0) break;
-	    ja[i] = q % sizes[i];
-	    q = q / sizes[i];
-	}
-	// add 1 to each entry to comply with format
-	for(int i=0; i<n; i++) ja[i]++;
-	return ja;
-    }
-
-    /// encode state, complement of sdecode
-    /// receives factored state starting from 1
-    /// and returns factored state in the same form
-    public int sencode(int fstate[], int n, int sizes[]) {
-	// make sure fstate is in the right range
-	// subtract 1 for format
-	// for(int i=0; i<n; i++) fstate[i]--; // BUG HERE!
-	int s = 0;
-	int f = 1;
-	for(int i=0;i<n;i++) {
-	    s += f * (fstate[i] - 1); // remember that fstate starts from 1
-	    f *= sizes[i];
-	}
-	// back to format from 1
-	return s + 1;
-    }
-
-    // concatenate DD arrays - need to replace this with the
-    // routine in Common.java
-    private DD[] concat(DD[] first, DD[]... rest) {
-	int totalLength = first.length;
-	for (DD[] array : rest) totalLength += array.length;	
-	DD[] result = new DD[totalLength];
-	// copy fist array
-	System.arraycopy(first, 0, result, 0, first.length);
-	int offset = first.length;
-	for (DD[] array : rest) {
-	    System.arraycopy(array, 0, result, offset, array.length);
-	    offset += array.length;
-	}
-	return result;
-    }
-
-    // first arg is not an array - IDEM as before
-    private DD[] concat(DD f, DD[]... rest) {
-	DD[] first = new DD[1];
-	first[0]   = f;
-	return concat(first,rest);
-    }
-
-} // addpomdp
+} // pomdpAdd
