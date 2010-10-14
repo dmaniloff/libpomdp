@@ -28,10 +28,6 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 
     /// backup heuristic
     private backupHeuristic bakH;
-    
-    /// need |A| fringe lists, one per action at the root
-    /// will think about the most efficient structure later
-    //public ArrayList<orNode> fringes[];
 
     /// fringeSupportLists: |A| x |V^L|
     /// histograms with counts of beliefs supported by
@@ -48,7 +44,6 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 	this.problem = (pomdpAdd) super.problem;
 	this.bakH    =  bakh;
 	this.fringeSupportLists = IntegerArray.fill(problem.getnrAct(), offlineLower.getSize(), 0);
-	//this.fringes =  (ArrayList<orNode>[]) new ArrayList[problem.getnrAct()];
     }
 
     /**
@@ -69,13 +64,6 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 	// initialize at zero so we can accumulate
 	en.supportList = IntegerArray.fill(offlineLower.getSize(), 0);
 	
-	// in case this is the first expansion after init or a move
-	// initialize the fringes for each action - we may want to do this allocation elsewhere!!
-//	if (en.getdepth() == 0) {
-//	    fringes =   (ArrayList<orNode>[]) new ArrayList[problem.getnrAct()];
-//	    for (int a = 0; a < problem.getnrAct(); a++) fringes[a] = new ArrayList<orNode>();
-//	}
-	
 	// iterators
 	int action, observation;
 	// poba vector for each action
@@ -92,11 +80,13 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 	// start actions at zero here
 	action = 0;
 	for(andNode a : en.children) {
-	    // initialize this node, precompute Rba
-	    a.init(action, en, problem);
+	    // initialize this node, precompute and store Rba
+	    a.init(action, en, problem.Rba(en.belief, action));
 	    // allocate space for the children OR nodes (do we have to do this here?)
+	    // could prob do both these operations as part of init
 	    a.children = new orNode[problem.getnrObs()];
-	    for(observation=0; observation<problem.getnrObs(); observation++)
+	    a.subTreeSize = problem.getnrObs();
+	    for(observation = 0; observation < problem.getnrObs(); observation++)
 		a.children[observation] = new orNode();
 	    // pre-compute observation probabilities
 	    pOba = problem.P_Oba(en.belief, action);
@@ -151,10 +141,13 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 	    // b*(b,a) - propagate ref of b*
 	    a.bStar = a.children[a.oStar].bStar;
 	    
-	    // the backup candidate and bakheursitic stay as in the
+	    // the backup candidate and bakheuristic stay as in the
 	    // initialization of the andNode since none of its children
 	    // can be backed-up given that they are all fringe nodes
-	   
+	    // we only allocate the right amount of space for bakHeuristicStar
+	    a.bakHeuristicStar = new double[offlineLower.getSize()]; // all zeros
+	    a.bakCandidate     = new orNode[offlineLower.getSize()]; // all nulls
+	    
 	    // iterate
 	    action++;
 	}  // andNode loop
@@ -183,12 +176,16 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 	}
 	// one-step best action
 	en.oneStepBestAction = currentBestActionAtNode(en);	
+	
 	// compute backup heuristic for this newly expanded node
 	en.bakHeuristic = bakH.h_b(en); 
 	// the backup candidate is still itself and it has its own value as best
-	en.bakHeuristicStar = en.bakHeuristic;
-	en.bakCandidate     = en;
-    } // (overriden) expand
+	// we can now allocate the right amount of space for the bakheuristics
+	en.bakHeuristicStar = new double[offlineLower.getSize()]; // all zeros
+	en.bakCandidate     = new orNode[offlineLower.getSize()]; // all nulls 
+	en.bakHeuristicStar[en.belief.getplanid()] = en.bakHeuristic;
+	en.bakCandidate[en.belief.getplanid()]     = en;
+    } // (overridden) expand
 
 
     /**
@@ -204,7 +201,7 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 	orNode  o = null;
 	// store ref to the just expanded node
 	orNode orig = n;
-	//while(n.hashCode() != this.root.hashCode()) {
+
 	while(n.getdepth() != 0) {
 	    // get the AND parent node
 	    a = n.getParent();
@@ -218,7 +215,18 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 	    // b*(b,a) - propagate ref of b*
 	    a.bStar = a.children[a.oStar].bStar;
 	    // propagate reference of backup candidate and its H value
-	    a.bakCandidate = bakH.updateBakStar(a, n.getobs());
+	    // but check first, it could be that these andNode' bakheuristic
+	    // elements are null
+//	    if (null == a.bakCandidate) { // if one is null, both should be!
+//		a.bakCandidate     = new orNode[offlineLower.getSize()];
+//		a.bakHeuristicStar = new double[offlineLower.getSize()];
+//	    }
+	    // safe to propagate information now
+	    for (int i = 0; i < offlineLower.getSize(); i++) {
+		a.bakCandidate[i] = bakH.updateBakStar(a, n.getobs(), i);
+	    }
+	    // increase subtree size by the branching factor |A||O|
+	    a.subTreeSize += problem.getnrAct() * problem.getnrObs();
 
 	    // get the OR parent of the parent
 	    o = a.getParent();
@@ -234,7 +242,9 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 	    // update reference to best fringe node in the subtree of en
 	    o.bStar = o.children[o.aStar].bStar;
 	    // update reference of backup candidate and its H value
-	    o.bakCandidate = bakH.updateBakStar(o, a.getAct());
+	    for (int i = 0; i < offlineLower.getSize(); i++) {
+		o.bakCandidate[i] = bakH.updateBakStar(o, a.getAct(), i);
+	    }
 	    // increase subtree size by the branching factor |A||O|
 	    o.subTreeSize += problem.getnrAct() * problem.getnrObs();
 	    // iterate

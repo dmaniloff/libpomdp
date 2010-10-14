@@ -16,12 +16,12 @@ interface backupHeuristic {
 
     public double h_b(orNode o);
 
-    public orNode bakStar(andNode a);
+    //public orNode bakStar(andNode a);
 
-    public double bakHStar(andNode a);
+    //public double bakHStar(andNode a, int i);
 
-    public orNode updateBakStar(andNode a, int o);
+    public orNode updateBakStar(andNode a, int o, int i);
 
-    public orNode updateBakStar(orNode o, int a);
+    public orNode updateBakStar(orNode  o, int a, int i);
     
 } // backupHeuristic

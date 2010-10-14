@@ -61,14 +61,14 @@ public class orNode {
     /// in the subtree of this node
     public orNode bStar; // might wanna change this name to expandCandidate or sth ...
 
-    /// size of the subtree rooted at this node, excluding itself
+    /// # of belief nodes in the subtree rooted at this node, excluding itself
     public int subTreeSize;
 
     /// the parent of an OR node is an AND node
     private andNode parent;
 
     /// the depth relative to orNodes only
-    public int depth = 0;
+    private int depth = 0;
 
     /// AND children nodes indexed by action #
     public andNode children[];
@@ -87,15 +87,21 @@ public class orNode {
     /// backupCandidate \max_{b \in T} b_{backupHeuristic}
     /// reference to the best backup node
     /// according to a given backup heuristic
-    public orNode bakCandidate;
+    /// this is now a list of nodes of size |V|, one per alpha-vector
+    public orNode bakCandidate[];
 
-    /// backup heuristic
+    /// backup heuristic for this node
     public double bakHeuristic;
 
     /// value of the heuristic for the bakCandidate
     /// this is NOT the same as bakCandidate.bakHeuristic
     /// since there may be weighting factors along the path
-    public double bakHeuristicStar;
+    /// this is now a list of nodes of size |V|, one per alpha-vector
+    public double bakHeuristicStar[];
+    
+    /// supportList[i] is the number of beliefs in the subtree of 
+    /// this node that are supported by alpha-vector i
+    public int supportList[];
 
     // ------------------------------------------------------------------------
     // methods
@@ -110,6 +116,7 @@ public class orNode {
 	if (parent != null) 
 	    this.depth         = parent.getParent().depth + 1;
 	this.children          = null;
+	this.supportList       = null;
 	// best reference upon creation is to itself
 	this.bStar             = this;
 	// initialize one-step improvement 
@@ -118,9 +125,9 @@ public class orNode {
 	// initialize one-step best action
 	this.oneStepBestAction = -1;
 	// backup heuristic
-	this.bakCandidate      = this;
+	this.bakCandidate      = null;
 	this.bakHeuristic      = -1;
-	this.bakHeuristicStar  = -1;
+	this.bakHeuristicStar  = null;
 	// size of the subtree rooted here
 	this.subTreeSize  = 0;
     }
@@ -134,6 +141,10 @@ public class orNode {
     public void disconnect() {
 	this.parent = null;
 	this.obs    = -1;
+    }
+    
+    public int getdepth() {
+	return depth;
     }
 
     public int getobs() {

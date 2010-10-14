@@ -9,9 +9,6 @@
 
 package libpomdp.online.java;
 
-// imports
-import libpomdp.general.java.*;
-
 public class andNode {
     
     /// main property is the action the node represents
@@ -47,27 +44,38 @@ public class andNode {
     public orNode children[];
 
     /// best node to backup
-    public orNode bakCandidate;
+    /// this is now a list of nodes of size |V|, one per alpha-vector
+    public orNode bakCandidate[];
 
     /// value of the heuristic for the bakCandidate
     /// this is NOT the same as bakCandidate.bakHeuristic
     /// since there may be weighting factors along the path
-    public double bakHeuristicStar;
+    /// this is now a list of nodes of size |V|, one per alpha-vector
+    public double bakHeuristicStar[];
 
     /// a plan id that is valid (part of the max planes representation)
     /// for one of this andNode's children (any)
     public int validPlanid;
+    
+    /// # of belief nodes in the subtree rooted at this node
+    public int subTreeSize;
+    
+    /// supportList[i] is the number of beliefs in the subtree of 
+    /// this node that are supported by alpha-vector i
+    //public int[] supportList;
+    
 
-    /// initializer:
-    /// needs a reference to problem to call Rba
-    public void init(int action, orNode parent, pomdp problem) {
+    /// initializer
+    public void init(int action, orNode parent, double rba) {
 	this.act              = action;
 	this.parent           = parent;
-	this.rba              = problem.Rba(parent.belief, action);
+	this.rba              = rba;
 	this.bStar            = null;
 	this.bakCandidate     = null;
-	this.bakHeuristicStar = -1;
-	this.validPlanid     = -1;
+	this.bakHeuristicStar = null;
+	this.validPlanid      = -1;
+	this.subTreeSize      = -1;
+	//this.supportList      = null;
 	// might want to include subTreeSize for andNodes too?
     }
 
