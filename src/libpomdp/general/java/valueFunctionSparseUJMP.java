@@ -45,6 +45,10 @@ public class valueFunctionSparseUJMP implements valueFunction, Serializable {
     public int[] getActions() {
 	return a;
     }
+    
+    public int getSize() {
+	return a.length;
+    }
 
     // return value of a belief state
     public double V(belState bel) {
