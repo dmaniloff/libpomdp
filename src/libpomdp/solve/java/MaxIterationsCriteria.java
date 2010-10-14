@@ -1,6 +1,6 @@
 package libpomdp.solve.java;
 
-public class MaxIterationsCriteria extends StopCriteria {
+public class MaxIterationsCriteria extends Criteria {
 
 	int max_iter;
 	

@@ -83,8 +83,6 @@ public class ValueFunctionStd implements ValueFunction, Serializable {
         return v.get(idx);
     }
 
-
-    // list of actions associated with each alpha
     @Override
     public int[] getActions() {
 	return(Utils.convertIntegers(a));
@@ -127,4 +125,20 @@ public class ValueFunctionStd implements ValueFunction, Serializable {
     }
 
 
+    public String toString(){
+    	String retval="Value Function\n";
+    	for (int i=0;i<size();i++){
+    		retval+="v"+i+"\t[";
+    		CustomVector v=getVectorRef(i);
+    		for (int j=0;j<v.size();j++){
+    			retval+=v.get(j)+" ";
+    		}
+    		retval+="]\n";
+    	}
+    	return retval;
+    }
+
+
 } // ValueFunctionStd
+	
+

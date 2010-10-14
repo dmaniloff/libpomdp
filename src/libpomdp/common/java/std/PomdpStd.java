@@ -107,7 +107,6 @@ public class PomdpStd implements Pomdp, Serializable {
 	this.initBelief = new BeliefStateStd(init, 0.0);
 
 	// copy the model matrices 
-	// sneaky one here, i wonder how long this's been like that
 	for(int a = 0; a < nrAct; a++) {
 	    this.T[a] = new CustomMatrix(T[a]);
 	    this.O[a] = new CustomMatrix(O[a]);

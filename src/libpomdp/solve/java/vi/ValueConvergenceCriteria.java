@@ -3,9 +3,9 @@ package libpomdp.solve.java.vi;
 import libpomdp.common.java.CustomVector;
 import libpomdp.common.java.ValueFunction;
 import libpomdp.solve.java.Iteration;
-import libpomdp.solve.java.StopCriteria;
+import libpomdp.solve.java.Criteria;
 
-public class ValueConvergenceCriteria extends StopCriteria {
+public class ValueConvergenceCriteria extends Criteria {
 
 	double epsilon;
 	int convCriteria;
@@ -53,6 +53,6 @@ public class ValueConvergenceCriteria extends StopCriteria {
 		this.convCriteria=convCriteria;
 	}
 	
-	public static final int CC_MAXEUCLID=1;
+
 
 }
