@@ -117,8 +117,8 @@ public class PomdpStd implements Pomdp, Serializable {
 	int a;
 	for(a = 0; a < nrAct; a++) {
 		this.R[a] = new CustomVector(R[a]);
-	    this.T[a] = new CustomMatrix(O[a]);
-	    this.O[a] = new CustomMatrix(T[a]);	    
+	    this.T[a] = new CustomMatrix(T[a]);
+	    this.O[a] = new CustomMatrix(O[a]);	    
 	}
     } // constructor
 

@@ -112,5 +112,19 @@ public class ValueFunctionStd implements ValueFunction, Serializable {
 	public CustomVector getVectorCopy(int idx) {
 		return(getVectorRef(idx).copy());
 	}
-
+	
+    public String toString(){
+    	String retval="Value Function\n";
+    	for (int i=0;i<size();i++){
+    		retval+="v"+i+"\t[";
+    		CustomVector v=getVectorRef(i);
+    		for (int j=0;j<v.size();j++){
+    			retval+=v.get(j)+" ";
+    		}
+    		retval+="]\n";
+    	}
+    	return retval;
+    }
+    
+    
 } // valueFunctionSparseMTJ

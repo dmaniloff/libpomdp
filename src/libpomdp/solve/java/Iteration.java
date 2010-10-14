@@ -8,7 +8,7 @@ public abstract class Iteration {
 
 	protected Pomdp pomdp;
 	protected IterationStats iterationStats;
-	protected ArrayList<StopCriteria> stopCriterias; 
+	protected ArrayList<Criteria> stopCriterias; 
 
 	public abstract IterationStats iterate();
 
@@ -20,14 +20,14 @@ public abstract class Iteration {
 	}
 
 	public boolean finished() {
-		for (StopCriteria sc:stopCriterias){
+		for (Criteria sc:stopCriterias){
 			if (sc.check(this))
 				return true;
 		}
 		return false;
 	}
 	
-	public void addStopCriteria(StopCriteria sc) {
+	public void addStopCriteria(Criteria sc) {
 		if (sc.valid(this))
 			stopCriterias.add(sc);
 	}
