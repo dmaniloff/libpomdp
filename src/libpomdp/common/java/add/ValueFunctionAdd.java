@@ -20,8 +20,8 @@ import libpomdp.common.java.BeliefState;
 import libpomdp.common.java.CustomVector;
 import libpomdp.common.java.Utils;
 import libpomdp.common.java.ValueFunction;
-import libpomdp.common.java.symbolic.DD;
-import libpomdp.common.java.symbolic.OP;
+import libpomdp.common.java.add.symbolic.DD;
+import libpomdp.common.java.add.symbolic.OP;
 
 public class ValueFunctionAdd implements ValueFunction, Serializable {
     
@@ -58,7 +58,7 @@ public class ValueFunctionAdd implements ValueFunction, Serializable {
     }
 
     // return value of a belief state
-    public double V(BeliefState bel) {
+    public double value(BeliefState bel) {
 	// declarations
 	DD     b;
 	DD     m[];
@@ -88,13 +88,18 @@ public class ValueFunctionAdd implements ValueFunction, Serializable {
 	return vAdd;
     }
 
-	public CustomVector getVector(int idx) {
+	public CustomVector getVectorCopy(int idx) {
 		double[][] val=OP.convert2array(vAdd, staIds);
 		return new CustomVector(val[idx]);
 	}
 
 	public int size() {
 		return a.length;
+	}
+
+	public CustomVector getVectorRef(int idx) {
+		System.out.println("Warning: getVectorRef is not implemented for ADD representation, passing a copy...");
+		return getVectorCopy(idx);
 	}
 
 } // valueFunctionAdd

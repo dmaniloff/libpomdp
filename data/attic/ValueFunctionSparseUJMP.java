@@ -7,7 +7,7 @@
  * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
 
-package libpomdp.common.java.standard;
+package libpomdp.common.java.std;
 
 // imports
 import java.io.Serializable;

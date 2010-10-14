@@ -12,8 +12,8 @@ package libpomdp.common.java.add;
 
 import libpomdp.common.java.BeliefState;
 import libpomdp.common.java.CustomVector;
-import libpomdp.common.java.symbolic.DD;
-import libpomdp.common.java.symbolic.OP;
+import libpomdp.common.java.add.symbolic.DD;
+import libpomdp.common.java.add.symbolic.OP;
  
 public class BelStateAdd implements BeliefState {
     

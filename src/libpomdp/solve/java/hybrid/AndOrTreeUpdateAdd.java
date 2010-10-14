@@ -18,9 +18,9 @@ import libpomdp.common.java.Pomdp;
 import libpomdp.common.java.ValueFunction;
 import libpomdp.common.java.add.PomdpAdd;
 import libpomdp.common.java.add.ValueFunctionAdd;
-import libpomdp.common.java.symbolic.DD;
-import libpomdp.common.java.symbolic.DDleaf;
-import libpomdp.common.java.symbolic.OP;
+import libpomdp.common.java.add.symbolic.DD;
+import libpomdp.common.java.add.symbolic.DDleaf;
+import libpomdp.common.java.add.symbolic.OP;
 import libpomdp.solve.java.online.AndOrTree;
 import libpomdp.solve.java.online.andNode;
 import libpomdp.solve.java.online.expandHeuristic;
@@ -106,8 +106,8 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 		o.init(problem.sampleNextBelief(en.belief,action,observation), observation, a);
 		o.belief.setPoba(pOba[observation]);		
 		// compute upper and lower bounds for this node
-		o.u = offlineUpper.V(o.belief);		
-		o.l = offlineLower.V(o.belief);
+		o.u = offlineUpper.value(o.belief);		
+		o.l = offlineLower.value(o.belief);
 		// save one valid plan id for this andNode
 		// may be saved multiple times, but it's ok
 		a.validPlanid = o.belief.getAlpha();

@@ -47,6 +47,11 @@
     </java>
   </target>
 
+  <target name="BPVItest">
+    <java classname="libpomdp.test.BPVItest" classpathref="classpath">
+    </java>
+  </target>
+
   
   <target name="compile" depends="init"
 	  description="compile the source " >

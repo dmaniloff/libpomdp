@@ -1,10 +1,38 @@
 package libpomdp.common.java;
 
+import java.io.Serializable;
+
 import no.uib.cipr.matrix.Matrices;
+import no.uib.cipr.matrix.Matrix;
 import no.uib.cipr.matrix.sparse.FlexCompColMatrix;
 import no.uib.cipr.matrix.sparse.SparseVector;
 
-public class CustomMatrix {
+public class CustomMatrix implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2570778734441488861L;
+
+	public int numColumns() {
+		return m.numColumns();
+	}
+
+	public int numRows() {
+		return m.numRows();
+	}
+
+	public String toString() {
+		return m.toString();
+	}
+
+	public Matrix transpose() {
+		return m.transpose();
+	}
+
+	public void zero() {
+		m.zero();
+	}
+
 	protected FlexCompColMatrix m; 
 	
 	public CustomMatrix(int rows, int cols) {
@@ -42,19 +70,19 @@ public class CustomMatrix {
 	}
 
 	public CustomMatrix mult(CustomMatrix in) {
-		CustomMatrix retval=new CustomMatrix(this);
-		retval.m=(FlexCompColMatrix) retval.m.mult(in.m, retval.m);
+		CustomMatrix retval=new CustomMatrix(this.numRows(),in.numColumns());
+		retval.m=(FlexCompColMatrix) m.mult(in.m, retval.m);
 		return retval;
 	}
 
 	public CustomVector mult(CustomVector in) {
-		CustomVector retval=new CustomVector(m.numRows());
+		CustomVector retval=new CustomVector(this.numRows());
 		retval.v=(SparseVector) m.mult(in.v, retval.v);
 		return retval;
 	}
 
 	public CustomVector transMult(CustomVector in) {
-		CustomVector retval=new CustomVector(m.numRows());
+		CustomVector retval=new CustomVector(this.numRows());
 		retval.v=(SparseVector) m.transMult(in.v, retval.v);
 		return retval;
 	}
@@ -67,8 +95,8 @@ public class CustomMatrix {
 	}
 
 	public CustomMatrix transBmult(CustomMatrix in) {
-		CustomMatrix retval=new CustomMatrix(this);
-		retval.m=(FlexCompColMatrix) retval.m.transBmult(in.m, retval.m);
+		CustomMatrix retval=new CustomMatrix(this.numRows(),in.numRows());
+		retval.m=(FlexCompColMatrix) m.transBmult(in.m, retval.m);
 		return retval;
 	}
 

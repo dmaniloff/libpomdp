@@ -1,7 +1,7 @@
 /** ------------------------------------------------------------------------- *
  * libpomdp
  * ========
- * File:
+ * File: belStateSparseMTJ.java
  * Description: 
  * Copyright (c) 2009, 2010 Diego Maniloff 
  * W3: http://www.cs.uic.edu/~dmanilof
@@ -10,36 +10,41 @@
 package libpomdp.common.java.std;
 
 // imports
+import java.io.Serializable;
+
 import libpomdp.common.java.BeliefState;
+import libpomdp.common.java.CustomVector;
 
-import org.ujmp.core.doublematrix.impl.DefaultSparseDoubleMatrix;
+public class BeliefStateStd implements BeliefState, Serializable {
 
-public class BelStateSparseUJMP implements BelState {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1232321752664518575L;
 
-    // main property, public for debug
-    public DefaultSparseDoubleMatrix bSparse;
+	// sparse representation of the belief
+    public CustomVector bSparse;
 
-    // flat belief point
-	//private double bPoint[];
+    // flat belief point)
+	//  double bPoint[];
 
+    // associated P(o|b,a)
     private double poba = -1.0;
 
+    // associated alpha vector id
     private int planid = -1;
 
     // constructor
     // in case this is the initial belief, poba = 0.0
-    public BelStateSparseUJMP(DefaultSparseDoubleMatrix bSparse, double poba) {
+    public BeliefStateStd(CustomVector bSparse, double poba) {
 	this.bSparse = bSparse;
 	this.poba    = poba;
     }
 
     // calling this method should be for debugging
     // purposes only, otherwise we loose the sparse rep
-    public double[] getPoint() {
-	if(bSparse.getSize()[0]>1)
-	    return bSparse.transpose().toDoubleArray()[0];
-	else
-	    return bSparse.toDoubleArray()[0];
+    public CustomVector getPoint() {
+    	return bSparse;
     }
 
     public double getPoba() {
@@ -58,5 +63,10 @@ public class BelStateSparseUJMP implements BelState {
 	this.planid = planid;
     }
 
+	public BeliefState copy() {
+		// TODO Auto-generated method stub
+		return (new BeliefStateStd(bSparse,poba));
+	}
 
-} // 
+
+} // belStateSparseMTJ

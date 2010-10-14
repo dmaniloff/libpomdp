@@ -21,8 +21,8 @@ import libpomdp.common.java.BeliefState;
 import libpomdp.common.java.CustomMatrix;
 import libpomdp.common.java.CustomVector;
 import libpomdp.common.java.Pomdp;
-import libpomdp.common.java.symbolic.DD;
-import libpomdp.common.java.symbolic.OP;
+import libpomdp.common.java.add.symbolic.DD;
+import libpomdp.common.java.add.symbolic.OP;
 import libpomdp.parser.java.ParseSPUDD;
 
 import org.math.array.DoubleArray;

@@ -7,11 +7,11 @@ import java.io.StreamTokenizer;
 import java.util.HashMap;
 import java.util.Vector;
 
-import libpomdp.common.java.symbolic.DD;
-import libpomdp.common.java.symbolic.DDleaf;
-import libpomdp.common.java.symbolic.DDnode;
-import libpomdp.common.java.symbolic.Global;
-import libpomdp.common.java.symbolic.OP;
+import libpomdp.common.java.add.symbolic.DD;
+import libpomdp.common.java.add.symbolic.DDleaf;
+import libpomdp.common.java.add.symbolic.DDnode;
+import libpomdp.common.java.add.symbolic.Global;
+import libpomdp.common.java.add.symbolic.OP;
 
 public class ParseSPUDD {
     private HashMap existingDds;

@@ -1,12 +1,39 @@
 package libpomdp.common.java;
 
+import java.io.Serializable;
+
 import no.uib.cipr.matrix.Matrices;
 import no.uib.cipr.matrix.Vector;
 import no.uib.cipr.matrix.VectorEntry;
 import no.uib.cipr.matrix.sparse.SparseVector;
 
-public class CustomVector {
+public class CustomVector implements Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8494095501573100178L;
+
+	public double[] getData() {
+		return v.getData();
+	}
+
+	public int[] getIndex() {
+		return v.getIndex();
+	}
+
+	public int getUsed() {
+		return v.getUsed();
+	}
+
+	public String toString() {
+		return v.toString();
+	}
+
+	public void zero() {
+		v.zero();
+	}
+
 	protected SparseVector v;
 
 	public CustomVector(double[] list) {
@@ -95,6 +122,15 @@ public class CustomVector {
 		return(Matrices.getArray(v));
 	}
 
+	public int numColumns() {
+		return 1;
+	}
+
+	public int numRows() {
+		return size();
+	}
+	
+	
 	public int size() {
 		return v.size();
 	}

@@ -3,8 +3,8 @@ package libpomdp.parser.java;
 import libpomdp.common.java.BeliefMdp;
 import libpomdp.common.java.Pomdp;
 import libpomdp.common.java.add.PomdpAdd;
-import libpomdp.common.java.standard.BeliefMdpStandard;
-import libpomdp.common.java.standard.PomdpStandard;
+import libpomdp.common.java.std.BeliefMdpStd;
+import libpomdp.common.java.std.PomdpStd;
 
 public class FileParser {
 	
@@ -15,8 +15,8 @@ public class FileParser {
 		Pomdp newPomdp;
 		switch(filetype){
 		case PARSE_CASSANDRA_POMDP:
-			DotPomdpParserStandard.parse(filename);
-			PomdpSpecStandard data=DotPomdpParserStandard.getSpec();
+			DotPomdpParserStd.parse(filename);
+			PomdpSpecStd data=DotPomdpParserStd.getSpec();
 			String actStr[]=null;
 			if (data.actList != null)
 				actStr= (String []) data.actList.toArray (new String [data.actList.size ()]);
@@ -26,7 +26,7 @@ public class FileParser {
 			String staStr[]=null; 
 			if (data.staList != null)   
 			    obsStr = (String []) data.staList.toArray (new String [data.staList.size ()]);
-			newPomdp=new PomdpStandard(data.O, data.T,data.R, data.nrSta, data.nrAct, data.nrObs, data.discount,staStr,actStr,obsStr,data.startState);
+			newPomdp=new PomdpStd(data.O, data.T,data.R, data.nrSta, data.nrAct, data.nrObs, data.discount,staStr,actStr,obsStr,data.startState);
 			break;
 		case PARSE_SPUDD:
 				newPomdp=new PomdpAdd(filename);
@@ -44,7 +44,7 @@ public class FileParser {
 			throw new Exception("Cannot create a belief over a ADD representation (Not Implemented Yet)\n");
 		Pomdp pomdp=loadPomdp(filename,filetype);
 		BeliefMdp bPomdp;
-		bPomdp=new BeliefMdpStandard((PomdpStandard)pomdp);
+		bPomdp=new BeliefMdpStd((PomdpStd)pomdp);
 		return bPomdp;
 	}
 }

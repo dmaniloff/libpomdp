@@ -57,8 +57,8 @@ public class AndOrTree {
     public void init(BeliefState belief) {
 	this.root = new orNode();
 	this.root.init(belief, -1, null);
-	this.root.l = offlineLower.V(this.root.belief);
-	this.root.u = offlineUpper.V(this.root.belief);
+	this.root.l = offlineLower.value(this.root.belief);
+	this.root.u = offlineUpper.value(this.root.belief);
     }
 
     /**
@@ -110,8 +110,8 @@ public class AndOrTree {
 		o.init(problem.sampleNextBelief(en.belief,action,observation), observation, a);
 		o.belief.setPoba(pOba[observation]);
 		// compute upper and lower bounds for this node
-		o.u = offlineUpper.V(o.belief);
-		o.l = offlineLower.V(o.belief);		
+		o.u = offlineUpper.value(o.belief);
+		o.l = offlineLower.value(o.belief);		
 		// H(b)
 		o.h_b = expH.h_b(o);
 		// H(b,a,o)	

@@ -17,5 +17,4 @@ function ret = loadBeliefMdp(filename,filetype)
             error('libpomdp:loadBeliefMdp', 'Unknown Filetype');
     end         
 end
-end
 
