@@ -328,6 +328,7 @@ public class AndOrTree {
 
     /// return best action given the current state
     /// of expansion in the whole tree
+    /// this function is randomized!!!!
     public int currentBestAction() {
 	// construct array with L(b,a)
 	double Lba[] = new double[problem.getnrAct()];
@@ -336,32 +337,54 @@ public class AndOrTree {
 	return Common.argmax(Lba);
     }
     
-    public boolean currentBestActionIsOptimal(double OPT_EPSILON) {
+    /// check if an action is epsilon-optimal given the current
+    /// state of the search tree - this assumes act was previously 
+    /// obtained from currentBestAction....
+    /// there' probably a better way to do this, maybe by maintaining
+    /// the best action for every belief node in the tree and updating it
+    public boolean actionIsEpsOptimal(int act, double OPT_EPSILON) {
+	// first condition
+	if (Math.abs(root.u - root.l) < OPT_EPSILON) return true;
+	// second condition
 	boolean opt1 = true;
-	boolean opt2 = false;
-	int bestA = currentBestAction();
 	for(andNode a : root.children) {
-	    if ((root.l < a.u) && (a.getAct() != bestA)) {
+	    if ((a.getAct() != act) && (root.l > a.u)) { // BUGG
 		opt1 = false;
 		break;
 	    }
 	}
-	if (Math.abs(root.u - root.l) < OPT_EPSILON)
-	    opt2 = true;
-	// either condition is enough
-	return opt1 || opt2;
+	return opt1;
     }
+    
+    
+    // DO NOT USE
+//    public boolean currentBestActionIsOptimal(double OPT_EPSILON) {
+//	boolean opt1 = true;
+//	boolean opt2 = false;
+//	int bestA = currentBestAction();
+//	for(andNode a : root.children) {
+//	    if ((root.l < a.u) && (a.getAct() != bestA)) { // BUGG
+//		opt1 = false;
+//		break;
+//	    }
+//	}
+//	if (Math.abs(root.u - root.l) < OPT_EPSILON)
+//	    opt2 = true;
+//	// either condition is enough
+//	return opt1 || opt2;
+//    }
 
 
     /// return best action according to the subtree
     /// rooted at on
-    public int currentBestActionAtNode(orNode on) {
-	// construct array with L(b,a)
-	double Lba[] = new double[problem.getnrAct()];
-	for(andNode a : on.children)
-	    Lba[a.getAct()] = a.l;
-	return Common.argmax(Lba);
-    }
+    /// this function is randomized!!!!
+//    public int currentBestActionAtNode(orNode on) {
+//	// construct array with L(b,a)
+//	double Lba[] = new double[problem.getnrAct()];
+//	for(andNode a : on.children)
+//	    Lba[a.getAct()] = a.l;
+//	return Common.argmax(Lba);
+//    }
 
     public valueFunction getLB() {
 	return offlineLower;
