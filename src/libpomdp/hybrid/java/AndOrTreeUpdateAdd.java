@@ -153,7 +153,7 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 	}  // andNode loop
 
 	// update values in en
-	en.l = ORpropagateL(en);
+	en.l = ORpropagateLexpand(en);
 	en.u = ORpropagateU(en);
 	// update H(b)
 	en.h_b = expH.h_b(en);
@@ -175,7 +175,7 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 	    System.err.println("Hmmmmmmmmmmm");
 	}
 	// one-step best action
-	en.oneStepBestAction = currentBestActionAtNode(en);	
+	//en.oneStepBestAction = currentBestActionAtNode(en);	
 	
 	// compute backup heuristic for this newly expanded node
 	en.bakHeuristic = bakH.h_b(en); 
@@ -270,6 +270,30 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 	// reset fringeSupportLists
 	this.fringeSupportLists = IntegerArray.fill(problem.getnrAct(), offlineLower.getSize(), 0);
     } // (overridden) moveTree  
+
+
+    /**
+     * ORpropagateLexpand:
+     * 
+     * Need a special propagate function for the expand 
+     * case of an orNode since we are now saving the 
+     * oneStepBestAction, but we cannot overwrite this
+     * during updateAncestors since it is with respect to
+     * the current lower bound.
+     * 
+     * @param o
+     * @return
+     * 
+     * L(b) = max{max_a L(b,a), L(b)}
+     */
+    protected double ORpropagateLexpand(orNode o) {
+	// construct array with L(b,a)
+	double Lba[] = new double[problem.getnrAct()];
+	for(andNode a : o.children) Lba[a.getAct()] = a.l;
+	o.oneStepBestAction = Common.argmax(Lba);
+	// compare to current bound
+	return Math.max(Lba[o.oneStepBestAction], o.l);
+    } //  ORpropagateLexpand
 
     
     /**
