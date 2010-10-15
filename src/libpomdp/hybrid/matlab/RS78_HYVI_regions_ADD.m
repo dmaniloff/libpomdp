@@ -71,9 +71,9 @@ all.avfoundeopt   = [];
 
 % print general config problem parameters
 diary(logFilename);
-fprintf(1, '+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++');
-fprintf(1, 'libpomdp log - config parameters');
-fprintf(1, '--------------------------------');
+fprintf(1, '+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n');
+fprintf(1, 'libpomdp log - config parameters\n');
+fprintf(1, '--------------------------------\n');
 fprintf(1, 'TOTALRUNS            = %d\n', TOTALRUNS);
 fprintf(1, 'EPISODECOUNT         = %d\n', EPISODECOUNT);
 fprintf(1, 'MAXEPISODELENGTH     = %d\n', MAXEPISODELENGTH);
@@ -81,7 +81,7 @@ fprintf(1, 'EXPANSIONTIME        = %d\n', EXPANSIONTIME);
 fprintf(1, 'BACKUPTIME           = %d\n', BACKUPTIME);
 fprintf(1, 'EPSILON_ACT_TH       = %d\n', EPSILON_ACT_TH);
 fprintf(1, 'USE_FACTORED_BELIEFS = %d\n', USE_FACTORED_BELIEFS);
-fprintf(1, '+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++');
+fprintf(1, '+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n');
 
 for run = 1:TOTALRUNS
     
@@ -154,10 +154,11 @@ for run = 1:TOTALRUNS
             expC = 0;
             
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-            % EXPANSIONS start here:
+            % EXPANSIONS for t_exp start here:
             %
             % start stopwatch for expansions
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+         
             tic
             while toc < EXPANSIONTIME
                 % expand best node
@@ -180,24 +181,28 @@ for run = 1:TOTALRUNS
             % the additional k expansions we can get in t_bak would all be of
             % nodes that we can reuse
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-            
+
             tic
             backedup = 0;
             % get the support list for the action we are about to output
-            [sortedSupportList, oid] = sort(...
-                aoTree.fringeSupportLists(aoTree.currentBestAction() + 1,:), 'descend');
+            % obtain the best action for the root
+            % remember that a's and o's in matlab should start from 1
+            % need to do this a priori!! otherwise currentBestAction() could
+            % change since its randomized
+            a = aoTree.currentBestAction();
+            a = a + 1;
             
+            % sort the support list for action a
+            [sortedSupportList, oid] = sort(aoTree.fringeSupportLists(a,:), 'descend');
             for salphaid=1:aoTree.getLB().getSize()
                 % if there exists a candidate, with I(b) > 0, and its fellow
                 % nodes outnumber the expansions that could be made, backup
-                if (rootNode.children(...
-                        aoTree.currentBestAction()+1).bakHeuristicStar(oid(salphaid)) > 0 && ...
+                if (rootNode.children(a).bakHeuristicStar(oid(salphaid)) > 0 && ...
                         sortedSupportList(salphaid) > EXPANSION_RATE * BACKUPTIME)
                     % compute backup
                     tic
                     aoTree.backupLowerAtNode(...
-                        rootNode.children(...
-                        aoTree.currentBestAction()+1).bakCandidate(oid(salphaid)));
+                        rootNode.children(a).bakCandidate(oid(salphaid)));
                     all.stats{run}.ep{ep}.backuptime(end+1) = toc;
                     bakC = bakC + 1;
                     % break loop
@@ -218,8 +223,12 @@ for run = 1:TOTALRUNS
 %                 bakC = bakC + 1;
 %             else
        
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            % EXTRA expansions may happen here for t_bak
+            %
             % if not, continue expanding for the remaining 0.1 secs
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
+        
             if (backedup == 0)
                 tic
                 while toc < BACKUPTIME - falseheurtime
@@ -232,17 +241,22 @@ for run = 1:TOTALRUNS
                 end
             end
             
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            % at this point, TOTALPLANNINGTIME has elapsed
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
+            
+            
             % check whether we found an e-optimal action, either in the
             % EXPANSIONTIME slot or in the TOTALPLANNINGTIME slot
-            if (aoTree.currentBestActionIsOptimal(EPSILON_ACT_TH))
+            if (aoTree.actionIsEpsOptimal(a-1, EPSILON_ACT_TH)) % careful with action indexes
                 fprintf(1, 'Achieved e-optimal action!\n');
                 fndO = fndO + 1;
             end
             
             % obtain the best action for the root
             % remember that a's and o's in matlab should start from 1
-            a = aoTree.currentBestAction();
-            a = a + 1;
+            %a = aoTree.currentBestAction();
+            %a = a + 1;
             
             % execute best action and receive new o
             restrictedT = OP.restrictN(factoredProb.T(a), factoredS);
@@ -259,13 +273,13 @@ for run = 1:TOTALRUNS
             
 
             % output some stats
-            fprintf(1, 'Expansion finished, # expands:  %d\n', expC);
+            fprintf(1, 'Expansion finished, # expands:  %d\n',   expC);
             % this will count an extra |A||O| nodes given the expansion of the root
-            fprintf(1, '|T|:                            %d\n', rootNode.subTreeSize);
+            fprintf(1, '|T|:                            %d\n',   rootNode.subTreeSize);
             tc = cell(factoredProb.getactStr(a-1));
-            fprintf(1, 'Outputting action:              %s\n', tc{1});
+            fprintf(1, 'Outputting action:              %s\n',   tc{1});
             tc = cell(factoredProb.printO(factoredO));
-            fprintf(1, 'Perceived observation:          %s\n', tc{1});
+            fprintf(1, 'Perceived observation:          %s\n',   tc{1});
             fprintf(1, 'Received reward:                %.2f\n', all.stats{run}.ep{ep}.R(end));
             fprintf(1, 'Cumulative reward:              %.2f\n', cumR);
 
@@ -285,9 +299,9 @@ for run = 1:TOTALRUNS
             % aoTree.moveTree(rootNode.children(a).children(o)); 
             % create new tree, but keep new bounds
             aoTree = AndOrTreeUpdateAdd(factoredProb, ...
-                aems2h, ...
-                dosih, ...
-                aoTree.getLB, aoTree.getUB);
+                     aems2h, ...
+                     dosih, ...
+                     aoTree.getLB, aoTree.getUB);
             % initialize at the new belief
             aoTree.init(rootNode.children(a).children(o).belief);
             % update reference to rootNode
