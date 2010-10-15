@@ -7,14 +7,14 @@
  * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
 
-package libpomdp.common.java.std;
+package libpomdp.common.std;
 
 // imports
 import java.io.Serializable;
 
-import libpomdp.common.java.BeliefState;
-import libpomdp.common.java.Utils;
-import libpomdp.common.java.ValueFunction;
+import libpomdp.common.BeliefState;
+import libpomdp.common.Utils;
+import libpomdp.common.ValueFunction;
 
 import org.ujmp.core.doublematrix.impl.DefaultSparseDoubleMatrix;
 

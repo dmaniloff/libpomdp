@@ -1,0 +1,27 @@
+package libpomdp.solve.vi;
+
+import libpomdp.common.std.PomdpStd;
+import libpomdp.common.std.ValueFunctionStd;
+import libpomdp.solve.IterationStats;
+
+public abstract class ValueIterationStd extends ValueIteration {
+	
+	protected PomdpStd pomdp;
+	protected ValueFunctionStd current;
+	protected ValueFunctionStd old;
+	
+	public PomdpStd getPomdp() {
+		return pomdp;
+	}
+
+	public ValueFunctionStd getValueFunction() {
+		return current;
+	}
+
+	public ValueFunctionStd getOldValueFunction() {
+		return old;
+	}
+	
+	public abstract IterationStats iterate();
+
+}

@@ -7,10 +7,10 @@
  * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
 
-package libpomdp.common.java.std;
+package libpomdp.common.std;
 
 // imports
-import libpomdp.common.java.BeliefState;
+import libpomdp.common.BeliefState;
 
 import org.ujmp.core.doublematrix.impl.DefaultSparseDoubleMatrix;
 

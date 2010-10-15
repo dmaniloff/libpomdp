@@ -1,0 +1,6 @@
+EXPONENT=5
+WS=7
+INT=4
+FLOAT=6
+'-'=9
+'+'=8

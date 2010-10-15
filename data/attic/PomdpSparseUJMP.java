@@ -7,11 +7,11 @@
  * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
 
-package libpomdp.common.java.std;
+package libpomdp.common.std;
 
 // imports
-import libpomdp.common.java.BelState;
-import libpomdp.common.java.Pomdp;
+import libpomdp.common.BelState;
+import libpomdp.common.Pomdp;
 import no.uib.cipr.matrix.DenseMatrix;
 import no.uib.cipr.matrix.Matrices;
 import no.uib.cipr.matrix.sparse.SparseVector;

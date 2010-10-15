@@ -7,14 +7,14 @@
  * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
 
-package libpomdp.common.java.dense;
+package libpomdp.common.dense;
 
 // imports
 import java.io.Serializable;
 
-import libpomdp.common.java.BeliefState;
-import libpomdp.common.java.Utils;
-import libpomdp.common.java.ValueFunction;
+import libpomdp.common.BeliefState;
+import libpomdp.common.Utils;
+import libpomdp.common.ValueFunction;
 import no.uib.cipr.matrix.DenseMatrix;
 import no.uib.cipr.matrix.DenseVector;
 import no.uib.cipr.matrix.Matrices;

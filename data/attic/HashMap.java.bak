@@ -1,4 +1,4 @@
-package libpomdp.common.java.add.symbolic;
+package libpomdp.common.add.symbolic;
 
 /*
  * @(#)HashMap.java	1.57 03/01/23

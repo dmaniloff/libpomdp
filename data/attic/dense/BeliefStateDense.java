@@ -7,11 +7,11 @@
  * Copyright (c) 2009, 2010 Diego Maniloff 
  * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
-package libpomdp.common.java.dense;
+package libpomdp.common.dense;
 
 import no.uib.cipr.matrix.DenseVector;
 import no.uib.cipr.matrix.Vector;
-import libpomdp.common.java.BeliefState;
+import libpomdp.common.BeliefState;
 
 public class BeliefStateDense implements BeliefState {
 

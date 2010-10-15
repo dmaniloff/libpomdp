@@ -12,11 +12,11 @@
  * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
 
-package libpomdp.common.java.dense;
+package libpomdp.common.dense;
 
 // imports
-import libpomdp.common.java.BeliefState;
-import libpomdp.common.java.Pomdp;
+import libpomdp.common.BeliefState;
+import libpomdp.common.Pomdp;
 import no.uib.cipr.matrix.DenseMatrix;
 import no.uib.cipr.matrix.DenseVector;
 import no.uib.cipr.matrix.Vector;

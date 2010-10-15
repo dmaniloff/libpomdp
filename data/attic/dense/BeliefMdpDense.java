@@ -1,12 +1,12 @@
-package libpomdp.common.java.dense;
+package libpomdp.common.dense;
 
 import no.uib.cipr.matrix.DenseMatrix;
 import no.uib.cipr.matrix.DenseVector;
 import no.uib.cipr.matrix.Matrices;
 import no.uib.cipr.matrix.Matrix;
-import libpomdp.common.java.BeliefMdp;
-import libpomdp.common.java.BeliefState;
-import libpomdp.common.java.Pomdp;
+import libpomdp.common.BeliefMdp;
+import libpomdp.common.BeliefState;
+import libpomdp.common.Pomdp;
 
 public class BeliefMdpDense implements BeliefMdp {
 
