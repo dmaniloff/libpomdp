@@ -11,6 +11,9 @@
 % --------------------------------------------------------------------------- %
 
 %% preparation
+clear all
+clear java
+clear java
 
 % add dynamic classpath
 javaaddpath '../../../../external/jmatharray.jar'
@@ -47,12 +50,12 @@ drawer            = rocksampleGraph;
 NUM_ROCKS         = size(ROCK_POSITIONS,1);
 
 % parameters
-EPSILON_ACT_TH    = 1e-3;
-EPISODECOUNT      = 10;
-MAXPLANNINGTIME   = 1.0;
-MAXEPISODELENGTH  = 100;
-TOTALRUNS         = 2^NUM_ROCKS;
-USE_FACTORED_BELIEFS = 1
+EPSILON_ACT_TH       = 1e-3;
+EPISODECOUNT         = 10;
+MAXPLANNINGTIME      = 1.0;
+MAXEPISODELENGTH     = 100;
+TOTALRUNS            = 2^NUM_ROCKS;
+USE_FACTORED_BELIEFS = 1;
 
 % stats
 cumR              = [];
@@ -127,8 +130,8 @@ for run = 1:TOTALRUNS
             tc = cell(factoredProb.printS(factoredS));
             fprintf(1, 'Current world state is:         %s\n', tc{1});
             drawer.drawState(GRID_SIZE, ROCK_POSITIONS,factoredS);
-            if rootNode.belief.getClass.toString == ...
-                    'class libpomdp.general.java.BelStateFactoredADD'
+            if strcmp(rootNode.belief.getClass.toString, ...
+                    'class libpomdp.general.java.BelStateFactoredADD')
               fprintf(1, 'Current belief agree prob:      %d\n', ...                       
                       OP.evalN(rootNode.belief.marginals, factoredS));
             else
@@ -152,8 +155,8 @@ for run = 1:TOTALRUNS
                 % check whether we found an e-optimal action - there is another criteria
                 % here too!!
                 %if (abs(rootNode.u-rootNode.l) < 1e-3)
-                if (aoTree.currentBestActionIsOptimal(EPSILON_ACT_TH))
-                    toc
+                if (aoTree.actionIsEpsOptimal(aoTree.currentBestAction(), EPSILON_ACT_TH))
+                    % toc
                     fprintf(1, 'Found e-optimal action, aborting expansions\n');
                     fndO = fndO + 1;
                     break;
@@ -181,13 +184,13 @@ for run = 1:TOTALRUNS
             all.stats{run}.ep{ep}.exps(end+1)  = expC;
 
             % output some stats
-            fprintf(1, 'Expansion finished, # expands:  %d\n', expC);
+            fprintf(1, 'Expansion finished, # expands:  %d\n'  , expC);
             % this will count an extra |A||O| nodes given the expansion of the root
-            fprintf(1, '|T|:                            %d\n', rootNode.subTreeSize);
+            fprintf(1, '|T|:                            %d\n'  , rootNode.subTreeSize);
             tc = cell(factoredProb.getactStr(a-1));
-            fprintf(1, 'Outputting action:              %s\n', tc{1});
+            fprintf(1, 'Outputting action:              %s\n'  , tc{1});
             tc = cell(factoredProb.printO(factoredO));
-            fprintf(1, 'Perceived observation:          %s\n', tc{1});
+            fprintf(1, 'Perceived observation:          %s\n'  , tc{1});
             fprintf(1, 'Received reward:                %.2f\n', all.stats{run}.ep{ep}.R(end));
             fprintf(1, 'Cumulative reward:              %.2f\n', cumR);
 

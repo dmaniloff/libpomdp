@@ -29,24 +29,27 @@ import libpomdp.hybrid.java.*;
 import libpomdp.problems.rocksample.*;
 
 %% load problem
-factoredProb = pomdpAdd  ('../../problems/rocksample/15-12/RockSample_15_12.SPUDD');
+factoredProb = pomdpAdd  ('../../problems/rocksample/10-15/RockSample_10_15.SPUDD');
 
 %% load pre-computed offline bounds
-load '../../problems/rocksample/15-12/RockSample_15_12_blind_ADD.mat';
-load '../../problems/rocksample/15-12/RockSample_15_12_qmdp_ADD.mat';
+load '../../problems/rocksample/10-15/RockSample_10_15_blind_ADD.mat';
+load '../../problems/rocksample/10-15/RockSample_10_15_qmdp_ADD.mat';
 
 %% create heuristic search AND-OR tree
 % instantiate an aems2 heuristic object
 aems2h  = aems2(factoredProb);
 
 %% play the pomdp
-diary(['simulation-logs/rocksample/15-12-online-run-AEMS2-',date,'.log']);
+diary(['simulation-logs/rocksample/10-15-online-run-AEMS2-',date,'.log']);
 
 % rocksample parameters for the grapher
-GRID_SIZE         = 15;
-ROCK_POSITIONS    = [0, 9; 0, 13; 1, 14; 3, 9; 3, 14; 4, 9; 5, 14; ...
-                    6, 9; 9, 14; 9, 9; 4, 0; 14, 0]; 
-SARTING_POS       = [0 8];
+GRID_SIZE         = 10;
+n=10
+ROCK_POSITIONS    = [0 3; 0 7; 1 8; 3 3; 3 8; 4 3; 5 8; 6 1; 9 3; 9 9; ...
+                     0 0; 0 9; 3 0; 3 9; 9 0];
+SARTING_POS       =[0,5]
+% ROCK_POSITIONS    = [0 3; 0 7; 1 8; 3 3; 3 8; 4 3; 5 8; 6 1; 9 3; 9 9]; 
+% SARTING_POS       = [0 5];
 drawer            = rocksampleGraph;
 NUM_ROCKS         = size(ROCK_POSITIONS,1);
 
@@ -243,4 +246,4 @@ for run = 1:TOTALRUNS
 end % runs loop
 
 % save statistics before quitting
-save (['simulation-logs/rocksample/ALLSTATS-15-12-online-run-AEMS2-',date,'.mat'], 'all');
+save (['simulation-logs/rocksample/ALLSTATS-10-15-online-run-AEMS2-',date,'.mat'], 'all');
