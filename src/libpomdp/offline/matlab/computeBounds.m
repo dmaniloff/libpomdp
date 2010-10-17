@@ -16,9 +16,6 @@ if nargin ~= 2
 end
 
 %% preparation
-% clear
-clear java
-clear all
 
 % add dynamic classpath
 javaaddpath '../../../../external/jmatharray.jar'
@@ -34,10 +31,10 @@ import libpomdp.hybrid.java.*;
 import libpomdp.problems.rocksample.*;
 
 % add to the matlab path - only needed if we use Poupart's QMDP solver
-addpath     '../../external/symPerseusMatlab' -end
+% addpath     '../../external/symPerseusMatlab' -end
 
 %% load problem parameters - factored representation
-factoredProb = pomdpAdd(filename);
+factoredProb = pomdpAdd(problem_filename);
 
 %% compute offline lower and upper bounds
 blindCalc = blindAdd;
@@ -52,5 +49,5 @@ problem_name = problem_name{1}{end};
 problem_name = textscan(problem_name, '%s', 'Delimiter', '.');
 problem_name = problem_name{1}{end};
 
-save [output_dir, '/', problem_name, '_blind_ADD.mat'] lBound;
-save [output_dir, '/', problem_name, '_qmdp_ADD.mat']  uBound;
+save(strcat(output_dir, '/', problem_name, '_blind_ADD.mat'), 'lBound');
+save(strcat(output_dir, '/', problem_name, '_qmdp_ADD.mat' ), 'uBound');
