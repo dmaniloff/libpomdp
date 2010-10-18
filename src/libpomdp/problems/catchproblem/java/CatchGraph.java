@@ -7,7 +7,7 @@
  * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
 
-package libpomdp.problems.catchproblem;
+package libpomdp.problems.catchproblem.java;
 
 public class CatchGraph {
     

@@ -1,52 +1,51 @@
 /** ------------------------------------------------------------------------- *
  * libpomdp
  * ========
- * File: CatchTagGrid.java
- * Description: Defines wallAhead according to Pineau's T-shaped Tag POMDP
+ * File: CatchRectangularGrid.java
+ * Description: 
  * Copyright (c) 2009, 2010 Diego Maniloff 
  * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
 
-package libpomdp.problems.catchproblem;
+package libpomdp.problems.catchproblem.java;
 
-public class CatchTagGrid implements CatchGridProperties {
+public class CatchRectangularGrid implements CatchGridProperties {
     
     // class properties
-    public int WIDTH;
-    public int HEIGHT;
+    private int WIDTH;
+    private int HEIGHT;
     // grid size
     private int N;
 
     // constructor
-    public CatchTagGrid(int w, int h) {
-	this.WIDTH = w;
+    public CatchRectangularGrid(int w, int h) {
+	this.WIDTH  = w;
 	this.HEIGHT = h;
 	this.N = WIDTH * HEIGHT;
     }
 
     // is there a wall in the move direction of position?
-    // implemented according to Pineau's T-shaped tag environment
+    // implemented for a simple rectangular grid
     public boolean wallAhead(int position, CatchGen.Direction move) {
 	// get x and y
 	int x=getxy(position)[0]; int y=getxy(position)[1];
 	switch (move) {
 	case N:
-	    return ((HEIGHT-1 == y) || (y==1 && (x<=4 || x>=8)) || (y==4 && x<=7 && x>=5));
+	    return (HEIGHT-1 == y);
 	case S:
-	    return (y==0);
+	    return (0 == y);
 	case E:
-	    return (WIDTH-1 == x) || (x==9 || (x==7 && y>=2 && y<=4));	    
+	    return (WIDTH-1 == x);	    
 	case W:
-	    return (x==0 || (x==5 && y>=2 && y<=4));
+	    return (0 == x);
 	}	
 	// never reachable
 	return false;
     }
 
+    // in a rectangular configuration, all positions are legal
     public boolean isLegalPosition(int position) {
-	// get x and y
-	int x=getxy(position)[0]; int y=getxy(position)[1];
-	return !((y >= 2) && (x <= 4 || x>=8));
+	return true;
     }
 
     public int totPossibleLocations() {
