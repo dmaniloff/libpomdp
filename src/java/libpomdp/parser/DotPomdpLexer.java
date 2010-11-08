@@ -1,4 +1,4 @@
-// $ANTLR 3.0.1 /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g 2010-10-14 14:45:57
+// $ANTLR 3.0.1 /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g 2010-10-20 11:54:30
 
     package libpomdp.parser;
 
@@ -41,14 +41,14 @@ public class DotPomdpLexer extends Lexer {
     public DotPomdpLexer(CharStream input) {
         super(input);
     }
-    public String getGrammarFileName() { return "/home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g"; }
+    public String getGrammarFileName() { return "/home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g"; }
 
     // $ANTLR start DISCOUNTTOK
     public final void mDISCOUNTTOK() throws RecognitionException {
         try {
             int _type = DISCOUNTTOK;
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:6:13: ( 'discount' )
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:6:15: 'discount'
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:6:13: ( 'discount' )
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:6:15: 'discount'
             {
             match("discount"); 
 
@@ -66,8 +66,8 @@ public class DotPomdpLexer extends Lexer {
     public final void mVALUESTOK() throws RecognitionException {
         try {
             int _type = VALUESTOK;
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:7:11: ( 'values' )
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:7:13: 'values'
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:7:11: ( 'values' )
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:7:13: 'values'
             {
             match("values"); 
 
@@ -85,8 +85,8 @@ public class DotPomdpLexer extends Lexer {
     public final void mSTATESTOK() throws RecognitionException {
         try {
             int _type = STATESTOK;
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:8:11: ( 'states' )
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:8:13: 'states'
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:8:11: ( 'states' )
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:8:13: 'states'
             {
             match("states"); 
 
@@ -104,8 +104,8 @@ public class DotPomdpLexer extends Lexer {
     public final void mACTIONSTOK() throws RecognitionException {
         try {
             int _type = ACTIONSTOK;
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:9:12: ( 'actions' )
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:9:14: 'actions'
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:9:12: ( 'actions' )
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:9:14: 'actions'
             {
             match("actions"); 
 
@@ -123,8 +123,8 @@ public class DotPomdpLexer extends Lexer {
     public final void mOBSERVATIONSTOK() throws RecognitionException {
         try {
             int _type = OBSERVATIONSTOK;
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:10:17: ( 'observations' )
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:10:19: 'observations'
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:10:17: ( 'observations' )
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:10:19: 'observations'
             {
             match("observations"); 
 
@@ -142,8 +142,8 @@ public class DotPomdpLexer extends Lexer {
     public final void mTTOK() throws RecognitionException {
         try {
             int _type = TTOK;
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:11:6: ( 'T' )
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:11:8: 'T'
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:11:6: ( 'T' )
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:11:8: 'T'
             {
             match('T'); 
 
@@ -160,8 +160,8 @@ public class DotPomdpLexer extends Lexer {
     public final void mOTOK() throws RecognitionException {
         try {
             int _type = OTOK;
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:12:6: ( 'O' )
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:12:8: 'O'
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:12:6: ( 'O' )
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:12:8: 'O'
             {
             match('O'); 
 
@@ -178,8 +178,8 @@ public class DotPomdpLexer extends Lexer {
     public final void mRTOK() throws RecognitionException {
         try {
             int _type = RTOK;
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:13:6: ( 'R' )
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:13:8: 'R'
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:13:6: ( 'R' )
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:13:8: 'R'
             {
             match('R'); 
 
@@ -196,8 +196,8 @@ public class DotPomdpLexer extends Lexer {
     public final void mUNIFORMTOK() throws RecognitionException {
         try {
             int _type = UNIFORMTOK;
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:14:12: ( 'uniform' )
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:14:14: 'uniform'
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:14:12: ( 'uniform' )
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:14:14: 'uniform'
             {
             match("uniform"); 
 
@@ -215,8 +215,8 @@ public class DotPomdpLexer extends Lexer {
     public final void mIDENTITYTOK() throws RecognitionException {
         try {
             int _type = IDENTITYTOK;
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:15:13: ( 'identity' )
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:15:15: 'identity'
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:15:13: ( 'identity' )
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:15:15: 'identity'
             {
             match("identity"); 
 
@@ -234,8 +234,8 @@ public class DotPomdpLexer extends Lexer {
     public final void mREWARDTOK() throws RecognitionException {
         try {
             int _type = REWARDTOK;
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:16:11: ( 'reward' )
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:16:13: 'reward'
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:16:11: ( 'reward' )
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:16:13: 'reward'
             {
             match("reward"); 
 
@@ -253,8 +253,8 @@ public class DotPomdpLexer extends Lexer {
     public final void mCOSTTOK() throws RecognitionException {
         try {
             int _type = COSTTOK;
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:17:9: ( 'cost' )
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:17:11: 'cost'
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:17:9: ( 'cost' )
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:17:11: 'cost'
             {
             match("cost"); 
 
@@ -272,8 +272,8 @@ public class DotPomdpLexer extends Lexer {
     public final void mSTARTTOK() throws RecognitionException {
         try {
             int _type = STARTTOK;
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:18:10: ( 'start' )
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:18:12: 'start'
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:18:10: ( 'start' )
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:18:12: 'start'
             {
             match("start"); 
 
@@ -291,8 +291,8 @@ public class DotPomdpLexer extends Lexer {
     public final void mINCLUDETOK() throws RecognitionException {
         try {
             int _type = INCLUDETOK;
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:19:12: ( 'include' )
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:19:14: 'include'
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:19:12: ( 'include' )
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:19:14: 'include'
             {
             match("include"); 
 
@@ -310,8 +310,8 @@ public class DotPomdpLexer extends Lexer {
     public final void mEXCLUDETOK() throws RecognitionException {
         try {
             int _type = EXCLUDETOK;
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:20:12: ( 'exclude' )
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:20:14: 'exclude'
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:20:12: ( 'exclude' )
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:20:14: 'exclude'
             {
             match("exclude"); 
 
@@ -329,8 +329,8 @@ public class DotPomdpLexer extends Lexer {
     public final void mRESETTOK() throws RecognitionException {
         try {
             int _type = RESETTOK;
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:21:10: ( 'reset' )
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:21:12: 'reset'
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:21:10: ( 'reset' )
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:21:12: 'reset'
             {
             match("reset"); 
 
@@ -348,8 +348,8 @@ public class DotPomdpLexer extends Lexer {
     public final void mCOLONTOK() throws RecognitionException {
         try {
             int _type = COLONTOK;
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:22:10: ( ':' )
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:22:12: ':'
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:22:10: ( ':' )
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:22:12: ':'
             {
             match(':'); 
 
@@ -366,8 +366,8 @@ public class DotPomdpLexer extends Lexer {
     public final void mASTERICKTOK() throws RecognitionException {
         try {
             int _type = ASTERICKTOK;
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:23:13: ( '*' )
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:23:15: '*'
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:23:13: ( '*' )
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:23:15: '*'
             {
             match('*'); 
 
@@ -384,8 +384,8 @@ public class DotPomdpLexer extends Lexer {
     public final void mPLUSTOK() throws RecognitionException {
         try {
             int _type = PLUSTOK;
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:24:9: ( '+' )
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:24:11: '+'
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:24:9: ( '+' )
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:24:11: '+'
             {
             match('+'); 
 
@@ -402,8 +402,8 @@ public class DotPomdpLexer extends Lexer {
     public final void mMINUSTOK() throws RecognitionException {
         try {
             int _type = MINUSTOK;
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:25:10: ( '-' )
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:25:12: '-'
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:25:10: ( '-' )
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:25:12: '-'
             {
             match('-'); 
 
@@ -420,8 +420,8 @@ public class DotPomdpLexer extends Lexer {
     public final void mSTRING() throws RecognitionException {
         try {
             int _type = STRING;
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:101:5: ( ( 'a' .. 'z' | 'A' .. 'Z' ) ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '_' | '-' )* )
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:101:9: ( 'a' .. 'z' | 'A' .. 'Z' ) ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '_' | '-' )*
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:101:5: ( ( 'a' .. 'z' | 'A' .. 'Z' ) ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '_' | '-' )* )
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:101:9: ( 'a' .. 'z' | 'A' .. 'Z' ) ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '_' | '-' )*
             {
             if ( (input.LA(1)>='A' && input.LA(1)<='Z')||(input.LA(1)>='a' && input.LA(1)<='z') ) {
                 input.consume();
@@ -433,7 +433,7 @@ public class DotPomdpLexer extends Lexer {
                 recover(mse);    throw mse;
             }
 
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:101:29: ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '_' | '-' )*
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:101:29: ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '_' | '-' )*
             loop1:
             do {
                 int alt1=2;
@@ -446,7 +446,7 @@ public class DotPomdpLexer extends Lexer {
 
                 switch (alt1) {
             	case 1 :
-            	    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:
+            	    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:
             	    {
             	    if ( input.LA(1)=='-'||(input.LA(1)>='0' && input.LA(1)<='9')||(input.LA(1)>='A' && input.LA(1)<='Z')||input.LA(1)=='_'||(input.LA(1)>='a' && input.LA(1)<='z') ) {
             	        input.consume();
@@ -481,7 +481,7 @@ public class DotPomdpLexer extends Lexer {
     public final void mINT() throws RecognitionException {
         try {
             int _type = INT;
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:105:5: ( '0' | ( '1' .. '9' ) ( '0' .. '9' )* )
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:105:5: ( '0' | ( '1' .. '9' ) ( '0' .. '9' )* )
             int alt3=2;
             int LA3_0 = input.LA(1);
 
@@ -499,23 +499,23 @@ public class DotPomdpLexer extends Lexer {
             }
             switch (alt3) {
                 case 1 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:105:9: '0'
+                    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:105:9: '0'
                     {
                     match('0'); 
 
                     }
                     break;
                 case 2 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:105:15: ( '1' .. '9' ) ( '0' .. '9' )*
+                    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:105:15: ( '1' .. '9' ) ( '0' .. '9' )*
                     {
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:105:15: ( '1' .. '9' )
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:105:16: '1' .. '9'
+                    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:105:15: ( '1' .. '9' )
+                    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:105:16: '1' .. '9'
                     {
                     matchRange('1','9'); 
 
                     }
 
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:105:26: ( '0' .. '9' )*
+                    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:105:26: ( '0' .. '9' )*
                     loop2:
                     do {
                         int alt2=2;
@@ -528,7 +528,7 @@ public class DotPomdpLexer extends Lexer {
 
                         switch (alt2) {
                     	case 1 :
-                    	    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:105:27: '0' .. '9'
+                    	    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:105:27: '0' .. '9'
                     	    {
                     	    matchRange('0','9'); 
 
@@ -556,14 +556,14 @@ public class DotPomdpLexer extends Lexer {
     public final void mFLOAT() throws RecognitionException {
         try {
             int _type = FLOAT;
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:109:5: ( ( '0' .. '9' )+ '.' ( '0' .. '9' )* ( EXPONENT )? | '.' ( '0' .. '9' )+ ( EXPONENT )? | ( '0' .. '9' )+ EXPONENT )
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:109:5: ( ( '0' .. '9' )+ '.' ( '0' .. '9' )* ( EXPONENT )? | '.' ( '0' .. '9' )+ ( EXPONENT )? | ( '0' .. '9' )+ EXPONENT )
             int alt10=3;
             alt10 = dfa10.predict(input);
             switch (alt10) {
                 case 1 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:109:9: ( '0' .. '9' )+ '.' ( '0' .. '9' )* ( EXPONENT )?
+                    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:109:9: ( '0' .. '9' )+ '.' ( '0' .. '9' )* ( EXPONENT )?
                     {
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:109:9: ( '0' .. '9' )+
+                    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:109:9: ( '0' .. '9' )+
                     int cnt4=0;
                     loop4:
                     do {
@@ -577,7 +577,7 @@ public class DotPomdpLexer extends Lexer {
 
                         switch (alt4) {
                     	case 1 :
-                    	    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:109:10: '0' .. '9'
+                    	    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:109:10: '0' .. '9'
                     	    {
                     	    matchRange('0','9'); 
 
@@ -594,7 +594,7 @@ public class DotPomdpLexer extends Lexer {
                     } while (true);
 
                     match('.'); 
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:109:25: ( '0' .. '9' )*
+                    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:109:25: ( '0' .. '9' )*
                     loop5:
                     do {
                         int alt5=2;
@@ -607,7 +607,7 @@ public class DotPomdpLexer extends Lexer {
 
                         switch (alt5) {
                     	case 1 :
-                    	    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:109:26: '0' .. '9'
+                    	    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:109:26: '0' .. '9'
                     	    {
                     	    matchRange('0','9'); 
 
@@ -619,7 +619,7 @@ public class DotPomdpLexer extends Lexer {
                         }
                     } while (true);
 
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:109:37: ( EXPONENT )?
+                    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:109:37: ( EXPONENT )?
                     int alt6=2;
                     int LA6_0 = input.LA(1);
 
@@ -628,7 +628,7 @@ public class DotPomdpLexer extends Lexer {
                     }
                     switch (alt6) {
                         case 1 :
-                            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:109:37: EXPONENT
+                            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:109:37: EXPONENT
                             {
                             mEXPONENT(); 
 
@@ -641,10 +641,10 @@ public class DotPomdpLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:110:9: '.' ( '0' .. '9' )+ ( EXPONENT )?
+                    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:110:9: '.' ( '0' .. '9' )+ ( EXPONENT )?
                     {
                     match('.'); 
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:110:13: ( '0' .. '9' )+
+                    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:110:13: ( '0' .. '9' )+
                     int cnt7=0;
                     loop7:
                     do {
@@ -658,7 +658,7 @@ public class DotPomdpLexer extends Lexer {
 
                         switch (alt7) {
                     	case 1 :
-                    	    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:110:14: '0' .. '9'
+                    	    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:110:14: '0' .. '9'
                     	    {
                     	    matchRange('0','9'); 
 
@@ -674,7 +674,7 @@ public class DotPomdpLexer extends Lexer {
                         cnt7++;
                     } while (true);
 
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:110:25: ( EXPONENT )?
+                    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:110:25: ( EXPONENT )?
                     int alt8=2;
                     int LA8_0 = input.LA(1);
 
@@ -683,7 +683,7 @@ public class DotPomdpLexer extends Lexer {
                     }
                     switch (alt8) {
                         case 1 :
-                            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:110:25: EXPONENT
+                            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:110:25: EXPONENT
                             {
                             mEXPONENT(); 
 
@@ -696,9 +696,9 @@ public class DotPomdpLexer extends Lexer {
                     }
                     break;
                 case 3 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:111:9: ( '0' .. '9' )+ EXPONENT
+                    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:111:9: ( '0' .. '9' )+ EXPONENT
                     {
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:111:9: ( '0' .. '9' )+
+                    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:111:9: ( '0' .. '9' )+
                     int cnt9=0;
                     loop9:
                     do {
@@ -712,7 +712,7 @@ public class DotPomdpLexer extends Lexer {
 
                         switch (alt9) {
                     	case 1 :
-                    	    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:111:10: '0' .. '9'
+                    	    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:111:10: '0' .. '9'
                     	    {
                     	    matchRange('0','9'); 
 
@@ -745,7 +745,7 @@ public class DotPomdpLexer extends Lexer {
     public final void mCOMMENT() throws RecognitionException {
         try {
             int _type = COMMENT;
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:115:5: ( '#' (~ ( '\\n' | '\\r' ) )* ( '\\r' )? '\\n' | '//' (~ ( '\\n' | '\\r' ) )* ( '\\r' )? '\\n' | '/*' ( options {greedy=false; } : . )* '*/' )
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:115:5: ( '#' (~ ( '\\n' | '\\r' ) )* ( '\\r' )? '\\n' | '//' (~ ( '\\n' | '\\r' ) )* ( '\\r' )? '\\n' | '/*' ( options {greedy=false; } : . )* '*/' )
             int alt16=3;
             int LA16_0 = input.LA(1);
 
@@ -776,10 +776,10 @@ public class DotPomdpLexer extends Lexer {
             }
             switch (alt16) {
                 case 1 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:115:9: '#' (~ ( '\\n' | '\\r' ) )* ( '\\r' )? '\\n'
+                    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:115:9: '#' (~ ( '\\n' | '\\r' ) )* ( '\\r' )? '\\n'
                     {
                     match('#'); 
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:115:13: (~ ( '\\n' | '\\r' ) )*
+                    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:115:13: (~ ( '\\n' | '\\r' ) )*
                     loop11:
                     do {
                         int alt11=2;
@@ -792,7 +792,7 @@ public class DotPomdpLexer extends Lexer {
 
                         switch (alt11) {
                     	case 1 :
-                    	    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:115:13: ~ ( '\\n' | '\\r' )
+                    	    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:115:13: ~ ( '\\n' | '\\r' )
                     	    {
                     	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='\t')||(input.LA(1)>='\u000B' && input.LA(1)<='\f')||(input.LA(1)>='\u000E' && input.LA(1)<='\uFFFE') ) {
                     	        input.consume();
@@ -813,7 +813,7 @@ public class DotPomdpLexer extends Lexer {
                         }
                     } while (true);
 
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:115:27: ( '\\r' )?
+                    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:115:27: ( '\\r' )?
                     int alt12=2;
                     int LA12_0 = input.LA(1);
 
@@ -822,7 +822,7 @@ public class DotPomdpLexer extends Lexer {
                     }
                     switch (alt12) {
                         case 1 :
-                            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:115:27: '\\r'
+                            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:115:27: '\\r'
                             {
                             match('\r'); 
 
@@ -837,11 +837,11 @@ public class DotPomdpLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:116:9: '//' (~ ( '\\n' | '\\r' ) )* ( '\\r' )? '\\n'
+                    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:116:9: '//' (~ ( '\\n' | '\\r' ) )* ( '\\r' )? '\\n'
                     {
                     match("//"); 
 
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:116:14: (~ ( '\\n' | '\\r' ) )*
+                    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:116:14: (~ ( '\\n' | '\\r' ) )*
                     loop13:
                     do {
                         int alt13=2;
@@ -854,7 +854,7 @@ public class DotPomdpLexer extends Lexer {
 
                         switch (alt13) {
                     	case 1 :
-                    	    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:116:14: ~ ( '\\n' | '\\r' )
+                    	    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:116:14: ~ ( '\\n' | '\\r' )
                     	    {
                     	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='\t')||(input.LA(1)>='\u000B' && input.LA(1)<='\f')||(input.LA(1)>='\u000E' && input.LA(1)<='\uFFFE') ) {
                     	        input.consume();
@@ -875,7 +875,7 @@ public class DotPomdpLexer extends Lexer {
                         }
                     } while (true);
 
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:116:28: ( '\\r' )?
+                    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:116:28: ( '\\r' )?
                     int alt14=2;
                     int LA14_0 = input.LA(1);
 
@@ -884,7 +884,7 @@ public class DotPomdpLexer extends Lexer {
                     }
                     switch (alt14) {
                         case 1 :
-                            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:116:28: '\\r'
+                            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:116:28: '\\r'
                             {
                             match('\r'); 
 
@@ -899,11 +899,11 @@ public class DotPomdpLexer extends Lexer {
                     }
                     break;
                 case 3 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:117:9: '/*' ( options {greedy=false; } : . )* '*/'
+                    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:117:9: '/*' ( options {greedy=false; } : . )* '*/'
                     {
                     match("/*"); 
 
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:117:14: ( options {greedy=false; } : . )*
+                    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:117:14: ( options {greedy=false; } : . )*
                     loop15:
                     do {
                         int alt15=2;
@@ -928,7 +928,7 @@ public class DotPomdpLexer extends Lexer {
 
                         switch (alt15) {
                     	case 1 :
-                    	    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:117:42: .
+                    	    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:117:42: .
                     	    {
                     	    matchAny(); 
 
@@ -959,8 +959,8 @@ public class DotPomdpLexer extends Lexer {
     public final void mWS() throws RecognitionException {
         try {
             int _type = WS;
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:121:5: ( ( ' ' | '\\t' | '\\r' | '\\n' ) )
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:121:9: ( ' ' | '\\t' | '\\r' | '\\n' )
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:121:5: ( ( ' ' | '\\t' | '\\r' | '\\n' ) )
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:121:9: ( ' ' | '\\t' | '\\r' | '\\n' )
             {
             if ( (input.LA(1)>='\t' && input.LA(1)<='\n')||input.LA(1)=='\r'||input.LA(1)==' ' ) {
                 input.consume();
@@ -986,8 +986,8 @@ public class DotPomdpLexer extends Lexer {
     // $ANTLR start EXPONENT
     public final void mEXPONENT() throws RecognitionException {
         try {
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:130:10: ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:130:12: ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:130:10: ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:130:12: ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+
             {
             if ( input.LA(1)=='E'||input.LA(1)=='e' ) {
                 input.consume();
@@ -999,7 +999,7 @@ public class DotPomdpLexer extends Lexer {
                 recover(mse);    throw mse;
             }
 
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:130:22: ( '+' | '-' )?
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:130:22: ( '+' | '-' )?
             int alt17=2;
             int LA17_0 = input.LA(1);
 
@@ -1008,7 +1008,7 @@ public class DotPomdpLexer extends Lexer {
             }
             switch (alt17) {
                 case 1 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:
+                    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:
                     {
                     if ( input.LA(1)=='+'||input.LA(1)=='-' ) {
                         input.consume();
@@ -1026,7 +1026,7 @@ public class DotPomdpLexer extends Lexer {
 
             }
 
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:130:33: ( '0' .. '9' )+
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:130:33: ( '0' .. '9' )+
             int cnt18=0;
             loop18:
             do {
@@ -1040,7 +1040,7 @@ public class DotPomdpLexer extends Lexer {
 
                 switch (alt18) {
             	case 1 :
-            	    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:130:34: '0' .. '9'
+            	    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:130:34: '0' .. '9'
             	    {
             	    matchRange('0','9'); 
 
@@ -1066,180 +1066,180 @@ public class DotPomdpLexer extends Lexer {
     // $ANTLR end EXPONENT
 
     public void mTokens() throws RecognitionException {
-        // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:1:8: ( DISCOUNTTOK | VALUESTOK | STATESTOK | ACTIONSTOK | OBSERVATIONSTOK | TTOK | OTOK | RTOK | UNIFORMTOK | IDENTITYTOK | REWARDTOK | COSTTOK | STARTTOK | INCLUDETOK | EXCLUDETOK | RESETTOK | COLONTOK | ASTERICKTOK | PLUSTOK | MINUSTOK | STRING | INT | FLOAT | COMMENT | WS )
+        // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:1:8: ( DISCOUNTTOK | VALUESTOK | STATESTOK | ACTIONSTOK | OBSERVATIONSTOK | TTOK | OTOK | RTOK | UNIFORMTOK | IDENTITYTOK | REWARDTOK | COSTTOK | STARTTOK | INCLUDETOK | EXCLUDETOK | RESETTOK | COLONTOK | ASTERICKTOK | PLUSTOK | MINUSTOK | STRING | INT | FLOAT | COMMENT | WS )
         int alt19=25;
         alt19 = dfa19.predict(input);
         switch (alt19) {
             case 1 :
-                // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:1:10: DISCOUNTTOK
+                // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:1:10: DISCOUNTTOK
                 {
                 mDISCOUNTTOK(); 
 
                 }
                 break;
             case 2 :
-                // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:1:22: VALUESTOK
+                // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:1:22: VALUESTOK
                 {
                 mVALUESTOK(); 
 
                 }
                 break;
             case 3 :
-                // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:1:32: STATESTOK
+                // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:1:32: STATESTOK
                 {
                 mSTATESTOK(); 
 
                 }
                 break;
             case 4 :
-                // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:1:42: ACTIONSTOK
+                // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:1:42: ACTIONSTOK
                 {
                 mACTIONSTOK(); 
 
                 }
                 break;
             case 5 :
-                // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:1:53: OBSERVATIONSTOK
+                // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:1:53: OBSERVATIONSTOK
                 {
                 mOBSERVATIONSTOK(); 
 
                 }
                 break;
             case 6 :
-                // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:1:69: TTOK
+                // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:1:69: TTOK
                 {
                 mTTOK(); 
 
                 }
                 break;
             case 7 :
-                // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:1:74: OTOK
+                // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:1:74: OTOK
                 {
                 mOTOK(); 
 
                 }
                 break;
             case 8 :
-                // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:1:79: RTOK
+                // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:1:79: RTOK
                 {
                 mRTOK(); 
 
                 }
                 break;
             case 9 :
-                // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:1:84: UNIFORMTOK
+                // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:1:84: UNIFORMTOK
                 {
                 mUNIFORMTOK(); 
 
                 }
                 break;
             case 10 :
-                // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:1:95: IDENTITYTOK
+                // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:1:95: IDENTITYTOK
                 {
                 mIDENTITYTOK(); 
 
                 }
                 break;
             case 11 :
-                // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:1:107: REWARDTOK
+                // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:1:107: REWARDTOK
                 {
                 mREWARDTOK(); 
 
                 }
                 break;
             case 12 :
-                // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:1:117: COSTTOK
+                // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:1:117: COSTTOK
                 {
                 mCOSTTOK(); 
 
                 }
                 break;
             case 13 :
-                // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:1:125: STARTTOK
+                // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:1:125: STARTTOK
                 {
                 mSTARTTOK(); 
 
                 }
                 break;
             case 14 :
-                // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:1:134: INCLUDETOK
+                // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:1:134: INCLUDETOK
                 {
                 mINCLUDETOK(); 
 
                 }
                 break;
             case 15 :
-                // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:1:145: EXCLUDETOK
+                // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:1:145: EXCLUDETOK
                 {
                 mEXCLUDETOK(); 
 
                 }
                 break;
             case 16 :
-                // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:1:156: RESETTOK
+                // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:1:156: RESETTOK
                 {
                 mRESETTOK(); 
 
                 }
                 break;
             case 17 :
-                // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:1:165: COLONTOK
+                // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:1:165: COLONTOK
                 {
                 mCOLONTOK(); 
 
                 }
                 break;
             case 18 :
-                // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:1:174: ASTERICKTOK
+                // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:1:174: ASTERICKTOK
                 {
                 mASTERICKTOK(); 
 
                 }
                 break;
             case 19 :
-                // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:1:186: PLUSTOK
+                // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:1:186: PLUSTOK
                 {
                 mPLUSTOK(); 
 
                 }
                 break;
             case 20 :
-                // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:1:194: MINUSTOK
+                // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:1:194: MINUSTOK
                 {
                 mMINUSTOK(); 
 
                 }
                 break;
             case 21 :
-                // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:1:203: STRING
+                // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:1:203: STRING
                 {
                 mSTRING(); 
 
                 }
                 break;
             case 22 :
-                // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:1:210: INT
+                // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:1:210: INT
                 {
                 mINT(); 
 
                 }
                 break;
             case 23 :
-                // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:1:214: FLOAT
+                // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:1:214: FLOAT
                 {
                 mFLOAT(); 
 
                 }
                 break;
             case 24 :
-                // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:1:220: COMMENT
+                // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:1:220: COMMENT
                 {
                 mCOMMENT(); 
 
                 }
                 break;
             case 25 :
-                // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:1:228: WS
+                // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:1:228: WS
                 {
                 mWS(); 
 

@@ -1,4 +1,4 @@
-// $ANTLR 3.0.1 /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotAlpha.g 2010-10-14 14:45:58
+// $ANTLR 3.0.1 /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotAlpha.g 2010-10-20 11:54:32
 
     package libpomdp.parser;
 
@@ -32,7 +32,7 @@ public class DotAlphaParser extends Parser {
         
 
     public String[] getTokenNames() { return tokenNames; }
-    public String getGrammarFileName() { return "/home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotAlpha.g"; }
+    public String getGrammarFileName() { return "/home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotAlpha.g"; }
 
 
         // main method
@@ -69,7 +69,7 @@ public class DotAlphaParser extends Parser {
 
 
     // $ANTLR start dotAlpha
-    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotAlpha.g:86:1: dotAlpha : ( action_decl alpha_vector )+ ;
+    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotAlpha.g:86:1: dotAlpha : ( action_decl alpha_vector )+ ;
     public final void dotAlpha() throws RecognitionException {
         int action_decl1 = 0;
 
@@ -77,10 +77,10 @@ public class DotAlphaParser extends Parser {
 
 
         try {
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotAlpha.g:87:5: ( ( action_decl alpha_vector )+ )
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotAlpha.g:88:9: ( action_decl alpha_vector )+
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotAlpha.g:87:5: ( ( action_decl alpha_vector )+ )
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotAlpha.g:88:9: ( action_decl alpha_vector )+
             {
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotAlpha.g:88:9: ( action_decl alpha_vector )+
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotAlpha.g:88:9: ( action_decl alpha_vector )+
             int cnt1=0;
             loop1:
             do {
@@ -94,7 +94,7 @@ public class DotAlphaParser extends Parser {
 
                 switch (alt1) {
             	case 1 :
-            	    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotAlpha.g:89:13: action_decl alpha_vector
+            	    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotAlpha.g:89:13: action_decl alpha_vector
             	    {
             	    pushFollow(FOLLOW_action_decl_in_dotAlpha287);
             	    action_decl1=action_decl();
@@ -142,15 +142,15 @@ public class DotAlphaParser extends Parser {
 
 
     // $ANTLR start action_decl
-    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotAlpha.g:103:1: action_decl returns [int a] : INT ;
+    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotAlpha.g:103:1: action_decl returns [int a] : INT ;
     public final int action_decl() throws RecognitionException {
         int a = 0;
 
         Token INT3=null;
 
         try {
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotAlpha.g:104:5: ( INT )
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotAlpha.g:104:9: INT
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotAlpha.g:104:5: ( INT )
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotAlpha.g:104:9: INT
             {
             INT3=(Token)input.LT(1);
             match(input,INT,FOLLOW_INT_in_action_decl368); 
@@ -171,7 +171,7 @@ public class DotAlphaParser extends Parser {
 
 
     // $ANTLR start alpha_vector
-    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotAlpha.g:108:1: alpha_vector returns [ArrayList<Double> v = new ArrayList<Double>()] : ( optional_sign FLOAT )+ ;
+    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotAlpha.g:108:1: alpha_vector returns [ArrayList<Double> v = new ArrayList<Double>()] : ( optional_sign FLOAT )+ ;
     public final ArrayList<Double> alpha_vector() throws RecognitionException {
         ArrayList<Double> v =  new ArrayList<Double>();
 
@@ -180,10 +180,10 @@ public class DotAlphaParser extends Parser {
 
 
         try {
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotAlpha.g:109:5: ( ( optional_sign FLOAT )+ )
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotAlpha.g:109:9: ( optional_sign FLOAT )+
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotAlpha.g:109:5: ( ( optional_sign FLOAT )+ )
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotAlpha.g:109:9: ( optional_sign FLOAT )+
             {
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotAlpha.g:109:9: ( optional_sign FLOAT )+
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotAlpha.g:109:9: ( optional_sign FLOAT )+
             int cnt2=0;
             loop2:
             do {
@@ -197,7 +197,7 @@ public class DotAlphaParser extends Parser {
 
                 switch (alt2) {
             	case 1 :
-            	    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotAlpha.g:109:10: optional_sign FLOAT
+            	    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotAlpha.g:109:10: optional_sign FLOAT
             	    {
             	    pushFollow(FOLLOW_optional_sign_in_alpha_vector402);
             	    optional_sign4=optional_sign();
@@ -237,12 +237,12 @@ public class DotAlphaParser extends Parser {
 
 
     // $ANTLR start optional_sign
-    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotAlpha.g:117:1: optional_sign returns [int s] : ( '+' | '-' | );
+    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotAlpha.g:117:1: optional_sign returns [int s] : ( '+' | '-' | );
     public final int optional_sign() throws RecognitionException {
         int s = 0;
 
         try {
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotAlpha.g:118:5: ( '+' | '-' | )
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotAlpha.g:118:5: ( '+' | '-' | )
             int alt3=3;
             switch ( input.LA(1) ) {
             case 8:
@@ -269,7 +269,7 @@ public class DotAlphaParser extends Parser {
 
             switch (alt3) {
                 case 1 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotAlpha.g:118:7: '+'
+                    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotAlpha.g:118:7: '+'
                     {
                     match(input,8,FOLLOW_8_in_optional_sign455); 
                     s = 1;
@@ -277,7 +277,7 @@ public class DotAlphaParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotAlpha.g:120:7: '-'
+                    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotAlpha.g:120:7: '-'
                     {
                     match(input,9,FOLLOW_9_in_optional_sign473); 
                     s = -1;
@@ -285,7 +285,7 @@ public class DotAlphaParser extends Parser {
                     }
                     break;
                 case 3 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotAlpha.g:123:9: 
+                    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotAlpha.g:123:9: 
                     {
                     s = 1;
 

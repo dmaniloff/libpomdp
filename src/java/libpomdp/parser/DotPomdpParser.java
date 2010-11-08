@@ -1,9 +1,9 @@
-// $ANTLR 3.0.1 /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g 2010-10-14 14:45:56
+// $ANTLR 3.0.1 /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g 2010-10-20 11:54:28
 
     package libpomdp.parser;
-    import libpomdp.common.CustomMatrix;
-import libpomdp.common.CustomVector;
-import libpomdp.common.Utils;
+    import libpomdp.common.Utils;
+    import libpomdp.common.CustomVector;
+    import libpomdp.common.CustomMatrix;  
   
 
 
@@ -60,7 +60,7 @@ public class DotPomdpParser extends Parser {
         
 
     public String[] getTokenNames() { return tokenNames; }
-    public String getGrammarFileName() { return "/home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g"; }
+    public String getGrammarFileName() { return "/home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g"; }
 
 
         // main method
@@ -102,11 +102,11 @@ public class DotPomdpParser extends Parser {
 
 
     // $ANTLR start dotPomdp
-    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:135:1: dotPomdp : preamble start_state param_list ;
+    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:135:1: dotPomdp : preamble start_state param_list ;
     public final void dotPomdp() throws RecognitionException {
         try {
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:136:5: ( preamble start_state param_list )
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:137:9: preamble start_state param_list
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:136:5: ( preamble start_state param_list )
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:137:9: preamble start_state param_list
             {
 
                   		System.out.println("PARSER: Parsing preamble...");
@@ -195,13 +195,13 @@ public class DotPomdpParser extends Parser {
 
 
     // $ANTLR start preamble
-    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:201:1: preamble : ( param_type )* ;
+    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:201:1: preamble : ( param_type )* ;
     public final void preamble() throws RecognitionException {
         try {
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:202:5: ( ( param_type )* )
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:202:7: ( param_type )*
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:202:5: ( ( param_type )* )
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:202:7: ( param_type )*
             {
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:202:7: ( param_type )*
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:202:7: ( param_type )*
             loop1:
             do {
                 int alt1=2;
@@ -214,7 +214,7 @@ public class DotPomdpParser extends Parser {
 
                 switch (alt1) {
             	case 1 :
-            	    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:202:7: param_type
+            	    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:202:7: param_type
             	    {
             	    pushFollow(FOLLOW_param_type_in_preamble869);
             	    param_type();
@@ -245,10 +245,10 @@ public class DotPomdpParser extends Parser {
 
 
     // $ANTLR start param_type
-    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:205:1: param_type : ( discount_param | value_param | state_param | action_param | obs_param );
+    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:205:1: param_type : ( discount_param | value_param | state_param | action_param | obs_param );
     public final void param_type() throws RecognitionException {
         try {
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:206:5: ( discount_param | value_param | state_param | action_param | obs_param )
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:206:5: ( discount_param | value_param | state_param | action_param | obs_param )
             int alt2=5;
             switch ( input.LA(1) ) {
             case DISCOUNTTOK:
@@ -285,7 +285,7 @@ public class DotPomdpParser extends Parser {
 
             switch (alt2) {
                 case 1 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:206:7: discount_param
+                    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:206:7: discount_param
                     {
                     pushFollow(FOLLOW_discount_param_in_param_type901);
                     discount_param();
@@ -295,7 +295,7 @@ public class DotPomdpParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:207:7: value_param
+                    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:207:7: value_param
                     {
                     pushFollow(FOLLOW_value_param_in_param_type909);
                     value_param();
@@ -305,7 +305,7 @@ public class DotPomdpParser extends Parser {
                     }
                     break;
                 case 3 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:208:7: state_param
+                    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:208:7: state_param
                     {
                     pushFollow(FOLLOW_state_param_in_param_type917);
                     state_param();
@@ -315,7 +315,7 @@ public class DotPomdpParser extends Parser {
                     }
                     break;
                 case 4 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:209:7: action_param
+                    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:209:7: action_param
                     {
                     pushFollow(FOLLOW_action_param_in_param_type925);
                     action_param();
@@ -325,7 +325,7 @@ public class DotPomdpParser extends Parser {
                     }
                     break;
                 case 5 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:210:7: obs_param
+                    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:210:7: obs_param
                     {
                     pushFollow(FOLLOW_obs_param_in_param_type933);
                     obs_param();
@@ -349,13 +349,13 @@ public class DotPomdpParser extends Parser {
 
 
     // $ANTLR start discount_param
-    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:214:1: discount_param : DISCOUNTTOK COLONTOK FLOAT ;
+    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:214:1: discount_param : DISCOUNTTOK COLONTOK FLOAT ;
     public final void discount_param() throws RecognitionException {
         Token FLOAT1=null;
 
         try {
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:215:5: ( DISCOUNTTOK COLONTOK FLOAT )
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:215:7: DISCOUNTTOK COLONTOK FLOAT
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:215:5: ( DISCOUNTTOK COLONTOK FLOAT )
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:215:7: DISCOUNTTOK COLONTOK FLOAT
             {
             match(input,DISCOUNTTOK,FOLLOW_DISCOUNTTOK_in_discount_param953); 
             match(input,COLONTOK,FOLLOW_COLONTOK_in_discount_param955); 
@@ -379,11 +379,11 @@ public class DotPomdpParser extends Parser {
 
 
     // $ANTLR start value_param
-    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:220:1: value_param : VALUESTOK COLONTOK value_tail ;
+    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:220:1: value_param : VALUESTOK COLONTOK value_tail ;
     public final void value_param() throws RecognitionException {
         try {
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:221:5: ( VALUESTOK COLONTOK value_tail )
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:221:7: VALUESTOK COLONTOK value_tail
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:221:5: ( VALUESTOK COLONTOK value_tail )
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:221:7: VALUESTOK COLONTOK value_tail
             {
             match(input,VALUESTOK,FOLLOW_VALUESTOK_in_value_param987); 
             match(input,COLONTOK,FOLLOW_COLONTOK_in_value_param989); 
@@ -407,10 +407,10 @@ public class DotPomdpParser extends Parser {
 
 
     // $ANTLR start value_tail
-    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:224:1: value_tail : ( REWARDTOK | COSTTOK );
+    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:224:1: value_tail : ( REWARDTOK | COSTTOK );
     public final void value_tail() throws RecognitionException {
         try {
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:225:5: ( REWARDTOK | COSTTOK )
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:225:5: ( REWARDTOK | COSTTOK )
             int alt3=2;
             int LA3_0 = input.LA(1);
 
@@ -428,14 +428,14 @@ public class DotPomdpParser extends Parser {
             }
             switch (alt3) {
                 case 1 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:225:7: REWARDTOK
+                    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:225:7: REWARDTOK
                     {
                     match(input,REWARDTOK,FOLLOW_REWARDTOK_in_value_tail1014); 
 
                     }
                     break;
                 case 2 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:226:7: COSTTOK
+                    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:226:7: COSTTOK
                     {
                     match(input,COSTTOK,FOLLOW_COSTTOK_in_value_tail1022); 
                     err("PARSER: Costs are not supported... sure that you want to use costs?");
@@ -457,11 +457,11 @@ public class DotPomdpParser extends Parser {
 
 
     // $ANTLR start state_param
-    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:230:1: state_param : STATESTOK COLONTOK state_tail ;
+    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:230:1: state_param : STATESTOK COLONTOK state_tail ;
     public final void state_param() throws RecognitionException {
         try {
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:231:5: ( STATESTOK COLONTOK state_tail )
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:231:7: STATESTOK COLONTOK state_tail
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:231:5: ( STATESTOK COLONTOK state_tail )
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:231:7: STATESTOK COLONTOK state_tail
             {
             match(input,STATESTOK,FOLLOW_STATESTOK_in_state_param1055); 
             match(input,COLONTOK,FOLLOW_COLONTOK_in_state_param1057); 
@@ -485,14 +485,14 @@ public class DotPomdpParser extends Parser {
 
 
     // $ANTLR start state_tail
-    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:234:1: state_tail : ( INT | ident_list );
+    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:234:1: state_tail : ( INT | ident_list );
     public final void state_tail() throws RecognitionException {
         Token INT2=null;
         ArrayList<String> ident_list3 = null;
 
 
         try {
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:235:5: ( INT | ident_list )
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:235:5: ( INT | ident_list )
             int alt4=2;
             int LA4_0 = input.LA(1);
 
@@ -510,7 +510,7 @@ public class DotPomdpParser extends Parser {
             }
             switch (alt4) {
                 case 1 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:235:7: INT
+                    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:235:7: INT
                     {
                     INT2=(Token)input.LT(1);
                     match(input,INT,FOLLOW_INT_in_state_tail1082); 
@@ -519,7 +519,7 @@ public class DotPomdpParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:238:7: ident_list
+                    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:238:7: ident_list
                     {
                     pushFollow(FOLLOW_ident_list_in_state_tail1109);
                     ident_list3=ident_list();
@@ -545,11 +545,11 @@ public class DotPomdpParser extends Parser {
 
 
     // $ANTLR start action_param
-    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:244:1: action_param : ACTIONSTOK COLONTOK action_tail ;
+    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:244:1: action_param : ACTIONSTOK COLONTOK action_tail ;
     public final void action_param() throws RecognitionException {
         try {
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:245:5: ( ACTIONSTOK COLONTOK action_tail )
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:245:7: ACTIONSTOK COLONTOK action_tail
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:245:5: ( ACTIONSTOK COLONTOK action_tail )
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:245:7: ACTIONSTOK COLONTOK action_tail
             {
             match(input,ACTIONSTOK,FOLLOW_ACTIONSTOK_in_action_param1150); 
             match(input,COLONTOK,FOLLOW_COLONTOK_in_action_param1152); 
@@ -573,14 +573,14 @@ public class DotPomdpParser extends Parser {
 
 
     // $ANTLR start action_tail
-    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:248:1: action_tail : ( INT | ident_list );
+    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:248:1: action_tail : ( INT | ident_list );
     public final void action_tail() throws RecognitionException {
         Token INT4=null;
         ArrayList<String> ident_list5 = null;
 
 
         try {
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:249:5: ( INT | ident_list )
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:249:5: ( INT | ident_list )
             int alt5=2;
             int LA5_0 = input.LA(1);
 
@@ -598,7 +598,7 @@ public class DotPomdpParser extends Parser {
             }
             switch (alt5) {
                 case 1 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:249:7: INT
+                    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:249:7: INT
                     {
                     INT4=(Token)input.LT(1);
                     match(input,INT,FOLLOW_INT_in_action_tail1177); 
@@ -607,7 +607,7 @@ public class DotPomdpParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:252:7: ident_list
+                    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:252:7: ident_list
                     {
                     pushFollow(FOLLOW_ident_list_in_action_tail1204);
                     ident_list5=ident_list();
@@ -633,11 +633,11 @@ public class DotPomdpParser extends Parser {
 
 
     // $ANTLR start obs_param
-    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:258:1: obs_param : OBSERVATIONSTOK COLONTOK obs_param_tail ;
+    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:258:1: obs_param : OBSERVATIONSTOK COLONTOK obs_param_tail ;
     public final void obs_param() throws RecognitionException {
         try {
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:259:5: ( OBSERVATIONSTOK COLONTOK obs_param_tail )
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:259:7: OBSERVATIONSTOK COLONTOK obs_param_tail
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:259:5: ( OBSERVATIONSTOK COLONTOK obs_param_tail )
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:259:7: OBSERVATIONSTOK COLONTOK obs_param_tail
             {
             match(input,OBSERVATIONSTOK,FOLLOW_OBSERVATIONSTOK_in_obs_param1241); 
             match(input,COLONTOK,FOLLOW_COLONTOK_in_obs_param1243); 
@@ -661,14 +661,14 @@ public class DotPomdpParser extends Parser {
 
 
     // $ANTLR start obs_param_tail
-    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:262:1: obs_param_tail : ( INT | ident_list );
+    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:262:1: obs_param_tail : ( INT | ident_list );
     public final void obs_param_tail() throws RecognitionException {
         Token INT6=null;
         ArrayList<String> ident_list7 = null;
 
 
         try {
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:263:5: ( INT | ident_list )
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:263:5: ( INT | ident_list )
             int alt6=2;
             int LA6_0 = input.LA(1);
 
@@ -686,7 +686,7 @@ public class DotPomdpParser extends Parser {
             }
             switch (alt6) {
                 case 1 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:263:7: INT
+                    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:263:7: INT
                     {
                     INT6=(Token)input.LT(1);
                     match(input,INT,FOLLOW_INT_in_obs_param_tail1263); 
@@ -695,7 +695,7 @@ public class DotPomdpParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:266:7: ident_list
+                    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:266:7: ident_list
                     {
                     pushFollow(FOLLOW_ident_list_in_obs_param_tail1290);
                     ident_list7=ident_list();
@@ -721,13 +721,13 @@ public class DotPomdpParser extends Parser {
 
 
     // $ANTLR start start_state
-    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:272:1: start_state : ( STARTTOK COLONTOK prob_vector | STARTTOK COLONTOK STRING | STARTTOK INCLUDETOK COLONTOK start_state_list | STARTTOK EXCLUDETOK COLONTOK start_state_list | );
+    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:272:1: start_state : ( STARTTOK COLONTOK prob_vector | STARTTOK COLONTOK STRING | STARTTOK INCLUDETOK COLONTOK start_state_list | STARTTOK EXCLUDETOK COLONTOK start_state_list | );
     public final void start_state() throws RecognitionException {
         CustomVector prob_vector8 = null;
 
 
         try {
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:273:5: ( STARTTOK COLONTOK prob_vector | STARTTOK COLONTOK STRING | STARTTOK INCLUDETOK COLONTOK start_state_list | STARTTOK EXCLUDETOK COLONTOK start_state_list | )
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:273:5: ( STARTTOK COLONTOK prob_vector | STARTTOK COLONTOK STRING | STARTTOK INCLUDETOK COLONTOK start_state_list | STARTTOK EXCLUDETOK COLONTOK start_state_list | )
             int alt7=5;
             int LA7_0 = input.LA(1);
 
@@ -780,7 +780,7 @@ public class DotPomdpParser extends Parser {
             }
             switch (alt7) {
                 case 1 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:273:7: STARTTOK COLONTOK prob_vector
+                    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:273:7: STARTTOK COLONTOK prob_vector
                     {
                     match(input,STARTTOK,FOLLOW_STARTTOK_in_start_state1331); 
                     match(input,COLONTOK,FOLLOW_COLONTOK_in_start_state1333); 
@@ -796,7 +796,7 @@ public class DotPomdpParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:279:7: STARTTOK COLONTOK STRING
+                    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:279:7: STARTTOK COLONTOK STRING
                     {
                     match(input,STARTTOK,FOLLOW_STARTTOK_in_start_state1362); 
                     match(input,COLONTOK,FOLLOW_COLONTOK_in_start_state1364); 
@@ -806,7 +806,7 @@ public class DotPomdpParser extends Parser {
                     }
                     break;
                 case 3 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:281:7: STARTTOK INCLUDETOK COLONTOK start_state_list
+                    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:281:7: STARTTOK INCLUDETOK COLONTOK start_state_list
                     {
                     match(input,STARTTOK,FOLLOW_STARTTOK_in_start_state1384); 
                     match(input,INCLUDETOK,FOLLOW_INCLUDETOK_in_start_state1386); 
@@ -820,7 +820,7 @@ public class DotPomdpParser extends Parser {
                     }
                     break;
                 case 4 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:283:7: STARTTOK EXCLUDETOK COLONTOK start_state_list
+                    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:283:7: STARTTOK EXCLUDETOK COLONTOK start_state_list
                     {
                     match(input,STARTTOK,FOLLOW_STARTTOK_in_start_state1409); 
                     match(input,EXCLUDETOK,FOLLOW_EXCLUDETOK_in_start_state1411); 
@@ -834,7 +834,7 @@ public class DotPomdpParser extends Parser {
                     }
                     break;
                 case 5 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:286:6: 
+                    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:286:6: 
                     {
 
                         	// Empty start state means uniform belief
@@ -858,13 +858,13 @@ public class DotPomdpParser extends Parser {
 
 
     // $ANTLR start start_state_list
-    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:292:1: start_state_list : ( state )+ ;
+    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:292:1: start_state_list : ( state )+ ;
     public final void start_state_list() throws RecognitionException {
         try {
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:293:5: ( ( state )+ )
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:293:7: ( state )+
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:293:5: ( ( state )+ )
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:293:7: ( state )+
             {
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:293:7: ( state )+
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:293:7: ( state )+
             int cnt8=0;
             loop8:
             do {
@@ -878,7 +878,7 @@ public class DotPomdpParser extends Parser {
 
                 switch (alt8) {
             	case 1 :
-            	    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:293:7: state
+            	    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:293:7: state
             	    {
             	    pushFollow(FOLLOW_state_in_start_state_list1463);
             	    state();
@@ -913,13 +913,13 @@ public class DotPomdpParser extends Parser {
 
 
     // $ANTLR start param_list
-    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:296:1: param_list : ( param_spec )* ;
+    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:296:1: param_list : ( param_spec )* ;
     public final void param_list() throws RecognitionException {
         try {
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:297:5: ( ( param_spec )* )
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:297:7: ( param_spec )*
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:297:5: ( ( param_spec )* )
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:297:7: ( param_spec )*
             {
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:297:7: ( param_spec )*
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:297:7: ( param_spec )*
             loop9:
             do {
                 int alt9=2;
@@ -932,7 +932,7 @@ public class DotPomdpParser extends Parser {
 
                 switch (alt9) {
             	case 1 :
-            	    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:297:7: param_spec
+            	    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:297:7: param_spec
             	    {
             	    pushFollow(FOLLOW_param_spec_in_param_list1486);
             	    param_spec();
@@ -963,10 +963,10 @@ public class DotPomdpParser extends Parser {
 
 
     // $ANTLR start param_spec
-    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:300:1: param_spec : ( trans_prob_spec | obs_prob_spec | reward_spec );
+    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:300:1: param_spec : ( trans_prob_spec | obs_prob_spec | reward_spec );
     public final void param_spec() throws RecognitionException {
         try {
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:301:5: ( trans_prob_spec | obs_prob_spec | reward_spec )
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:301:5: ( trans_prob_spec | obs_prob_spec | reward_spec )
             int alt10=3;
             switch ( input.LA(1) ) {
             case TTOK:
@@ -993,7 +993,7 @@ public class DotPomdpParser extends Parser {
 
             switch (alt10) {
                 case 1 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:301:7: trans_prob_spec
+                    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:301:7: trans_prob_spec
                     {
                     pushFollow(FOLLOW_trans_prob_spec_in_param_spec1509);
                     trans_prob_spec();
@@ -1003,7 +1003,7 @@ public class DotPomdpParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:302:7: obs_prob_spec
+                    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:302:7: obs_prob_spec
                     {
                     pushFollow(FOLLOW_obs_prob_spec_in_param_spec1517);
                     obs_prob_spec();
@@ -1013,7 +1013,7 @@ public class DotPomdpParser extends Parser {
                     }
                     break;
                 case 3 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:303:7: reward_spec
+                    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:303:7: reward_spec
                     {
                     pushFollow(FOLLOW_reward_spec_in_param_spec1526);
                     reward_spec();
@@ -1037,11 +1037,11 @@ public class DotPomdpParser extends Parser {
 
 
     // $ANTLR start trans_prob_spec
-    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:306:1: trans_prob_spec : TTOK COLONTOK trans_spec_tail ;
+    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:306:1: trans_prob_spec : TTOK COLONTOK trans_spec_tail ;
     public final void trans_prob_spec() throws RecognitionException {
         try {
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:307:5: ( TTOK COLONTOK trans_spec_tail )
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:307:7: TTOK COLONTOK trans_spec_tail
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:307:5: ( TTOK COLONTOK trans_spec_tail )
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:307:7: TTOK COLONTOK trans_spec_tail
             {
             match(input,TTOK,FOLLOW_TTOK_in_trans_prob_spec1548); 
             match(input,COLONTOK,FOLLOW_COLONTOK_in_trans_prob_spec1550); 
@@ -1065,7 +1065,7 @@ public class DotPomdpParser extends Parser {
 
 
     // $ANTLR start trans_spec_tail
-    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:310:1: trans_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state prob | paction COLONTOK state u_matrix | paction ui_matrix );
+    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:310:1: trans_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state prob | paction COLONTOK state u_matrix | paction ui_matrix );
     public final void trans_spec_tail() throws RecognitionException {
         state_return s_1 = null;
 
@@ -1087,7 +1087,7 @@ public class DotPomdpParser extends Parser {
 
 
         try {
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:311:5: ( paction COLONTOK s_1= state COLONTOK s_2= state prob | paction COLONTOK state u_matrix | paction ui_matrix )
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:311:5: ( paction COLONTOK s_1= state COLONTOK s_2= state prob | paction COLONTOK state u_matrix | paction ui_matrix )
             int alt11=3;
             switch ( input.LA(1) ) {
             case INT:
@@ -1336,7 +1336,7 @@ public class DotPomdpParser extends Parser {
 
             switch (alt11) {
                 case 1 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:311:7: paction COLONTOK s_1= state COLONTOK s_2= state prob
+                    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:311:7: paction COLONTOK s_1= state COLONTOK s_2= state prob
                     {
                     pushFollow(FOLLOW_paction_in_trans_spec_tail1574);
                     paction10=paction();
@@ -1357,7 +1357,7 @@ public class DotPomdpParser extends Parser {
                     _fsp--;
 
 
-                                if(prob9 > 0.0) // this causes MORE entries to exist - don't know why yet
+                                // if(prob9 > 0.0) //Some files relies in rewriting... bad thing... 
                                     for(int a : paction10)
                                         for(int s1 : s_1.l)
                                             for(int s2 : s_2.l)
@@ -1367,7 +1367,7 @@ public class DotPomdpParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:320:7: paction COLONTOK state u_matrix
+                    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:320:7: paction COLONTOK state u_matrix
                     {
                     pushFollow(FOLLOW_paction_in_trans_spec_tail1616);
                     paction11=paction();
@@ -1393,7 +1393,7 @@ public class DotPomdpParser extends Parser {
                     }
                     break;
                 case 3 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:328:7: paction ui_matrix
+                    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:328:7: paction ui_matrix
                     {
                     pushFollow(FOLLOW_paction_in_trans_spec_tail1641);
                     paction14=paction();
@@ -1425,11 +1425,11 @@ public class DotPomdpParser extends Parser {
 
 
     // $ANTLR start obs_prob_spec
-    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:336:1: obs_prob_spec : OTOK COLONTOK obs_spec_tail ;
+    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:336:1: obs_prob_spec : OTOK COLONTOK obs_spec_tail ;
     public final void obs_prob_spec() throws RecognitionException {
         try {
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:337:5: ( OTOK COLONTOK obs_spec_tail )
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:337:7: OTOK COLONTOK obs_spec_tail
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:337:5: ( OTOK COLONTOK obs_spec_tail )
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:337:7: OTOK COLONTOK obs_spec_tail
             {
             match(input,OTOK,FOLLOW_OTOK_in_obs_prob_spec1681); 
             match(input,COLONTOK,FOLLOW_COLONTOK_in_obs_prob_spec1683); 
@@ -1453,7 +1453,7 @@ public class DotPomdpParser extends Parser {
 
 
     // $ANTLR start obs_spec_tail
-    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:340:1: obs_spec_tail : ( paction COLONTOK state COLONTOK obs prob | paction COLONTOK state u_matrix | paction u_matrix );
+    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:340:1: obs_spec_tail : ( paction COLONTOK state COLONTOK obs prob | paction COLONTOK state u_matrix | paction u_matrix );
     public final void obs_spec_tail() throws RecognitionException {
         double prob16 = 0.0;
 
@@ -1475,7 +1475,7 @@ public class DotPomdpParser extends Parser {
 
 
         try {
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:341:5: ( paction COLONTOK state COLONTOK obs prob | paction COLONTOK state u_matrix | paction u_matrix )
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:341:5: ( paction COLONTOK state COLONTOK obs prob | paction COLONTOK state u_matrix | paction u_matrix )
             int alt12=3;
             switch ( input.LA(1) ) {
             case INT:
@@ -1724,7 +1724,7 @@ public class DotPomdpParser extends Parser {
 
             switch (alt12) {
                 case 1 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:341:7: paction COLONTOK state COLONTOK obs prob
+                    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:341:7: paction COLONTOK state COLONTOK obs prob
                     {
                     pushFollow(FOLLOW_paction_in_obs_spec_tail1704);
                     paction17=paction();
@@ -1745,7 +1745,7 @@ public class DotPomdpParser extends Parser {
                     _fsp--;
 
 
-                            if(prob16 > 0.0)
+                            //if(prob16 > 0.0) // rewriting... puff 
                                 for(int a : paction17)
                                     for(int s2 : state18.l)
                                         for(int o : obs19.l)
@@ -1755,7 +1755,7 @@ public class DotPomdpParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:350:7: paction COLONTOK state u_matrix
+                    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:350:7: paction COLONTOK state u_matrix
                     {
                     pushFollow(FOLLOW_paction_in_obs_spec_tail1741);
                     paction20=paction();
@@ -1781,7 +1781,7 @@ public class DotPomdpParser extends Parser {
                     }
                     break;
                 case 3 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:358:7: paction u_matrix
+                    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:358:7: paction u_matrix
                     {
                     pushFollow(FOLLOW_paction_in_obs_spec_tail1766);
                     paction23=paction();
@@ -1813,11 +1813,11 @@ public class DotPomdpParser extends Parser {
 
 
     // $ANTLR start reward_spec
-    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:366:1: reward_spec : RTOK COLONTOK reward_spec_tail ;
+    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:366:1: reward_spec : RTOK COLONTOK reward_spec_tail ;
     public final void reward_spec() throws RecognitionException {
         try {
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:367:5: ( RTOK COLONTOK reward_spec_tail )
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:367:7: RTOK COLONTOK reward_spec_tail
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:367:5: ( RTOK COLONTOK reward_spec_tail )
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:367:7: RTOK COLONTOK reward_spec_tail
             {
             match(input,RTOK,FOLLOW_RTOK_in_reward_spec1808); 
             match(input,COLONTOK,FOLLOW_COLONTOK_in_reward_spec1810); 
@@ -1841,7 +1841,7 @@ public class DotPomdpParser extends Parser {
 
 
     // $ANTLR start reward_spec_tail
-    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:370:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );
+    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:370:1: reward_spec_tail : ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix );
     public final void reward_spec_tail() throws RecognitionException {
         state_return s_1 = null;
 
@@ -1855,7 +1855,7 @@ public class DotPomdpParser extends Parser {
 
 
         try {
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:371:5: ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix )
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:371:5: ( paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number | paction COLONTOK state COLONTOK state num_matrix | paction COLONTOK state num_matrix )
             int alt13=3;
             switch ( input.LA(1) ) {
             case INT:
@@ -2644,7 +2644,7 @@ public class DotPomdpParser extends Parser {
 
             switch (alt13) {
                 case 1 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:371:7: paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number
+                    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:371:7: paction COLONTOK s_1= state COLONTOK s_2= state COLONTOK obs number
                     {
                     pushFollow(FOLLOW_paction_in_reward_spec_tail1830);
                     paction27=paction();
@@ -2708,7 +2708,7 @@ public class DotPomdpParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:407:7: paction COLONTOK state COLONTOK state num_matrix
+                    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:407:7: paction COLONTOK state COLONTOK state num_matrix
                     {
                     pushFollow(FOLLOW_paction_in_reward_spec_tail1866);
                     paction();
@@ -2734,7 +2734,7 @@ public class DotPomdpParser extends Parser {
                     }
                     break;
                 case 3 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:410:7: paction COLONTOK state num_matrix
+                    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:410:7: paction COLONTOK state num_matrix
                     {
                     pushFollow(FOLLOW_paction_in_reward_spec_tail1894);
                     paction();
@@ -2768,7 +2768,7 @@ public class DotPomdpParser extends Parser {
 
 
     // $ANTLR start ui_matrix
-    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:414:1: ui_matrix returns [CustomMatrix m] : ( UNIFORMTOK | IDENTITYTOK | prob_matrix );
+    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:414:1: ui_matrix returns [CustomMatrix m] : ( UNIFORMTOK | IDENTITYTOK | prob_matrix );
     public final CustomMatrix ui_matrix() throws RecognitionException {
         CustomMatrix m = null;
 
@@ -2776,7 +2776,7 @@ public class DotPomdpParser extends Parser {
 
 
         try {
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:415:5: ( UNIFORMTOK | IDENTITYTOK | prob_matrix )
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:415:5: ( UNIFORMTOK | IDENTITYTOK | prob_matrix )
             int alt14=3;
             switch ( input.LA(1) ) {
             case UNIFORMTOK:
@@ -2804,7 +2804,7 @@ public class DotPomdpParser extends Parser {
 
             switch (alt14) {
                 case 1 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:415:7: UNIFORMTOK
+                    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:415:7: UNIFORMTOK
                     {
                     match(input,UNIFORMTOK,FOLLOW_UNIFORMTOK_in_ui_matrix1936); 
                     m = CustomMatrix.getUniform(dotPomdpSpec.nrSta,dotPomdpSpec.nrSta);
@@ -2812,7 +2812,7 @@ public class DotPomdpParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:417:7: IDENTITYTOK
+                    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:417:7: IDENTITYTOK
                     {
                     match(input,IDENTITYTOK,FOLLOW_IDENTITYTOK_in_ui_matrix1952); 
                     m = CustomMatrix.getIdentity(dotPomdpSpec.nrSta);
@@ -2820,7 +2820,7 @@ public class DotPomdpParser extends Parser {
                     }
                     break;
                 case 3 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:419:7: prob_matrix
+                    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:419:7: prob_matrix
                     {
                     pushFollow(FOLLOW_prob_matrix_in_ui_matrix1971);
                     prob_matrix28=prob_matrix();
@@ -2845,7 +2845,7 @@ public class DotPomdpParser extends Parser {
 
 
     // $ANTLR start u_matrix
-    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:423:1: u_matrix returns [CustomMatrix m] : ( UNIFORMTOK | RESETTOK | prob_matrix );
+    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:423:1: u_matrix returns [CustomMatrix m] : ( UNIFORMTOK | RESETTOK | prob_matrix );
     public final CustomMatrix u_matrix() throws RecognitionException {
         CustomMatrix m = null;
 
@@ -2853,7 +2853,7 @@ public class DotPomdpParser extends Parser {
 
 
         try {
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:424:5: ( UNIFORMTOK | RESETTOK | prob_matrix )
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:424:5: ( UNIFORMTOK | RESETTOK | prob_matrix )
             int alt15=3;
             switch ( input.LA(1) ) {
             case UNIFORMTOK:
@@ -2881,7 +2881,7 @@ public class DotPomdpParser extends Parser {
 
             switch (alt15) {
                 case 1 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:424:7: UNIFORMTOK
+                    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:424:7: UNIFORMTOK
                     {
                     match(input,UNIFORMTOK,FOLLOW_UNIFORMTOK_in_u_matrix1999); 
 
@@ -2907,7 +2907,7 @@ public class DotPomdpParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:444:7: RESETTOK
+                    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:444:7: RESETTOK
                     {
                     match(input,RESETTOK,FOLLOW_RESETTOK_in_u_matrix2014); 
                     err("PARSER: the reset feature is not supported yet");
@@ -2915,7 +2915,7 @@ public class DotPomdpParser extends Parser {
                     }
                     break;
                 case 3 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:446:7: prob_matrix
+                    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:446:7: prob_matrix
                     {
                     pushFollow(FOLLOW_prob_matrix_in_u_matrix2029);
                     prob_matrix29=prob_matrix();
@@ -2940,7 +2940,7 @@ public class DotPomdpParser extends Parser {
 
 
     // $ANTLR start prob_matrix
-    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:450:1: prob_matrix returns [CustomMatrix m] : ( prob )+ ;
+    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:450:1: prob_matrix returns [CustomMatrix m] : ( prob )+ ;
     public final CustomMatrix prob_matrix() throws RecognitionException {
         CustomMatrix m = null;
 
@@ -2948,8 +2948,8 @@ public class DotPomdpParser extends Parser {
 
 
         try {
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:451:5: ( ( prob )+ )
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:452:6: ( prob )+
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:451:5: ( ( prob )+ )
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:452:6: ( prob )+
             {
 
                  int index = 0;
@@ -2979,7 +2979,7 @@ public class DotPomdpParser extends Parser {
                 	}  
                  m = new CustomMatrix(i_max,j_max);
                  
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:480:9: ( prob )+
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:480:9: ( prob )+
             int cnt16=0;
             loop16:
             do {
@@ -2993,7 +2993,7 @@ public class DotPomdpParser extends Parser {
 
                 switch (alt16) {
             	case 1 :
-            	    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:480:10: prob
+            	    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:480:10: prob
             	    {
             	    pushFollow(FOLLOW_prob_in_prob_matrix2075);
             	    prob30=prob();
@@ -3032,7 +3032,7 @@ public class DotPomdpParser extends Parser {
 
 
     // $ANTLR start prob_vector
-    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:488:1: prob_vector returns [CustomVector vector] : ( prob )+ ;
+    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:488:1: prob_vector returns [CustomVector vector] : ( prob )+ ;
     public final CustomVector prob_vector() throws RecognitionException {
         CustomVector vector = null;
 
@@ -3040,11 +3040,11 @@ public class DotPomdpParser extends Parser {
 
 
         try {
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:489:5: ( ( prob )+ )
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:491:9: ( prob )+
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:489:5: ( ( prob )+ )
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:491:9: ( prob )+
             {
             int index = 0; vector = new CustomVector(dotPomdpSpec.nrSta);
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:492:9: ( prob )+
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:492:9: ( prob )+
             int cnt17=0;
             loop17:
             do {
@@ -3058,7 +3058,7 @@ public class DotPomdpParser extends Parser {
 
                 switch (alt17) {
             	case 1 :
-            	    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:492:10: prob
+            	    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:492:10: prob
             	    {
             	    pushFollow(FOLLOW_prob_in_prob_vector2148);
             	    prob31=prob();
@@ -3098,17 +3098,17 @@ public class DotPomdpParser extends Parser {
 
 
     // $ANTLR start num_matrix
-    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:501:1: num_matrix : ( number )+ ;
+    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:501:1: num_matrix : ( number )+ ;
     public final void num_matrix() throws RecognitionException {
         try {
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:502:5: ( ( number )+ )
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:502:12: ( number )+
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:502:5: ( ( number )+ )
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:502:12: ( number )+
             {
 
                  int index = 0;
                  //int i_max;
                  
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:506:9: ( number )+
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:506:9: ( number )+
             int cnt18=0;
             loop18:
             do {
@@ -3122,7 +3122,7 @@ public class DotPomdpParser extends Parser {
 
                 switch (alt18) {
             	case 1 :
-            	    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:506:10: number
+            	    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:506:10: number
             	    {
             	    pushFollow(FOLLOW_number_in_num_matrix2209);
             	    number();
@@ -3163,7 +3163,7 @@ public class DotPomdpParser extends Parser {
     };
 
     // $ANTLR start state
-    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:513:1: state returns [ArrayList<Integer> l = new ArrayList<Integer>()] : ( INT | STRING | ASTERICKTOK );
+    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:513:1: state returns [ArrayList<Integer> l = new ArrayList<Integer>()] : ( INT | STRING | ASTERICKTOK );
     public final state_return state() throws RecognitionException {
         state_return retval = new state_return();
         retval.start = input.LT(1);
@@ -3172,7 +3172,7 @@ public class DotPomdpParser extends Parser {
         Token STRING33=null;
 
         try {
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:514:5: ( INT | STRING | ASTERICKTOK )
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:514:5: ( INT | STRING | ASTERICKTOK )
             int alt19=3;
             switch ( input.LA(1) ) {
             case INT:
@@ -3199,7 +3199,7 @@ public class DotPomdpParser extends Parser {
 
             switch (alt19) {
                 case 1 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:515:9: INT
+                    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:515:9: INT
                     {
                     INT32=(Token)input.LT(1);
                     match(input,INT,FOLLOW_INT_in_state2260); 
@@ -3208,7 +3208,7 @@ public class DotPomdpParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:518:9: STRING
+                    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:518:9: STRING
                     {
                     STRING33=(Token)input.LT(1);
                     match(input,STRING,FOLLOW_STRING_in_state2288); 
@@ -3217,7 +3217,7 @@ public class DotPomdpParser extends Parser {
                     }
                     break;
                 case 3 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:521:9: ASTERICKTOK
+                    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:521:9: ASTERICKTOK
                     {
                     match(input,ASTERICKTOK,FOLLOW_ASTERICKTOK_in_state2315); 
                     for(int s=0; s<dotPomdpSpec.nrSta; s++) retval.l.add(s);
@@ -3241,7 +3241,7 @@ public class DotPomdpParser extends Parser {
 
 
     // $ANTLR start paction
-    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:525:1: paction returns [ArrayList<Integer> l = new ArrayList<Integer>()] : ( INT | STRING | ASTERICKTOK );
+    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:525:1: paction returns [ArrayList<Integer> l = new ArrayList<Integer>()] : ( INT | STRING | ASTERICKTOK );
     public final ArrayList<Integer> paction() throws RecognitionException {
         ArrayList<Integer> l =  new ArrayList<Integer>();
 
@@ -3249,7 +3249,7 @@ public class DotPomdpParser extends Parser {
         Token STRING35=null;
 
         try {
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:526:5: ( INT | STRING | ASTERICKTOK )
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:526:5: ( INT | STRING | ASTERICKTOK )
             int alt20=3;
             switch ( input.LA(1) ) {
             case INT:
@@ -3276,7 +3276,7 @@ public class DotPomdpParser extends Parser {
 
             switch (alt20) {
                 case 1 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:527:9: INT
+                    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:527:9: INT
                     {
                     INT34=(Token)input.LT(1);
                     match(input,INT,FOLLOW_INT_in_paction2357); 
@@ -3285,7 +3285,7 @@ public class DotPomdpParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:530:9: STRING
+                    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:530:9: STRING
                     {
                     STRING35=(Token)input.LT(1);
                     match(input,STRING,FOLLOW_STRING_in_paction2385); 
@@ -3294,7 +3294,7 @@ public class DotPomdpParser extends Parser {
                     }
                     break;
                 case 3 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:533:9: ASTERICKTOK
+                    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:533:9: ASTERICKTOK
                     {
                     match(input,ASTERICKTOK,FOLLOW_ASTERICKTOK_in_paction2412); 
                     for(int a=0; a<dotPomdpSpec.nrAct; a++) l.add(a);
@@ -3319,7 +3319,7 @@ public class DotPomdpParser extends Parser {
     };
 
     // $ANTLR start obs
-    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:537:1: obs returns [ArrayList<Integer> l = new ArrayList<Integer>()] : ( INT | STRING | ASTERICKTOK );
+    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:537:1: obs returns [ArrayList<Integer> l = new ArrayList<Integer>()] : ( INT | STRING | ASTERICKTOK );
     public final obs_return obs() throws RecognitionException {
         obs_return retval = new obs_return();
         retval.start = input.LT(1);
@@ -3328,7 +3328,7 @@ public class DotPomdpParser extends Parser {
         Token STRING37=null;
 
         try {
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:538:5: ( INT | STRING | ASTERICKTOK )
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:538:5: ( INT | STRING | ASTERICKTOK )
             int alt21=3;
             switch ( input.LA(1) ) {
             case INT:
@@ -3355,7 +3355,7 @@ public class DotPomdpParser extends Parser {
 
             switch (alt21) {
                 case 1 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:539:9: INT
+                    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:539:9: INT
                     {
                     INT36=(Token)input.LT(1);
                     match(input,INT,FOLLOW_INT_in_obs2455); 
@@ -3364,7 +3364,7 @@ public class DotPomdpParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:542:9: STRING
+                    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:542:9: STRING
                     {
                     STRING37=(Token)input.LT(1);
                     match(input,STRING,FOLLOW_STRING_in_obs2483); 
@@ -3373,7 +3373,7 @@ public class DotPomdpParser extends Parser {
                     }
                     break;
                 case 3 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:545:9: ASTERICKTOK
+                    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:545:9: ASTERICKTOK
                     {
                     match(input,ASTERICKTOK,FOLLOW_ASTERICKTOK_in_obs2510); 
                     for(int o=0; o<dotPomdpSpec.nrObs; o++) retval.l.add(o);
@@ -3397,18 +3397,18 @@ public class DotPomdpParser extends Parser {
 
 
     // $ANTLR start ident_list
-    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:549:1: ident_list returns [ArrayList<String> list] : ( STRING )+ ;
+    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:549:1: ident_list returns [ArrayList<String> list] : ( STRING )+ ;
     public final ArrayList<String> ident_list() throws RecognitionException {
         ArrayList<String> list = null;
 
         Token STRING38=null;
 
         try {
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:550:5: ( ( STRING )+ )
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:551:9: ( STRING )+
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:550:5: ( ( STRING )+ )
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:551:9: ( STRING )+
             {
             list = new ArrayList<String>();
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:552:9: ( STRING )+
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:552:9: ( STRING )+
             int cnt22=0;
             loop22:
             do {
@@ -3422,7 +3422,7 @@ public class DotPomdpParser extends Parser {
 
                 switch (alt22) {
             	case 1 :
-            	    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:552:10: STRING
+            	    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:552:10: STRING
             	    {
             	    STRING38=(Token)input.LT(1);
             	    match(input,STRING,FOLLOW_STRING_in_ident_list2566); 
@@ -3456,7 +3456,7 @@ public class DotPomdpParser extends Parser {
 
 
     // $ANTLR start prob
-    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:557:1: prob returns [double p] : ( INT | FLOAT );
+    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:557:1: prob returns [double p] : ( INT | FLOAT );
     public final double prob() throws RecognitionException {
         double p = 0.0;
 
@@ -3464,7 +3464,7 @@ public class DotPomdpParser extends Parser {
         Token FLOAT40=null;
 
         try {
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:558:5: ( INT | FLOAT )
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:558:5: ( INT | FLOAT )
             int alt23=2;
             int LA23_0 = input.LA(1);
 
@@ -3482,7 +3482,7 @@ public class DotPomdpParser extends Parser {
             }
             switch (alt23) {
                 case 1 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:558:7: INT
+                    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:558:7: INT
                     {
                     INT39=(Token)input.LT(1);
                     match(input,INT,FOLLOW_INT_in_prob2614); 
@@ -3491,7 +3491,7 @@ public class DotPomdpParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:560:7: FLOAT
+                    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:560:7: FLOAT
                     {
                     FLOAT40=(Token)input.LT(1);
                     match(input,FLOAT,FOLLOW_FLOAT_in_prob2632); 
@@ -3514,7 +3514,7 @@ public class DotPomdpParser extends Parser {
 
 
     // $ANTLR start number
-    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:564:1: number returns [double n] : ( optional_sign INT | optional_sign FLOAT );
+    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:564:1: number returns [double n] : ( optional_sign INT | optional_sign FLOAT );
     public final double number() throws RecognitionException {
         double n = 0.0;
 
@@ -3526,7 +3526,7 @@ public class DotPomdpParser extends Parser {
 
 
         try {
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:565:5: ( optional_sign INT | optional_sign FLOAT )
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:565:5: ( optional_sign INT | optional_sign FLOAT )
             int alt24=2;
             switch ( input.LA(1) ) {
             case PLUSTOK:
@@ -3584,7 +3584,7 @@ public class DotPomdpParser extends Parser {
 
             switch (alt24) {
                 case 1 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:565:7: optional_sign INT
+                    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:565:7: optional_sign INT
                     {
                     pushFollow(FOLLOW_optional_sign_in_number2675);
                     optional_sign41=optional_sign();
@@ -3597,7 +3597,7 @@ public class DotPomdpParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:567:7: optional_sign FLOAT
+                    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:567:7: optional_sign FLOAT
                     {
                     pushFollow(FOLLOW_optional_sign_in_number2696);
                     optional_sign43=optional_sign();
@@ -3624,12 +3624,12 @@ public class DotPomdpParser extends Parser {
 
 
     // $ANTLR start optional_sign
-    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:571:1: optional_sign returns [int s] : ( PLUSTOK | MINUSTOK | );
+    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:571:1: optional_sign returns [int s] : ( PLUSTOK | MINUSTOK | );
     public final int optional_sign() throws RecognitionException {
         int s = 0;
 
         try {
-            // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:572:5: ( PLUSTOK | MINUSTOK | )
+            // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:572:5: ( PLUSTOK | MINUSTOK | )
             int alt25=3;
             switch ( input.LA(1) ) {
             case PLUSTOK:
@@ -3657,7 +3657,7 @@ public class DotPomdpParser extends Parser {
 
             switch (alt25) {
                 case 1 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:572:7: PLUSTOK
+                    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:572:7: PLUSTOK
                     {
                     match(input,PLUSTOK,FOLLOW_PLUSTOK_in_optional_sign2730); 
                     s = 1;
@@ -3665,7 +3665,7 @@ public class DotPomdpParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:574:7: MINUSTOK
+                    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:574:7: MINUSTOK
                     {
                     match(input,MINUSTOK,FOLLOW_MINUSTOK_in_optional_sign2748); 
                     s = -1;
@@ -3673,7 +3673,7 @@ public class DotPomdpParser extends Parser {
                     }
                     break;
                 case 3 :
-                    // /home/maraya/inria/code/libpomdp/src/libpomdp/parser/java/DotPomdp.g:577:9: 
+                    // /home/maraya/inria/code/libpomdp/src/java/libpomdp/parser/DotPomdp.g:577:9: 
                     {
                     s = 1;
 

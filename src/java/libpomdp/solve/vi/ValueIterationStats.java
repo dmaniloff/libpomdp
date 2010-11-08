@@ -7,9 +7,16 @@ import libpomdp.solve.IterationStats;
 
 public class ValueIterationStats extends IterationStats {
 	
+	public long total_lp_time;
+	
 	public ValueIterationStats(Pomdp pomdp){
 		super(pomdp);
 		iteration_vector_count=new ArrayList<Integer>();
+		total_lp_time=0;
+	}
+	
+	public void registerLp(long iTime) {
+		total_lp_time+=iTime;
 	}
 	
 	public int register(long iTime,int nVects) {

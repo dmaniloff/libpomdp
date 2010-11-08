@@ -40,12 +40,15 @@ public class BeliefMdpStd implements BeliefMdp,Serializable {
 		for (int a=0;a<nrActions();a++){
 			CustomMatrix tMat=this.getTransitionProbs(a);
 			CustomMatrix oMat=this.getObservationProbs(a);
+			//oMat.transpose();
+			//System.out.println(oMat.toString());
 			for (int o=0;o<nrObservations();o++){
 				CustomMatrix oDiag=new CustomMatrix(nrStates(),nrStates());
 				for (int s=0;s<nrStates();s++){
-					oDiag.set(s,s,oMat.get(o,s));
+					oDiag.set(s,s,oMat.get(s,o));
 				}
-				tau[o][a]=oDiag.mult(tMat);
+				//System.out.println(oDiag.toString());
+				tau[o][a]=tMat.mult(oDiag);
 			}
 		}
 	}
