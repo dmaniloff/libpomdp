@@ -29,10 +29,6 @@ public class CustomMatrix implements Serializable {
 		return m.numRows();
 	}
 
-	public String toString() {
-		return m.toString();
-	}
-
 	public Matrix transpose() {
 		return m.transpose();
 	}
@@ -129,8 +125,20 @@ public class CustomMatrix implements Serializable {
 	public double[][] getArray() {
 		return Matrices.getArray(m);
 	}
-
+	
+	public String toString(){
+		String ret="";
+		for (int i=0;i<numRows();i++){
+			for (int j=0;j<numColumns();j++){
+				ret+=get(i, j)+" ";
+			}
+			ret+="\n";
+		}
+		return ret;
+	}
+	
 	public CustomMatrix copy() {
 		return new CustomMatrix(this);
 	}
+
 }

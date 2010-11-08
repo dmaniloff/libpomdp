@@ -26,10 +26,10 @@ import libpomdp.solve.java.vi.ValueIterationStd;
 public class BpviStd extends ValueIterationStd {
 	
 	public BpviStd(PomdpStd pomdp){
+		long inTime = System.currentTimeMillis();
 		this.pomdp=pomdp;
 		iterationStats=new ValueIterationStats(pomdp);
 		stopCriterias= new ArrayList<Criteria>();
-		long inTime = System.currentTimeMillis();
 		// Blind is |A| x |S| - initialize each \alpha^a_{0} to \min_s {R(s,a)/(1-\gamma)}
 		ValueFunctionStd iniv = new ValueFunctionStd(pomdp.nrStates());
 		for(int a=0; a<pomdp.nrActions(); a++) {
@@ -54,15 +54,14 @@ public class BpviStd extends ValueIterationStd {
 
 	@Override
 	public ValueIterationStats iterate() {
-		System.out.println("== Iteration "+iterationStats.iterations+" ==");
-		old=current.copy();
 		long inTime = System.currentTimeMillis();
+		//System.out.println("== Iteration "+iterationStats.iterations+" ==");
+		old=current.copy();
     	for(int a=0; a<pomdp.nrActions(); a++) {
     	    CustomVector vec=current.getVectorRef(a);
     	    CustomVector res=pomdp.getTransitionProbs(a).mult(pomdp.getGamma(),vec);
     	    res.add(pomdp.getRewardValues(a));
-    	    vec.zero();
-    	    vec.add(res);
+    	    vec.set(res);
     	}
     	iterationStats.register(System.currentTimeMillis() - inTime, current.size());
     	return iterationStats;

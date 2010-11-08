@@ -29,7 +29,7 @@ public class ValueConvergenceCriteria extends Criteria {
 					if (a_value > conv)
 			   			conv=a_value;
 			   	}
-			   	System.out.println("Max euclid dist at iteration " + i.getStats().iterations + " is: " + conv);
+			   	System.out.println("Iteration " + i.getStats().iterations + ": " + conv);
 			   	if (conv <= epsilon)
 			   		return(true);
 				break;

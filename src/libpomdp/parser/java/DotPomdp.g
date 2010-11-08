@@ -310,7 +310,7 @@ trans_spec_tail
     : paction COLONTOK s_1=state COLONTOK s_2=state prob // this would not detect probs>1
         // triple loop with lists
         {
-            if($prob.p > 0.0) // this causes MORE entries to exist - don't know why yet
+            // if($prob.p > 0.0) //Some files relies in rewriting... bad thing... 
                 for(int a : $paction.l)
                     for(int s1 : $s_1.l)
                         for(int s2 : $s_2.l)
@@ -340,7 +340,7 @@ obs_spec_tail
     : paction COLONTOK state COLONTOK obs prob
         // triple loop with lists
         {
-        if($prob.p > 0.0)
+        //if($prob.p > 0.0) // rewriting... puff 
             for(int a : $paction.l)
                 for(int s2 : $state.l)
                     for(int o : $obs.l)

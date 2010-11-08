@@ -151,6 +151,19 @@ public class CustomVector implements Serializable {
 	public void add(double d, CustomVector cv) {
 		v.add(d,cv.v);	
 	}
+
+	public void set(CustomVector res) {
+		v.set(res.v);	
+	}
+
+	public double min() {
+		double minv=Double.POSITIVE_INFINITY;
+		for (double val:Matrices.getArray(v)){
+			if (val<minv)
+				minv=val;
+		}
+		return minv;
+	}
     
 	
 }

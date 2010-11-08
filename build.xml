@@ -39,16 +39,34 @@
   <target name="parser">
     <!-- ANTRL is called with a java task, this should be changed to use antlr  -->
     <java classname="org.antlr.Tool" classpathref="classpath">
-	<arg value="${src}/libpomdp/parser/java/DotPomdp.g"/>	
+	<arg value="${src}/libpomdp/parser/DotPomdp.g"/>	
     </java>
     <java classname="org.antlr.Tool" classpathref="classpath">
-	<arg value="${src}/libpomdp/parser/java/DotAlpha.g"/>	
+	<arg value="${src}/libpomdp/parser/DotAlpha.g"/>	
     </java>
   </target>
 
-  <target name="BPVItest">
-    <java classname="libpomdp.test.BPVItest" classpathref="classpath">
-    </java>
+  <target name="test">
+  	 <echo message="Running Cassandra's Incremental Pruning Exact Algorithm"/>
+    <exec executable="java">
+      <arg value="-Djava.library.path=/usr/lib/jni"/> 
+      <arg value="-classpath"/>
+      <arg value="lib/*:dist/*"/>
+      <arg value="libpomdp.test.IncrementalPruningTest"/>
+	</exec>
+  	 <echo message="Running Monahan's Batch Enumeration Exact Algorithm"/>
+    <exec executable="java">
+      <arg value="-Djava.library.path=/usr/lib/jni"/> 
+      <arg value="-classpath"/>
+      <arg value="lib/*:dist/*"/>
+      <arg value="libpomdp.test.BatchEnumerationTest"/>
+	</exec>
+  	 <echo message="Running Sondik's One Pass Exact Algorithm"/>
+    <java classname="libpomdp.test.OnePassTest" classpathref="classpath"/>
+  	 <echo message="Running Littman's QMDP Value Iteration Heuristic"/>
+    <java classname="libpomdp.test.QmdpTest" classpathref="classpath"/>
+  	 <echo message="Running Hauskretcht's Blind Policy Value Iteration Heuristic"/>
+    <java classname="libpomdp.test.BpviTest" classpathref="classpath"/>
   </target>
 
   
