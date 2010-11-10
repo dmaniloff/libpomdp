@@ -28,11 +28,9 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 
     /// backup heuristic
     private backupHeuristic bakH;
-
-    /// fringeSupportLists: |A| x |V^L|
-    /// histograms with counts of beliefs supported by
-    /// vector ids
-    //public int fringeSupportLists[][];
+    
+    /// supportSetSize[i] is the number of beliefs in the subtree of 
+    /// this node that are supported by alpha-vector i
     public int treeSupportSetSize[];
     
     /// same constructor with backup heuristic
@@ -61,10 +59,6 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 	    System.err.println("node cannot be expanded, it already has children");
 	    return;
 	}
-	
-	// allocate supportList for expanding node
-	// initialize at zero so we can accumulate
-	en.supportSetSize = IntegerArray.fill(offlineLower.getSize(), 0);
 	
 	// iterators
 	int action, observation;
@@ -121,14 +115,8 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 		o.hStar = o.h_b;
 		// bStar is a reference to itself since o is a fringe node
 		o.bStar = o;
-		
-		if (en.getdepth() == 0)
-		    // if this is the first expansion, add each of these to the corresponding fringe 
-		    treeSupportSetSize[o.belief.getplanid()]++; 
-		else	
-		    // fill in values for support list of the expanding node
-		    en.supportSetSize[o.belief.getplanid()]++;
-		
+		// add each of these to the support set sizes
+		treeSupportSetSize[o.belief.getplanid()]++; 
 		// iterate
 		observation++;
 	    } // orNode loop
@@ -239,10 +227,6 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 	    for (int i = 0; i < offlineLower.getSize(); i++) {
 		o.bakCandidate[i] = bakH.updateBakStar(o, a.getAct(), i);
 	    }
-	    // update supportSetSize (can do it in the same loop)
-	    for (int i = 0; i < offlineLower.getSize(); i++) {
-		o.supportSetSize[i] += n.supportSetSize[i];
-	    }
 	    // increase subtree size by the branching factor |A||O|
 	    o.subTreeSize += problem.getnrAct() * problem.getnrObs();
 	    // iterate (maybe better to say n = o ?)
@@ -259,8 +243,8 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
     public void moveTree(orNode newroot) {
 	this.root = newroot;
 	this.root.disconnect();
-	// reset fringeSupportLists
-	this.fringeSupportLists = IntegerArray.fill(problem.getnrAct(), offlineLower.getSize(), 0);
+	// reset treeSupportSetSize
+	this.treeSupportSetSize = IntegerArray.fill(offlineLower.getSize(), 0);
     } // (overridden) moveTree  
 
 
