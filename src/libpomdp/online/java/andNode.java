@@ -74,9 +74,6 @@ public class andNode {
 	this.bakCandidate     = null;
 	this.bakHeuristicStar = null;
 	this.validPlanid      = -1;
-	//this.subTreeSize      = -1;
-	//this.supportList      = null;
-	// might want to include subTreeSize for andNodes too?
     }
 
     // get parent
