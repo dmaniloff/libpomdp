@@ -58,7 +58,7 @@ public class andNode {
     public int validPlanid;
     
     /// # of belief nodes in the subtree rooted at this node
-    public int subTreeSize;
+    // public int subTreeSize;
     
     /// supportList[i] is the number of beliefs in the subtree of 
     /// this node that are supported by alpha-vector i
@@ -74,7 +74,7 @@ public class andNode {
 	this.bakCandidate     = null;
 	this.bakHeuristicStar = null;
 	this.validPlanid      = -1;
-	this.subTreeSize      = -1;
+	//this.subTreeSize      = -1;
 	//this.supportList      = null;
 	// might want to include subTreeSize for andNodes too?
     }

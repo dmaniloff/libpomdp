@@ -32,7 +32,8 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
     /// fringeSupportLists: |A| x |V^L|
     /// histograms with counts of beliefs supported by
     /// vector ids
-    public int fringeSupportLists[][];
+    //public int fringeSupportLists[][];
+    public int treeSupportSetSize[];
     
     /// same constructor with backup heuristic
     public AndOrTreeUpdateAdd(pomdp prob, 
@@ -43,7 +44,8 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 	super(prob, h, L, U);
 	this.problem = (pomdpAdd) super.problem;
 	this.bakH    =  bakh;
-	this.fringeSupportLists = IntegerArray.fill(problem.getnrAct(), offlineLower.getSize(), 0);
+	//this.fringeSupportLists = IntegerArray.fill(problem.getnrAct(), offlineLower.getSize(), 0);
+	this.treeSupportSetSize = IntegerArray.fill(offlineLower.getSize(), 0);
     }
 
     /**
@@ -62,7 +64,7 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 	
 	// allocate supportList for expanding node
 	// initialize at zero so we can accumulate
-	en.supportList = IntegerArray.fill(offlineLower.getSize(), 0);
+	en.supportSetSize = IntegerArray.fill(offlineLower.getSize(), 0);
 	
 	// iterators
 	int action, observation;
@@ -85,7 +87,7 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 	    // allocate space for the children OR nodes (do we have to do this here?)
 	    // could prob do both these operations as part of init
 	    a.children = new orNode[problem.getnrObs()];
-	    a.subTreeSize = problem.getnrObs();
+	    //a.subTreeSize = problem.getnrObs();
 	    for(observation = 0; observation < problem.getnrObs(); observation++)
 		a.children[observation] = new orNode();
 	    // pre-compute observation probabilities
@@ -122,10 +124,10 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 		
 		if (en.getdepth() == 0)
 		    // if this is the first expansion, add each of these to the corresponding fringe 
-		    fringeSupportLists[action][o.belief.getplanid()]++; 
+		    treeSupportSetSize[o.belief.getplanid()]++; 
 		else	
 		    // fill in values for support list of the expanding node
-		    en.supportList[o.belief.getplanid()]++;
+		    en.supportSetSize[o.belief.getplanid()]++;
 		
 		// iterate
 		observation++;
@@ -196,11 +198,10 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
      */
     public void updateAncestors(orNode n) {
 	// make sure this is not the call after expanding the root
+	// this should also fix the subTreeSize problem as well
 	if (null == n.children) return;
 	andNode a = null;
 	orNode  o = null;
-	// store ref to the just expanded node
-	orNode orig = n;
 
 	while(n.getdepth() != 0) {
 	    // get the AND parent node
@@ -214,19 +215,12 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 	    a.hStar = expH.hANDStar(a);
 	    // b*(b,a) - propagate ref of b*
 	    a.bStar = a.children[a.oStar].bStar;
-	    // propagate reference of backup candidate and its H value
-	    // but check first, it could be that these andNode' bakheuristic
-	    // elements are null
-//	    if (null == a.bakCandidate) { // if one is null, both should be!
-//		a.bakCandidate     = new orNode[offlineLower.getSize()];
-//		a.bakHeuristicStar = new double[offlineLower.getSize()];
-//	    }
-	    // safe to propagate information now
+	    // propagate references of backup candidates and its H value
 	    for (int i = 0; i < offlineLower.getSize(); i++) {
 		a.bakCandidate[i] = bakH.updateBakStar(a, n.getobs(), i);
 	    }
 	    // increase subtree size by the branching factor |A||O|
-	    a.subTreeSize += problem.getnrAct() * problem.getnrObs();
+	    //a.subTreeSize += problem.getnrAct() * problem.getnrObs();
 
 	    // get the OR parent of the parent
 	    o = a.getParent();
@@ -245,16 +239,14 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 	    for (int i = 0; i < offlineLower.getSize(); i++) {
 		o.bakCandidate[i] = bakH.updateBakStar(o, a.getAct(), i);
 	    }
+	    // update supportSetSize (can do it in the same loop)
+	    for (int i = 0; i < offlineLower.getSize(); i++) {
+		o.supportSetSize[i] += n.supportSetSize[i];
+	    }
 	    // increase subtree size by the branching factor |A||O|
 	    o.subTreeSize += problem.getnrAct() * problem.getnrObs();
-	    // iterate
+	    // iterate (maybe better to say n = o ?)
 	    n = n.getParent().getParent();
-	}
-	// update the support list of the top action nodes
-	// within a cycle of expansions, these lists always have
-	// matching sizes
-	for (int i = 0; i < offlineLower.getSize(); i++) {
-	    fringeSupportLists[a.getAct()][i] += orig.supportList[i];
 	}
 	
     } // (overridden) updateAncestors

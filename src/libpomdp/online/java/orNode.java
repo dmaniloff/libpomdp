@@ -99,9 +99,9 @@ public class orNode {
     /// this is now a list of nodes of size |V|, one per alpha-vector
     public double bakHeuristicStar[];
     
-    /// supportList[i] is the number of beliefs in the subtree of 
+    /// supportSetSize[i] is the number of beliefs in the subtree of 
     /// this node that are supported by alpha-vector i
-    public int supportList[];
+    //public int supportSetSize[];
 
     // ------------------------------------------------------------------------
     // methods
@@ -116,7 +116,7 @@ public class orNode {
 	if (parent != null) 
 	    this.depth         = parent.getParent().depth + 1;
 	this.children          = null;
-	this.supportList       = null;
+	//this.supportSetSize    = null;
 	// best reference upon creation is to itself
 	this.bStar             = this;
 	// initialize one-step improvement 

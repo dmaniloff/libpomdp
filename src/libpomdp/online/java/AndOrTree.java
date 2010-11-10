@@ -52,8 +52,9 @@ public class AndOrTree {
     public void init(belState belief) {
 	this.root = new orNode();
 	this.root.init(belief, -1, null);
-	this.root.l = offlineLower.V(this.root.belief);
 	this.root.u = offlineUpper.V(this.root.belief);
+	this.root.l = offlineLower.V(this.root.belief);
+	// should have separate plan ids to avoid this!
     }
 
     /**
@@ -86,7 +87,7 @@ public class AndOrTree {
 	    // allocate space for the children OR nodes (do we have to do this here?)
 	    // could prob do both these operations as part of init
 	    a.children = new orNode[problem.getnrObs()];
-	    a.subTreeSize = problem.getnrObs();
+	    //a.subTreeSize = problem.getnrObs();
 	    for(observation=0; observation<problem.getnrObs(); observation++)
 		a.children[observation] = new orNode();
 	    // pre-compute observation probabilities
