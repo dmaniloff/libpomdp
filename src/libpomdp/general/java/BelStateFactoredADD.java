@@ -43,7 +43,7 @@ public class BelStateFactoredADD implements belState {
 
     // compute this only if we actually need it
     public double[] getbPoint() {
-	return	OP.convert2array(OP.multN(marginals), staIds);
+	return	OP.convert2array(OP.multN(marginals), staIds); // bug here, should be marginals(1:10)
     }
 
     public double getpoba() {
