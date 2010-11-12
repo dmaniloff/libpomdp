@@ -17,7 +17,7 @@ public class BatchEnumerationTest {
 		BatchEnumerationStd algo= new BatchEnumerationStd(pomdp,1e-1);
 		algo.addStopCriteria(new MaxIterationsCriteria(10));
 		algo.run();
-		ValueIterationStats stat=algo.getStats();
+		ValueIterationStats stat=(ValueIterationStats) algo.getStats();
 		System.out.println(stat);
 		//System.out.println(val);
 	}

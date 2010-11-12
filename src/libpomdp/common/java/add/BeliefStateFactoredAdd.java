@@ -28,6 +28,7 @@ public class BeliefStateFactoredAdd implements BeliefState {
     // we need the state variable ids to call convert2array
     private int staIds[];
 
+
     // constructor
     // in case this is the init belief, poba = 0.0
     public BeliefStateFactoredAdd(DD m[], int staIds[], double poba) {
@@ -36,11 +37,13 @@ public class BeliefStateFactoredAdd implements BeliefState {
 	this.poba      = poba;
     }
 
+
     // constructor without poba
     public BeliefStateFactoredAdd(DD m[], int staIds[]) {
 	this.marginals = m;
 	this.staIds    = staIds;	
     }
+
 
     // compute this only if we actually need it
     @Override
@@ -48,35 +51,54 @@ public class BeliefStateFactoredAdd implements BeliefState {
 	return	new CustomVector(OP.convert2array(OP.multN(marginals), staIds));
     }
 
+
     @Override
     public double getPoba() {
 	return poba;
     }
+
 
     @Override
     public void setPoba(double poba) {
 	this.poba = poba;
     }
 
+
     @Override
     public int getAlpha() {
 	return planid;
     }
+
 
     @Override
     public void setAlpha(int planid) {
 	this.planid = planid;
     }
 
+
     // compute entropy of this point in nats
     @Override
-    public double getEntropy() {
+	public double getEntropy() {
         DD m[] = new DD[marginals.length-1];
         System.arraycopy(marginals, 0, m, 0, marginals.length-1);
         return -OP.dotProductNoMem(
-                	OP.log(OP.multN(m)),
-                        OP.multN(m),
-                        staIds);
+				   OP.log(OP.multN(m)),
+				   OP.multN(m),
+				   staIds);
     }
+
+
+    public boolean compare(BeliefState arg0) {
+	System.out.println("UUuuups... Compare not implemented yet for ADDs");
+	// TODO Auto-generated method stub
+	return false;
+    }
+
+
+    public BeliefState copy() {
+	// TODO Auto-generated method stub
+	return null;
+    }
+
 
 } // BeliefStateFactoredAdd

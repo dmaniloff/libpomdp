@@ -34,7 +34,10 @@ public class BeliefStateStd implements BeliefState, Serializable {
 	this.bSparse = bSparse;
 	this.poba    = poba;
     }
-
+    
+    public BeliefStateStd(CustomVector bSparse) {
+    	this(bSparse,-1);
+    }
     // calling this method should be for debugging
     // purposes only, otherwise we loose the sparse rep
     @Override
@@ -67,8 +70,13 @@ public class BeliefStateStd implements BeliefState, Serializable {
     }
 
 
+    public BeliefState copy() {
+	return (new BeliefStateStd(bSparse,poba));
+    }
+
+
     @Override
-    public double getEntropy() {
+	public double getEntropy() {
 	// TODO Auto-generated method stub
 	return 0;
     }
@@ -77,5 +85,16 @@ public class BeliefStateStd implements BeliefState, Serializable {
     public BeliefState copy() {
 	return (new BeliefStateStandard(bSparse,poba));
     }
+
+
+    public static BeliefStateStd getRandom(int dim) {
+	return(new BeliefStateStd(CustomVector.getRandomUnitary(dim)));
+    }
+
+
+    public boolean compare(BeliefState arg0) {
+	return(bSparse.compare(arg0.getPoint()));
+    }
+
 
 } // BeliefStateStandard

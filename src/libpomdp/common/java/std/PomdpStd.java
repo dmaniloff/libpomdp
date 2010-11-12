@@ -30,12 +30,12 @@ import java.util.ArrayList;
 
 import java.io.Serializable;
 
-import libpomdp.common.java.BeliefState;
-import libpomdp.common.java.CustomMatrix;
-import libpomdp.common.java.CustomVector;
-import libpomdp.common.java.Pomdp;
-import libpomdp.parser.java.DotPomdpParserStandard;
-import libpomdp.parser.java.PomdpSpecStandard;
+import libpomdp.common.AlphaVector;
+import libpomdp.common.BeliefState;
+import libpomdp.common.CustomMatrix;
+import libpomdp.common.CustomVector;
+import libpomdp.common.Pomdp;
+import libpomdp.common.Utils;
 
 public class PomdpStd implements Pomdp, Serializable {
 
@@ -215,9 +215,43 @@ public class PomdpStd implements Pomdp, Serializable {
 	return obsStr.get(o);
     }
 
-//    public String[] getStateString() {
-//	return staStr.;
-//    }
+	public CustomMatrix getObservationProbs(int a) {
+		return O[a].copy();
+	}
 
-} // PomdpStd
+	public CustomVector getRewardValues(int a) {
+		return R[a].copy();
+	}
+
+	public CustomMatrix getTransitionProbs(int a) {
+		return T[a].copy();
+	}
+
+	public String[] getStateString() {
+		return staStr;
+	}
+	
+	public int getRandomObservation(BeliefStateStd bel,int a){
+		double roulette=Utils.gen.nextDouble();
+		CustomVector vect=O[a].mult(bel.getPoint());
+		double sum=0.0;
+		for (int o=0;o<nrObs;o++){
+			sum+=vect.get(o);
+			if (roulette<sum)
+				return o;
+		}
+		return(-1);
+	}
+
+	public AlphaVector mdpValueUpdate(AlphaVector alpha,int a) {
+		CustomVector vec=getTransitionProbs(a).mult(getGamma(),alpha.getVectorRef());
+	    vec.add(getRewardValues(a));
+	    return(new AlphaVector(vec,a));
+	}
+
+	public int getRandomAction() {
+		return(Utils.gen.nextInt(Integer.MAX_VALUE)%nrActions());
+	}
+	
+} // pomdpSparseMTJ
 

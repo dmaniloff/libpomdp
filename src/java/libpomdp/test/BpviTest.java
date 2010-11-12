@@ -6,9 +6,9 @@ import libpomdp.solve.Criteria;
 import libpomdp.solve.MaxIterationsCriteria;
 import libpomdp.solve.vi.ValueConvergenceCriteria;
 import libpomdp.solve.vi.ValueIterationStats;
-import libpomdp.solve.vi.heuristic.QmdpStd;
+import libpomdp.solve.vi.heuristic.BpviStd;
 
-public class QmdpTest {
+public class BpviTest {
 
 	/**
 	 * @param args
@@ -16,12 +16,10 @@ public class QmdpTest {
 	 */
 	public static void main(String[] args) throws Exception {
 		PomdpStd pomdp=(PomdpStd)FileParser.loadPomdp("data/problems/tiger/tiger.95.POMDP", FileParser.PARSE_CASSANDRA_POMDP);
-		QmdpStd algo= new QmdpStd(pomdp);
-		double epsi=1e-6*(1-pomdp.getGamma())/(2*pomdp.getGamma());
-		algo.addStopCriteria(new MaxIterationsCriteria(100));
-		algo.addStopCriteria(new ValueConvergenceCriteria(epsi,Criteria.CC_MAXDIST));
+		BpviStd algo= new BpviStd(pomdp);
+		algo.addStopCriteria(new MaxIterationsCriteria(50000));
+		algo.addStopCriteria(new ValueConvergenceCriteria(1e-3,Criteria.CC_MAXEUCLID));
 		algo.run();
-		System.out.println(algo.getValueFunction());
 		ValueIterationStats stat=(ValueIterationStats) algo.getStats();
 		System.out.println(stat);
 		//System.out.println(val);

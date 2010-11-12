@@ -36,36 +36,56 @@ public class BeliefStateAdd implements BeliefState {
 	this.poba   = poba;
     }
 
+
     // compute this only if we actually need it
     @Override
     public CustomVector getPoint() {
     	return(new CustomVector(OP.convert2array(bAdd, staIds)));
     }
 
+
     @Override
     public double getPoba() {
 	return poba;
     }
+
 
     @Override
     public void setPoba(double poba) {
 	this.poba = poba;
     }
 
+
     @Override
     public int getAlpha() {
 	return planid;
     }
+
 
     @Override
     public void setAlpha(int planid) {
 	this.planid = planid;
     }
 
+
     @Override
-    public double getEntropy() {
+	public double getEntropy() {
 	// TODO Auto-generated method stub
 	return 0;
     }
 
-} // BelStateAdd
+
+    public boolean compare(BeliefState arg0) {
+	System.out.println("UUuuups... Compare not implemented yet for ADDs");
+	// TODO Auto-generated method stub
+	return false;
+    }
+
+
+    public BeliefState copy() {
+	// TODO Auto-generated method stub
+	return null;
+    }
+
+} // BeliefStateAdd
+

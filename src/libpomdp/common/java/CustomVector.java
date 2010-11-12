@@ -16,7 +16,7 @@ import no.uib.cipr.matrix.Vector;
 import no.uib.cipr.matrix.VectorEntry;
 import no.uib.cipr.matrix.sparse.SparseVector;
 
-public class CustomVector implements Serializable {
+public class CustomVector implements Serializable, Comparable<CustomVector> {
 	
 	/**
 	 * 
@@ -164,6 +164,36 @@ public class CustomVector implements Serializable {
 		}
 		return minv;
 	}
-    
+
+	public boolean compare(CustomVector point) {
+		if (point.v.toString().compareTo(v.toString())==0)
+				return true;
+		return false;
+		
+	}
+
+	public static CustomVector getRandomUnitary(int dim) {
+		CustomVector retval=new CustomVector(dim);
+		for (int i=0;i<dim;i++){
+			retval.set(i,Utils.gen.nextDouble());
+		}
+		retval.scale(retval.norm(1));
+		return retval;
+	}
+
+	public int compareTo(CustomVector vprime,double delta) {
+		for (int i=0;i<v.size();i++){
+			if (v.get(i) > vprime.get(i) + delta)
+				return 1;
+			if (v.get(i) < vprime.get(i) - delta)
+				return -1;
+		}
+		return 0;
+	}
+
+
+	public int compareTo(CustomVector arg0) {
+		return compareTo(arg0,0.0);
+	}
 	
 }

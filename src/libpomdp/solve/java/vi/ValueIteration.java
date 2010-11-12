@@ -1,18 +1,17 @@
 package libpomdp.solve.java.vi;
 
-import libpomdp.common.java.ValueFunction;
-import libpomdp.solve.java.Iteration;
+import libpomdp.common.ValueFunction;
+import libpomdp.solve.Iteration;
+import libpomdp.solve.IterationStats;
 
 public abstract class ValueIteration extends Iteration {
 	
-	protected ValueFunction current;
-	protected ValueFunction old;
-	protected ValueIterationStats iterationStats;
-
-	public ValueIterationStats getStats() {
+	public IterationStats getStats() {
 		return(iterationStats);
 	}
 	
+	public abstract void registerValueIterationStats();
+		
 	public abstract ValueFunction getValueFunction();
 	public abstract ValueFunction getOldValueFunction();
 }

@@ -19,11 +19,11 @@ public class ValueIterationStats extends IterationStats {
 		total_lp_time+=iTime;
 	}
 	
-	public int register(long iTime,int nVects) {
-		register(iTime);
+	/*public int register(long iTime,int nVects) {
 		iteration_vector_count.add(new Integer(nVects));
+		register(iTime);
 		return(iterations);
-	}
+	}*/
 	
 	public String toString(){
 		String retval=super.toString();

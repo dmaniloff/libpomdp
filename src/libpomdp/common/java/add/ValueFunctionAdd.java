@@ -15,12 +15,13 @@ package libpomdp.common.java.add;
 // imports
 import java.io.Serializable;
 
-import libpomdp.common.java.BeliefState;
-import libpomdp.common.java.CustomVector;
-import libpomdp.common.java.Utils;
-import libpomdp.common.java.ValueFunction;
-import libpomdp.common.java.add.symbolic.DD;
-import libpomdp.common.java.add.symbolic.OP;
+import libpomdp.common.AlphaVector;
+import libpomdp.common.BeliefState;
+import libpomdp.common.CustomVector;
+import libpomdp.common.Utils;
+import libpomdp.common.ValueFunction;
+import libpomdp.common.add.symbolic.DD;
+import libpomdp.common.add.symbolic.OP;
 
 public class ValueFunctionAdd implements ValueFunction, Serializable {
 
@@ -119,5 +120,28 @@ public class ValueFunctionAdd implements ValueFunction, Serializable {
 	return vAdd;
     }
 
+	public CustomVector getAlphaValues(int idx) {
+		double[][] val=OP.convert2array(vAdd, staIds);
+		return new CustomVector(val[idx]);
+	}
+
+	public int size() {
+		return a.length;
+	}
+
+	public CustomVector getVectorRef(int idx) {
+		System.out.println("Warning: getVectorRef is not implemented for ADD representation, passing a copy...");
+		return getAlphaValues(idx);
+	}
+
+	public void sort() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public AlphaVector getAlpha(int idx) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 } // valueFunctionAdd

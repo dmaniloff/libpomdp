@@ -30,4 +30,9 @@ public interface BeliefState {
 
     /// returns the entropy of the belief in nats
     public double getEntropy(); 
+
+    public boolean compare(BeliefState arg0);
+
+    public BeliefState copy();
+
 }

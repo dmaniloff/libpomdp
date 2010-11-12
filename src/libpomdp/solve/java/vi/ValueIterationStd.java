@@ -1,14 +1,22 @@
 package libpomdp.solve.java.vi;
 
-import libpomdp.common.java.std.PomdpStd;
-import libpomdp.common.java.std.ValueFunctionStd;
-import libpomdp.solve.java.IterationStats;
+import libpomdp.common.Pomdp;
+import libpomdp.common.std.PomdpStd;
+import libpomdp.common.std.ValueFunctionStd;
+import libpomdp.solve.IterationStats;
 
 public abstract class ValueIterationStd extends ValueIteration {
 	
 	protected PomdpStd pomdp;
 	protected ValueFunctionStd current;
 	protected ValueFunctionStd old;
+	
+	protected void initValueIteration(PomdpStd pomdp)
+	{
+		this.pomdp=pomdp;
+		initIteration();
+		iterationStats=new ValueIterationStats(pomdp);
+	}
 	
 	public PomdpStd getPomdp() {
 		return pomdp;
@@ -23,5 +31,11 @@ public abstract class ValueIterationStd extends ValueIteration {
 	}
 	
 	public abstract IterationStats iterate();
-
+	
+	public void registerValueIterationStats(){
+		if (current!=null){
+			((ValueIterationStats)iterationStats).iteration_vector_count.add(new Integer(current.size()));
+		}
+	registerIterationTime();
+	}
 }

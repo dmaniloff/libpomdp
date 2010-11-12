@@ -6,14 +6,15 @@ import libpomdp.common.java.Pomdp;
 
 public abstract class Iteration {
 
-	protected Pomdp pomdp;
 	protected IterationStats iterationStats;
 	protected ArrayList<Criteria> stopCriterias; 
-
+	protected long tempTime;
+	
 	public abstract IterationStats iterate();
 
 	public IterationStats run(){
 			while (!finished()){
+				System.out.println("== Iteration "+iterationStats.iterations+" ==");
 				iterate();
 			}
 			return iterationStats;
@@ -31,6 +32,23 @@ public abstract class Iteration {
 		if (sc.valid(this))
 			stopCriterias.add(sc);
 	}
+	
+	protected void startTimer(){
+		tempTime = System.currentTimeMillis();
+	}
+	
+	protected void initIteration(){
+		stopCriterias= new ArrayList<Criteria>();
+	}
+	
+	protected void registerInitTime(){
+		iterationStats.init_time = System.currentTimeMillis() - tempTime;
+	}
+	
+	protected void registerIterationTime(){
+		iterationStats.register(System.currentTimeMillis() - tempTime); 
+	}
+
 	
 	public abstract IterationStats getStats();
 
