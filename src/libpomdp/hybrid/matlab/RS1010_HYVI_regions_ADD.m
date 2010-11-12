@@ -271,12 +271,12 @@ for run = 1:TOTALRUNS
             
 
             % output some stats
-            fprintf(1, 'Expansion finished, # expands:  %d\n',   expC);
-            fprintf(1, '|T|:                            %d\n',   rootNode.subTreeSize);
+            fprintf(1, 'Expansion finished, # expands:  %d\n'  ,   expC);
+            fprintf(1, '|T|:                            %d\n'  ,   rootNode.subTreeSize);
             tc = cell(factoredProb.getactStr(a-1));
-            fprintf(1, 'Outputting action:              %s\n',   tc{1});
+            fprintf(1, 'Outputting action:              %s\n'  ,   tc{1});
             tc = cell(factoredProb.printO(factoredO));
-            fprintf(1, 'Perceived observation:          %s\n',   tc{1});
+            fprintf(1, 'Perceived observation:          %s\n'  ,   tc{1});
             fprintf(1, 'Received reward:                %.2f\n', all.stats{run}.ep{ep}.R(end));
             fprintf(1, 'Cumulative reward:              %.2f\n', cumR);
 
