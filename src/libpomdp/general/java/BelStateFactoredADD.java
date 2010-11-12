@@ -11,7 +11,8 @@
 package libpomdp.general.java;
 
 // imports
-import symPerseusJava.*;
+import symPerseusJava.DD;
+import symPerseusJava.OP;
 
 public class BelStateFactoredADD implements belState {
     
@@ -41,6 +42,16 @@ public class BelStateFactoredADD implements belState {
 	this.staIds    = staIds;	
     }
 
+    // compute entropy of this point in nats
+    public double getEntropy() {
+	DD m[] = new DD[marginals.length-1];
+	System.arraycopy(marginals, 0, m, 0, marginals.length-1);
+	return -OP.dotProductNoMem(
+                	OP.log(OP.multN(m)),
+                        OP.multN(m),
+                        staIds);
+    }
+    
     // compute this only if we actually need it
     public double[] getbPoint() {
 	return	OP.convert2array(OP.multN(marginals), staIds); // bug here, should be marginals(1:10)

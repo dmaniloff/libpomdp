@@ -57,5 +57,10 @@ public class belStateSparseUJMP implements belState {
 	this.planid = planid;
     }
 
+    public double getEntropy() {
+	// TODO Auto-generated method stub
+	return 0;
+    }
+
 
 } // 

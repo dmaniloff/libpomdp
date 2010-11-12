@@ -11,7 +11,8 @@
 package libpomdp.general.java;
 
 // imports
-import symPerseusJava.*;
+import symPerseusJava.DD;
+import symPerseusJava.OP;
 
 public class belStateAdd implements belState {
     
@@ -54,6 +55,11 @@ public class belStateAdd implements belState {
 
     public void setplanid(int planid) {
 	this.planid = planid;
+    }
+
+    public double getEntropy() {
+	// TODO Auto-generated method stub
+	return -1;
     }
 
 } // belState

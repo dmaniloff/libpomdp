@@ -10,8 +10,10 @@
 package libpomdp.hybrid.java;
 
 // imports
-import libpomdp.general.java.*;
-import libpomdp.online.java.*;
+import libpomdp.general.java.Common;
+import libpomdp.general.java.pomdp;
+import libpomdp.online.java.andNode;
+import libpomdp.online.java.orNode;
 
 public class DOSI implements backupHeuristic {
 
@@ -25,7 +27,13 @@ public class DOSI implements backupHeuristic {
 
     /// heuristic of each orNode = I * \gamma^{D_b}
     public double h_b(orNode o) {
-	return o.oneStepDeltaLower * Math.pow(problem.getGamma(), o.getdepth());
+	// think about this, using getdepth() prob makes sense
+	// for the root only, which is good for now, but not very general
+	// will make this consider the normalized entropy of the belief node as well,
+	// probably need to change this class' name as well!
+	return o.oneStepDeltaLower * 
+		Math.pow(problem.getGamma(), o.getdepth()) *
+		o.belief.getEntropy() / Math.log(problem.getnrSta()); 
     }
 
     /// compare current bakCandidate with the child's
