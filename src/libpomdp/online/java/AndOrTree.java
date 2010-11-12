@@ -349,7 +349,7 @@ public class AndOrTree {
 	// second condition
 	boolean opt1 = true;
 	for(andNode a : root.children) {
-	    if ((a.getAct() != act) && (root.l > a.u)) { // BUGG
+	    if ((a.getAct() != act) && (root.l < a.u)) {
 		opt1 = false;
 		break;
 	    }
