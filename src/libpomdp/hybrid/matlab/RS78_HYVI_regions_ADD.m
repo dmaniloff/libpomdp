@@ -46,7 +46,7 @@ NUM_ROCKS         = size(ROCK_POSITIONS,1);
 
 % general parameters
 EXPANSION_RATE       = 100; % calculated from the online simulator, avg 
-AVG_EP_LIFETIME      = 29; % calculated from the online simulator, avg
+AVG_EP_LIFETIME      = 18; % calculated from the online simulator, avg
 EPSILON_ACT_TH       = 1e-3;
 EPISODECOUNT         = 10;
 MAXEPISODELENGTH     = 100;
@@ -176,17 +176,12 @@ for run = 1:TOTALRUNS
             %
             % will go with a first approximation, and assume that ALL nodes
             % supported by alpha-vec i will get improved if we have a candidate
-            % node supported by that alpha-vec i whose I(b) > 0
+            % node supported by that alpha-vec i whose bakheuristic > 0
             % we will also assume that such improvement will be forever from
             % this time-step on, that is for all t > t_c
             % with this, the comparison we make is 
             % p n_b?c >  ?H ?(tc) k 
-            % of k = exp_rate * t_bak,
-            % is  k > max_i { #supportList[i] * exists(bakCandidate[i] } ?
-            % I DON"T UNDERSTAND THIS (and i wrote it):
-            % throughout, we are also assuming (to our disadvantage) that
-            % the additional k expansions we can get in t_bak would all be of
-            % nodes that we can reuse
+            % of k = exp_rate * t_bak
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
             tic
@@ -197,27 +192,18 @@ for run = 1:TOTALRUNS
             % enough, since |support(index(b))| / (p - k) is invariant for every
             % b in the same support set:
             % f(b) = ?^{d^b_T} I(b) |support(index(b))| / (p - k), b ? I(T).
-            n_star           = double(aoTree.treeSupportSetSize) ./ rootNode.subTreeSize; % fraction of nodes that will improve
-            f                = rootNode.bakHeuristicStar .* double(n_star);
-            % get f* and the associated index
-            [f_star, i_star] = max(f);
+            n_star           = double(aoTree.treeSupportSetSize) ./ rootNode.subTreeSize; % fraction of nodes 
+            f                = rootNode.bakHeuristicStar .* double(n_star);               % affect this fraction by (discounted I(b) * entropy)
+            [f_star, i_star] = max(f);                                                    % get f* and the associated index
             
             % before continuing, make sure there is a feasible candidate
             if rootNode.bakHeuristicStar(i_star) > 0
-                % get p * n_b*_c
-                imp_n            = P * n_star(i_star); % number of nodes that will improve
-                b_star_entropy   = -OP.dotProductNoMem(...
-                    OP.log(OP.multN(...
-                    rootNode.bakCandidate(i_star).belief.marginals(1:factoredProb.getnrStaV))),...
-                    OP.multN(...
-                    rootNode.bakCandidate(i_star).belief.marginals(1:factoredProb.getnrStaV)),...
-                    factoredProb.getstaIds())...
-                    / log(factoredProb.getnrSta);
-                imp_n            = imp_n * b_star_entropy; % reduce this by the entropy of the belief to backup
+                % get p * n_b*_c, estimate of nodes that will improve
+                imp_n = P * n_star(i_star) * rootNode.bakCandidate(i_star).belief.getEntropy() / log(factoredProb.getnrSta); 
                 % compute \gamma_H(t_c)
                 gamma_tc = (1 - factoredProb.getGamma()) / ...
                     (factoredProb.getGamma() - factoredProb.getGamma()^ ...
-                    (max(AVG_EP_LIFETIME,iter) - iter + 1)); % ie., AVG_EP_LIFETIME - iter + 1 
+                    (max(AVG_EP_LIFETIME,iter) - iter + 1)); 
                 % gamma_tc * K
                 % if there exists a candidate, with I(b) > 0, and it fulfills the
                 % decision rule, back it up
@@ -232,36 +218,6 @@ for run = 1:TOTALRUNS
                 end
                 falseheurtime = toc;
             end               
-            % sort the support list for action a
-%             [sortedSupportList, oid] = sort(aoTree.fringeSupportLists(a,:), 'descend');
-%             for salphaid=1:aoTree.getLB().getSize()
-%                 % if there exists a candidate, with I(b) > 0, and its fellow
-%                 % nodes outnumber the expansions that could be made, backup
-%                 if (rootNode.children(a).bakHeuristicStar(oid(salphaid)) > 0 && ...
-%                         sortedSupportList(salphaid) > EXPANSION_RATE * BACKUPTIME)
-%                     % compute backup
-%                     tic
-%                     aoTree.backupLowerAtNode(...
-%                         rootNode.children(a).bakCandidate(oid(salphaid)));
-%                     all.stats{run}.ep{ep}.backuptime(end+1) = toc;
-%                     bakC = bakC + 1;
-%                     % break loop
-%                     backedup = 1;
-%                     break;
-%                 end
-%             end
-%             falseheurtime = toc
-            
-%             if(aoTree.expectedReuseRatio() > REUSETHRESHOLD && ...
-%                     rootNode.children(aoTree.currentBestAction() + 1).bakHeuristicStar > 0)
-%                 % bakup at best node according to heuristic
-%                 tic
-%                 aoTree.backupLowerAtNode(...
-%                     rootNode.children(aoTree.currentBestAction() + ...
-%                                       1).bakCandidate);
-%                 all.stats{run}.ep{ep}.backuptime(end+1) = toc;
-%                 bakC = bakC + 1;
-%             else
        
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             % EXTRA expansions may happen here for t_bak
@@ -298,12 +254,7 @@ for run = 1:TOTALRUNS
                 fprintf(1, 'Achieved e-optimal action!\n');
                 fndO = fndO + 1;
             end
-            
-            % obtain the best action for the root
-            % remember that a's and o's in matlab should start from 1
-            %a = aoTree.currentBestAction();
-            %a = a + 1;
-            
+
             % execute best action and receive new o
             restrictedT = OP.restrictN(factoredProb.T(a), factoredS);
             factoredS1  = OP.sampleMultinomial(restrictedT, factoredProb.getstaIdsPr());
@@ -320,7 +271,6 @@ for run = 1:TOTALRUNS
 
             % output some stats
             fprintf(1, 'Expansion finished, # expands:  %d\n',   expC);
-            % this will count an extra |A||O| nodes given the expansion of the root
             fprintf(1, '|T|:                            %d\n',   rootNode.subTreeSize);
             tc = cell(factoredProb.getactStr(a-1));
             fprintf(1, 'Outputting action:              %s\n',   tc{1});
