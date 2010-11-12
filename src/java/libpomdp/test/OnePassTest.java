@@ -17,7 +17,7 @@ public class OnePassTest {
 		OnePassStd algo= new OnePassStd(pomdp);
 		algo.addStopCriteria(new MaxIterationsCriteria(10));
 		algo.run();
-		ValueIterationStats stat=algo.getStats();
+		ValueIterationStats stat=(ValueIterationStats) algo.getStats();
 		System.out.println(stat);
 		//System.out.println(val);
 	}

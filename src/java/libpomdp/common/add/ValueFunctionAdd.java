@@ -16,6 +16,7 @@ package libpomdp.common.add;
 // imports
 import java.io.Serializable;
 
+import libpomdp.common.AlphaVector;
 import libpomdp.common.BeliefState;
 import libpomdp.common.CustomVector;
 import libpomdp.common.Utils;
@@ -88,7 +89,7 @@ public class ValueFunctionAdd implements ValueFunction, Serializable {
 	return vAdd;
     }
 
-	public CustomVector getVectorCopy(int idx) {
+	public CustomVector getAlphaValues(int idx) {
 		double[][] val=OP.convert2array(vAdd, staIds);
 		return new CustomVector(val[idx]);
 	}
@@ -99,7 +100,17 @@ public class ValueFunctionAdd implements ValueFunction, Serializable {
 
 	public CustomVector getVectorRef(int idx) {
 		System.out.println("Warning: getVectorRef is not implemented for ADD representation, passing a copy...");
-		return getVectorCopy(idx);
+		return getAlphaValues(idx);
+	}
+
+	public void sort() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public AlphaVector getAlpha(int idx) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 } // valueFunctionAdd

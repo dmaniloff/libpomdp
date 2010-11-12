@@ -3,6 +3,7 @@ package libpomdp.common.std;
 
 import java.io.Serializable;
 
+import libpomdp.common.AlphaVector;
 import libpomdp.common.BeliefMdp;
 import libpomdp.common.BeliefState;
 import libpomdp.common.CustomMatrix;
@@ -106,11 +107,31 @@ public class BeliefMdpStd implements BeliefMdp,Serializable {
 	}
 
 	public BeliefState sampleNextBelief(BeliefState b, int a, int o) {
-		return(pom.sampleNextBelief(b,a,o));
+		CustomVector vect=tau[o][a].mult(b.getPoint());
+		vect=vect.scale(1.0/vect.norm(1.0));
+		return(new BeliefStateStd(vect));
 	}
 
 	public double sampleReward(BeliefState b, int a) {
 		return(pom.sampleReward(b, a));
+	}
+
+	public int getRandomObservation(BeliefStateStd bel, int a) {
+		return pom.getRandomObservation(bel, a);
+	}
+
+	public String[] getStateString() {
+		return pom.getStateString();
+	}
+
+	public AlphaVector projection(AlphaVector alpha, int a, int o) {
+		CustomVector vect=new CustomVector(nrStates());
+		vect.add(tau[o][a].mult(getGamma(),alpha.getVectorRef()));
+		return(new AlphaVector(vect,a));
+	}
+
+	public int getRandomAction() {
+		return(pom.getRandomAction());
 	}
 
 }

@@ -40,7 +40,10 @@ public class BeliefStateStd implements BeliefState, Serializable {
 	this.bSparse = bSparse;
 	this.poba    = poba;
     }
-
+    
+    public BeliefStateStd(CustomVector bSparse) {
+    	this(bSparse,-1);
+    }
     // calling this method should be for debugging
     // purposes only, otherwise we loose the sparse rep
     public CustomVector getPoint() {
@@ -64,8 +67,15 @@ public class BeliefStateStd implements BeliefState, Serializable {
     }
 
 	public BeliefState copy() {
-		// TODO Auto-generated method stub
 		return (new BeliefStateStd(bSparse,poba));
+	}
+
+	//public static BeliefStateStd getRandom(int dim) {
+	//	return(new BeliefStateStd(CustomVector.getRandomUnitary(dim)));
+	//}
+
+	public boolean compare(BeliefState arg0) {
+		return(bSparse.compare(arg0.getPoint()));
 	}
 
 

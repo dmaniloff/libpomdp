@@ -1,5 +1,6 @@
 package libpomdp.solve.vi;
 
+import libpomdp.common.AlphaVector;
 import libpomdp.common.CustomVector;
 import libpomdp.common.ValueFunction;
 import libpomdp.solve.Criteria;
@@ -10,35 +11,43 @@ public class ValueConvergenceCriteria extends Criteria {
 	double epsilon;
 	int convCriteria;
 	
-	@Override
 	public boolean check(Iteration i) {
 		ValueIteration vi=(ValueIteration)i;
 		ValueFunction newv=vi.getValueFunction();
 		ValueFunction oldv=vi.getOldValueFunction();
-		if (oldv==null)
+		if (oldv==null  || newv.size()!=oldv.size()){
+			System.out.println("Eval(" + i.getStats().iterations + ") = Inf");
 			return false;
-		switch(convCriteria){
-			case CC_MAXEUCLID:
-				if (newv.size()!=oldv.size())
-					return false;
-				double conv=0;
-			   	for(int j=0; j<newv.size(); j++){
-			   		CustomVector perf=newv.getVectorCopy(j);
-			   		perf.add(-1.0,oldv.getVectorCopy(j));
-			   		double a_value = perf.norm(2.0);	
-					if (a_value > conv)
-			   			conv=a_value;
-			   	}
-			   	System.out.println("Iteration " + i.getStats().iterations + ": " + conv);
-			   	if (conv <= epsilon)
-			   		return(true);
-				break;
-			default:
-				System.out.println("Warning: Unknown Convergence Criteria");
-				break;
 		}
+		newv.sort();
+		oldv.sort();
+		double conv=0;
+		for(int j=0; j<newv.size(); j++){
+			AlphaVector newAlpha=newv.getAlpha(j);
+			AlphaVector oldAlpha=oldv.getAlpha(j);
+			if (newAlpha.getAction()!=oldAlpha.getAction()){
+				System.out.println("Eval(" + i.getStats().iterations + ") = Inf");
+				return false;
+			}
+			CustomVector perf=newAlpha.getVectorCopy();
+			perf.add(-1.0,oldAlpha.getVectorRef());
+			double a_value=0;
+			switch(convCriteria){
+			case CC_MAXEUCLID:
+				a_value = perf.norm(2.0);
+				break;
+			case CC_MAXDIST:
+				a_value = perf.norm(1.0);
+				break;
+			}
+			if (a_value > conv)
+				conv=a_value;
+		}
+		System.out.println("Eval(" + i.getStats().iterations + ") = " + conv);
+		if (conv <= epsilon)
+			return(true);
 		return false;
-	}
+ 	}
 
 	@Override
 	public boolean valid(Iteration vi) {

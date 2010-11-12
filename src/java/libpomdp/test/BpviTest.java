@@ -20,7 +20,7 @@ public class BpviTest {
 		algo.addStopCriteria(new MaxIterationsCriteria(50000));
 		algo.addStopCriteria(new ValueConvergenceCriteria(1e-3,Criteria.CC_MAXEUCLID));
 		algo.run();
-		ValueIterationStats stat=algo.getStats();
+		ValueIterationStats stat=(ValueIterationStats) algo.getStats();
 		System.out.println(stat);
 		//System.out.println(val);
 	}

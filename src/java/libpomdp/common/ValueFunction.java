@@ -18,10 +18,12 @@ public interface ValueFunction {
 
     public int size();
     
-    public CustomVector getVectorRef(int idx);
-    public CustomVector getVectorCopy(int idx);
+    public AlphaVector getAlpha(int idx);
+    public CustomVector getAlphaValues(int idx);
     
     // value of a belief according to this value function
     public double value(BeliefState b);
+
+	public void sort();
 
 } // valueFunction

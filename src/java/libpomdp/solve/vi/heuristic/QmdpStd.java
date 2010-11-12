@@ -14,55 +14,45 @@ package libpomdp.solve.vi.heuristic;
 
 // imports
 
-import java.util.ArrayList;
-
-import libpomdp.common.CustomVector;
+import libpomdp.common.AlphaVector;
 import libpomdp.common.std.PomdpStd;
 import libpomdp.common.std.ValueFunctionStd;
-import libpomdp.solve.Criteria;
 import libpomdp.solve.IterationStats;
-import libpomdp.solve.vi.ValueIterationStats;
 import libpomdp.solve.vi.ValueIterationStd;
 
 public class QmdpStd extends ValueIterationStd {
     
-	public CustomVector Vt;
+	public AlphaVector Vt;
 	
 	public QmdpStd(PomdpStd pomdp){
-		long inTime = System.currentTimeMillis();
-		this.pomdp=pomdp;
-		iterationStats=new ValueIterationStats(pomdp);
-		stopCriterias= new ArrayList<Criteria>();
+		startTimer();
+		initValueIteration(pomdp);
 		current=new ValueFunctionStd(pomdp.nrStates());
-		CustomVector vi=new CustomVector(pomdp.nrStates());
-		vi.zero();
 		for(int a=0; a<pomdp.nrActions(); a++)	
-		    current.push(vi,a);
-		Vt=vi;
-		iterationStats.init_time = System.currentTimeMillis() - inTime;
+		    current.push(new AlphaVector(pomdp.nrStates(),a));
+		Vt=new AlphaVector(pomdp.nrStates());
+		registerInitTime();
 	}
 	
 	@Override
 	public IterationStats iterate() {
-		long inTime = System.currentTimeMillis();
-		//System.out.println("== Iteration "+iterationStats.iterations+" ==");
+		startTimer();
 		old=current.copy();
 		current=new ValueFunctionStd(pomdp.nrStates());
 		for(int a=0; a<pomdp.nrActions(); a++){
-			CustomVector res=pomdp.getTransitionProbs(a).mult(pomdp.getGamma(),Vt);
-		    res.add(pomdp.getRewardValues(a));
-    	    current.push(res,a);
+			AlphaVector res=pomdp.mdpValueUpdate(Vt, a);
+    	    current.push(res);
     	}
 		for (int s=0;s<pomdp.nrStates();s++){
 			double colmax=Double.NEGATIVE_INFINITY;
 			for(int a=0; a<pomdp.nrActions(); a++){
-				double val=current.getVectorRef(a).get(s);
+				double val=current.getAlphaElement(a,s);
 				if (val > colmax)
 					colmax=val;
 			}
-			Vt.set(s, colmax);
+			Vt.setValue(s, colmax);
 		}
-    	iterationStats.register(System.currentTimeMillis() - inTime, current.size());
+		registerValueIterationStats();
     	return iterationStats;
 	}
 } // qmdpFlat

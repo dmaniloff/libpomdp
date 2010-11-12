@@ -64,4 +64,15 @@ public class BelStateFactoredAdd implements BeliefState {
 	this.planid = planid;
     }
 
+	public boolean compare(BeliefState arg0) {
+		System.out.println("UUuuups... Compare not implemented yet for ADDs");
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public BeliefState copy() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 } // belState

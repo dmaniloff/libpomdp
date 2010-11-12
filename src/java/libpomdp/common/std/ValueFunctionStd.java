@@ -12,6 +12,7 @@ package libpomdp.common.std;
 // imports
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import org.gnu.glpk.GLPK;
 import org.gnu.glpk.GLPKConstants;
@@ -20,9 +21,9 @@ import org.gnu.glpk.SWIGTYPE_p_int;
 import org.gnu.glpk.glp_prob;
 import org.gnu.glpk.glp_smcp;
 
+import libpomdp.common.AlphaVector;
 import libpomdp.common.BeliefState;
 import libpomdp.common.CustomVector;
-import libpomdp.common.Utils;
 import libpomdp.common.ValueFunction;
 
 
@@ -41,19 +42,13 @@ public class ValueFunctionStd implements ValueFunction, Serializable {
 
 
     // represent a value function via a Matrix object
-    private ArrayList <CustomVector> v;
-    
+    private ArrayList <AlphaVector> set;
     private int states;
-    
     long total_lp_time;
     
-    // actions associated to each alpha vector
-    private ArrayList <Integer> a;
-
     // constructor
     public ValueFunctionStd(int states){
-    	a=new ArrayList<Integer>();
-    	v=new ArrayList<CustomVector>();
+    	set=new ArrayList<AlphaVector>();
     	this.states=states;
     }
 
@@ -70,66 +65,74 @@ public class ValueFunctionStd implements ValueFunction, Serializable {
 
 	// list of actions associated with each alpha
     public int[] getActions() {
-    	return(Utils.convertIntegers(a));
+    	int [] retval=new int[size()];
+    	for (int i=0;i<size();i++){
+    		retval[i]=getAction(i);
+    	}
+    	return(retval);
     }
 
     // return value of a belief state
     public double value(BeliefState bel) {
     	//long start = System.currentTimeMillis();
-    	CustomVector b = (CustomVector)bel.getPoint();
-    	double valmax=Double.MIN_VALUE;
-    	int index=0;
-    	for (CustomVector vect: v){
-    		double sol = vect.dot(b);
+    	double valmax=Double.NEGATIVE_INFINITY;
+    	AlphaVector sel = null;
+    	for (AlphaVector alpha: set){
+    		double sol = alpha.eval(bel);
     		if (sol > valmax)
     		{
     			valmax=sol;
-    			index=v.indexOf(vect);
+    			sel=alpha;
     		}
     	}
-		bel.setAlpha(index);
-		//System.out.println("elapsed in V: " + (System.currentTimeMillis() - start));
+		bel.setAlpha(set.indexOf(sel));;
 		return valmax;
     }
 
-    public int push(double list[],int a){
+    public boolean push(double list[],int a){
     	return push(new CustomVector(list),a);
     }
     
-	public int push(CustomVector vec, int a) {
-		v.add(vec.copy());
-		this.a.add(new Integer(a));
-		return(v.size()-1);
+	public boolean push(CustomVector vec, int a) {
+		return(push(new AlphaVector(vec.copy(),a)));
 	}
 
-	public CustomVector getVectorRef(int idx) {
-		return v.get(idx);
+	public boolean push(AlphaVector ent) {
+		return(set.add(ent));
+	}
+	
+	public AlphaVector getAlpha(int idx) {
+		return set.get(idx);
 	} 
 	
 	public int size() {
-		return(v.size());
+		return(set.size());
 	}
 
 	public ValueFunctionStd copy() {
 		ValueFunctionStd newv=new ValueFunctionStd(states);
-		for (int i=0;i<v.size();i++)
-			newv.push(v.get(i).copy(),a.get(i).intValue());
+		for (int i=0;i<set.size();i++)
+			newv.push(set.get(i).copy());
 		return newv;
 	}
 
-	public CustomVector getVectorCopy(int idx) {
-		return(getVectorRef(idx).copy());
+	public CustomVector getAlphaValues(int idx) {
+		return(getAlpha(idx).getVectorCopy());
+	}
+	
+	public int getAlphaAction(int idx) {
+		return(set.get(idx).getAction());
 	}
 	
     public String toString(){
     	String retval="Value Function\n";
     	for (int i=0;i<size();i++){
     		retval+="v"+i+"\t[";
-    		CustomVector v=getVectorRef(i);
+    		CustomVector v=getAlphaValues(i);
     		for (int j=0;j<v.size();j++){
     			retval+=v.get(j)+" ";
     		}
-    		retval+="] a="+a.get(i)+"\n";
+    		retval+="] a="+getAlphaAction(i)+"\n";
     	}
     	return retval;
     }
@@ -144,14 +147,12 @@ public class ValueFunctionStd implements ValueFunction, Serializable {
 
 	private long lp_pruning(double delta) {
 		total_lp_time=0;
-		if (v.size()<2)
+		if (set.size()<2)
 			return total_lp_time;
-		ArrayList<CustomVector> newv=new ArrayList<CustomVector>();
-		ArrayList<Integer> newa=new ArrayList<Integer>();
-		while(v.size()>0){
+		ArrayList<AlphaVector> newv=new ArrayList<AlphaVector>();
+		while(set.size()>0){
 			BeliefStateStd b;
-			CustomVector sel_vect=v.remove(0);
-			Integer sel_a=a.remove(0);
+			AlphaVector sel_vect=set.remove(0);
 			if (newv.size()==0){
 				b = new BeliefStateStd(CustomVector.getUniform(sel_vect.size()),-1);
 			}
@@ -159,50 +160,43 @@ public class ValueFunctionStd implements ValueFunction, Serializable {
 				b=find_region(sel_vect,newv,delta);
 			}
 			if (b!=null) {
-				v.add(sel_vect);
-				a.add(sel_a);
-				sel_vect=best_vector(b,v,delta);
-				int idx=v.indexOf(sel_vect);
-				v.remove(idx);
-				sel_a=a.remove(idx);
+				set.add(sel_vect);
+				sel_vect=best_vector(b,set,delta);
+				int idx=set.indexOf(sel_vect);
+				set.remove(idx);
 				newv.add(sel_vect);
-				newa.add(sel_a);
 			}
 		}
-		v=newv;
-		a=newa;
+		set=newv;
 		return total_lp_time;
 	}
 
-	private CustomVector best_vector(BeliefStateStd b,
-			ArrayList<CustomVector> v2,double delta) {
-		CustomVector best_vec = v2.get(0);
-		double best_val=best_vec.dot(b.getPoint());;
-		for (CustomVector test_vec:v2){
-			double val=test_vec.dot(b.getPoint());
+	private AlphaVector best_vector(BeliefStateStd b,
+			ArrayList<AlphaVector> set2,double delta) {
+		AlphaVector best_vec = set2.get(0);
+		double best_val=best_vec.eval(b);
+		for (AlphaVector test_vec:set2){
+			double val=test_vec.eval(b);
 			if (Math.abs(val- best_val) < delta){
 				best_vec=lexicographic_max(best_vec,test_vec,delta);
 			}
 			else if (val > best_val){
 				best_vec=test_vec;
 			}
-			best_val=best_vec.dot(b.getPoint());
+			best_val=best_vec.eval(b);
 		}
 		return best_vec;
 	}
 
-	private CustomVector lexicographic_max(CustomVector bestVec,
-			CustomVector testVec, double delta) {
-		for (int i=0;i<bestVec.size();i++){
-			if (bestVec.get(i) > testVec.get(i) + delta)
-				return bestVec;
-			if (bestVec.get(i) < testVec.get(i) - delta)
-				return testVec;
-		}
-		return bestVec;
+	private AlphaVector lexicographic_max(AlphaVector bestVec,
+			AlphaVector testVec, double delta) {
+		if (bestVec.compareTo(testVec,delta)>0)
+			return(bestVec);
+		else
+			return(testVec);
 	}
 
-	private BeliefStateStd find_region(CustomVector selVect, ArrayList<CustomVector> v2, double delta){
+	private BeliefStateStd find_region(AlphaVector selVect, ArrayList<AlphaVector> newv, double delta){
 		// Can Sparsity play a role here?, nice question!
 		BeliefStateStd bel=null;
 		glp_prob lp;
@@ -220,17 +214,17 @@ public class ValueFunctionStd implements ValueFunction, Serializable {
 		GLPK.glp_set_col_kind(lp,states+1, GLPKConstants.GLP_CV);
 		GLPK.glp_set_col_bnds(lp,states+1, GLPKConstants.GLP_FR, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
 		// Define Constraints
-		GLPK.glp_add_rows(lp, v2.size()+1);
+		GLPK.glp_add_rows(lp, newv.size()+1);
 		ind=GLPK.new_intArray(states+2);
 		for (int j=0;j<states+2;j++){
 			GLPK.intArray_setitem(ind,j+1,j+1);
 		}
 		val=GLPK.new_doubleArray(states+2);
-		for (int i=0;i<v2.size();i++){	
+		for (int i=0;i<newv.size();i++){	
 			GLPK.glp_set_row_bnds(lp, i+1, GLPKConstants.GLP_LO,0.0,Double.POSITIVE_INFINITY);
-			CustomVector testVect=v2.get(i);
+			CustomVector testVect=newv.get(i).getVectorCopy();
 			for (int j=0;j<states;j++){
-				GLPK.doubleArray_setitem(val,j+1,selVect.get(j) - testVect.get(j));
+				GLPK.doubleArray_setitem(val,j+1,selVect.getVectorRef().get(j) - testVect.get(j));
 			}
 			GLPK.doubleArray_setitem(val,states+1,-1.0);
 			GLPK.glp_set_mat_row(lp,i+1,states+1, ind, val);
@@ -240,12 +234,12 @@ public class ValueFunctionStd implements ValueFunction, Serializable {
 		//	GLPK.intArray_setitem(ind,j+1,j+1);
 		//}
 		//val=GLPK.new_doubleArray(states+2);
-		GLPK.glp_set_row_bnds(lp,v2.size()+1,GLPKConstants.GLP_FX,1.0,1.0);
+		GLPK.glp_set_row_bnds(lp,newv.size()+1,GLPKConstants.GLP_FX,1.0,1.0);
 		for (int j=0;j<states;j++){
 			GLPK.doubleArray_setitem(val,j+1,1.0);
 		}
 		GLPK.doubleArray_setitem(val,states+1,0.0);
-		GLPK.glp_set_mat_row(lp,v2.size()+1,states+1, ind, val);
+		GLPK.glp_set_mat_row(lp,newv.size()+1,states+1, ind, val);
 		// Define Objective
 		GLPK.glp_set_obj_dir(lp, GLPKConstants.GLP_MAX);
 		GLPK.glp_set_obj_coef(lp,states+1, 1.0);
@@ -272,24 +266,20 @@ public class ValueFunctionStd implements ValueFunction, Serializable {
 	}
 
 	private void domination_check(double delta) {
-		if (v.size()<2)
+		if (set.size()<2)
 			return;
-		ArrayList<CustomVector> newv=new ArrayList<CustomVector>();
-		ArrayList<Integer> newa=new ArrayList<Integer>();
-		while(v.size()>0){
-			CustomVector sel_vect=v.remove(v.size()-1);
-			Integer sel_a=a.remove(v.size());
+		ArrayList<AlphaVector> newv=new ArrayList<AlphaVector>();
+		while(set.size()>0){
+			AlphaVector sel_vect=set.remove(set.size()-1);
 			if (newv.size()==0){
 				newv.add(sel_vect);
-				newa.add(sel_a);
 				continue;
 			}
-			ArrayList<CustomVector> tempv=new ArrayList<CustomVector>();
-			ArrayList<Integer> tempa=new ArrayList<Integer>();
+			ArrayList<AlphaVector> tempv=new ArrayList<AlphaVector>();
 			double max_dom=Double.NEGATIVE_INFINITY;
-			for (CustomVector test_vect:newv){
-				CustomVector res=test_vect.copy();
-				res.add(-1.0,sel_vect);
+			for (AlphaVector test_vect:newv){
+				CustomVector res=test_vect.getVectorCopy();
+				res.add(-1.0,sel_vect.getVectorRef());
 				double min_dom=res.min();
 				if (min_dom > max_dom)
 					max_dom=min_dom;
@@ -299,43 +289,46 @@ public class ValueFunctionStd implements ValueFunction, Serializable {
 				res.scale(-1.0);
 				if (res.min()<0.0){
 					tempv.add(test_vect);
-					tempa.add(newa.get(newv.indexOf(test_vect)));
 				}
 			}
 			if (max_dom<0.0){
 				newv=tempv;
-				newa=tempa;
 				newv.add(sel_vect);
-				newa.add(sel_a);
 			}
 		}
-		v=newv;
-		a=newa;
+		set=newv;
 	}
 
 	public void crossSum(ValueFunctionStd vfB) {
-		int mya=a.get(0).intValue();
-		ArrayList<CustomVector> backup = v;
-		v=new ArrayList<CustomVector>();
-		for (CustomVector vecA:backup){
-    		for (CustomVector vecB:vfB.v){
-        		CustomVector thevec=vecA.copy();
-        		thevec.add(vecB);
+		int mya=set.get(0).getAction();
+		ArrayList<AlphaVector> backup = set;
+		set=new ArrayList<AlphaVector>();
+		for (AlphaVector vecA:backup){
+    		for (AlphaVector vecB:vfB.set){
+        		CustomVector thevec=vecA.getVectorCopy();
+        		thevec.add(vecB.getVectorRef());
         		push(thevec,mya);
         	}
     	}
-		
 	}
 
 	public void merge(ValueFunctionStd vfA) {
 		for (int i=0;i<vfA.size();i++){
-    		push(vfA.getVectorRef(i),vfA.getAction(i));
+    		push(vfA.getAlpha(i).copy());
     	}
 	}
 
 	public int getAction(int i) {
-		return(a.get(i).intValue());
+		return(set.get(i).getAction());
 		
+	}
+
+	public void sort() {
+		Collections.sort(set);
+	}
+
+	public double getAlphaElement(int i, int s) {
+		return set.get(i).getVectorRef().get(s);
 	}
     
 } // valueFunctionSparseMTJ

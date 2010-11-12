@@ -29,4 +29,8 @@ public interface BeliefState {
 
     /// get index of the alpha vector that supports this point 
     public void setAlpha(int planid);
+
+	public boolean compare(BeliefState arg0);
+
+	public BeliefState copy();
 }
