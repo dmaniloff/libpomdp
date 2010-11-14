@@ -187,6 +187,7 @@ for run = 1:TOTALRUNS
 
             tic
             backedup = 0;
+            falseheurtime = 0;
             
             % work at the root level, should not need currentBestAction anymore
             % we will compute |V| of these f's, having kept track of I^*(b) is
