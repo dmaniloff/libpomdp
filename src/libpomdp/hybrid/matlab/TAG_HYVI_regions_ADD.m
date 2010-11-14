@@ -52,8 +52,8 @@ drawer            = CatchGraph(10, 5, CatchTagGrid(10,5));
 COLLOCATED_REWARD = 10.0;
 
 % general parameters
-EXPANSION_RATE       = 30; % calculated from the online simulator, avg
-AVG_EP_LIFETIME      = 31; % calculated from the online simulator, avg
+EXPANSION_RATE       = 60; % calculated from the online simulator, avg
+AVG_EP_LIFETIME      = 19; % calculated from the online simulator, avg
 EPSILON_ACT_TH       = 1e-3;
 EPISODECOUNT         = 10;
 EXPANSIONTIME        = 0.9;
@@ -194,13 +194,15 @@ for run = 1:TOTALRUNS
 
             tic
             backedup = 0;
+            falseheurtime = 0;
             
             % work at the root level, should not need currentBestAction anymore
             % we will compute |V| of these f's, having kept track of I^*(b) is
             % enough, since |support(index(b))| / (p - k) is invariant for every
             % b in the same support set:
             % f(b) = ?^{d^b_T} I(b) |support(index(b))| / (p - k), b ? I(T).
-            n_star           = double(aoTree.treeSupportSetSize) ./ rootNode.subTreeSize; % fraction of nodes 
+            %n_star           = double(aoTree.treeSupportSetSize) ./ rootNode.subTreeSize; % fraction of nodes 
+            n_star           = double(aoTree.treeSupportSetSize) ./ double(sum(aoTree.treeSupportSetSize)); % fraction of nodes 
             f                = rootNode.bakHeuristicStar .* double(n_star);               % affect this fraction by (discounted I(b) * entropy)
             [f_star, i_star] = max(f);                                                    % get f* and the associated index
             
