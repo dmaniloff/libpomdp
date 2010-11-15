@@ -161,7 +161,7 @@ public class ValueFunctionStd implements ValueFunction, Serializable {
 			}
 			if (b!=null) {
 				set.add(sel_vect);
-				sel_vect=best_vector(b,set,delta);
+				sel_vect=getBestAlpha(b,set,delta);
 				int idx=set.indexOf(sel_vect);
 				set.remove(idx);
 				newv.add(sel_vect);
@@ -171,7 +171,11 @@ public class ValueFunctionStd implements ValueFunction, Serializable {
 		return total_lp_time;
 	}
 
-	private AlphaVector best_vector(BeliefStateStd b,
+	public AlphaVector getBestAlpha(BeliefState b) {
+		return(getBestAlpha((BeliefStateStd) b,this.set,0.0));
+	}
+	
+	private AlphaVector getBestAlpha(BeliefStateStd b,
 			ArrayList<AlphaVector> set2,double delta) {
 		AlphaVector best_vec = set2.get(0);
 		double best_val=best_vec.eval(b);
@@ -330,5 +334,5 @@ public class ValueFunctionStd implements ValueFunction, Serializable {
 	public double getAlphaElement(int i, int s) {
 		return set.get(i).getVectorRef().get(s);
 	}
-    
+
 } // valueFunctionSparseMTJ

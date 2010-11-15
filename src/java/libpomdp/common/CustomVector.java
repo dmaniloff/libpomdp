@@ -186,5 +186,14 @@ public class CustomVector implements Serializable, Comparable<CustomVector> {
 	public int compareTo(CustomVector arg0) {
 		return compareTo(arg0,0.0);
 	}
+
+	public double max() {
+		double maxv=Double.NEGATIVE_INFINITY;
+		for (double val:Matrices.getArray(v)){
+			if (val>maxv)
+				maxv=val;
+		}
+		return maxv;
+	}
 	
 }

@@ -9,7 +9,7 @@ import libpomdp.solve.vi.ValueIterationStats;
 import libpomdp.solve.vi.pointbased.PbParams;
 import libpomdp.solve.vi.pointbased.PointBasedStd;
 
-public class PbviTest {
+public class PerseusTest {
 
 	/**
 	 * @param args
@@ -19,7 +19,7 @@ public class PbviTest {
 		//tiger/tiger.95.POMDP
 		PomdpStd pomdp=(PomdpStd)FileParser.loadPomdp("data/problems/tiger/tiger.95.POMDP", FileParser.PARSE_CASSANDRA_POMDP);
 		double epsi=1e-6*(1-pomdp.getGamma())/(2*pomdp.getGamma());
-		PbParams params=new PbParams(PbParams.BACKUP_SYNC_FULL,PbParams.EXPAND_GREEDY_ERROR_REDUCTION,100);
+		PbParams params=new PbParams(PbParams.BACKUP_ASYNC_FULL,PbParams.EXPAND_RANDOM_EXPLORE_STATIC,1,100,100);
 		PointBasedStd algo= new PointBasedStd(pomdp,params);
 		algo.addStopCriteria(new MaxIterationsCriteria(100));
 		algo.addStopCriteria(new ValueConvergenceCriteria(epsi,Criteria.CC_MAXDIST));

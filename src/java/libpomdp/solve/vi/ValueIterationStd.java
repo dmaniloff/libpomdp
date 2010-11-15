@@ -1,6 +1,5 @@
 package libpomdp.solve.vi;
 
-import libpomdp.common.Pomdp;
 import libpomdp.common.std.PomdpStd;
 import libpomdp.common.std.ValueFunctionStd;
 import libpomdp.solve.IterationStats;

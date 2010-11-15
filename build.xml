@@ -48,12 +48,33 @@
   </target>
 
   <target name="test">
-    <echo message="Running Pineu's PBVI Algorithm"/>
+  	 <echo message="Running Spaan's Perseus Algorithm"/>
+    <exec executable="java">
+      <arg value="-Djava.library.path=/usr/lib/jni"/> 
+      <arg value="-classpath"/>
+      <arg value="lib/*:dist/*"/>
+      <arg value="libpomdp.test.PerseusTest"/>
+	</exec>
+    <echo message="Running Pineu's PBVI (standard) Algorithm"/>
     <exec executable="java">
       <arg value="-Djava.library.path=/usr/lib/jni"/> 
       <arg value="-classpath"/>
       <arg value="lib/*:dist/*"/>
       <arg value="libpomdp.test.PbviTest"/>
+	</exec>
+  	 <echo message="Running Spaan's Perseus (dynPoints) Algorithm"/>
+    <exec executable="java">
+      <arg value="-Djava.library.path=/usr/lib/jni"/> 
+      <arg value="-classpath"/>
+      <arg value="lib/*:dist/*"/>
+      <arg value="libpomdp.test.PerseusDynamicTest"/>
+	</exec>
+    <echo message="Running Pineu's PBVI (SSRA-fast) Algorithm"/>
+    <exec executable="java">
+      <arg value="-Djava.library.path=/usr/lib/jni"/> 
+      <arg value="-classpath"/>
+      <arg value="lib/*:dist/*"/>
+      <arg value="libpomdp.test.PbviFastTest"/>
 	</exec>
   	 <echo message="Running Cassandra's Incremental Pruning Exact Algorithm"/>
     <exec executable="java">
