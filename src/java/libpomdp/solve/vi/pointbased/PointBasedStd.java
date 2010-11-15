@@ -73,42 +73,62 @@ public class PointBasedStd extends ValueIterationStd {
 		}
 	}
 
+	private AlphaVector backup(BeliefState bel,ValueFunctionStd vf){
+		AlphaVector alpha_max=null;
+		double alpha_max_val=Double.NEGATIVE_INFINITY;
+		for (int a=0;a<bmdp.nrActions();a++){
+			AlphaVector alpha_sum=new AlphaVector(bmdp.nrStates(),a);
+			for (int o=0;o<bmdp.nrObservations();o++){
+				double max_val=Double.NEGATIVE_INFINITY;
+				AlphaVector max_vect=null;
+				for (int idx=0;idx<vf.size();idx++){
+					AlphaVector prev= vf.getAlpha(idx);
+					AlphaVector vect=bmdp.projection(prev, a, o);
+					double val=vect.eval(bel);
+					if (val>max_val){
+						max_val=val;
+						max_vect=vect;
+					}
+				}
+				alpha_sum.add(max_vect);
+			}
+			alpha_sum.add(bmdp.getRewardValues(a));
+			double alpha_val=alpha_sum.eval(bel);
+			if (alpha_val>alpha_max_val){
+				alpha_max_val=alpha_val;
+				alpha_max=alpha_sum;
+			}
+		}
+		return(alpha_max);
+	}
 	
-	
-	private ValueFunctionStd asyncBackup(PointSet newBset) {
-		// TODO Auto-generated method stub
-		return null;
+	private ValueFunctionStd asyncBackup(PointSet bset) {
+		ValueFunctionStd newv=new ValueFunctionStd(bmdp.nrStates());
+		PointSet testBset = bset.copy();
+		while(testBset.size()!=0){
+			BeliefState bel=testBset.getRandom();
+			bset.remove(bel);
+			AlphaVector alpha=backup(bel,old);
+			if (alpha.eval(bel) >= old.value(bel))
+				newv.push(alpha);
+			else
+				newv.push(old.getBestAlpha(bel));
+			PointSet tabu=new PointSet();
+			for (BeliefState beltest:testBset){
+				if (newv.value(beltest) >= old.value(beltest)){
+					tabu.add(beltest);
+				}
+			}
+			for (BeliefState beltest:tabu)
+				testBset.remove(beltest);
+		}
+		return newv;
 	}
 
 	protected ValueFunctionStd syncBackup(PointSet bset){
 		ValueFunctionStd newv=new ValueFunctionStd(bmdp.nrStates());
 		for (BeliefState bel:bset){
-			AlphaVector alpha_max=null;
-			double alpha_max_val=Double.NEGATIVE_INFINITY;
-			for (int a=0;a<bmdp.nrActions();a++){
-				AlphaVector alpha_sum=new AlphaVector(bmdp.nrStates(),a);
-				for (int o=0;o<bmdp.nrObservations();o++){
-					double max_val=Double.NEGATIVE_INFINITY;
-					AlphaVector max_vect=null;
-					for (int idx=0;idx<old.size();idx++){
-						AlphaVector prev= old.getAlpha(idx);
-						AlphaVector vect=bmdp.projection(prev, a, o);
-						double val=vect.eval(bel);
-						if (val>max_val){
-							max_val=val;
-							max_vect=vect;
-						}
-					}
-					alpha_sum.add(max_vect);
-				}
-				alpha_sum.add(bmdp.getRewardValues(a));
-				double alpha_val=alpha_sum.eval(bel);
-				if (alpha_val>alpha_max_val){
-					alpha_max_val=alpha_val;
-					alpha_max=alpha_sum;
-				}
-			}
-			newv.push(alpha_max);
+			newv.push(backup(bel,old));
 		}
 		return newv;
 	}
@@ -129,14 +149,14 @@ public class PointBasedStd extends ValueIterationStd {
 			BeliefStateStd point = null;
 			switch (params.getExpandMethod()) {
 			case PbParams.EXPAND_GREEDY_ERROR_REDUCTION:
-				point = collectGreedyErrorReduction((BeliefStateStd) testBset.remove(0));
+				point = collectGreedyErrorReduction(testBset);
 				break;
 			case PbParams.EXPAND_EXPLORATORY_ACTION:
-				point = collectExploratoryAction((BeliefStateStd) testBset.remove(0));
+				point = collectExploratoryAction(testBset);
 				break;
 			case PbParams.EXPAND_RANDOM_EXPLORE_STATIC:
 			case PbParams.EXPAND_RANDOM_EXPLORE_DYNAMIC:
-				point = collectRandomExplore((BeliefStateStd) testBset.remove(0));
+				point = collectRandomExplore(testBset);
 				break;
 			}
 			if (point!=null){
@@ -152,7 +172,8 @@ public class PointBasedStd extends ValueIterationStd {
 		}
 	}
 
-	private BeliefStateStd collectExploratoryAction(BeliefStateStd b) {
+	private BeliefStateStd collectExploratoryAction(PointSet testBset) {
+		BeliefStateStd b=(BeliefStateStd) testBset.remove(0);
 		double max_dist=Double.NEGATIVE_INFINITY;
 		BeliefStateStd bnew=null;
 		for (int a=0;a<bmdp.nrActions();a++){		
@@ -169,12 +190,62 @@ public class PointBasedStd extends ValueIterationStd {
 		return(bnew);
 	}
 
-	private BeliefStateStd collectGreedyErrorReduction(BeliefStateStd remove) {
-		// TODO Auto-generated method stub
-		return null;
+	private BeliefStateStd collectGreedyErrorReduction(PointSet testBset) {
+		double max_val=Double.NEGATIVE_INFINITY;
+		BeliefState bprime = null;
+		int aprime = -1;
+		int oprime = -1;
+		for (BeliefState b:testBset){	
+			for (int a=0;a<bmdp.nrActions();a++){
+				double sum_err=0;
+				for (int o=0;o<bmdp.nrObservations();o++){
+					double err=(bmdp.getTau(a, o).mult(b.getPoint())).norm(1.0);
+					err*=minError(bmdp.sampleNextBelief(b, a, o),testBset);
+					sum_err+=err;
+				}
+				
+				if (sum_err>max_val){
+					max_val=sum_err;
+					bprime=b;
+					aprime=a;
+				}
+			}
+		}
+		max_val=Double.NEGATIVE_INFINITY;
+		for (int o=0;o<bmdp.nrObservations();o++){
+			double err=(bmdp.getTau(aprime, o).mult(bprime.getPoint())).norm(1.0);
+			err*=minError(bmdp.sampleNextBelief(bprime, aprime, o),testBset);
+			if (err>max_val){
+				max_val=err;
+				oprime=o;
+			}
+		}
+		testBset.remove(bprime);
+		return (BeliefStateStd) (bmdp.sampleNextBelief(bprime, aprime, oprime));
 	}
 
-	private BeliefStateStd collectRandomExplore(BeliefStateStd b) {
+	private double minError(BeliefState beliefState,PointSet bset){
+		double rmax=bmdp.getRewardMax()/(1.0 - bmdp.getGamma());
+		double rmin=bmdp.getRewardMin()/(1.0 - bmdp.getGamma());
+		double min_val=Double.POSITIVE_INFINITY;
+		for (BeliefState b:bset){
+			double sum=0;
+			AlphaVector vect=current.getBestAlpha(b);
+			for (int s=0;s<bmdp.nrStates();s++){
+				double bdiff=beliefState.getPoint().get(s)- b.getPoint().get(s);
+				if (bdiff>=0)
+					sum+=(rmax - vect.getVectorRef().get(s))*bdiff;
+				else
+					sum+=(rmin - vect.getVectorRef().get(s))*bdiff;
+			}
+			if (sum<min_val)
+				min_val=sum;
+		}
+		return(min_val);
+	}
+	
+	private BeliefStateStd collectRandomExplore(PointSet testBset) {
+		BeliefStateStd b=(BeliefStateStd) testBset.remove(0);
 		BeliefStateStd bprime;
 		int a = bmdp.getRandomAction();
 		int o = bmdp.getRandomObservation(b, a);

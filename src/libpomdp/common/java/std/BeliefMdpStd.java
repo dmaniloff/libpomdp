@@ -134,4 +134,24 @@ public class BeliefMdpStd implements BeliefMdp,Serializable {
 		return(pom.getRandomAction());
 	}
 
+	public double getRewardMax() {
+		double max_val=Double.NEGATIVE_INFINITY;
+		for (int a=0;a<nrActions();a++){
+			double test_val=getRewardValues(a).max();
+			if (test_val>max_val)
+				max_val=test_val;
+		}
+		return max_val;
+	}
+
+	public double getRewardMin() {
+		double min_val=Double.POSITIVE_INFINITY;
+		for (int a=0;a<nrActions();a++){
+			double test_val=getRewardValues(a).min();
+			if (test_val<min_val)
+				min_val=test_val;
+		}
+		return min_val;
+	}
+
 }

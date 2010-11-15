@@ -11,6 +11,8 @@ public class ValueConvergenceCriteria extends Criteria {
 	double epsilon;
 	int convCriteria;
 	
+	static final int MIN_ITERATIONS = 5;
+	
 	public boolean check(Iteration i) {
 		ValueIteration vi=(ValueIteration)i;
 		ValueFunction newv=vi.getValueFunction();
@@ -44,7 +46,7 @@ public class ValueConvergenceCriteria extends Criteria {
 				conv=a_value;
 		}
 		System.out.println("Eval(" + i.getStats().iterations + ") = " + conv);
-		if (conv <= epsilon)
+		if (conv <= epsilon && i.getStats().iterations > MIN_ITERATIONS)
 			return(true);
 		return false;
  	}
