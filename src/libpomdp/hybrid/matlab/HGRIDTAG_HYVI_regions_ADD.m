@@ -201,8 +201,7 @@ for run = 1:TOTALRUNS
             % enough, since |support(index(b))| / (p - k) is invariant for every
             % b in the same support set:
             % f(b) = ?^{d^b_T} I(b) |support(index(b))| / (p - k), b ? I(T).
-            %n_star           = double(aoTree.treeSupportSetSize) ./ rootNode.subTreeSize; % fraction of nodes 
-            n_star           = double(aoTree.treeSupportSetSize) ./ double(sum(aoTree.treeSupportSetSize)); % fraction of nodes 
+            n_star           = double(aoTree.treeSupportSetSize) ./ rootNode.subTreeSize; % fraction of nodes             
             f                = rootNode.bakHeuristicStar .* double(n_star);               % affect this fraction by (discounted I(b) * entropy)
             [f_star, i_star] = max(f);                                                    % get f* and the associated index
             

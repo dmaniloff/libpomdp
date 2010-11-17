@@ -40,7 +40,7 @@ dosih   = DOSI(factoredProb);
 % rocksample parameters for the grapher
 GRID_SIZE         = 7;
 ROCK_POSITIONS    = [2 0; 0 1; 3 1; 6 3; 2 4; 3 4; 5 5; 1 6; 6 0; 6 6];
-SARTING_POS       = [0,3]
+SARTING_POS       = [0,3];
 drawer            = rocksampleGraph;
 NUM_ROCKS         = size(ROCK_POSITIONS,1);
 

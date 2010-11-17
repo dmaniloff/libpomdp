@@ -115,6 +115,8 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 		o.hStar = o.h_b;
 		// bStar is a reference to itself since o is a fringe node
 		o.bStar = o;
+		// increase subtree size of en accordingly
+		en.subTreeSize++;
 		// add each of these to the support set sizes
 		treeSupportSetSize[o.belief.getplanid()]++; 
 		// iterate
@@ -157,7 +159,7 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 	// update reference to best fringe node in the subtree of en
 	en.bStar = en.children[en.aStar].bStar;
 	// the number of nodes under en increases by |A||O|
-	en.subTreeSize += problem.getnrAct() * problem.getnrObs();	
+	//en.subTreeSize += problem.getnrAct() * problem.getnrObs();	
 	// one-step improvement
 	en.oneStepDeltaLower = en.l - old_l;
 	en.oneStepDeltaUpper = en.u - old_u;
@@ -190,7 +192,9 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 	if (null == n.children) return;
 	andNode a = null;
 	orNode  o = null;
-
+	// if array.length does not count nulls, then we could use that here...
+	// could also just keep n untouched, and use o from the beginning...
+	int subTreeSizeDelta = n.subTreeSize; 
 	while(n.getdepth() != 0) {
 	    // get the AND parent node
 	    a = n.getParent();
@@ -227,8 +231,8 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 	    for (int i = 0; i < offlineLower.getSize(); i++) {
 		o.bakCandidate[i] = bakH.updateBakStar(o, a.getAct(), i);
 	    }
-	    // increase subtree size by the branching factor |A||O|
-	    o.subTreeSize += problem.getnrAct() * problem.getnrObs();
+	    // increase subtree size accordingly
+	    o.subTreeSize += subTreeSizeDelta;
 	    // iterate (maybe better to say n = o ?)
 	    n = n.getParent().getParent();
 	}

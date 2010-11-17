@@ -118,6 +118,8 @@ public class AndOrTree {
 		o.hStar = o.h_b;
 		// bStar is a reference to itself since o is a fringe node
 		o.bStar = o;
+		// increase subtree size of en accordingly
+		en.subTreeSize++;
 		// iterate
 		observation++;
 	    } // orNode loop
@@ -152,7 +154,7 @@ public class AndOrTree {
 	// update reference to best fringe node in the subtree of en
 	en.bStar = en.children[en.aStar].bStar;
 	// the number of nodes under en increases by |A||O|
-	en.subTreeSize += problem.getnrAct() * problem.getnrObs();
+	//en.subTreeSize += problem.getnrAct() * problem.getnrObs();
 	// one-step improvement
 	en.oneStepDeltaLower = en.l - old_l;
 	en.oneStepDeltaUpper = en.u - old_u;
@@ -171,6 +173,9 @@ public class AndOrTree {
 	if (null == n.children) return;
 	andNode a;
 	orNode  o;
+	// if array.length does not count nulls, then we could use that here...
+	// could also just keep n untouched, and use o from the beginning...
+	int subTreeSizeDelta = n.subTreeSize; 
 	while(n.hashCode() != this.root.hashCode()) {  
 	    // get the AND parent node
 	    a = n.getParent();
@@ -197,82 +202,12 @@ public class AndOrTree {
 	    o.hStar = o.h_ba[o.aStar] * o.children[o.aStar].hStar;
 	    // update reference to best fringe node in the subtree of en
 	    o.bStar = o.children[o.aStar].bStar;
-	    // increase subtree size by the branching factor |A||O|
-	    o.subTreeSize += problem.getnrAct() * problem.getnrObs();
+	    // increase subtree size accordingly
+	    o.subTreeSize += subTreeSizeDelta;
 	    // iterate
 	    n = o;
 	}
     } // updateAncestors
-
-    /**
-     * updateAncestorsPath:
-     * improved version that updates only along
-     * the path that was modified
-     * STILL IN DEVELOPMENT - NOT YET IN USE
-     */
-    public void updateAncestorsPath(orNode n) {
-	// decls
-	double  improvLower;
-	double  improvUpper;	
-	//double lbanew;
-	//double ubanew;
-	orNode  o;
-	andNode a;	
-	boolean updateL = true;
-	boolean updateU = true;
-	// n will be a node that has just been expanded
-	// therefore its improvement will just be oneStepDelta
-	improvLower = n.oneStepDeltaLower;
-	improvUpper = n.oneStepDeltaUpper;
-	// first check
-	if(0 >= improvLower) updateL = false;
-	if(0 >= improvUpper) updateU = false;	    
-	// update loop
-	while(n.hashCode() != this.root.hashCode() /*&& (updateL || updateU)*/) {  
-	    // get AND parent node
-	    a = n.getParent();
-	    // AND break
-	    if (updateL) a.l  += problem.getGamma() * n.belief.getpoba() * improvLower;
-	    if (updateU) a.u  += problem.getGamma() * n.belief.getpoba() * improvUpper; //  ???????????
-	    // update best obs - this becomes a question of whether to continue pointing in the same
-	    // direction or not given the change in certainty along this path/branch
-	    //a.oStar = expH.oStarUpdate(a, n.getobs());
-	    a.oStar = expH.oStar(a);
-	    // H*(b,a)
-	    a.hStar = expH.hANDStar(a);
-	    // b*(b,a) - propagate ref of b*
-	    a.bStar = a.children[a.oStar].bStar;	    
-
-	    // get OR parent node
-	    o = a.getParent();
-	    // OR break 
-	    // update bounds - same way as comparison against best current
-	    if (o.l >= a.l) {		
-		updateL = false;
-	    } else {
-		o.l = a.l;
-		improvLower = a.l - o.l;
-	    }
-	    if (o.u <= a.u) {
-		updateU = false;
-	    } else {
-		o.u = a.u;
-		improvUpper = o.u - a.u;
-	    }
-	    // H(b,a)
-	    o.h_ba = expH.h_baUpdate(o, a.getAct());
-	    // best action
-	    o.aStar = expH.aStar(o);
-	    // value of best heuristic in the subtree of en
-	    o.hStar = o.h_ba[o.aStar] * o.children[o.aStar].hStar;
-	    // update reference to best fringe node in the subtree of en
-	    o.bStar = o.children[o.aStar].bStar;
-	    // increase subtree size by the branching factor |A||O|
-	    o.subTreeSize += problem.getnrAct() * problem.getnrObs();
-	    // iterate
-	    n = o;
-	}
-    } // updateAncestorsPath
 
     /// L(b,a) = R(b,a) + \gamma \sum_o P(o|b,a) L(tao(b,a,o))
     protected double ANDpropagateL(andNode a) {
