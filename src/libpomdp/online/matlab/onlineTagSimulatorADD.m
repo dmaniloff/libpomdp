@@ -241,6 +241,6 @@ for run = 1:TOTALRUNS
 end % runs loop
 
 % save statistics before quitting
-save (['simulation-logs/catchproblem/ALLSTATS-online-run-AEMS2-',date,'.mat'], 'all');
+save (['simulation-logs/catchproblem/catch_tag_taggingAction_10_5-ALLSTATS-online-run-AEMS2-',date,'.mat'], 'all');
 
 % onlineTagSimulatorADD
