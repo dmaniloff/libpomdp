@@ -47,6 +47,9 @@ for r=1:factoredProb.getnrSta
     end
 end
 
+% of all 2352 possible states, remove every other one to reduce the runs to 1176
+states(2:2:end) = [];
+
 % catch parameters for the grapher
 drawer               = CatchGraph(10, 7, CatchTagHGrid(10,7));
 COLLOCATED_REWARD    = 10.0;

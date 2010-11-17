@@ -47,6 +47,9 @@ for r=1:factoredProb.getnrSta
     end
 end
 
+% of all 2352 possible states, remove every other one to reduce the runs to 1176
+states(2:2:end) = [];
+
 %% play the pomdp
 diary(['simulation-logs/catchproblem/catch_tag_hgrid_taggingAction_10_7-online-run-AEMS2-',date,'.log']);
 
