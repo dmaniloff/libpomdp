@@ -45,8 +45,8 @@ drawer            = rocksampleGraph;
 NUM_ROCKS         = size(ROCK_POSITIONS,1);
 
 % general parameters
-EXPANSION_RATE       = 83; % calculated from the online simulator, avg 
-AVG_EP_LIFETIME      = 19; % calculated from the online simulator, avg
+EXPANSION_RATE       = 79; % calculated from the online simulator, avg 
+AVG_EP_LIFETIME      = 26; % calculated from the online simulator, avg
 EPSILON_ACT_TH       = 1e-3;
 EPISODECOUNT         = 10;
 MAXEPISODELENGTH     = 100;

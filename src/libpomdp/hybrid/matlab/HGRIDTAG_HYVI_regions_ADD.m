@@ -52,10 +52,10 @@ drawer               = CatchGraph(10, 7, CatchTagHGrid(10,7));
 COLLOCATED_REWARD    = 10.0;
 
 % general parameters
-EXPANSION_RATE       = 60; % calculated from the online simulator, avg
+EXPANSION_RATE       = 30; % calculated from the online simulator, avg
 AVG_EP_LIFETIME      = 25; % calculated from the online simulator, avg
 EPSILON_ACT_TH       = 1e-3;
-EPISODECOUNT         = 10;
+EPISODECOUNT         = 5;
 EXPANSIONTIME        = 0.9;
 BACKUPTIME           = 0.1;
 TOTALPLANNINGTIME    = 1.0;

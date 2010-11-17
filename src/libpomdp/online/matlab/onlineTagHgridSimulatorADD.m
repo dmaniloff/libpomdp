@@ -56,7 +56,7 @@ COLLOCATED_REWARD = 10.0;
 
 % other parameters
 EPSILON_ACT_TH       = 1e-3;
-EPISODECOUNT         = 10;
+EPISODECOUNT         = 5;
 MAXPLANNINGTIME      = 1.0;
 MAXEPISODELENGTH     = 100;
 TOTALRUNS            = size(states,2);

@@ -46,8 +46,8 @@ NUM_ROCKS         = size(ROCK_POSITIONS,1);
 
 % general parameters
 
-EXPANSION_RATE       = 40; % calculated from the online simulator, avg
-AVG_EP_LIFETIME      = 20; % calculated from the online simulator, avg
+EXPANSION_RATE       = 35; % calculated from the online simulator, avg
+AVG_EP_LIFETIME      = 27; % calculated from the online simulator, avg
 EPSILON_ACT_TH       = 1e-3;
 EPISODECOUNT         = 5;
 MAXEPISODELENGTH     = 100;
