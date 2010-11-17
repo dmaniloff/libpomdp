@@ -37,6 +37,9 @@ load '../../problems/rocksample/10-11/RockSample_10_11_qmdp_ADD.mat';
 aems2h  = aems2(factoredProb);
 dosih   = DOSI(factoredProb);
 
+%% play the pomdp
+logFilename = sprintf('simulation-logs/rocksample/RS1011-HYVI-regions-ADD-%s.log', date);
+
 % rocksample parameters for the grapher
 GRID_SIZE         = 10;
 ROCK_POSITIONS    = [0 3; 0 7; 1 8; 3 3; 3 8; 4 3; 5 8; 6 1; 9 3; 9 9; 9 0]; 
@@ -59,8 +62,6 @@ USE_FACTORED_BELIEFS = 1;
 P                    = EXPANSION_RATE * TOTALPLANNINGTIME;
 K                    = EXPANSION_RATE * BACKUPTIME;
 PMK                  = P - K;
-
-logFilename = sprintf('simulation-logs/rocksample/RS1011-HYVI-regions-ADD-%s.log', date);
 
 % stats
 cumR              = [];

@@ -47,6 +47,9 @@ for r=1:factoredProb.getnrSta
     end
 end
 
+%% play the pomdp
+logFilename = sprintf('simulation-logs/catchproblem/TAG-HYVI-regions-ADD-%s.log', date);
+
 % catch parameters for the grapher
 drawer            = CatchGraph(10, 5, CatchTagGrid(10,5));
 COLLOCATED_REWARD = 10.0;
@@ -65,8 +68,6 @@ USE_FACTORED_BELIEFS = 1;
 P                    = EXPANSION_RATE * TOTALPLANNINGTIME;
 K                    = EXPANSION_RATE * BACKUPTIME;
 PMK                  = P - K;
-
-logFilename = sprintf('simulation-logs/catchproblem/TAG-HYVI-regions-ADD-%s.log', date);
 
 % stats
 cumR              = [];

@@ -50,6 +50,9 @@ end
 % of all 2352 possible states, remove every other one to reduce the runs to 1176
 states(2:2:end) = [];
 
+%% play te pomdp
+logFilename = sprintf('simulation-logs/catchproblem/HGRIDTAG-HYVI-regions-ADD-%s.log', date);
+
 % catch parameters for the grapher
 drawer               = CatchGraph(10, 7, CatchTagHGrid(10,7));
 COLLOCATED_REWARD    = 10.0;
@@ -68,8 +71,6 @@ USE_FACTORED_BELIEFS = 1;
 P                    = EXPANSION_RATE * TOTALPLANNINGTIME;
 K                    = EXPANSION_RATE * BACKUPTIME;
 PMK                  = P - K;
-
-logFilename = sprintf('simulation-logs/catchproblem/HGRIDTAG-HYVI-regions-ADD-%s.log', date);
 
 % stats
 cumR              = [];
