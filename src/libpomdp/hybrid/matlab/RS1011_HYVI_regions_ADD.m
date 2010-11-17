@@ -88,7 +88,8 @@ fprintf(1, 'EPSILON_ACT_TH       = %d\n', EPSILON_ACT_TH);
 fprintf(1, 'USE_FACTORED_BELIEFS = %d\n', USE_FACTORED_BELIEFS);
 fprintf(1, '+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n');
 
-for run = 1:TOTALRUNS
+
+for run = 1+TOTALRUNS/4 : TOTALRUNS-TOTALRUNS/4 % take from the middle 1/4 up and down, this 1/2 the runs but maintains all possibilities for all rocks
     
     fprintf(1, '///////////////////////////// UPDATE RUN %d of %d \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\n',...
         run, TOTALRUNS);
