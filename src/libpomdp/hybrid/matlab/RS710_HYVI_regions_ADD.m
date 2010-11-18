@@ -39,6 +39,7 @@ dosih   = DOSI(factoredProb);
 
 %% play the pomdp
 logFilename = sprintf('simulation-logs/rocksample/RS710-HYVI-regions-ADD-%s.log', datestr(now, 'yyyy-mmm-dd-HHMMSS'));
+diary(logFilename);
 
 % rocksample parameters for the grapher
 GRID_SIZE         = 7;
@@ -75,7 +76,6 @@ all.avfoundeopt   = [];
 
 
 % print general config problem parameters
-diary(logFilename);
 fprintf(1, '+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n');
 fprintf(1, 'libpomdp log - config parameters\n');
 fprintf(1, '--------------------------------\n');

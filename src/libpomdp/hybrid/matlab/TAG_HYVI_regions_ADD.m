@@ -49,6 +49,7 @@ end
 
 %% play the pomdp
 logFilename = sprintf('simulation-logs/catchproblem/TAG-HYVI-regions-ADD-%s.log', datestr(now, 'yyyy-mmm-dd-HHMMSS'));
+diary(logFilename);
 
 % catch parameters for the grapher
 drawer            = CatchGraph(10, 5, CatchTagGrid(10,5));
@@ -80,7 +81,6 @@ all.avbackups     = [];
 all.avfoundeopt   = [];
 
 % print general config problem parameters
-diary(logFilename);
 fprintf(1, '+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n');
 fprintf(1, 'libpomdp log - config parameters\n');
 fprintf(1, '--------------------------------\n');
