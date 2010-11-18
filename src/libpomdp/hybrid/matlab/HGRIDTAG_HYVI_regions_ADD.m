@@ -51,7 +51,7 @@ end
 states(2:2:end) = [];
 
 %% play te pomdp
-logFilename = sprintf('simulation-logs/catchproblem/HGRIDTAG-HYVI-regions-ADD-%s.log', date);
+logFilename = sprintf('simulation-logs/catchproblem/HGRIDTAG-HYVI-regions-ADD-%s.log', datestr(now, 'yyyy-mmm-dd-HHMMSS'));
 
 % catch parameters for the grapher
 drawer               = CatchGraph(10, 7, CatchTagHGrid(10,7));
@@ -351,5 +351,5 @@ end % runs loop
 
 % save statistics before quitting
 statsFilename = ...
-    sprintf('simulation-logs/catchproblem/HGRIDTAG-ALLSTATS-HYVI-regions-ADD-%s.mat', date);
+    sprintf('simulation-logs/catchproblem/HGRIDTAG-ALLSTATS-HYVI-regions-ADD-%s.mat', datestr(now, 'yyyy-mmm-dd-HHMMSS'));
 save(statsFilename, 'all');

@@ -48,7 +48,7 @@ for r=1:factoredProb.getnrSta
 end
 
 %% play the pomdp
-logFilename = sprintf('simulation-logs/catchproblem/TAG-HYVI-regions-ADD-%s.log', date);
+logFilename = sprintf('simulation-logs/catchproblem/TAG-HYVI-regions-ADD-%s.log', datestr(now, 'yyyy-mmm-dd-HHMMSS'));
 
 % catch parameters for the grapher
 drawer            = CatchGraph(10, 5, CatchTagGrid(10,5));
@@ -348,5 +348,5 @@ end % runs loop
 
 % save statistics before quitting
 statsFilename = ...
-    sprintf('simulation-logs/catchproblem/TAG-ALLSTATS-HYVI-regions-ADD-%s.mat', date);
+    sprintf('simulation-logs/catchproblem/TAG-ALLSTATS-HYVI-regions-ADD-%s.mat', datestr(now, 'yyyy-mmm-dd-HHMMSS'));
 save(statsFilename, 'all');

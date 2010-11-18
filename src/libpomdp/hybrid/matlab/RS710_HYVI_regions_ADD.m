@@ -38,7 +38,7 @@ aems2h  = aems2(factoredProb);
 dosih   = DOSI(factoredProb);
 
 %% play the pomdp
-logFilename = sprintf('simulation-logs/rocksample/RS710-HYVI-regions-ADD-%s.log', date);
+logFilename = sprintf('simulation-logs/rocksample/RS710-HYVI-regions-ADD-%s.log', datestr(now, 'yyyy-mmm-dd-HHMMSS'));
 
 % rocksample parameters for the grapher
 GRID_SIZE         = 7;
@@ -340,5 +340,5 @@ end % runs loop
 
 % save statistics before quitting
 statsFilename = ...
-    sprintf('simulation-logs/rocksample/RS710-ALLSTATS-HYVI-regions-ADD-%s.mat', date);
+    sprintf('simulation-logs/rocksample/RS710-ALLSTATS-HYVI-regions-ADD-%s.mat', datestr(now, 'yyyy-mmm-dd-HHMMSS'));
 save(statsFilename, 'all');

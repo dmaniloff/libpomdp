@@ -48,7 +48,8 @@ for r=1:factoredProb.getnrSta
 end
 
 %% play the pomdp
-diary(['simulation-logs/catchproblem/catch_tag_taggingAction_10_5-online-run-AEMS2-',date,'.log']);
+logFilename = sprintf('simulation-logs/catchproblem/catch_tag_taggingAction_10_5-online-AEMS2-ADD-%s.log', datestr(now, 'yyyy-mmm-dd-HHMMSS'));
+diary(logFilename);
 
 % catch parameters for the grapher
 drawer            = CatchGraph(10, 5, CatchTagGrid(10,5));
@@ -241,6 +242,8 @@ for run = 1:TOTALRUNS
 end % runs loop
 
 % save statistics before quitting
-save (['simulation-logs/catchproblem/catch_tag_taggingAction_10_5-ALLSTATS-online-run-AEMS2-',date,'.mat'], 'all');
+statsFilename = ...
+    sprintf('simulation-logs/catchproblem/catch_tag_taggingAction_10_5-online-ALLSTATS-AEMS2-ADD-%s.mat', datestr(now, 'yyyy-mmm-dd-HHMMSS')));
+save(statsFilename, 'all');
 
 % onlineTagSimulatorADD

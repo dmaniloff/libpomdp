@@ -40,7 +40,8 @@ load '../../problems/rocksample/7-8/RockSample_7_8_qmdp_ADD.mat';
 aems2h  = aems2(factoredProb);
 
 %% play the pomdp
-diary(['simulation-logs/rocksample/7-8-online-run-AEMS2-',date,'.log']);
+logFilename = sprintf('simulation-logs/rocksample/RS78-online-AEMS2-ADD-%s.log', datestr(now, 'yyyy-mmm-dd-HHMMSS'));
+diary(logFilename);
 
 % rocksample parameters for the grapher
 GRID_SIZE         = 7;
@@ -242,4 +243,6 @@ for run = 1:TOTALRUNS
 end % runs loop
 
 % save statistics before quitting
-save (['simulation-logs/rocksample/ALLSTATS-7-8-online-run-AEMS2-',date,'.mat'], 'all');
+statsFilename = ...
+    sprintf('simulation-logs/rocksample/RS78-online-ALLSTATS-AEMS2-ADD-%s.mat', datestr(now, 'yyyy-mmm-dd-HHMMSS')));
+save(statsFilename, 'all');
