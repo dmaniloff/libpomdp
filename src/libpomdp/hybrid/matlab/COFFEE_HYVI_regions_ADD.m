@@ -24,7 +24,6 @@ import libpomdp.general.java.*;
 import libpomdp.online.java.*;
 import libpomdp.offline.java.*;
 import libpomdp.hybrid.java.*;
-import libpomdp.problems.rocksample.*;
 
 %% load problem parameters - factored representation
 factoredProb  = pomdpAdd  ('../../problems/coffee/coffee.90.SPUDD');
@@ -48,13 +47,13 @@ for r=1:factoredProb.getnrSta
 end
 
 %% play the pomdp
-logFilename = sprintf('simulation-logs/coffee/COFEE-HYVI-regions-ADD-%s.log',...
+logFilename = sprintf('simulation-logs/coffee/COFFEE-HYVI-regions-ADD-%s.log',...
                       datestr(now, 'yyyy-mmm-dd-HHMMSS'));
 diary(logFilename);
 
 % general parameters
-EXPANSION_RATE       = 42; % calculated from the online simulator, avg
-AVG_EP_LIFETIME      = 90; 
+EXPANSION_RATE       = 38; % calculated from the online simulator, avg
+AVG_EP_LIFETIME      = 190; 
 EPSILON_ACT_TH       = 1e-3;
 EPISODECOUNT         = 10;
 EXPANSIONTIME        = 0.9;
@@ -338,6 +337,6 @@ end % runs loop
 
 % save statistics before quitting
 statsFilename = ...
-    sprintf('simulation-logs/coffee/COFEE-ALLSTATS-HYVI-regions-ADD-%s.mat',...
+    sprintf('simulation-logs/coffee/COFFEE-ALLSTATS-HYVI-regions-ADD-%s.mat',...
             datestr(now, 'yyyy-mmm-dd-HHMMSS'));
 save(statsFilename, 'all');
