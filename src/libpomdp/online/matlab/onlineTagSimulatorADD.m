@@ -243,7 +243,7 @@ end % runs loop
 
 % save statistics before quitting
 statsFilename = ...
-    sprintf('simulation-logs/catchproblem/catch_tag_taggingAction_10_5-online-ALLSTATS-AEMS2-ADD-%s.mat', datestr(now, 'yyyy-mmm-dd-HHMMSS')));
+    sprintf('simulation-logs/catchproblem/catch_tag_taggingAction_10_5-online-ALLSTATS-AEMS2-ADD-%s.mat', datestr(now, 'yyyy-mmm-dd-HHMMSS'));
 save(statsFilename, 'all');
 
 % onlineTagSimulatorADD
