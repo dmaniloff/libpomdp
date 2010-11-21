@@ -54,7 +54,7 @@ diary(logFilename);
 EPSILON_ACT_TH       = 1e-3;
 MAXPLANNINGTIME      = 1.0;
 EPISODECOUNT         = 10;
-MAXEPISODELENGTH     = 100;
+MAXEPISODELENGTH     = 200;
 TOTALRUNS            = size(states,2);
 USE_FACTORED_BELIEFS = 1;
 

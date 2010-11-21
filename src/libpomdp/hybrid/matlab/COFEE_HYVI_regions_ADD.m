@@ -54,13 +54,13 @@ diary(logFilename);
 
 % general parameters
 EXPANSION_RATE       = 42; % calculated from the online simulator, avg
-AVG_EP_LIFETIME      = 90; % calculated from the online simulator, avg
+AVG_EP_LIFETIME      = 90; 
 EPSILON_ACT_TH       = 1e-3;
 EPISODECOUNT         = 10;
 EXPANSIONTIME        = 0.9;
 BACKUPTIME           = 0.1;
 TOTALPLANNINGTIME    = 1.0;
-MAXEPISODELENGTH     = 100;
+MAXEPISODELENGTH     = 200;
 TOTALRUNS            = size(states,2);
 USE_FACTORED_BELIEFS = 1;
 P                    = EXPANSION_RATE * TOTALPLANNINGTIME;
