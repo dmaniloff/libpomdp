@@ -47,8 +47,8 @@ logFilename = sprintf('simulation-logs/network/NETCYCLE%d-HYVI-regions-ADD-%s.lo
 diary(logFilename);
 
 % parameters
-EXPANSION_RATE       = 11; % adjusted from the online simulator, avg
-AVG_EP_LIFETIME      = 55;
+EXPANSION_RATE       = 12; % adjusted from the online simulator, avg
+AVG_EP_LIFETIME      = 60;
 EPSILON_ACT_TH       = 1e-3;
 EPISODECOUNT         = 400; % there's only one starting belief, so we make this high
 EXPANSIONTIME        = 0.9;
