@@ -9,6 +9,8 @@
 
 package libpomdp.common;
 
+import libpomdp.common.std.BeliefStateStd;
+
 
 public interface Pomdp {
 
@@ -26,9 +28,6 @@ public interface Pomdp {
     public CustomMatrix getTransitionProbs(int a);
 
     public CustomMatrix getObservationProbs(int a);
-    
-    /// R(s,a): 1 x s vector
-    public CustomVector getRewardValues(int a);
 
     /// nrSta: total # of states
     public int nrStates();
@@ -50,5 +49,10 @@ public interface Pomdp {
 
     /// observation names
     public String getObservationString(int o);
+
+	public int getRandomAction();
+
+	public int getRandomObservation(BeliefStateStd b, int a);
+    
 
 } // pomdp

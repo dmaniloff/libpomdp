@@ -23,6 +23,7 @@ import libpomdp.common.CustomVector;
 import libpomdp.common.Pomdp;
 import libpomdp.common.add.symbolic.DD;
 import libpomdp.common.add.symbolic.OP;
+import libpomdp.common.std.BeliefStateStd;
 import libpomdp.parser.ParseSPUDD;
 
 import org.math.array.DoubleArray;
@@ -549,5 +550,15 @@ public class PomdpAdd implements Pomdp {
 	first[0]   = f;
 	return concat(first,rest);
     }
+
+	public int getRandomAction() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	public int getRandomObservation(BeliefStateStd b, int a) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 
 } // addpomdp

@@ -3,6 +3,8 @@ package libpomdp.solve.vi.pointbased;
 import libpomdp.common.AlphaVector;
 import libpomdp.common.BeliefState;
 import libpomdp.common.CustomVector;
+import libpomdp.common.Pomdp;
+import libpomdp.common.rho.RhoPomdp;
 import libpomdp.common.std.BeliefMdpStd;
 import libpomdp.common.std.BeliefStateStd;
 import libpomdp.common.std.PomdpStd;
@@ -18,13 +20,7 @@ public class PointBasedStd extends ValueIterationStd {
 	PbParams params;
 	
 	public AlphaVector getLowestAlpha(){
-		double best_val=Double.NEGATIVE_INFINITY;
-		for (int a=0;a<bmdp.nrActions();a++){
-			CustomVector rvect=bmdp.getRewardValues(a);
-			double val=rvect.min();
-			if (val > best_val)
-				best_val=val;
-		}
+		double best_val=bmdp.getRewardMaxMin();
 		best_val=best_val/(1-bmdp.getGamma());
 		return(new AlphaVector(CustomVector.getHomogene(bmdp.nrStates(), best_val),-1));
 	}
@@ -43,6 +39,9 @@ public class PointBasedStd extends ValueIterationStd {
 		startTimer();
 		old=current;
 		expand();
+		if (bmdp.getPomdp() instanceof RhoPomdp){
+			((RhoPomdp)bmdp.getPomdp()).approxReward(fullBset);
+		}
 		//System.out.println("size(B)="+fullBset.size());
 		
 		for (int i=0;i<params.backupHorizon;i++){
@@ -92,7 +91,8 @@ public class PointBasedStd extends ValueIterationStd {
 				}
 				alpha_sum.add(max_vect);
 			}
-			alpha_sum.add(bmdp.getRewardValues(a));
+			AlphaVector re=bmdp.getReward(a).getBestAlpha(bel);
+			alpha_sum.add(re);
 			double alpha_val=alpha_sum.eval(bel);
 			if (alpha_val>alpha_max_val){
 				alpha_max_val=alpha_val;
@@ -156,7 +156,7 @@ public class PointBasedStd extends ValueIterationStd {
 				break;
 			case PbParams.EXPAND_RANDOM_EXPLORE_STATIC:
 			case PbParams.EXPAND_RANDOM_EXPLORE_DYNAMIC:
-				point = collectRandomExplore(testBset);
+				point = collectRandomExplore(testBset,bmdp);
 				break;
 			}
 			if (point!=null){
@@ -244,7 +244,7 @@ public class PointBasedStd extends ValueIterationStd {
 		return(min_val);
 	}
 	
-	private BeliefStateStd collectRandomExplore(PointSet testBset) {
+	public static BeliefStateStd collectRandomExplore(PointSet testBset,Pomdp bmdp) {
 		BeliefStateStd b=(BeliefStateStd) testBset.remove(0);
 		BeliefStateStd bprime;
 		int a = bmdp.getRandomAction();
