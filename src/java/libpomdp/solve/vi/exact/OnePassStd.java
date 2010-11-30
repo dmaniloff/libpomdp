@@ -32,10 +32,10 @@ public class OnePassStd extends ValueIterationStd {
 				AlphaVector alpha=new AlphaVector(bmdp.nrStates());
 				for (int o=0;o<bmdp.nrObservations();o++){
 					alpha.add(bmdp.projection(prev,a,o));
-				}
-				alpha.add(bmdp.getRewardValues(a));
+				}	
 				current.push(alpha);
 			}
+			current.crossSum(bmdp.getReward(a));
 		}
 		registerValueIterationStats();
     	return iterationStats;

@@ -36,9 +36,9 @@ public class BatchEnumerationStd extends ValueIterationStd {
 				for (int o=0;o<bmdp.nrObservations();o++){
 					alpha.add(bmdp.projection(prev,a,o));
 				}
-				alpha.add(bmdp.getRewardValues(a));
 				current.push(alpha);
 			}
+			current.crossSum(bmdp.getReward(a));
 		}
 		((ValueIterationStats) iterationStats).registerLp(current.prune(delta));
 		registerValueIterationStats();

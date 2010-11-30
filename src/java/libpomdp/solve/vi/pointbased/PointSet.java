@@ -10,7 +10,7 @@ import libpomdp.common.Utils;
 public class PointSet implements Iterable<BeliefState> {
 	ArrayList<BeliefState> set;
 
-	PointSet(){
+	public PointSet(){
 		set=new ArrayList<BeliefState>();
 	}
 	

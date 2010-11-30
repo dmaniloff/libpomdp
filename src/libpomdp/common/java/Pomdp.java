@@ -8,6 +8,8 @@
 
 package libpomdp.common.java;
 
+import libpomdp.common.std.BeliefStateStd;
+
 
 public interface Pomdp {
 

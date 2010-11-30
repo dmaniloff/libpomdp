@@ -16,14 +16,14 @@ package libpomdp.common.java.add;
 // imports
 import java.util.ArrayList;
 
-import libpomdp.common.java.BeliefState;
-import libpomdp.common.java.CustomMatrix;
-import libpomdp.common.java.CustomVector;
-import libpomdp.common.java.Pomdp;
-import libpomdp.common.java.Utils;
-import libpomdp.common.java.add.symbolic.DD;
-import libpomdp.common.java.add.symbolic.OP;
-import libpomdp.parser.java.ParseSPUDD;
+import libpomdp.common.BeliefState;
+import libpomdp.common.CustomMatrix;
+import libpomdp.common.CustomVector;
+import libpomdp.common.Pomdp;
+import libpomdp.common.add.symbolic.DD;
+import libpomdp.common.add.symbolic.OP;
+import libpomdp.common.std.BeliefStateStd;
+import libpomdp.parser.ParseSPUDD;
 
 import org.math.array.DoubleArray;
 import org.math.array.IntegerArray;

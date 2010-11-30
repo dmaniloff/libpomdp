@@ -39,12 +39,14 @@ public class IncrementalPruningStd extends ValueIterationStd {
 				for (int idx=0;idx<old.size();idx++){
 					AlphaVector alpha=old.getAlpha(idx);
 					AlphaVector res=bmdp.projection(alpha, a, o);
-					res.add(bmdp.getRewardValues(a).scale(1.0/(double)bmdp.nrObservations()));
 					proj.push(res);
 				}
 				iterationStats.registerLp(proj.prune(delta));
 				psi.add(proj);
 			}
+			ValueFunctionStd rewFunc=bmdp.getReward(a);
+			//rewFunc.scale(1.0/(double)bmdp.nrObservations());
+			psi.add(rewFunc);
 			//Now Cross sum...
 			while (psi.size()>1){
 				ValueFunctionStd vfA=psi.remove(0);
@@ -57,6 +59,7 @@ public class IncrementalPruningStd extends ValueIterationStd {
 			current.merge(vfA);
 		}
 		iterationStats.registerLp(current.prune(delta));
+		System.out.println(current.size());
 		registerValueIterationStats();
     	return iterationStats;
 	}

@@ -27,10 +27,9 @@ public class BpviStd extends ValueIterationStd {
 		// Blind is |A| x |S| - initialize each \alpha^a_{0} to \min_s {R(s,a)/(1-\gamma)}
 		current = new ValueFunctionStd(pomdp.nrStates());
 		for(int a=0; a<pomdp.nrActions(); a++) {
-			CustomVector vr=pomdp.getRewardValues(a);
 			double factor=1.0/(1.0-pomdp.getGamma());
-			vr.scale(factor);
-			double val=vr.min();
+			double val=pomdp.getRewardMin();
+			val*=factor;
 		    current.push(CustomVector.getHomogene(pomdp.nrStates(),val),a);
 		}
 		registerInitTime();

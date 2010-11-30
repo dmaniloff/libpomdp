@@ -82,8 +82,8 @@ public class BeliefMdpStd implements BeliefMdp,Serializable {
 		return pom.getObservationString(o);
 	}
 
-	public CustomVector getRewardValues(int a) {
-		return pom.getRewardValues(a);
+	public ValueFunctionStd getReward(int a) {
+		return pom.getReward(a);
 	}
 
 	public CustomMatrix getTransitionProbs(int a) {
@@ -135,23 +135,15 @@ public class BeliefMdpStd implements BeliefMdp,Serializable {
 	}
 
 	public double getRewardMax() {
-		double max_val=Double.NEGATIVE_INFINITY;
-		for (int a=0;a<nrActions();a++){
-			double test_val=getRewardValues(a).max();
-			if (test_val>max_val)
-				max_val=test_val;
-		}
-		return max_val;
+		return(pom.getRewardMax());
 	}
 
 	public double getRewardMin() {
-		double min_val=Double.POSITIVE_INFINITY;
-		for (int a=0;a<nrActions();a++){
-			double test_val=getRewardValues(a).min();
-			if (test_val<min_val)
-				min_val=test_val;
-		}
-		return min_val;
+		return(pom.getRewardMin());		
+	}
+
+	public double getRewardMaxMin() {
+		return(pom.getRewardMaxMin());		
 	}
 
 }

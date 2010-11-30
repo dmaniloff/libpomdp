@@ -219,8 +219,10 @@ public class PomdpStd implements Pomdp, Serializable {
 		return O[a].copy();
 	}
 
-	public CustomVector getRewardValues(int a) {
-		return R[a].copy();
+	public ValueFunctionStd getReward(int a) {
+		ValueFunctionStd vf=new ValueFunctionStd(nrSta);
+		vf.push(R[a].copy(), a);
+		return vf;
 	}
 
 	public CustomMatrix getTransitionProbs(int a) {
@@ -245,12 +247,55 @@ public class PomdpStd implements Pomdp, Serializable {
 
 	public AlphaVector mdpValueUpdate(AlphaVector alpha,int a) {
 		CustomVector vec=getTransitionProbs(a).mult(getGamma(),alpha.getVectorRef());
-	    vec.add(getRewardValues(a));
+	    vec.add(getReward(a).getAlpha(0).getVectorRef());
 	    return(new AlphaVector(vec,a));
 	}
 
 	public int getRandomAction() {
 		return(Utils.gen.nextInt(Integer.MAX_VALUE)%nrActions());
+	}
+
+	public double getRewardMax() {
+		double max_val=Double.NEGATIVE_INFINITY;
+		for (int a=0;a<nrActions();a++){
+			double test_val=getRewardMax(a);
+			if (test_val>max_val)
+				max_val=test_val;
+		}
+		return max_val;	
+	}
+
+	public double getRewardMin() {
+		double min_val=Double.POSITIVE_INFINITY;
+		for (int a=0;a<nrActions();a++){
+			double test_val=getRewardMin(a);
+			if (test_val<min_val)
+				min_val=test_val;
+		}
+		return min_val;
+	}
+	
+	public double getRewardMaxMin() {
+		double max_val=Double.NEGATIVE_INFINITY;
+		for (int a=0;a<nrActions();a++){
+			double test_val=getRewardMin(a);
+			if (test_val>max_val)
+				max_val=test_val;
+		}
+		return max_val;
+	}
+	
+	
+	public double getRewardMin(int a){
+		return(R[a].min());
+	}
+	
+	public double getRewardMax(int a){
+		return(R[a].max());
+	}
+
+	public AlphaVector getRewardVec(int a, BeliefState bel) {
+		return(new AlphaVector(R[a].copy(),a));
 	}
 	
 } // pomdpSparseMTJ

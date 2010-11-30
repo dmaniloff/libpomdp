@@ -82,7 +82,6 @@
       <arg value="lib/*:dist/*"/>
       <arg value="libpomdp.test.IncrementalPruningTest"/>
 	</exec>
-	<!--
   	 <echo message="Running Monahan's Batch Enumeration Exact Algorithm"/>
     <exec executable="java">
       <arg value="-Djava.library.path=/usr/lib/jni"/> 
@@ -93,9 +92,41 @@
   	 <echo message="Running Sondik's One Pass Exact Algorithm"/>
     <java classname="libpomdp.test.OnePassTest" classpathref="classpath"/>
   	 <echo message="Running Hauskretcht's Blind Policy Value Iteration Heuristic"/>
-    <java classname="libpomdp.test.BpviTest" classpathref="classpath"/> -->
+    <java classname="libpomdp.test.BpviTest" classpathref="classpath"/>
   	 <echo message="Running Littman's QMDP Value Iteration Heuristic"/>
     <java classname="libpomdp.test.QmdpTest" classpathref="classpath"/>
+  </target>
+
+
+  <target name="rhotest">
+   <!-- <echo message="Running RHO PBVI Algorithm"/>
+    <exec executable="java">
+      <arg value="-Djava.library.path=/usr/lib/jni"/> 
+      <arg value="-classpath"/>
+      <arg value="lib/*:dist/*"/>
+      <arg value="libpomdp.test.RhoPbviTest"/>
+	</exec>
+    <echo message="Running Pineu's PBVI (standard) Algorithm"/>
+    <exec executable="java">
+      <arg value="-Djava.library.path=/usr/lib/jni"/> 
+      <arg value="-classpath"/>
+      <arg value="lib/*:dist/*"/>
+      <arg value="libpomdp.test.PbviTest"/>
+	</exec>-->
+  	 <echo message="Running Cassandra's Incremental Pruning Exact Algorithm"/>
+    <exec executable="java">
+      <arg value="-Djava.library.path=/usr/lib/jni"/> 
+      <arg value="-classpath"/>
+      <arg value="lib/*:dist/*"/>
+      <arg value="libpomdp.test.IncrementalPruningTest"/>
+	</exec>
+  	 <echo message="Running RHO IP Algorithm"/>
+    <exec executable="java">
+      <arg value="-Djava.library.path=/usr/lib/jni"/> 
+      <arg value="-classpath"/>
+      <arg value="lib/*:dist/*"/>
+      <arg value="libpomdp.test.RhoIncrementalPruningTest"/>
+	</exec>
   </target>
 
   
