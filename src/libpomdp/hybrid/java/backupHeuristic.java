@@ -14,14 +14,14 @@ import libpomdp.online.java.*;
 
 interface backupHeuristic {
 
-    public double h_b(orNode o);
+    public double h_b(HybridValueIterationOrNode o);
 
     //public orNode bakStar(andNode a);
 
     //public double bakHStar(andNode a, int i);
 
-    public orNode updateBakStar(andNode a, int o, int i);
+    public HybridValueIterationOrNode updateBakStar(HybridValueIterationAndNode a, int o, int i);
 
-    public orNode updateBakStar(orNode  o, int a, int i);
+    public HybridValueIterationOrNode updateBakStar(HybridValueIterationOrNode  o, int a, int i);
     
 } // backupHeuristic

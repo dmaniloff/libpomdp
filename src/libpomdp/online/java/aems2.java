@@ -11,10 +11,13 @@
 
 package libpomdp.online.java;
 
-// imports
-import libpomdp.general.java.*;
-import org.math.array.*;
-import java.util.*;
+import libpomdp.general.java.Common;
+import libpomdp.general.java.pomdp;
+
+import org.math.array.DoubleArray;
+
+
+
 
 public class aems2 implements expandHeuristic {
 
@@ -22,7 +25,7 @@ public class aems2 implements expandHeuristic {
     private pomdp problem;    
 
     /// set the gen only once for every instance
-    private Random gen = new Random(System.currentTimeMillis());
+    //private Random gen = new Random(System.currentTimeMillis());
 
     /// constructor
     public aems2 (pomdp prob) {
@@ -30,7 +33,7 @@ public class aems2 implements expandHeuristic {
     }
    
     /// H(b)
-    public double h_b(orNode o) {
+    public double h_b(HeuristicSearchOrNode o) {
 // 	if(o.u - o.l < 0) System.err.println("bad H(b) at ornode" + o.getobs()  + 
 // 					     " parent is action " + o.getParent().getAct()
 // 					     + " hb is: "+ (o.u - o.l));
@@ -43,10 +46,10 @@ public class aems2 implements expandHeuristic {
     /// given that this value depends on the
     /// other branches as well we compute it
     /// at the orNode level
-    public double[] h_ba(orNode o) {
+    public double[] h_ba(HeuristicSearchOrNode o) {
 	double UbA[] = new double[problem.getnrAct()];
 	double Hba[];
-	for(andNode a : o.children) UbA[a.getAct()] = a.u;
+	for(HeuristicSearchAndNode a : o.getChildren()) UbA[a.getAct()] = a.u;
 	Hba = DoubleArray.fill(problem.getnrAct(), 0.0);
 	// compute maximum upper bound
 	// set the chosen action's Hba value to 1
@@ -60,39 +63,37 @@ public class aems2 implements expandHeuristic {
 
     /// H(b,a) update version
     /// does this work?? needs to be tested...
-    public double[] h_baUpdate(orNode o, int a) {
-	double challenge = o.children[a].u;
-	int argmax = Common.argmax(new double[] {o.children[o.aStar].u, 
-						 challenge});
-	if(0==argmax) {
-	    return o.h_ba;
-	} else {
-	    o.h_ba[o.aStar] = 0.0;
-	    o.h_ba[a]       = 1.0;
-	    o.aStar         = a;
-	    return o.h_ba;
-	}
-    } // h_baUpdate
+//    public double[] h_baUpdate(orNode o, int a) {
+//	double challenge = o.children[a].u;
+//	int argmax = Common.argmax(new double[] {o.children[o.aStar].u, 
+//						 challenge});
+//	if(0==argmax) {
+//	    return o.h_ba;
+//	} else {
+//	    o.h_ba[o.aStar] = 0.0;
+//	    o.h_ba[a]       = 1.0;
+//	    o.aStar         = a;
+//	    return o.h_ba;
+//	}
+//    } // h_baUpdate
 
     /// H(b,a,o) = \gamma * P(o|b,a)
-    /// be means of a depth value we could get rid of this
-    /// product............
-    public double h_bao(orNode o) {	
-	return problem.getGamma() * o.belief.getpoba();
+    public double h_bao(HeuristicSearchOrNode o) {	
+	return problem.getGamma() * o.getBeliefState().getpoba();
     }
 
     /// H*(b,a) = \max_o {H(b,a,o) H*(tao(b,a,o))}
-    public double hANDStar(andNode a) {
-	return  a.children[a.oStar].h_bao * a.children[a.oStar].hStar;
+    public double hANDStar(HeuristicSearchAndNode a) {
+	return a.getChild(a.oStar).h_bao * a.getChild(a.oStar).hStar;
     }
 
     /// H*(b) = H(b,a*) H*(b,a*)
-    public double hORStar(orNode o) {
-	return o.h_ba[o.aStar] * o.children[o.aStar].hStar;
+    public double hORStar(HeuristicSearchOrNode o) {
+	return o.h_ba[o.aStar] * o.getChild(o.aStar).hStar;
     }
 
     /// o* = argmax_o {H(b,a,o) H*(tao(b,a,o))}
-    public int oStar(andNode a) {
+    public int oStar(HeuristicSearchAndNode a) {
 	double HbaoHostar[] = new double[problem.getnrObs()];	
 	//for(orNode o : a.children) HbaoHostar[o.getobs()] = o.h_bao * o.hStar;
 	//return Common.argmax(HbaoHostar);
@@ -101,8 +102,9 @@ public class aems2 implements expandHeuristic {
 	//int nullCount=0;
 	//for(orNode o : a.children) 
 	for(int o=0; o<problem.getnrObs(); o++) {
-	    if(a.children[o] != null) {
-		HbaoHostar[o] = a.children[o].h_bao * a.children[o].hStar;
+	    if(a.getChild(o) != null) {
+		HbaoHostar[o] = a.getChild(o).h_bao * 
+			a.getChild(o).hStar;
 	    } else {
 		HbaoHostar[o] = -1; // do this to preserve the argmax
 		//nullCount++;
@@ -137,7 +139,7 @@ public class aems2 implements expandHeuristic {
     /// given the way H(b,a) is computed in AEMS2, we don't
     /// need to compute the actual argmax, we just return the
     /// stored value from the computation of H(b,a)
-    public int aStar(orNode o) {	
+    public int aStar(HeuristicSearchOrNode o) {	
 	return o.aStar;
     }
 
