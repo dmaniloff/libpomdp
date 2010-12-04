@@ -21,5 +21,7 @@ public interface valueFunction {
     // flat representation
     public double[][] getvFlat();
 
+    // size of this value function
+    public int getSize();
 
 } // valueFunction

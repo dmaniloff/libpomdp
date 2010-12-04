@@ -13,29 +13,29 @@ package libpomdp.online.java;
 public interface expandHeuristic {
 
     /// H(b): heuristic for the orNode
-    public double h_b(orNode o);
+    public double h_b(HeuristicSearchOrNode o);
 
     /// H(b,a): edge between orNode and andNode
     /// easier to compute at the orNode level
-    public double[] h_ba(orNode o);
+    public double[] h_ba(HeuristicSearchOrNode o);
 
-    public double[] h_baUpdate(orNode o, int a);
+    //public double[] h_baUpdate(HeuristicSearchOrNode o, int a);
 
-    /// H(b,a,o): edge between andNode anr orNode
-    public double h_bao(orNode o);
+    /// H(b,a,o): edge between andNode and orNode
+    public double h_bao(HeuristicSearchOrNode o);
 
     /// H*(b,a)
-    public double hANDStar(andNode a);
+    public double hANDStar(HeuristicSearchAndNode a);
 
     /// H*(b)
-    public double hORStar(orNode o);
+    public double hORStar(HeuristicSearchOrNode o);
 
     /// o* = argmax_o {H(b,a,o) H*(tao(b,a,o))}
-    public int oStar(andNode a);
+    public int oStar(HeuristicSearchAndNode a);
 
     //public int oStarUpdate(andNode a, int o);
 
     /// a* = argmax_a {H(b,a) H*(b,a)}
-    public int aStar(orNode o);
+    public int aStar(HeuristicSearchOrNode o);
     
 } // expandHeuristic

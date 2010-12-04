@@ -45,5 +45,10 @@ public class belStateFlat implements belState {
 	this.planid = planid;
     }
 
+    public double getEntropy() {
+	// TODO Auto-generated method stub
+	return 0;
+    }
+
 
 } // belStateFlat

@@ -7,19 +7,26 @@
 #  * W3: http://www.cs.uic.edu/~dmanilof
 #  --------------------------------------------------------------------------- */
 
+# imports
+import sys
+sys.path.append('../../../../dist/libpomdp.jar')
 import java.io.PrintStream as PrintStream
-import rocksampleGen
+from libpomdp.problems.rocksample import rocksampleGen
+
+# declarations
 out = PrintStream("10-10/RockSample_10_10.SPUDD")
-n=10
-k= [ [0, 3],
-     [0, 7],
-     [1, 8],
-     [3, 3],
-     [3, 8],
-     [4, 3],
-     [5, 8],
-     [6, 1],
-     [9, 3],
-     [9, 9], ]
-apos=[0,5]
+n   = 10
+k   = [ [0, 3],
+        [0, 7],
+        [1, 8],
+        [3, 3],
+        [3, 8],
+        [4, 3],
+        [5, 8],
+        [6, 1],
+        [9, 3],
+        [9, 9], ]
+apos = [0,5]
+
+# generate
 gen = rocksampleGen(n, k, apos, out)

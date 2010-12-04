@@ -28,4 +28,7 @@ public interface belState {
 
     /// get index of the alpha vector that supports this point 
     public void setplanid(int planid);
+
+    /// returns the entropy of the belief in nats
+    public double getEntropy();
 }

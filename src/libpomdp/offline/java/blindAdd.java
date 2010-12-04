@@ -57,7 +57,7 @@ public class blindAdd {
 		adds[adds.length-1] = alphas[a];		
 		//new DD[] {ddDiscFact, factoredProb.T[a], alphas[a]};
 		// \alpha_t^a = R(s,a) + \gamma \sum_{s'} {T(s,a,s') \alpha_{t-1}^a}
-		alphas[a]           = OP.addMultVarElim(adds, factoredProb.staIdsPr);  
+		alphas[a]           = OP.addMultVarElim(adds, factoredProb.getstaIdsPr());  
 		alphas[a]           = OP.add(factoredProb.R[a], alphas[a]);		
 	    }
    
@@ -75,7 +75,7 @@ public class blindAdd {
 	} // blind loop
 
 	// return
-	return new valueFunctionAdd(alphas, factoredProb.staIds, policy);	     
+	return new valueFunctionAdd(alphas, factoredProb.getstaIds(), policy);	     
 
     } // getBlindAdd
 

@@ -43,6 +43,10 @@ public class valueFunctionFlat implements valueFunction, Serializable {
 	return a;
     }
 
+    public int getSize() {
+	return a.length;
+    }
+    
     // return value of a belief state
     public double V(belState bel) {
 	double b[] = bel.getbPoint();
