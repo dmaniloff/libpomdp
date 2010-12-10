@@ -9,9 +9,11 @@
  * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
 
-package libpomdp.online.java;
+package libpomdp.hybrid.java;
 
 import libpomdp.general.java.belState;
+import libpomdp.online.java.AndNode;
+import libpomdp.online.java.HeuristicSearchOrNode;
 
 public class HybridValueIterationOrNode extends HeuristicSearchOrNode {
 

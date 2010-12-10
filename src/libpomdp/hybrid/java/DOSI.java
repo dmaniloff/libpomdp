@@ -12,8 +12,6 @@ package libpomdp.hybrid.java;
 // imports
 import libpomdp.general.java.Common;
 import libpomdp.general.java.pomdp;
-import libpomdp.online.java.HybridValueIterationAndNode;
-import libpomdp.online.java.HybridValueIterationOrNode;
 
 
 public class DOSI implements backupHeuristic {

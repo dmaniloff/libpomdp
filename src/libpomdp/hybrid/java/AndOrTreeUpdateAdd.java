@@ -20,8 +20,6 @@ import libpomdp.general.java.valueFunction;
 import libpomdp.general.java.valueFunctionAdd;
 import libpomdp.online.java.AndNode;
 import libpomdp.online.java.AndOrTree;
-import libpomdp.online.java.HybridValueIterationAndNode;
-import libpomdp.online.java.HybridValueIterationOrNode;
 import libpomdp.online.java.OrNode;
 import libpomdp.online.java.expandHeuristic;
 
@@ -437,9 +435,24 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 	// every or node has a reference to the best node to expand in its subtree
 	out.println(o.hashCode() + "->" + o.bStar.hashCode() +
 	"[label=\"b*\",weight=0,color=blue];");
-	// every or node has a reference to the best node to backup in its subtree
-	//out.println(o.hashCode() + "->" + o.bakCandidate.hashCode() +
-	//	    "[label=\"bakCandidate\",weight=0,color=orange];");
+	// if this is the root, then print an edge to the best candidate node to backup
+	if (o == getRoot()) {
+	    System.err.println("lenght is" + treeSupportSetSize.length);
+	    double nstar[] = new double[treeSupportSetSize.length];
+	    for (int i=0; i< treeSupportSetSize.length; i++) {
+		nstar[i] = treeSupportSetSize [i] / o.getSubTreeSize();
+		System.err.println(nstar[i]);
+	    }
+	    double f[] = new double[treeSupportSetSize.length];
+	    for (int i=0; i<treeSupportSetSize.length; i++) {
+		f[i] = o.bakHeuristicStar[i] * nstar[i];
+		System.err.println(f[i]);	
+	    }
+	    int istar = Common.argmax(f);
+	    System.err.println(istar);
+	    if (f[istar] > 0) out.println(o.hashCode() + "->" + o.bakCandidate[istar].hashCode() + 
+		    "[label=\"bakCandidate\",weight=0,color=orange];");
+	}
 	// check it's not in the fringe before calling andprint
 	if (o.getChildren() == null) return;	
 	// print outgoing edges from this node
@@ -478,8 +491,8 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 	out.println();
 
 	// every or node has a reference to the best node to backup in its subtree
-	out.println(a.hashCode() + "->" + a.bakCandidate.hashCode() +
-	"[label=\"bakCandidate\",weight=0,color=orange];");
+	//out.println(a.hashCode() + "->" + a.bakCandidate.hashCode() +
+	//"[label=\"bakCandidate\",weight=0,color=orange];");
 
 	// recurse
 	for(HybridValueIterationOrNode o : a.getChildren()) if(!(o==null)) orprint(o,out);
