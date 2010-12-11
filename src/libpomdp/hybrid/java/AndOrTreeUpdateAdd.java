@@ -21,7 +21,7 @@ import libpomdp.general.java.valueFunctionAdd;
 import libpomdp.online.java.AndNode;
 import libpomdp.online.java.AndOrTree;
 import libpomdp.online.java.OrNode;
-import libpomdp.online.java.expandHeuristic;
+import libpomdp.online.java.ExpandHeuristic;
 
 import org.math.array.DoubleArray;
 import org.math.array.IntegerArray;
@@ -40,7 +40,7 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
     private pomdpAdd problem;
 
     /// backup heuristic
-    private backupHeuristic bakH;
+    private BackupHeuristic bakH;
 
     /// supportSetSize[i] is the number of beliefs in the subtree of 
     /// this node that are supported by alpha-vector i
@@ -48,8 +48,8 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 
     /// same constructor with backup heuristic
     public AndOrTreeUpdateAdd(pomdp prob, 
-	    expandHeuristic h, 
-	    backupHeuristic bakh, 
+	    ExpandHeuristic h, 
+	    BackupHeuristic bakh, 
 	    valueFunction L, 
 	    valueFunction U) {
 	super(prob, h, L, U);

@@ -19,7 +19,7 @@ import org.math.array.DoubleArray;
 
 
 
-public class aems2 implements expandHeuristic {
+public class AEMS2 implements ExpandHeuristic {
 
     /// main property is the pomdp spec
     private pomdp problem;    
@@ -28,7 +28,7 @@ public class aems2 implements expandHeuristic {
     //private Random gen = new Random(System.currentTimeMillis());
 
     /// constructor
-    public aems2 (pomdp prob) {
+    public AEMS2 (pomdp prob) {
 	this.problem = prob;
     }
    

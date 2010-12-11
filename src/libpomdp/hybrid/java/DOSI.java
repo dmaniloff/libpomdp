@@ -14,7 +14,7 @@ import libpomdp.general.java.Common;
 import libpomdp.general.java.pomdp;
 
 
-public class DOSI implements backupHeuristic {
+public class DOSI implements BackupHeuristic {
 
     // pomdp specification
     private pomdp problem;

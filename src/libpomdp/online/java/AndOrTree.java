@@ -30,7 +30,7 @@ public class AndOrTree {
     protected pomdp problem;
 
     // expansion heuristic 
-    protected expandHeuristic expH;
+    protected ExpandHeuristic expH;
 
     // offline computed bounds
     protected valueFunction offlineLower;
@@ -44,7 +44,7 @@ public class AndOrTree {
     // ------------------------------------------------------------------------
 
     /// constructor
-    public AndOrTree(pomdp prob, expandHeuristic h, valueFunction L, valueFunction U) {
+    public AndOrTree(pomdp prob, ExpandHeuristic h, valueFunction L, valueFunction U) {
 	this.root         = new HeuristicSearchOrNode();
 	this.problem      = prob;
 	this.expH         = h;
