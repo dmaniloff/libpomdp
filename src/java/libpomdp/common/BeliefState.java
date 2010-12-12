@@ -3,7 +3,7 @@ package libpomdp.common;
 
 
 /** Belief-state Interface. Interface to implement 
-different representations of a belief state properties are to be filled by extending classes 
+different representations of a belief state. Properties are to be filled by extending classes 
 
 @author Diego Maniloff
 @author Mauricio Araya 
@@ -22,7 +22,6 @@ public interface BeliefState {
     	/** Set the reachability probability. Pr(o|b,a).
 	@param poba the reachability probability */ 
     	public void setPoba(double poba);
-
 
 	// TODO: It is not better to have here the reference of the alpha vector rather
 	// than the index??
