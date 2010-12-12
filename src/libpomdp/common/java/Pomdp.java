@@ -11,6 +11,11 @@ package libpomdp.common.java;
 import libpomdp.common.std.BeliefStateStd;
 
 
+/** Interface to represent pomdp problem specifications
+ * @author Diego Maniloff 
+ * @author Mauricio Araya
+*/
+
 public interface Pomdp {
 
     /// tao(b,a,o)
@@ -34,22 +39,30 @@ public interface Pomdp {
     /// initial belief state
     public BeliefState getInitialBeliefState();
 
-    /// nrSta: total # of states
+    /** Get the number of states.
+	@return the number of states */
     public int nrStates();
 
-    /// nrAct: # of actions
+    /** Get the number of actions.
+	@return the number of actions */
     public int nrActions();
 
-    /// nrObs: total # of observations
+    /** Get the number of observations.
+	@return the number of observations */
     public int nrObservations();
 
-    /// \gamma
+    /** Get the Gamma value.
+	@return the gamma value*/
     public double getGamma();
 
-    /// action names
+    /** Get the name of an action.
+	@param a the action
+ 	@return the name of the action*/
     public String getActionString(int a);
 
-    /// observation names
+    /** Get the name of an observation.
+	@param o the action
+ 	@return the name of the action*/
     public String getObservationString(int o);
 
 } // Pomdp
