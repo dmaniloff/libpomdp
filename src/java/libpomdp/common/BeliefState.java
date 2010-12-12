@@ -1,36 +1,46 @@
-/** ------------------------------------------------------------------------- *
- * libpomdp
- * ========
- * File: belState.java
- * Description: interface to implement different representations
- *              of a belief state
- *              properties are to be filled by extending classes
- * Copyright (c) 2009, 2010 Diego Maniloff 
- * W3: http://www.cs.uic.edu/~dmanilof
- --------------------------------------------------------------------------- */
 
 package libpomdp.common;
 
 
+/** Belief-state Interface. Interface to implement 
+different representations of a belief state properties are to be filled by extending classes 
+
+@author Diego Maniloff
+@author Mauricio Araya 
+
+ */
 public interface BeliefState {
 
-    /// flat belief point
-    public CustomVector getPoint();
+        /** Get belief state point as a custom vector.
+	@return belief-point */
+	public CustomVector getPoint();
 
-    /// reachability prob = P(o|b,a)
-    /// that is associated with the computation of tao(b,a,o)
-    public double getPoba();
+        /** Get the reachability probability. Pr(o|b,a).
+	@return the reachability probability. */
+    	public double getPoba();
 
-    /// set reachability prob
-    public void setPoba(double poba);
+    	/** Set the reachability probability. Pr(o|b,a).
+	@param poba the reachability probability */ 
+    	public void setPoba(double poba);
 
-    /// get index of the alpha vector that supports this point 
-    public int getAlpha();
 
-    /// get index of the alpha vector that supports this point 
-    public void setAlpha(int planid);
+	// TODO: It is not better to have here the reference of the alpha vector rather
+	// than the index??
 
-	public boolean compare(BeliefState arg0);
+    	/** Get index of the alpha vector that supports this point.
+	@return the index of the alpha vector that supports this point */
+    	public int getAlpha();
 
+        /** Set index of the alpha vector that supports this point. 
+	@param planid the index of the alpha vector that supports this point */
+    	public void setAlpha(int planid);
+	
+	/** Compare with other belief-state.
+	@param bel a belief-state. 
+	@return true if equals, false else */
+	public boolean compare(BeliefState bel);
+
+	/** Create a proper copy of the belief-state.
+        @return a belief-state copy */
 	public BeliefState copy();
 }
