@@ -9,33 +9,45 @@
  * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
 
-package libpomdp.general.java;
+package libpomdp.parser;
 
 // imports
 import org.antlr.runtime.*;
 import java.io.*;
 
-public class dotpomdpParserSparseMTJ {
+public class DotalphaParserFlat {    
 
-    static pomdpSpecSparseMTJ dotpomdpSpec = null;
+    static Integer actions[];
+    static Double  alphas[][];
 
     public static void parse (String filename) throws Exception {
-	dotpomdpMTJLexer lex = new dotpomdpMTJLexer(new ANTLRFileStream(filename));
+	dotalphaLexer lex = new dotalphaLexer(new ANTLRFileStream(filename));
        	CommonTokenStream tokens = new CommonTokenStream(lex);
-        dotpomdpMTJParser parser = new dotpomdpMTJParser(tokens);
+        dotalphaParser parser = new dotalphaParser(tokens);
 
         try {
-            parser.dotpomdp();
+            parser.dotalpha();
         } catch (RecognitionException e)  {
             e.printStackTrace();
         }
-
-	dotpomdpSpec = parser.getSpec();
-
 	
+	actions = parser.getActions();
+	alphas  = parser.getAlphas();
     }
 
-    public pomdpSpecSparseMTJ getSpec() {
-	return dotpomdpSpec;
+    public valueFunction getValueFunction() {
+	int s = actions.length;
+	int d = alphas[0].length;
+	int a[] = new int[s];
+	double v[][] = new double[s][d];
+
+	// convert from Integer to int and Double to double
+	for (int i=0; i<s; i++) {
+	    a[i] = actions[i].intValue();
+	    for (int j=0; j<d; j++) v[i][j] = alphas[i][j].doubleValue();
+	}
+	// generate flat value function
+	return new valueFunctionFlat(v, a);
     }
+
 }

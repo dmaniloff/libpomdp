@@ -9,7 +9,7 @@
  * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
 
-package libpomdp.general.java;
+package libpomdp.parser;
 
 // imports
 import java.util.*;
@@ -17,7 +17,7 @@ import java.io.*;
 import no.uib.cipr.matrix.*;
 import no.uib.cipr.matrix.sparse.*;
 
-public class pomdpSpecSparseMTJ implements Serializable{
+public class PomdpSpecSparse implements Serializable{
 
     // serial id
     static final long serialVersionUID = 1L;

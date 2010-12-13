@@ -9,13 +9,13 @@
  * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
 
-package libpomdp.general.java;
+package libpomdp.parser;
 
 // imports
 import org.antlr.runtime.*;
 import java.io.*;
 
-public class dotalphaParserFlat {    
+public class DotalphaParserFlat {    
 
     static Integer actions[];
     static Double  alphas[][];
