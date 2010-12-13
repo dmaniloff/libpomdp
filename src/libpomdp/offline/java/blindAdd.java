@@ -10,7 +10,7 @@
 package libpomdp.offline.java;
 
 // imports
-import libpomdp.general.java.*;
+import libpomdp.common.java.*;
 import symPerseusJava.*;
 import org.math.array.*;
 
@@ -20,7 +20,7 @@ public class blindAdd {
     final int MAXITERATIONS = 500;
     final double EPSILON    = 1e-5;
     
-    public valueFunctionAdd getBlindAdd(pomdpAdd factoredProb) {
+    public ValueFunctionAdd getBlindAdd(PomdpAdd factoredProb) {
 
 	// decls
 	DD[] adds;
@@ -75,7 +75,7 @@ public class blindAdd {
 	} // blind loop
 
 	// return
-	return new valueFunctionAdd(alphas, factoredProb.getstaIds(), policy);	     
+	return new ValueFunctionAdd(alphas, factoredProb.getstaIds(), policy);	     
 
     } // getBlindAdd
 

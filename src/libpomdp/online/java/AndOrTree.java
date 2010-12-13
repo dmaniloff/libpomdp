@@ -13,10 +13,10 @@ package libpomdp.online.java;
 
 import java.io.PrintStream;
 
-import libpomdp.general.java.Common;
-import libpomdp.general.java.belState;
-import libpomdp.general.java.pomdp;
-import libpomdp.general.java.valueFunction;
+import libpomdp.common.java.Util;
+import libpomdp.common.java.BeliefState;
+import libpomdp.common.java.Pomdp;
+import libpomdp.common.java.ValueFunction;
 
 import org.math.array.DoubleArray;
 
@@ -26,15 +26,15 @@ public class AndOrTree {
     // properties
     // ------------------------------------------------------------------------
 
-    // pomdp problem specification
-    protected pomdp problem;
+    // Pomdp problem specification
+    protected Pomdp problem;
 
     // expansion heuristic 
     protected ExpandHeuristic expH;
 
     // offline computed bounds
-    protected valueFunction offlineLower;
-    protected valueFunction offlineUpper;
+    protected ValueFunction offlineLower;
+    protected ValueFunction offlineUpper;
 
     // root of the tree
     protected HeuristicSearchOrNode root;
@@ -44,7 +44,7 @@ public class AndOrTree {
     // ------------------------------------------------------------------------
 
     /// constructor
-    public AndOrTree(pomdp prob, ExpandHeuristic h, valueFunction L, valueFunction U) {
+    public AndOrTree(Pomdp prob, ExpandHeuristic h, ValueFunction L, ValueFunction U) {
 	this.root         = new HeuristicSearchOrNode();
 	this.problem      = prob;
 	this.expH         = h;
@@ -53,7 +53,7 @@ public class AndOrTree {
     }
 
     /// initializer
-    public void init(belState belief) {
+    public void init(BeliefState belief) {
 	this.root.init(belief, -1, null);
 	this.root.u = offlineUpper.V(this.root.getBeliefState());
 	this.root.l = offlineLower.V(this.root.getBeliefState());
@@ -270,7 +270,7 @@ public class AndOrTree {
 	double Lba[] = new double[problem.getnrAct()];
 	for(HeuristicSearchAndNode a : root.getChildren())
 	    Lba[a.getAct()] = a.l;
-	return Common.argmax(Lba);
+	return Util.argmax(Lba);
     }
 
     /// check if an action is epsilon-optimal given the current
@@ -319,14 +319,14 @@ public class AndOrTree {
     //	double Lba[] = new double[problem.getnrAct()];
     //	for(andNode a : on.children)
     //	    Lba[a.getAct()] = a.l;
-    //	return Common.argmax(Lba);
+    //	return Util.argmax(Lba);
     //    }
 
-    public valueFunction getLB() {
+    public ValueFunction getLB() {
 	return offlineLower;
     }
 
-    public valueFunction getUB() {
+    public ValueFunction getUB() {
 	return offlineUpper;
     }
 

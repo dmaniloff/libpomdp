@@ -7,7 +7,7 @@
  * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
 
-package libpomdp.general.java;
+package libpomdp.common.java;
 
 // imports
 import org.math.array.*;
@@ -16,7 +16,7 @@ import org.ujmp.core.calculation.Calculation.Ret;
 import org.ujmp.core.doublematrix.impl.*;
 import java.io.*;
 
-public class valueFunctionSparseUJMP implements valueFunction, Serializable {
+public class ValueFunctionSparseUJMP implements ValueFunction, Serializable {
     
     // ------------------------------------------------------------------------
     // properties
@@ -32,7 +32,7 @@ public class valueFunctionSparseUJMP implements valueFunction, Serializable {
     private int a[];
 
     // constructor
-    public valueFunctionSparseUJMP(DefaultSparseDoubleMatrix v, int a[]) {
+    public ValueFunctionSparseUJMP(DefaultSparseDoubleMatrix v, int a[]) {
 	this.v   = v; 
 	this.a   = a;
     }
@@ -51,13 +51,13 @@ public class valueFunctionSparseUJMP implements valueFunction, Serializable {
     }
 
     // return value of a belief state
-    public double V(belState bel) {
-	DefaultSparseDoubleMatrix b = ((belStateSparseUJMP)bel).bSparse;
+    public double V(BeliefState bel) {
+	DefaultSparseDoubleMatrix b = ((BeliefStateSparseUJMP)bel).bSparse;
 	DefaultSparseDoubleMatrix dotProdsM  = (DefaultSparseDoubleMatrix) v.mtimes(b);
-	// need to convert for now to use Common.argmax
+	// need to convert for now to use Util.argmax
 	// there must be a way to avoid this!!
 	double dotProds[] =  dotProdsM.toDoubleArray()[0];
-	int argmax        = Common.argmax(dotProds);	
+	int argmax        = Util.argmax(dotProds);	
 	// save the index of the alpha that supports this belief point
 	bel.setplanid(argmax);
 	double max = dotProds[argmax];

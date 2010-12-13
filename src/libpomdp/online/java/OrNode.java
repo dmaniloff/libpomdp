@@ -9,19 +9,19 @@
 
 package libpomdp.online.java;
 
-import libpomdp.general.java.belState;
+import libpomdp.common.java.BeliefState;
 
 public abstract class OrNode {
 
     /// should these be private too?
     protected AndNode   parent_;
     protected AndNode   children_[];
-    private   belState  beliefState_;
+    private   BeliefState  beliefState_;
     private   int       obs_;
     private   int       subTreeSize_;
 
     /// initialization
-    public void init(belState belief, int obs, AndNode parent) {
+    public void init(BeliefState belief, int obs, AndNode parent) {
 	beliefState_  = belief;
 	obs_          = obs;
 	parent_       = parent;
@@ -37,7 +37,7 @@ public abstract class OrNode {
     
     public abstract AndNode[] getChildren();
     
-    public belState getBeliefState() {
+    public BeliefState getBeliefState() {
 	return beliefState_;
     }
 

@@ -13,7 +13,7 @@
 package libpomdp.offline.java;
 
 // imports
-import libpomdp.general.java.*;
+import libpomdp.common.java.*;
 import symPerseusJava.*;
 import org.math.array.*;
 
@@ -31,7 +31,7 @@ public class qmdpFlat {
     // ------------------------------------------------------------------------
 
     /// compute Vmdp and Qmdp
-    public valueFunctionFlat getqmdpFlat(pomdpFlat problem) {
+    public ValueFunctionFlat getqmdpFlat(PomdpFlat problem) {
 	
 	// Vmdp.v is always 1 x |S|
 	double Vmdpv[][] = new double[1][problem.getnrSta()];
@@ -78,7 +78,7 @@ public class qmdpFlat {
 		break;
 	}
 
-	return new valueFunctionFlat(Qmdpv, Qmdpa);
+	return new ValueFunctionFlat(Qmdpv, Qmdpa);
 
     } // getqmdpFlat
 

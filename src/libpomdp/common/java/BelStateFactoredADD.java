@@ -2,19 +2,19 @@
  * libpomdp
  * ========
  * File: BelStateFactoredADD.java
- * Description: implements belState via the product of marginals with ADDs
+ * Description: implements BeliefState via the product of marginals with ADDs
  *              uses Popuart's implementation from Symbolic Perseus
  * Copyright (c) 2009, 2010 Diego Maniloff 
  * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
 
-package libpomdp.general.java;
+package libpomdp.common.java;
 
 // imports
 import symPerseusJava.DD;
 import symPerseusJava.OP;
 
-public class BelStateFactoredADD implements belState {
+public class BelStateFactoredADD implements BeliefState {
     
     // main property is the DD array of marginals
     public DD marginals[];
@@ -73,4 +73,4 @@ public class BelStateFactoredADD implements belState {
 	this.planid = planid;
     }
 
-} // belState
+} // BeliefState

@@ -1,7 +1,7 @@
 /** ------------------------------------------------------------------------- *
  * libpomdp
  * ========
- * File: pomdpAdd.java
+ * File: PomdpAdd.java
  * Description: class to represent pomdp problems in factored form using
  *              ADDs - problems are specified in the subset of SPUDD
  *              defined by Poupart and parsed using his code - 
@@ -12,14 +12,14 @@
  * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
 
-package libpomdp.general.java;
+package libpomdp.common.java;
 
 // imports
 import symPerseusJava.*;
 import java.util.*;
 import org.math.array.*;
 
-public class pomdpAdd implements pomdp {
+public class PomdpAdd implements pomdp {
     	
     // ------------------------------------------------------------------------
     // properties
@@ -77,7 +77,7 @@ public class pomdpAdd implements pomdp {
     private String actStr[];
 	
     // starting belief
-    private belStateAdd initBelief;
+    private BeliefStateAdd initBelief;
 
     // ParseSPUDD parser - Poupart's parsing class
     public ParseSPUDD problemAdd;
@@ -87,7 +87,7 @@ public class pomdpAdd implements pomdp {
     // ------------------------------------------------------------------------
 
     /// constructor
-    public pomdpAdd(String spuddfile) {
+    public PomdpAdd(String spuddfile) {
 	// parse SPUDD file
 	problemAdd = new ParseSPUDD(spuddfile);
 	problemAdd.parsePOMDP(false);
@@ -134,7 +134,7 @@ public class pomdpAdd implements pomdp {
 	    actStr[a] = problemAdd.actNames.get(a);
 	}
 	// set initial belief state
-	initBelief = new belStateAdd(problemAdd.init, staIds, 0.0);
+	initBelief = new BeliefStateAdd(problemAdd.init, staIds, 0.0);
 	// compute total nr of states and obs
 	totnrSta = IntegerArray.product(staArity);
         totnrObs = IntegerArray.product(obsArity);
@@ -146,21 +146,21 @@ public class pomdpAdd implements pomdp {
      * used to quicky identify zero-prob obs and
      * avoid bulding an or node for those beliefs
      */
-    public double[] P_Oba(belState bel, int a) {
+    public double[] P_Oba(BeliefState bel, int a) {
 	// obtain subclass and the dd for this belief
-	//DD b = ((belStateAdd)bel).bAdd;
+	//DD b = ((BeliefStateAdd)bel).bAdd;
 	// declarations
 	DD     b1[];
 	DD     pObadd;
 	double pOba[];
-	if (bel instanceof belStateAdd) {
+	if (bel instanceof BeliefStateAdd) {
 	    b1 = new DD[1];
-	    b1[0] = ((belStateAdd)bel).bAdd;
+	    b1[0] = ((BeliefStateAdd)bel).bAdd;
 	} else {
 	    b1 = ((BelStateFactoredADD)bel).marginals;
 	}
 	// O_a * T_a * b1
-	DD[]  vars  = Common.concat(b1, T[a], O[a]);
+	DD[]  vars  = Util.concat(b1, T[a], O[a]);
 	int[] svars = IntegerArray.merge(staIds, staIdsPr);
 	pObadd      = OP.addMultVarElim(vars, svars);
 	pOba        = OP.convert2array(pObadd, obsIdsPr);
@@ -171,9 +171,9 @@ public class pomdpAdd implements pomdp {
      *  tao(b,a,o):
      *  compute new belief state from current and a,o pair
      */
-    public belState tao(belState bel, int a, int o) {
-	if (bel instanceof belStateAdd) {
-	    return regulartao ((belStateAdd)bel, a, o);
+    public BeliefState tao(BeliefState bel, int a, int o) {
+	if (bel instanceof BeliefStateAdd) {
+	    return regulartao ((BeliefStateAdd)bel, a, o);
 	} else {
 	    return factoredtao((BelStateFactoredADD)bel, a, o);
 	}
@@ -186,19 +186,19 @@ public class pomdpAdd implements pomdp {
      * this function re-computes poba to normalize the belief,
      * need to think of a clever way to avoid this...
      */
-    public belState regulartao(belStateAdd bel, int a, int o) {	    
+    public BeliefState regulartao(BeliefStateAdd bel, int a, int o) {	    
 	// obtain subclass and the dd for this belief 
 	DD b1 = bel.bAdd;
 	DD b2;
 	DD oProb;
-	belState bPrime;
+	BeliefState bPrime;
 	DD O_o[];
 	int oc[][];
 	// restrict the prime observation variables to the ones that occurred
-	oc  = IntegerArray.mergeRows(obsIdsPr, Common.sdecode(o, nrObsV, obsArity));
+	oc  = IntegerArray.mergeRows(obsIdsPr, Util.sdecode(o, nrObsV, obsArity));
 	//System.out.println(IntegerArray.toString(oc));
 	O_o = OP.restrictN(O[a], oc); 
-	DD[] vars = Common.concat(b1, T[a], O_o);
+	DD[] vars = Util.concat(b1, T[a], O_o);
     	// compute var elim on O * T * b
 	b2 = OP.addMultVarElim(vars, staIds);
 	// prime the b2 DD 
@@ -212,7 +212,7 @@ public class pomdpAdd implements pomdp {
 	} else {
 	    // safe to normalize now
 	    b2 = OP.div(b2, oProb);	    
-	    bPrime = new belStateAdd(b2, staIds, oProb.getVal());
+	    bPrime = new BeliefStateAdd(b2, staIds, oProb.getVal());
 	}
 	// return
 	return bPrime;
@@ -224,19 +224,19 @@ public class pomdpAdd implements pomdp {
      *  uses DD representation and functions from Symbolic Perseus
      *  uses the product of marginals to approximate a belief
      */
-    public belState factoredtao(BelStateFactoredADD bel, int a, int o) {	    
+    public BeliefState factoredtao(BelStateFactoredADD bel, int a, int o) {	    
 	// declarations
 	DD       b1[] = bel.marginals;	
 	DD       b2[];
 	DD       b2u[] = new DD[nrStaV];
-	belState bPrime;
+	BeliefState bPrime;
 	DD       O_o[];
 	int      oc[][];	
 	// restrict the prime observation variables to the ones that occurred
-	oc  = IntegerArray.mergeRows(obsIdsPr, Common.sdecode(o, nrObsV, obsArity));
+	oc  = IntegerArray.mergeRows(obsIdsPr, Util.sdecode(o, nrObsV, obsArity));
 	O_o = OP.restrictN(O[a], oc); 
 	// gather all necessary ADDs for variable elimination
-	DD[] vars = Common.concat(b1, T[a], O_o);
+	DD[] vars = Util.concat(b1, T[a], O_o);
     	// compute var elim on O * T * b
 	b2 = OP.marginals(vars, staIdsPr, staIds);
 	// unprime the b2 DD 
@@ -250,12 +250,12 @@ public class pomdpAdd implements pomdp {
     /// R(b,a)
     /// Poupart's matlab code has a loop indexed over
     /// 1:length(POMDP.actions(actId).rewFn) - when would this be > 1?
-    public double Rba(belState bel, int a) {
+    public double Rba(BeliefState bel, int a) {
 	// obtain subclass and the dd for this belief
 	DD b;
 	DD m[];
-	if (bel instanceof belStateAdd) {
-	    b = ((belStateAdd)bel).bAdd;
+	if (bel instanceof BeliefStateAdd) {
+	    b = ((BeliefStateAdd)bel).bAdd;
 	    return OP.dotProductNoMem(b, R[a], staIds);
 	} else {
 	    m = ((BelStateFactoredADD)bel).marginals;
@@ -334,7 +334,7 @@ public class pomdpAdd implements pomdp {
     }
 
     /// get initial belief state
-    public belState getInit() {
+    public BeliefState getInit() {
 	return initBelief;
     }
 
@@ -346,7 +346,7 @@ public class pomdpAdd implements pomdp {
     /// string describing the values each obs var took
     /// the observation starts from 0
     public String getobsStr(int o) {
-        int[] a = Common.sdecode(o, nrObsV, obsArity);
+        int[] a = Util.sdecode(o, nrObsV, obsArity);
 	String v="";
 	int c;
 	for(c=0; c<nrObsV; c++) {
@@ -397,7 +397,7 @@ public class pomdpAdd implements pomdp {
 	int factoredS[][];
 	for (int r=0; r<totnrSta; r++) {
 	    factoredS = IntegerArray.mergeRows(staIds, 
-					       Common.sdecode(r,
+					       Util.sdecode(r,
 						       nrStaV,
 						       staArity));
 	    if (OP.eval(initBelief.bAdd, factoredS) > 0)
@@ -448,9 +448,9 @@ public class pomdpAdd implements pomdp {
 	// alpha(s')
 	primedAlpha = OP.primeVars(alpha, nrTotV);
 	// restrict the O model to o
-	oc = IntegerArray.mergeRows(obsIdsPr, Common.sdecode(o, nrObsV, obsArity));
+	oc = IntegerArray.mergeRows(obsIdsPr, Util.sdecode(o, nrObsV, obsArity));
 	O_o = OP.restrictN(O[a], oc); 
-	vars = Common.concat(primedAlpha, T[a], O_o);
+	vars = Util.concat(primedAlpha, T[a], O_o);
     	// compute var elim on O * T * \alpha(s')
 	gao = OP.addMultVarElim(vars, staIdsPr);
 	return gao;
@@ -487,4 +487,4 @@ public class pomdpAdd implements pomdp {
 	return v;
     } // printO
 
-} // pomdpAdd
+} // PomdpAdd

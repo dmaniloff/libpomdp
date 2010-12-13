@@ -11,7 +11,7 @@
 package libpomdp.offline.java;
 
 // imports
-import libpomdp.general.java.*;
+import libpomdp.common.java.*;
 import symPerseusJava.*;
 import org.math.array.*;
 
@@ -21,7 +21,7 @@ public class qmdpAdd {
     final int MAXITERATIONS = 500;
     final double EPSILON    = 1e-5;
 
-    public valueFunctionAdd getqmdpAdd(pomdpAdd factoredProb) {
+    public ValueFunctionAdd getqmdpAdd(PomdpAdd factoredProb) {
 
 	// decls
 	DD[] adds;
@@ -71,7 +71,7 @@ public class qmdpAdd {
 	} // qmdp loop
 
 	// return
-	return new valueFunctionAdd(Vqmdp, factoredProb.getstaIds(), policy);
+	return new ValueFunctionAdd(Vqmdp, factoredProb.getstaIds(), policy);
 
     } // getqmdpAdd
 

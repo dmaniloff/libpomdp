@@ -11,7 +11,7 @@
 
 package libpomdp.hybrid.java;
 
-import libpomdp.general.java.belState;
+import libpomdp.common.java.BeliefState;
 import libpomdp.online.java.AndNode;
 import libpomdp.online.java.HeuristicSearchOrNode;
 
@@ -40,7 +40,7 @@ public class HybridValueIterationOrNode extends HeuristicSearchOrNode {
     public double bakHeuristicStar[];
 
     @Override
-    public void init(belState belief, int obs, AndNode parent) {
+    public void init(BeliefState belief, int obs, AndNode parent) {
 	super.init(belief, obs, parent);
 	// initialize one-step best action
 	this.oneStepBestAction = -1;

@@ -11,7 +11,7 @@
 
 package libpomdp.online.java;
 
-import libpomdp.general.java.belState;
+import libpomdp.common.java.BeliefState;
 
 
 public class HeuristicSearchOrNode extends OrNode {
@@ -28,7 +28,7 @@ public class HeuristicSearchOrNode extends OrNode {
     public double                oneStepDeltaUpper;
 
     @Override
-    public void init(belState belief, int obs, AndNode parent) {
+    public void init(BeliefState belief, int obs, AndNode parent) {
 	super.init(belief, obs, parent);
 	// initialize one-step improvement 
         this.oneStepDeltaLower = -1;

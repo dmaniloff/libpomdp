@@ -1,7 +1,7 @@
 /** ------------------------------------------------------------------------- *
  * libpomdp
  * ========
- * File: pomdpFlat.java
+ * File: PomdpFlat.java
  * Description: class to represent a pomdp problem specification
  *              and to compute certain useful functions
  *              at the moment this class is instantiated from Matlab
@@ -12,13 +12,13 @@
  * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
 
-package libpomdp.general.java;
+package libpomdp.common.java;
 
 // imports
 import org.math.array.*;
 import org.math.array.util.*; //dont't know why the above is not enough
 
-public class pomdpFlat implements pomdp {
+public class PomdpFlat implements pomdp {
 
     // ------------------------------------------------------------------------
     // properties
@@ -52,14 +52,14 @@ public class pomdpFlat implements pomdp {
     private String obsStr[];
 
     // starting belief
-    private belStateFlat initBelief;
+    private BeliefStateFlat initBelief;
 
     // ------------------------------------------------------------------------
     // methods
     // ------------------------------------------------------------------------
 
     // constructor
-    public pomdpFlat(double O[][], 
+    public PomdpFlat(double O[][], 
 		     double T[][], 
 		     double R[][],
 		     int nrSta, int nrAct, int nrObs, 
@@ -78,7 +78,7 @@ public class pomdpFlat implements pomdp {
 	this.actStr = actStr;
 	this.obsStr = obsStr;
 	// set initial belief state
-	this.initBelief = new belStateFlat(init, 0.0);
+	this.initBelief = new BeliefStateFlat(init, 0.0);
 	// copy the model matrices
 	int a;
 	for(a = 0; a < nrAct; a++) {
@@ -97,16 +97,16 @@ public class pomdpFlat implements pomdp {
     // }
 
     // P(o|b,a) in vector form for all o's
-    public double[] P_Oba(belState b, int a) {
+    public double[] P_Oba(BeliefState b, int a) {
     	double Tb[]   = LinearAlgebra.times(T[a],b.getbPoint());
     	double Poba[] = LinearAlgebra.times(DoubleArray.transpose(O[a]),Tb);
     	return Poba;
     }
 
     /// tao(b,a,o)
-    public belState tao(belState b, int a, int o) {
+    public BeliefState tao(BeliefState b, int a, int o) {
 	double b1[], b2[];
-	belState bPrime;
+	BeliefState bPrime;
 	b1 = b.getbPoint();
 	b2 = LinearAlgebra.times(T[a], b1); // matrix by vector
 	b2 = LinearAlgebra.times(b2, DoubleArray.getColumnCopy(O[a],o)); // element-wise
@@ -119,14 +119,14 @@ public class pomdpFlat implements pomdp {
 	} else {
 	    // safe to normalize now
 	    b2 = LinearAlgebra.divide(b2,DoubleArray.sum(b2));    
-	    bPrime = new belStateFlat(b2, poba);
+	    bPrime = new BeliefStateFlat(b2, poba);
 	}
 	// return
 	return bPrime;
     }
 
     /// R(b,a)
-    public double Rba(belState bel, int a) {
+    public double Rba(BeliefState bel, int a) {
 	return LinearAlgebra.sum(LinearAlgebra.
 				 times(bel.getbPoint(), DoubleArray.getRowCopy(R,a)));
     }
@@ -179,7 +179,7 @@ public class pomdpFlat implements pomdp {
 	return obsStr[o];
     }
 
-    public belState getInit() {
+    public BeliefState getInit() {
 	return initBelief;
     }
 

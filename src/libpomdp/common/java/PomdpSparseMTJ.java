@@ -23,13 +23,13 @@
  * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
 
-package libpomdp.general.java;
+package libpomdp.common.java;
 
 // imports
 import no.uib.cipr.matrix.*;
 import no.uib.cipr.matrix.sparse.*;
 
-public class pomdpSparseMTJ implements pomdp {
+public class PomdpSparseMTJ implements Pomdp {
 
     // ------------------------------------------------------------------------
     // properties
@@ -63,14 +63,14 @@ public class pomdpSparseMTJ implements pomdp {
     private String obsStr[];
 
     // starting belief
-    private belStateSparseMTJ initBelief;
+    private BeliefStateSparseMTJ initBelief;
 
     // ------------------------------------------------------------------------
     // methods
     // ------------------------------------------------------------------------
 
     /// constructor
-    public pomdpSparseMTJ(DenseMatrix  T[], 
+    public PomdpSparseMTJ(DenseMatrix  T[], 
 			  DenseMatrix  O[], 
 			  SparseVector R[],
 			  int          nrSta, 
@@ -81,7 +81,7 @@ public class pomdpSparseMTJ implements pomdp {
 			  String       obsStr[],
 			  SparseVector init) {
 
-	// allocate space for the pomdp models
+	// allocate space for the Pomdp models
 	this.nrSta  = nrSta;
 	this.nrAct  = nrAct;
 	this.nrObs  = nrObs;
@@ -93,7 +93,7 @@ public class pomdpSparseMTJ implements pomdp {
 	this.obsStr = obsStr;
 
 	// set initial belief state
-	this.initBelief = new belStateSparseMTJ(init, 0.0);
+	this.initBelief = new BeliefStateSparseMTJ(init, 0.0);
 
 	// copy the model matrices - transform from dense to comprow
 	// do we really need this? dense is in sparse form already...
@@ -106,8 +106,8 @@ public class pomdpSparseMTJ implements pomdp {
 
     // P(o|b,a) in vector form for all o's
     // THIS IS NOT MAKING THE RIGHT USE OF SPARSITY
-    public double[] P_Oba(belState b, int a) {
-	SparseVector  b1  = ((belStateSparseMTJ)b).bSparse;
+    public double[] P_Oba(BeliefState b, int a) {
+	SparseVector  b1  = ((BeliefStateSparseMTJ)b).bSparse;
     	SparseVector  Tb  = new SparseVector(nrSta);
 	Tb                = (SparseVector) T[a].mult(b1, Tb);
     	SparseVector Poba = new SparseVector(nrObs);
@@ -116,12 +116,12 @@ public class pomdpSparseMTJ implements pomdp {
     }
 
     /// tao(b,a,o)
-    public belState tao(belState b, int a, int o) {
+    public BeliefState tao(BeliefState b, int a, int o) {
 	long start = System.currentTimeMillis();
 	//System.out.println("made it to tao");
-	belState bPrime;
+	BeliefState bPrime;
 	// compute T[a]' * b1
-	SparseVector b1   = ((belStateSparseMTJ)b).bSparse;
+	SparseVector b1   = ((BeliefStateSparseMTJ)b).bSparse;
 	SparseVector b2   = new SparseVector(nrSta);
 	b2 = (SparseVector) T[a].transMult(b1, b2);
 	//System.out.println("Elapsed in tao - T[a] * b1" + (System.currentTimeMillis() - start));
@@ -141,7 +141,7 @@ public class pomdpSparseMTJ implements pomdp {
 	} else {
 	    // safe to normalize now
 	    b2 = b2.scale(1.0/poba);    
-	    bPrime = new belStateSparseMTJ(b2, poba);
+	    bPrime = new BeliefStateSparseMTJ(b2, poba);
 	}
 	//System.out.println("Elapsed in tao" + (System.currentTimeMillis() - start));
 	// return
@@ -149,8 +149,8 @@ public class pomdpSparseMTJ implements pomdp {
     }
 
     /// R(b,a)
-    public double Rba(belState bel, int a) {
-	SparseVector b = ((belStateSparseMTJ)bel).bSparse;
+    public double Rba(BeliefState bel, int a) {
+	SparseVector b = ((BeliefStateSparseMTJ)bel).bSparse;
 	return b.dot(R[a]);
     }
 
@@ -203,9 +203,9 @@ public class pomdpSparseMTJ implements pomdp {
 	return obsStr[o];
     }
 
-    public belState getInit() {
+    public BeliefState getInit() {
 	return initBelief;
     }
 
-} // pomdpSparseMTJ
+} // PomdpSparseMTJ
 

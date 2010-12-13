@@ -1,20 +1,20 @@
 /** ------------------------------------------------------------------------- *
  * libpomdp
  * ========
- * File: valueFunctionSparseMTJ.java
+ * File: ValueFunctionSparseMTJ.java
  * Description: 
  * Copyright (c) 2009, 2010 Diego Maniloff 
  * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
 
-package libpomdp.general.java;
+package libpomdp.common.java;
 
 // imports
 import java.io.*;
 import no.uib.cipr.matrix.*;
 import no.uib.cipr.matrix.sparse.*;
 
-public class valueFunctionSparseMTJ implements valueFunction, Serializable {
+public class ValueFunctionSparseMTJ implements ValueFunction, Serializable {
     
     // ------------------------------------------------------------------------
     // properties
@@ -30,7 +30,7 @@ public class valueFunctionSparseMTJ implements valueFunction, Serializable {
     private int a[];
 
     // constructor
-    public valueFunctionSparseMTJ(CompColMatrix v, int a[]) {
+    public ValueFunctionSparseMTJ(CompColMatrix v, int a[]) {
 	this.v   = v;
 	this.a   = a;
     }
@@ -49,13 +49,13 @@ public class valueFunctionSparseMTJ implements valueFunction, Serializable {
     }
 
     // return value of a belief state
-    public double V(belState bel) {
+    public double V(BeliefState bel) {
 	long start = System.currentTimeMillis();
-	SparseVector b = ((belStateSparseMTJ)bel).bSparse;
+	SparseVector b = ((BeliefStateSparseMTJ)bel).bSparse;
 	SparseVector dotProds = new SparseVector(v.numRows());
 	dotProds = (SparseVector) v.mult(b, dotProds);
 	// there must be a way to avoid this!!
-	int argmax = Common.argmax(Matrices.getArray(dotProds)); 
+	int argmax = Util.argmax(Matrices.getArray(dotProds)); 
 	//Matrix argmax = dotProds.indexOfMax(Ret.NEW, 0);
 	// save the index of the alpha that supports this belief point
 	bel.setplanid(argmax);
@@ -69,4 +69,4 @@ public class valueFunctionSparseMTJ implements valueFunction, Serializable {
 	return Matrices.getArray(v);
     }    
 
-} // valueFunctionSparseMTJ
+} // ValueFunctionSparseMTJ

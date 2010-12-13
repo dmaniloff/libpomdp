@@ -7,13 +7,13 @@
  * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
 
-package libpomdp.general.java;
+package libpomdp.common.java;
 
 // imports
 import org.math.array.*;
 import java.io.*;
 
-public class valueFunctionFlat implements valueFunction, Serializable {
+public class ValueFunctionFlat implements ValueFunction, Serializable {
     
     // ------------------------------------------------------------------------
     // properties
@@ -29,7 +29,7 @@ public class valueFunctionFlat implements valueFunction, Serializable {
     private int a[];
 
     // constructor
-    public valueFunctionFlat(double v[][], int a[]) {
+    public ValueFunctionFlat(double v[][], int a[]) {
 	this.v   = v; 
 	this.a   = a;
     }
@@ -48,10 +48,10 @@ public class valueFunctionFlat implements valueFunction, Serializable {
     }
     
     // return value of a belief state
-    public double V(belState bel) {
+    public double V(BeliefState bel) {
 	double b[] = bel.getbPoint();
 	double dotProds[] = LinearAlgebra.times(v, b);
-	int argmax = Common.argmax(dotProds);
+	int argmax = Util.argmax(dotProds);
 	// save the index of the alpha that supports this belief point
 	bel.setplanid(argmax);
 	double max = dotProds[argmax];
@@ -65,11 +65,11 @@ public class valueFunctionFlat implements valueFunction, Serializable {
 
     // direct contol using this value function as a policy
     // actions start from 0
-    public int directControl(belState bel) {
+    public int directControl(BeliefState bel) {
 	double b[] = bel.getbPoint();
 	double dotProds[] = LinearAlgebra.times(v, b);
-	int argmax = Common.argmax(dotProds);
+	int argmax = Util.argmax(dotProds);
 	return a[argmax];
     }
 
-} // valueFunctionFlat
+} // ValueFunctionFlat

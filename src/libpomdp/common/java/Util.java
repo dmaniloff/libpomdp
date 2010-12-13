@@ -1,20 +1,20 @@
 /** ------------------------------------------------------------------------- *
  * libpomdp
  * ========
- * File: Common.java
+ * File: Util.java
  * Description: useful general routines - everything in this class is static
  * Copyright (c) 2009, 2010 Diego Maniloff 
  * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
 
-package libpomdp.general.java;
+package libpomdp.common.java;
 
 // imports
 import symPerseusJava.*;
 import java.util.*;
 import org.math.array.*;
 
-public class Common {
+public class Util {
 
     /// set the gen only once for every instance
     public static Random gen = new Random(System.currentTimeMillis());
@@ -151,4 +151,4 @@ public class Common {
 	return s + 1;
     }
 
-} // Common
+} // Util

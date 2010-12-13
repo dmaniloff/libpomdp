@@ -1,20 +1,20 @@
 /** ------------------------------------------------------------------------- *
  * libpomdp
  * ========
- * File: belStateAdd.java
- * Description: implements belState via an ADD
+ * File: BeliefStateAdd.java
+ * Description: implements BeliefState via an ADD
  *              uses Popuart's implementation from Symbolic Perseus
  * Copyright (c) 2009, 2010 Diego Maniloff 
  * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
 
-package libpomdp.general.java;
+package libpomdp.common.java;
 
 // imports
 import symPerseusJava.DD;
 import symPerseusJava.OP;
 
-public class belStateAdd implements belState {
+public class BeliefStateAdd implements BeliefState {
     
     // main property is the DD itself
     public DD bAdd;
@@ -30,7 +30,7 @@ public class belStateAdd implements belState {
 
     // constructor
     // in case this is the init belief, poba = 0.0
-    public belStateAdd(DD b, int staIds[], double poba) {
+    public BeliefStateAdd(DD b, int staIds[], double poba) {
 	this.bAdd   = b;
 	this.staIds = staIds;
 	this.poba   = poba;
@@ -62,4 +62,4 @@ public class belStateAdd implements belState {
 	return -1;
     }
 
-} // belState
+} // BeliefState

@@ -11,8 +11,8 @@
 
 package libpomdp.online.java;
 
-import libpomdp.general.java.Common;
-import libpomdp.general.java.pomdp;
+import libpomdp.common.java.Util;
+import libpomdp.common.java.Pomdp;
 
 import org.math.array.DoubleArray;
 
@@ -21,14 +21,14 @@ import org.math.array.DoubleArray;
 
 public class AEMS2 implements ExpandHeuristic {
 
-    /// main property is the pomdp spec
-    private pomdp problem;    
+    /// main property is the Pomdp spec
+    private Pomdp problem;    
 
     /// set the gen only once for every instance
     //private Random gen = new Random(System.currentTimeMillis());
 
     /// constructor
-    public AEMS2 (pomdp prob) {
+    public AEMS2 (Pomdp prob) {
 	this.problem = prob;
     }
    
@@ -53,7 +53,7 @@ public class AEMS2 implements ExpandHeuristic {
 	Hba = DoubleArray.fill(problem.getnrAct(), 0.0);
 	// compute maximum upper bound
 	// set the chosen action's Hba value to 1
-	int aStar = Common.argmax(UbA);
+	int aStar = Util.argmax(UbA);
 	Hba[aStar] = 1.0;
 	// save this value
 	o.aStar = aStar;
@@ -65,7 +65,7 @@ public class AEMS2 implements ExpandHeuristic {
     /// does this work?? needs to be tested...
 //    public double[] h_baUpdate(orNode o, int a) {
 //	double challenge = o.children[a].u;
-//	int argmax = Common.argmax(new double[] {o.children[o.aStar].u, 
+//	int argmax = Util.argmax(new double[] {o.children[o.aStar].u, 
 //						 challenge});
 //	if(0==argmax) {
 //	    return o.h_ba;
@@ -96,7 +96,7 @@ public class AEMS2 implements ExpandHeuristic {
     public int oStar(HeuristicSearchAndNode a) {
 	double HbaoHostar[] = new double[problem.getnrObs()];	
 	//for(orNode o : a.children) HbaoHostar[o.getobs()] = o.h_bao * o.hStar;
-	//return Common.argmax(HbaoHostar);
+	//return Util.argmax(HbaoHostar);
 
 	// STILL TO THINK ABOUT:
 	//int nullCount=0;
@@ -112,7 +112,7 @@ public class AEMS2 implements ExpandHeuristic {
 	}
 	// System.out.println("nullcount inside oStar is "+ nullCount);
 	// 	System.out.println(DoubleArray.toString(HbaoHostar));
-	// 	int argmax = Common.argmax(HbaoHostar);
+	// 	int argmax = Util.argmax(HbaoHostar);
 	// 	if (argmax < 0 || argmax >= problem.getnrObs())
 	// 	    System.err.println("armax out of bounds");
 	// 	if (HbaoHostar[argmax] == -1) {
@@ -120,14 +120,14 @@ public class AEMS2 implements ExpandHeuristic {
 	// 	    //System.exit(0);
 	// 	}	
 	//return argmax;	
-	return Common.argmax(HbaoHostar);
+	return Util.argmax(HbaoHostar);
     }
 
     /// update version with challenge obs
     /// INCORRECT
     // public int oStarUpdate(andNode a, int o) {
     // 	double challenge = a.children[o].h_bao * a.children[o].hStar;
-    // 	int argmax = Common.argmax(new double[] {a.children[a.oStar].h_bao * a.children[a.oStar].hStar,
+    // 	int argmax = Util.argmax(new double[] {a.children[a.oStar].h_bao * a.children[a.oStar].hStar,
     // 						 challenge});
     // 	if(0==argmax)
     // 	    return a.oStar;

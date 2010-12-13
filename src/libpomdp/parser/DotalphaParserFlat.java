@@ -35,7 +35,7 @@ public class DotalphaParserFlat {
 	alphas  = parser.getAlphas();
     }
 
-    public valueFunction getValueFunction() {
+    public ValueFunction getValueFunction() {
 	int s = actions.length;
 	int d = alphas[0].length;
 	int a[] = new int[s];
@@ -47,7 +47,7 @@ public class DotalphaParserFlat {
 	    for (int j=0; j<d; j++) v[i][j] = alphas[i][j].doubleValue();
 	}
 	// generate flat value function
-	return new valueFunctionFlat(v, a);
+	return new ValueFunctionFlat(v, a);
     }
 
 }

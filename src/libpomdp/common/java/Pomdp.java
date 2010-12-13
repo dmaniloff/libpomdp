@@ -1,24 +1,24 @@
 /** ------------------------------------------------------------------------- *
  * libpomdp
  * ========
- * File: pomdp.java
- * Description: interface to represent pomdp problem specifications
+ * File: Pomdp.java
+ * Description: interface to represent Pomdp problem specifications
  * Copyright (c) 2009, 2010 Diego Maniloff 
  * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
 
-package libpomdp.general.java;
+package libpomdp.common.java;
 
-public interface pomdp {
+public interface Pomdp {
 
     /// P(o|b,a) in vector form for all o's
-    public double[] P_Oba(belState b, int a);
+    public double[] P_Oba(BeliefState b, int a);
 
     /// tao(b,a,o)
-    public belState tao(belState b, int a, int o);
+    public BeliefState tao(BeliefState b, int a, int o);
 
     /// R(b,a)
-    public double Rba(belState b, int a);
+    public double Rba(BeliefState b, int a);
 
     /// T(s,a,s'): s x s' matrix
     /// will generally be used by mdp.java
@@ -40,7 +40,7 @@ public interface pomdp {
     public double getGamma();
 
     /// initial belief state
-    public belState getInit();
+    public BeliefState getInit();
 
     /// action names
     public String getactStr(int a);
@@ -48,4 +48,4 @@ public interface pomdp {
     /// observation names
     public String getobsStr(int o);
 
-} // pomdp
+} // Pomdp

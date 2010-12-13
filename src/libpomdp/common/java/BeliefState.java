@@ -1,7 +1,7 @@
 /** ------------------------------------------------------------------------- *
  * libpomdp
  * ========
- * File: belState.java
+ * File: BeliefState.java
  * Description: interface to implement different representations
  *              of a belief state
  *              properties are to be filled by extending classes
@@ -9,9 +9,9 @@
  * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
 
-package libpomdp.general.java;
+package libpomdp.common.java;
 
-public interface belState {
+public interface BeliefState {
 
     /// flat belief point
     public double[] getbPoint();

@@ -1,15 +1,15 @@
 /** ------------------------------------------------------------------------- *
  * libpomdp
  * ========
- * File: belStateFlat.java
+ * File: BeliefStateFlat.java
  * Description: simple class to represent a belief state using
  *              a flat distribution over S
  * Copyright (c) 2009, 2010 Diego Maniloff 
  * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
-package libpomdp.general.java;
+package libpomdp.common.java;
 
-public class belStateFlat implements belState {
+public class BeliefStateFlat implements BeliefState {
 
     // flat belief point
     private double bPoint[];
@@ -20,7 +20,7 @@ public class belStateFlat implements belState {
 
     // constructor
     // in case this is the initial belief, poba = 0.0
-    public belStateFlat(double[] bPoint, double poba) {
+    public BeliefStateFlat(double[] bPoint, double poba) {
 	this.bPoint = bPoint;
 	this.poba   = poba;
     }
@@ -51,4 +51,4 @@ public class belStateFlat implements belState {
     }
 
 
-} // belStateFlat
+} // BeliefStateFlat

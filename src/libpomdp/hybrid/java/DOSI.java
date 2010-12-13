@@ -10,17 +10,17 @@
 package libpomdp.hybrid.java;
 
 // imports
-import libpomdp.general.java.Common;
-import libpomdp.general.java.pomdp;
+import libpomdp.common.java.Util;
+import libpomdp.common.java.Pomdp;
 
 
 public class DOSI implements BackupHeuristic {
 
-    // pomdp specification
-    private pomdp problem;
+    // Pomdp specification
+    private Pomdp problem;
 
     // constructor
-    public DOSI(pomdp prob) {
+    public DOSI(Pomdp prob) {
 	this.problem = prob;
     }
 
@@ -40,7 +40,7 @@ public class DOSI implements BackupHeuristic {
     /// now takes the index of the alpha vec to know what region we are comparing
     public HybridValueIterationOrNode updateBakStar(HybridValueIterationAndNode a, int o, int i) {
 	double challengeH = a.getChild(o).bakHeuristicStar[i];
-	int argmax = Common.argmax(new double[] {a.bakHeuristicStar[i], challengeH});
+	int argmax = Util.argmax(new double[] {a.bakHeuristicStar[i], challengeH});
 	if(0==argmax) {
 	    return a.bakCandidate[i];
 	} else {
@@ -54,7 +54,7 @@ public class DOSI implements BackupHeuristic {
     // on the updated branch
     public HybridValueIterationOrNode updateBakStar(HybridValueIterationOrNode o, int a, int i) {
 	double challengeH = o.getChild(a).bakHeuristicStar[i] * 1; // weight here
-	int argmax = Common.argmax(new double[] {o.bakHeuristicStar[i], challengeH}); 
+	int argmax = Util.argmax(new double[] {o.bakHeuristicStar[i], challengeH}); 
 	if(0==argmax) {
 	    return o.bakCandidate[i];
 	} else {

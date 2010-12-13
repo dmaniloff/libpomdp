@@ -1,7 +1,7 @@
 /** ------------------------------------------------------------------------- *
  * libpomdp
  * ========
- * File: valueFunctionAdd.java
+ * File: ValueFunctionAdd.java
  * Description: implementation of a value function via ADDs
  *              makes use of Poupart's OP class to manipulate ADDs
  *              see README reference [5]
@@ -11,14 +11,14 @@
  * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
 
-package libpomdp.general.java;
+package libpomdp.common.java;
 
 // imports
 import symPerseusJava.*;
 import org.math.array.*;
 import java.io.*;
 
-public class valueFunctionAdd implements valueFunction, Serializable {
+public class ValueFunctionAdd implements ValueFunction, Serializable {
     
     // ------------------------------------------------------------------------
     // properties
@@ -37,7 +37,7 @@ public class valueFunctionAdd implements valueFunction, Serializable {
     private int a[];
 
     // constructor
-    public valueFunctionAdd(DD vAdd[], int staIds[], int a[]) {
+    public ValueFunctionAdd(DD vAdd[], int staIds[], int a[]) {
 	this.vAdd   = vAdd; 
 	this.a      = a;
 	this.staIds = staIds;
@@ -57,21 +57,21 @@ public class valueFunctionAdd implements valueFunction, Serializable {
     }
 
     // return value of a belief state
-    public double V(belState bel) {
+    public double V(BeliefState bel) {
 	// declarations
 	DD     b;
 	DD     m[];
 	double dotProds[];
 	// compute dot products
-	if (bel instanceof belStateAdd) {
-	    b = ((belStateAdd)bel).bAdd; 
+	if (bel instanceof BeliefStateAdd) {
+	    b = ((BeliefStateAdd)bel).bAdd; 
 	    dotProds = OP.dotProductNoMem(b, vAdd, staIds);
 	} else {
 	    m = ((BelStateFactoredADD)bel).marginals;
 	    dotProds = OP.factoredExpectationSparseNoMem(m, vAdd);
 	}
 	// find best vector
-	int argmax = Common.argmax(dotProds);
+	int argmax = Util.argmax(dotProds);
 	// save the index of the alpha that supports this belief point
 	bel.setplanid(argmax);
 	return dotProds[argmax];
@@ -87,4 +87,4 @@ public class valueFunctionAdd implements valueFunction, Serializable {
 	return vAdd;
     }
 
-} // valueFunctionAdd
+} // ValueFunctionAdd

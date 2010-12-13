@@ -13,11 +13,11 @@ package libpomdp.hybrid.java;
 // imports
 import java.io.PrintStream;
 
-import libpomdp.general.java.Common;
-import libpomdp.general.java.pomdp;
-import libpomdp.general.java.pomdpAdd;
-import libpomdp.general.java.valueFunction;
-import libpomdp.general.java.valueFunctionAdd;
+import libpomdp.common.java.Util;
+import libpomdp.common.java.Pomdp;
+import libpomdp.common.java.PomdpAdd;
+import libpomdp.common.java.ValueFunction;
+import libpomdp.common.java.ValueFunctionAdd;
 import libpomdp.online.java.AndNode;
 import libpomdp.online.java.AndOrTree;
 import libpomdp.online.java.OrNode;
@@ -36,8 +36,8 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
     // properties
     // ------------------------------------------------------------------------
 
-    /// work with ADD representation of the pomdp
-    private pomdpAdd problem;
+    /// work with ADD representation of the Pomdp
+    private PomdpAdd problem;
 
     /// backup heuristic
     private BackupHeuristic bakH;
@@ -47,20 +47,20 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
     public int treeSupportSetSize[];
 
     /// same constructor with backup heuristic
-    public AndOrTreeUpdateAdd(pomdp prob, 
+    public AndOrTreeUpdateAdd(Pomdp prob, 
 	    ExpandHeuristic h, 
 	    BackupHeuristic bakh, 
-	    valueFunction L, 
-	    valueFunction U) {
+	    ValueFunction L, 
+	    ValueFunction U) {
 	super(prob, h, L, U);
 	this.root    = new HybridValueIterationOrNode();
-	this.problem = (pomdpAdd) super.problem;
+	this.problem = (PomdpAdd) super.problem;
 	this.bakH    =  bakh;
 	this.treeSupportSetSize = IntegerArray.fill(offlineLower.getSize(), 0);
     }
 
     /// Overridden initializer (is there another way???)
-    //    public void init(belState belief) {
+    //    public void init(BeliefState belief) {
     //	this.root.init(belief, -1, null);
     //	this.root.u = offlineUpper.V(this.root.getBeliefState());
     //	this.root.l = offlineLower.V(this.root.getBeliefState());
@@ -284,7 +284,7 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 	double Lba[] = new double[problem.getnrAct()];
 	for(HybridValueIterationAndNode a : o.getChildren()) 
 	    Lba[a.getAct()] = a.l;
-	o.oneStepBestAction = Common.argmax(Lba);
+	o.oneStepBestAction = Util.argmax(Lba);
 	// compare to current bound
 	return Math.max(Lba[o.oneStepBestAction], o.l);
     } //  ORpropagateLexpand
@@ -298,7 +298,7 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 	DD gamma  = DDleaf.myNew(problem.getGamma());
 	DD gab    = DD.zero;		
 	int bestA = currentBestAction(); // consider caching this value maybe
-	DD lowerBound [] = ((valueFunctionAdd)offlineLower).getvAdd();
+	DD lowerBound [] = ((ValueFunctionAdd)offlineLower).getvAdd();
 	// \sum_o g_{a,o}^i
 	for(OrNode o : root.getChild(bestA).getChildren()) {
 	    //if(o==null) continue;
@@ -324,7 +324,7 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
      * Using the current info from the tree, a backup operation is
      * reduced to computing a particular gab vector
      */
-    public valueFunction backupLowerAtNode(HybridValueIterationOrNode on) {
+    public ValueFunction backupLowerAtNode(HybridValueIterationOrNode on) {
 	// make sure this node is not in the fringe
 	if(null == on.getChildren()) {
 	    System.err.println("Attempted to backup a fringe node");
@@ -335,7 +335,7 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 	DD gab    = DD.zero;		
 	//int bestA = currentBestActionAtNode(on); // consider caching this value maybe
 	int obs   = 0;
-	DD lowerBound [] = ((valueFunctionAdd)offlineLower).getvAdd();
+	DD lowerBound [] = ((ValueFunctionAdd)offlineLower).getvAdd();
 	// \sum_o g_{a,o}^i
 	for(OrNode o : on.getChild(on.oneStepBestAction).getChildren()) {
 	    if(o==null) {
@@ -358,14 +358,14 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 	gab = OP.mult(gamma, gab);
 	gab = OP.add(problem.R[on.oneStepBestAction], gab);
 	// add newly computed vector to the tree's offline lower bound - NO PRUNING FOR NOW
-	valueFunctionAdd newLB = new valueFunctionAdd(Common.append(lowerBound, gab), 
+	ValueFunctionAdd newLB = new ValueFunctionAdd(Util.append(lowerBound, gab), 
 		problem.getstaIds(),
 		IntegerArray.merge(offlineLower.getActions(), 
 			new int[] {on.oneStepBestAction}));
 	offlineLower = newLB;
 	// return 
 	return newLB;
-	// how about coding a union operation in valueFunction?
+	// how about coding a union operation in ValueFunction?
 	// this function does not watch for repeated vectors yet
     } // backupLowerAtNode
 
@@ -448,7 +448,7 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 		f[i] = o.bakHeuristicStar[i] * nstar[i];
 		System.err.println(f[i]);	
 	    }
-	    int istar = Common.argmax(f);
+	    int istar = Util.argmax(f);
 	    System.err.println(istar);
 	    if (f[istar] > 0) out.println(o.hashCode() + "->" + o.bakCandidate[istar].hashCode() + 
 		    "[label=\"bakCandidate\",weight=0,color=orange];");
