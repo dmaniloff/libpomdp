@@ -1,12 +1,12 @@
 /** ------------------------------------------------------------------------- *
  * libpomdp
  * ========
- * File: dotpomdpMTJ.g
+ * File: DotPomdp.g
  * Description: ANTLRv3 grammar specification to parse a .POMDP file in
  *              Cassandra's format. Not all features are supported yet.
  *              Sparse matrices and arrays use the MTJ matrix package.
  * Copyright (c) 2009, 2010 Diego Maniloff 
- * W3: http://www.cs.uic.edu/~dmanilof
+ * Copyright (c) 2010 Mauricio Araya
  --------------------------------------------------------------------------- */
 
 grammar dotpomdpMTJ;
@@ -70,6 +70,12 @@ tokens {
         }
     }
 
+	private int matrixContext;
+	
+	private static final int MC_TRANSITION = 0;
+	private static final int MC_TRANSITION_ROW = 1;
+	private static final int MC_OBSERVATION = 2;
+	private static final int MC_OBSERVATION_ROW = 3;
     // main structure
     private pomdpSpecSparseMTJ dotpomdpSpec = new pomdpSpecSparseMTJ();
 
@@ -125,11 +131,17 @@ EXPONENT : ('e'|'E') ('+'|'-')? ('0'..'9')+ ;
 /*------------------------------------------------------------------
  * PARSER RULES
  *------------------------------------------------------------------*/
-dotpomdp
-    : preamble
+dotPomdp
+    :
         {
+      		System.out.println("PARSER: Parsing preamble...");
+        }            
+      preamble
+        {
+        	System.out.println("PARSER: Summary -> states "+dotPomdpSpec.nrSta);
+        	System.out.println("                -> observations "+dotPomdpSpec.nrObs);
+        	System.out.println("                -> actions "+dotPomdpSpec.nrAct);
             // we can now initialize the data structures for T, O, R
-            System.out.println("Successfully parsed preamble");            
             /* initialize |A| s x s' dense matrices (they're actually sparse)
                T: <action> : <start-state> : <end-state> prob  */
             dotpomdpSpec.T = new DenseMatrix[dotpomdpSpec.nrAct];
@@ -144,21 +156,25 @@ dotpomdp
                                                     dotpomdpSpec.nrObs);
             /* initialize |A| 1 x s' sparse vectors
                R: <action> : <start-state> : * : * float */
-            dotpomdpSpec.R = new SparseVector[dotpomdpSpec.nrAct];
-            for(int a=0; a<dotpomdpSpec.nrAct; a++) 
-                dotpomdpSpec.R[a] = new SparseVector(dotpomdpSpec.nrSta);        
+            dotPomdpSpec.R = new SparseVector[dotPomdpSpec.nrAct];
+            for(int a=0; a<dotPomdpSpec.nrAct; a++) 
+                dotPomdpSpec.R[a] = new SparseVector(dotPomdpSpec.nrSta);
+            System.out.println("PARSER: Parsing starting state/belief...");   
         }
       start_state 
         {
             // make sure the start state is a distribution
-            System.out.println("Successfully parsed start state");
-            if (dotpomdpSpec.startState.norm(Vector.Norm.One) - 1.0 > THRESHOLD)
-                err("Start state not a distribution" + dotpomdpSpec.startState.norm(Vector.Norm.One));
+            
+            //System.out.println("Successfully parsed start state");
+            if (dotPomdpSpec.startState.norm(Vector.Norm.One) - 1.0 > THRESHOLD)
+                err("Start state not a distribution" + dotPomdpSpec.startState.norm(Vector.Norm.One));
+            System.out.println("PARSER: Parsing parameters...");
         }
       param_list 
         {
             // there should be a check for the parameter distros here...
-            System.out.println("Successfully parsed parameters");
+            // System.out.println("Successfully parsed parameters");
+            System.out.println("PARSER: [DONE]");
             
         }
     ;
@@ -189,6 +205,7 @@ value_param
 value_tail      
     : REWARDTOK
     | COSTTOK
+         {err("PARSER: Costs are not supported... sure that you want to use costs?");}
     ;
 
 state_param     
@@ -237,16 +254,19 @@ start_state
     : STARTTOK COLONTOK prob_vector
         // we'll focus on this case for now, just a sparse vector
         {
-            System.out.println("ENTERED the first case for start state");
-            dotpomdpSpec.startState = $prob_vector.vector;
+            dotPomdpSpec.startState = $prob_vector.vector;
         }
     | STARTTOK COLONTOK STRING
-        {err("unsopported feature");}
+        {err("PARSER: MDPs are not supported yet, only POMDPs");}
     | STARTTOK INCLUDETOK COLONTOK start_state_list
-         {err("unsopported feature");}
+         {err("PARSER: Include and exclude features are not supported yet");}
     | STARTTOK EXCLUDETOK COLONTOK start_state_list
-         {err("unsopported feature");}
+         {err("PARSER: Include and exclude features are not supported yet");}
     |  /* empty */
+    	{
+    	// Empty start state means uniform belief
+    	dotPomdpSpec.startState=new SparseVector(Utils.getUniformDistribution(dotPomdpSpec.nrSta));
+    	}
     ;
 
 start_state_list    
@@ -278,10 +298,19 @@ trans_spec_tail
                             dotpomdpSpec.T[a].set(s1, s2, $prob.p);
         }
     | paction COLONTOK state u_matrix 
-        {err("unsopported feature");}
+        {
+        	matrixContext=MC_TRANSITION_ROW;
+        	for(int a : $paction.l)	
+        		for (int s : $state.l)
+        			for (int i=0;i<dotPomdpSpec.nrSta;i++)
+        				dotPomdpSpec.T[a].set(s,i,$u_matrix.m.get(i,0));
+        }
     | paction ui_matrix
         // full matrix specification, set if for each action 
-        {for(int a : $paction.l) dotpomdpSpec.T[a] = $ui_matrix.m;}
+        {
+        matrixContext=MC_TRANSITION;
+        for(int a : $paction.l) dotPomdpSpec.T[a] = $ui_matrix.m;
+        }
     ;
 
 obs_prob_spec  
@@ -298,9 +327,19 @@ obs_spec_tail
                         dotpomdpSpec.O[a].set(s2, o, $prob.p);
         }
     | paction COLONTOK state u_matrix
-        {err("unsopported feature");}
+        	{
+        	matrixContext=MC_OBSERVATION_ROW;
+        	for(int a : $paction.l)	
+        		for (int s : $state.l)
+        			for (int i=0;i<dotPomdpSpec.nrObs;i++)
+        				dotPomdpSpec.O[a].set(s,i,$u_matrix.m.get(i,0));
+        	}
     | paction u_matrix
-        {err("unsopported feature");}
+        // full matrix specification, set if for each action 
+        {
+        	matrixContext=MC_OBSERVATION;
+        	for(int a : $paction.l) dotPomdpSpec.O[a] = $u_matrix.m;
+        }
     ;
 
 reward_spec    
@@ -322,26 +361,84 @@ reward_spec_tail
                     dotpomdpSpec.R[a].set(s1, $number.n);                   
         }
     | paction COLONTOK state COLONTOK state num_matrix
-        {err("unsopported feature");}
+        {
+        err("unsupported feature COLONTOK state COLONTOK state num_matrix");}
     | paction COLONTOK state num_matrix
-        {err("unsopported feature");}
+        {err("unsupported feature COLONTOK state num_matrix");}
     ;
 
 ui_matrix returns [DenseMatrix m]     
     : UNIFORMTOK 
+    	{$m = Utils.getUniformMatrix(dotPomdpSpec.nrSta,dotPomdpSpec.nrSta);}
     | IDENTITYTOK 
         {$m = Matrices.identity(dotpomdpSpec.nrSta);}
     | prob_matrix
+    	{$m = $prob_matrix.m;}
     ;
 
-u_matrix  
-    : UNIFORMTOK 
+u_matrix returns [DenseMatrix m]
+    : UNIFORMTOK
+    	{
+    	switch (matrixContext){
+    	case MC_OBSERVATION: 
+    		$m = Utils.getUniformMatrix(dotPomdpSpec.nrSta,dotPomdpSpec.nrObs);
+    		break;
+    	case MC_TRANSITION:
+    		$m = Utils.getUniformMatrix(dotPomdpSpec.nrSta,dotPomdpSpec.nrSta);
+    		break;
+    	case MC_TRANSITION_ROW:
+    		$m = Utils.getUniformMatrix(1,dotPomdpSpec.nrSta);
+    		break;
+ 		case MC_OBSERVATION_ROW:
+    		$m = Utils.getUniformMatrix(1,dotPomdpSpec.nrObs);
+    		break;
+    	default:
+    		err("PARSER: wrong matrix context... umh? (UNIFORMTOK)");
+    		break;
+    	}
+    	}
     | RESETTOK
+    	{err("PARSER: the reset feature is not supported yet");}
     | prob_matrix
+    	{$m = $prob_matrix.m;}
     ;
 
-prob_matrix    
-    : prob+
+prob_matrix returns [DenseMatrix m]
+    : 
+     {
+     int index = 0;
+     int i_max,j_max;
+     	switch (matrixContext){
+    	case MC_OBSERVATION:
+    	 	i_max = dotPomdpSpec.nrObs;
+    	 	j_max = dotPomdpSpec.nrSta;
+   			break;
+    	case MC_TRANSITION:
+    	 	i_max = dotPomdpSpec.nrSta;
+    	 	j_max = dotPomdpSpec.nrSta;
+    		break;
+    	case MC_TRANSITION_ROW:
+    	 	i_max = dotPomdpSpec.nrSta;
+    	 	j_max = 1;
+    		break;
+ 		case MC_OBSERVATION_ROW:
+ 		    i_max = dotPomdpSpec.nrObs;
+    	 	j_max = 1;
+    		break;
+    	default:
+    		err("PARSER: wrong matrix context... umh? (prob_matrix)");
+    		j_max=0;
+    		i_max=0;
+    		break;
+    	}   
+     $m = new DenseMatrix(i_max,j_max);
+     } 
+        (prob 
+        {
+        	if ($prob.p > 0.0) $m.set(index \% i_max,index / i_max,$prob.p);
+            index++;
+        }
+        )+
     ;
 
 prob_vector returns [SparseVector vector]
@@ -358,7 +455,15 @@ prob_vector returns [SparseVector vector]
     ;
 
 num_matrix     
-    : number+
+    :      {
+     int index = 0;
+     int i_max;
+     } 
+        (number 
+        {
+            index++;
+        }
+        )+
     ;
 
 state returns [ArrayList<Integer> l = new ArrayList<Integer>()]
