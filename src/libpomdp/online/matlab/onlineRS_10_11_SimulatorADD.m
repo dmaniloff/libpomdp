@@ -132,7 +132,7 @@ for run = 1+TOTALRUNS/4 : TOTALRUNS-TOTALRUNS/4 % take from the middle 1/4 up an
             fprintf(1, 'Current world state is:         %s\n', tc{1});
             drawer.drawState(GRID_SIZE, ROCK_POSITIONS,factoredS);
             if strcmp(rootNode.belief.getClass.toString, ...
-                    'class libpomdp.common.java.BelStateFactoredADD')
+                    'class libpomdp.common.java.add.BelStateFactoredAdd')
               fprintf(1, 'Current belief agree prob:      %d\n', ...                       
                       OP.evalN(rootNode.belief.marginals, factoredS));
             else

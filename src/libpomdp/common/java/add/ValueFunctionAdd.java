@@ -11,12 +11,16 @@
  * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
 
-package libpomdp.common.java;
+package libpomdp.common.java.add;
 
 // imports
 import symPerseusJava.*;
 import org.math.array.*;
 import java.io.*;
+
+import libpomdp.common.java.BeliefState;
+import libpomdp.common.java.Util;
+import libpomdp.common.java.ValueFunction;
 
 public class ValueFunctionAdd implements ValueFunction, Serializable {
     
@@ -67,7 +71,7 @@ public class ValueFunctionAdd implements ValueFunction, Serializable {
 	    b = ((BeliefStateAdd)bel).bAdd; 
 	    dotProds = OP.dotProductNoMem(b, vAdd, staIds);
 	} else {
-	    m = ((BelStateFactoredADD)bel).marginals;
+	    m = ((BelStateFactoredAdd)bel).marginals;
 	    dotProds = OP.factoredExpectationSparseNoMem(m, vAdd);
 	}
 	// find best vector

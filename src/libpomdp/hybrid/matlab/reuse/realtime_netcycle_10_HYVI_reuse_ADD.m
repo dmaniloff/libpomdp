@@ -144,7 +144,7 @@ for run = 1:TOTALRUNS
             tc = cell(factoredProb.printS(factoredS));
             fprintf(1, 'Current world state is:         %s\n', tc{1});
             if rootNode.belief.getClass.toString == ...
-                  'class libpomdp.common.java.BelStateFactoredADD'
+                  'class libpomdp.common.java.add.BelStateFactoredAdd'
               fprintf(1, 'Current belief agree prob:      %d\n', ...                       
                       OP.evalN(rootNode.belief.marginals, factoredS));
             else

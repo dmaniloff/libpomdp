@@ -12,6 +12,8 @@ package libpomdp.offline.java;
 
 // imports
 import libpomdp.common.java.*;
+import libpomdp.common.java.add.PomdpAdd;
+import libpomdp.common.java.add.ValueFunctionAdd;
 import symPerseusJava.*;
 import org.math.array.*;
 

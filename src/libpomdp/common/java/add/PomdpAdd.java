@@ -12,11 +12,15 @@
  * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
 
-package libpomdp.common.java;
+package libpomdp.common.java.add;
 
 // imports
 import symPerseusJava.*;
 import java.util.*;
+
+import libpomdp.common.java.BeliefState;
+import libpomdp.common.java.Util;
+
 import org.math.array.*;
 
 public class PomdpAdd implements pomdp {
@@ -157,7 +161,7 @@ public class PomdpAdd implements pomdp {
 	    b1 = new DD[1];
 	    b1[0] = ((BeliefStateAdd)bel).bAdd;
 	} else {
-	    b1 = ((BelStateFactoredADD)bel).marginals;
+	    b1 = ((BelStateFactoredAdd)bel).marginals;
 	}
 	// O_a * T_a * b1
 	DD[]  vars  = Util.concat(b1, T[a], O[a]);
@@ -175,7 +179,7 @@ public class PomdpAdd implements pomdp {
 	if (bel instanceof BeliefStateAdd) {
 	    return regulartao ((BeliefStateAdd)bel, a, o);
 	} else {
-	    return factoredtao((BelStateFactoredADD)bel, a, o);
+	    return factoredtao((BelStateFactoredAdd)bel, a, o);
 	}
     }
 
@@ -224,7 +228,7 @@ public class PomdpAdd implements pomdp {
      *  uses DD representation and functions from Symbolic Perseus
      *  uses the product of marginals to approximate a belief
      */
-    public BeliefState factoredtao(BelStateFactoredADD bel, int a, int o) {	    
+    public BeliefState factoredtao(BelStateFactoredAdd bel, int a, int o) {	    
 	// declarations
 	DD       b1[] = bel.marginals;	
 	DD       b2[];
@@ -242,7 +246,7 @@ public class PomdpAdd implements pomdp {
 	// unprime the b2 DD 
 	for(int i=0; i<nrStaV; i++) b2u[i] = OP.primeVars(b2[i], -nrTotV);
 	// no need to normalize, done inside OP.marginals()	    
-	bPrime = new BelStateFactoredADD(b2u, staIds);
+	bPrime = new BelStateFactoredAdd(b2u, staIds);
 	// return
 	return bPrime;
     }
@@ -258,7 +262,7 @@ public class PomdpAdd implements pomdp {
 	    b = ((BeliefStateAdd)bel).bAdd;
 	    return OP.dotProductNoMem(b, R[a], staIds);
 	} else {
-	    m = ((BelStateFactoredADD)bel).marginals;
+	    m = ((BelStateFactoredAdd)bel).marginals;
 	    return OP.factoredExpectationSparseNoMem(m, R[a]);
 	}
     }

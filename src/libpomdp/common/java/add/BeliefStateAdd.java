@@ -8,9 +8,10 @@
  * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
 
-package libpomdp.common.java;
+package libpomdp.common.java.add;
 
 // imports
+import libpomdp.common.java.BeliefState;
 import symPerseusJava.DD;
 import symPerseusJava.OP;
 

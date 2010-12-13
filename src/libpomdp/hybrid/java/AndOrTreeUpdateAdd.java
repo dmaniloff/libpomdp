@@ -15,9 +15,9 @@ import java.io.PrintStream;
 
 import libpomdp.common.java.Util;
 import libpomdp.common.java.Pomdp;
-import libpomdp.common.java.PomdpAdd;
 import libpomdp.common.java.ValueFunction;
-import libpomdp.common.java.ValueFunctionAdd;
+import libpomdp.common.java.add.PomdpAdd;
+import libpomdp.common.java.add.ValueFunctionAdd;
 import libpomdp.online.java.AndNode;
 import libpomdp.online.java.AndOrTree;
 import libpomdp.online.java.OrNode;
