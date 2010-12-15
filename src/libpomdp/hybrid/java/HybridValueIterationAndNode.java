@@ -9,6 +9,7 @@
 
 package libpomdp.hybrid.java;
 
+import libpomdp.common.java.CustomVector;
 import libpomdp.online.java.HeuristicSearchAndNode;
 import libpomdp.online.java.OrNode;
 
@@ -36,10 +37,10 @@ public class HybridValueIterationAndNode extends HeuristicSearchAndNode {
     }
 
     @Override
-    public void initChildren(int nrObs, double pOba[]) {
+    public void initChildren(int nrObs, CustomVector pOba) {
 	children_ = new HybridValueIterationOrNode[nrObs];
 	for(int observation = 0; observation < nrObs; observation++) {
-	    if(pOba[observation] != 0)
+	    if(pOba.get(observation) != 0)
 		children_[observation] = new HybridValueIterationOrNode();
 	} 
     }

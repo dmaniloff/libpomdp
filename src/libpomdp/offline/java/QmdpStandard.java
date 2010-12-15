@@ -1,23 +1,23 @@
 /** ------------------------------------------------------------------------- *
  * libpomdp
  * ========
- * File: mdp.java
- * Description: offline upper and lower bounds based on the underlying
- *              fully observable MDP (Vmdp, Qmdp, and Blind)
- *              have a look at the README references [6,2]
- *              do not try on large problems as this will run out of mem
- * Copyright (c) 2009, 2010 Diego Maniloff 
- * W3: http://www.cs.uic.edu/~dmanilof
+ * File: QmdpStandard.java
+ * Description: 
+ * Copyright (c) 2010 Mauricio Araya
  --------------------------------------------------------------------------- */
 
 package libpomdp.offline.java;
 
 // imports
-import libpomdp.common.java.*;
-import symPerseusJava.*;
-import org.math.array.*;
 
-public class qmdpFlat {
+import libpomdp.common.java.standard.PomdpStandard;
+import libpomdp.common.java.standard.ValueFunctionStandard;
+
+import org.math.array.DoubleArray;
+import org.math.array.IntegerArray;
+import org.math.array.LinearAlgebra;
+
+public class QmdpStandard {
     // ------------------------------------------------------------------------
     // properties
     // ------------------------------------------------------------------------
@@ -31,16 +31,16 @@ public class qmdpFlat {
     // ------------------------------------------------------------------------
 
     /// compute Vmdp and Qmdp
-    public ValueFunctionFlat getqmdpFlat(PomdpFlat problem) {
+    public ValueFunctionStandard getqmdpFlat(PomdpStandard problem) {
 	
 	// Vmdp.v is always 1 x |S|
-	double Vmdpv[][] = new double[1][problem.getnrSta()];
+	double Vmdpv[][] = new double[1][problem.nrStates()];
 	// this is equiv to init with max_a R(s,a)
-	Vmdpv[0]         = DoubleArray.fill(problem.getnrSta(), 0.0); 
+	Vmdpv[0]         = DoubleArray.fill(problem.nrStates(), 0.0); 
 
 	// Qmdp is |A| x |S|
-	double Qmdpv[][] = new double[problem.getnrAct()][problem.getnrSta()];
-	int    Qmdpa[]   = new int [problem.getnrAct()];
+	double Qmdpv[][] = new double[problem.nrActions()][problem.nrStates()];
+	int    Qmdpa[]   = new int [problem.nrActions()];
 
 	// declarations
 	double oldVmdp[];
@@ -50,18 +50,18 @@ public class qmdpFlat {
 
 	for(int iter=0; iter<MAX_ITER; iter++) {
 	    // initialize Qmdp - this may not be necessary
-	    Qmdpv = DoubleArray.fill(problem.getnrAct(), problem.getnrSta(), 0.0);
-	    Qmdpa = IntegerArray.fill(problem.getnrAct(), -1);
+	    Qmdpv = DoubleArray.fill(problem.nrActions(), problem.nrStates(), 0.0);
+	    Qmdpa = IntegerArray.fill(problem.nrActions(), -1);
 
 	    // asynchronous update
 	    oldVmdp = DoubleArray.copy(Vmdpv[0]);
 	    	    
-	    for(int a=0; a<problem.getnrAct(); a++) {
+	    for(int a=0; a<problem.nrActions(); a++) {
 		// Qmdp:
 		// Q_a = R(s,a) + \gamma \sum_{s'} {T(s,a,s') Vmdp_{t-1}(s')
-		gTaV = LinearAlgebra.times(LinearAlgebra.times(problem.getT(a), oldVmdp),
+		gTaV = LinearAlgebra.times(LinearAlgebra.times(problem.getTransitionTable(a).getArray(), oldVmdp),
 					   problem.getGamma());
-		Qmdpv[a] = LinearAlgebra.plus(problem.getR(a), gTaV);
+		Qmdpv[a] = LinearAlgebra.plus(problem.getImmediateRewards(a).getArray(), gTaV);
 		Qmdpa[a] = a; // remember actions here start from 0!!		
 	    }
 
@@ -77,9 +77,8 @@ public class qmdpFlat {
 	    if (conv <= EPSILON)
 		break;
 	}
-
-	return new ValueFunctionFlat(Qmdpv, Qmdpa);
+	return new ValueFunctionStandard(Qmdpv, Qmdpa);
 
     } // getqmdpFlat
 
-} // qmdpFlat
+} // QmdpStandard

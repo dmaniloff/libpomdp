@@ -7,32 +7,33 @@
  * Copyright (c) 2010 Mauricio Araya
  --------------------------------------------------------------------------- */
 
-package libpomdp.parser;
+package libpomdp.parser.java;
 
-// imports
-import org.antlr.runtime.*;
-import java.io.*;
 
-public class DotPomdpParserSparse {
+import org.antlr.runtime.ANTLRFileStream;
+import org.antlr.runtime.CommonTokenStream;
+import org.antlr.runtime.RecognitionException;
 
-    static PomdpSpecSparse dotpomdpSpec = null;
+public class DotPomdpParserStandard {
+
+    static PomdpSpecStandard dotpomdpSpec = null;
 
     public static void parse (String filename) throws Exception {
-	dotpomdpMTJLexer lex = new dotpomdpMTJLexer(new ANTLRFileStream(filename));
+	DotPomdpLexer lex = new DotPomdpLexer(new ANTLRFileStream(filename));
        	CommonTokenStream tokens = new CommonTokenStream(lex);
         DotPomdpParser parser = new DotPomdpParser(tokens);
         try {
-            parser.dotpomdp();
+            parser.dotPomdp();
         } catch (RecognitionException e)  {
             e.printStackTrace();
         }
 
 	dotpomdpSpec = parser.getSpec();
 
-	
+
     }
 
-    public PomdpSpecSparse getSpec() {
+    public static PomdpSpecStandard getSpec() {
 	return dotpomdpSpec;
     }
 }

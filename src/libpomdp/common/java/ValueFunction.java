@@ -10,18 +10,18 @@
 
 package libpomdp.common.java;
 
+
 public interface ValueFunction {
     
-    // list of actions associated with each alpha
-    public int[] getActions();
-
     // value of a belief according to this value function
     public double V(BeliefState b);
 
-    // flat representation
-    public double[][] getvFlat();
+    public CustomVector getVector(int idx);
 
-    // size of this value function
-    public int getSize();
+    // list of actions associated with each alpha
+    public int[] getActions();
+
+    public int size();
+
 
 } // ValueFunction

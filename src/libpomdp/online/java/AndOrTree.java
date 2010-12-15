@@ -13,9 +13,10 @@ package libpomdp.online.java;
 
 import java.io.PrintStream;
 
-import libpomdp.common.java.Util;
 import libpomdp.common.java.BeliefState;
+import libpomdp.common.java.CustomVector;
 import libpomdp.common.java.Pomdp;
+import libpomdp.common.java.Util;
 import libpomdp.common.java.ValueFunction;
 
 import org.math.array.DoubleArray;
@@ -74,20 +75,20 @@ public class AndOrTree {
 	HeuristicSearchAndNode a;
 	HeuristicSearchOrNode  o;
 	// poba vector for each action
-	double pOba[];
+	CustomVector pOba;
 	// save this node's old bounds
 	double old_l = en.l;
 	double old_u = en.u;	
 	// allocate space for the children AND nodes
-	en.initChildren(problem.getnrAct());
+	en.initChildren(problem.nrActions());
 	// iterate through the AND nodes
-	for (int action = 0; action < problem.getnrAct(); action++) {
+	for (int action = 0; action < problem.nrActions(); action++) {
 	    // type-cast, doon't yet know of a nicer way to do this
 	    a = en.getChild(action); 	
 	    // initialize this node, precompute Rba
-	    a.init(action, en, problem.Rba(en.getBeliefState(), action));
+	    a.init(action, en, problem.expectedImmediateReward(en.getBeliefState(), action));
 	    // pre-compute observation probabilities for the children of this node
-	    pOba = problem.P_Oba(en.getBeliefState(), action);
+	    pOba = problem.observationProbabilities(en.getBeliefState(), action);
 	    // allocate space for the children OR nodes, the ones with poba == 0 
 	    // are left null 
 	    //a.children = new HeuristicSearchOrNode[problem.getnrObs()];
@@ -95,22 +96,22 @@ public class AndOrTree {
 	    //if(pOba[observation] != 0)
 	    //a.children[observation] = new HeuristicSearchOrNode();
 	    //}
-	    a.initChildren(problem.getnrObs(), pOba);
+	    a.initChildren(problem.nrObservations(), pOba);
 	    // iterate through new fringe OR nodes
-	    for (int observation = 0; observation < problem.getnrObs(); observation++) {
+	    for (int observation = 0; observation < problem.nrObservations(); observation++) {
 		// type-cast, doon't yet know of a nicer way to do this
 		o = a.getChild(observation);
 		// ZERO-PROB OBSERVATIONS:
 		// here we should continue the loop and avoid re-computing V^L and V^U
 		// for belief nodes with poba == 0              
-		if (pOba[observation] == 0) {
+		if (pOba.get(observation) == 0) {
 		    //a.children[observation] = null; - already done!
 		    //observation++;
 		    continue;
 		} 
 		// initialize this node, set its poba
-		o.init(problem.tao(en.getBeliefState(), action, observation), observation, a);
-		o.getBeliefState().setpoba(pOba[observation]);
+		o.init(problem.nextBeliefState(en.getBeliefState(), action, observation), observation, a);
+		o.getBeliefState().setPoba(pOba.get(observation));
 		// compute upper and lower bounds for this node
 		o.u = offlineUpper.V(o.getBeliefState());
 		o.l = offlineLower.V(o.getBeliefState());		
@@ -212,7 +213,7 @@ public class AndOrTree {
 	double Lba = 0;
 	for(HeuristicSearchOrNode o : a.getChildren()) {
 	    // o.belief.getpoba() == 0 for null HeuristicSearchOrNodes anyway
-	    if(o != null) Lba += o.getBeliefState().getpoba() * o.l;
+	    if(o != null) Lba += o.getBeliefState().getPoba() * o.l;
 	}
 	return a.rba + problem.getGamma() * Lba;
     }
@@ -222,7 +223,7 @@ public class AndOrTree {
 	double Uba = 0;
 	for(HeuristicSearchOrNode o : a.getChildren()) {
 	    // o.belief.getpoba() == 0 for null HeuristicSearchOrNodes anyway
-	    if(o != null) Uba += o.getBeliefState().getpoba() * o.u;
+	    if(o != null) Uba += o.getBeliefState().getPoba() * o.u;
 	}
 	return a.rba + problem.getGamma() * Uba;
     }
@@ -267,7 +268,7 @@ public class AndOrTree {
     /// this function is randomized!!!!
     public int currentBestAction() {
 	// construct array with L(b,a)
-	double Lba[] = new double[problem.getnrAct()];
+	double Lba[] = new double[problem.nrActions()];
 	for(HeuristicSearchAndNode a : root.getChildren())
 	    Lba[a.getAct()] = a.l;
 	return Util.argmax(Lba);
@@ -355,7 +356,7 @@ public class AndOrTree {
 	// print this node
 	String b = "";
 	b = "b=[\\n " + 
-	DoubleArray.toString("%.2f",o.getBeliefState().getbPoint()) + 
+	DoubleArray.toString("%.2f",o.getBeliefState().getPoint().getArray()) + 
 	"]\\n";
 	out.format(o.hashCode() + "[label=\"" +
 		//b +
@@ -384,7 +385,7 @@ public class AndOrTree {
     protected void andprint(HeuristicSearchAndNode  a, PrintStream out) {
 	// print this node
 	out.format(a.hashCode() + "[label=\"" + 
-		"a=" + problem.getactStr(a.getAct()) + "\\n" + 	
+		"a=" + problem.getActionString(a.getAct()) + "\\n" + 	
 		"U(b,a)= %.2f\\n" +
 		"L(b,a)= %.2f" +
 		"\"];\n", a.u, a.l);
@@ -393,11 +394,11 @@ public class AndOrTree {
 	    if (!(o==null))		
 		out.format(a.hashCode() + "->" + o.hashCode() + 
 			"[label=\"" +
-			"obs: " + problem.getobsStr(o.getObs()) + "\\n" +
+			"obs: " + problem.getObservationString(o.getObs()) + "\\n" +
 			"P(o|b,a)= %.2f\\n" + 
 			"H(b,a,o)= %.2f" +  
 			"\"];\n",
-			o.getBeliefState().getpoba(),
+			o.getBeliefState().getPoba(),
 			 o.h_bao);
 	}
 	out.println();

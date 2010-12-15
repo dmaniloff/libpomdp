@@ -13,15 +13,16 @@ package libpomdp.hybrid.java;
 // imports
 import java.io.PrintStream;
 
-import libpomdp.common.java.Util;
+import libpomdp.common.java.CustomVector;
 import libpomdp.common.java.Pomdp;
+import libpomdp.common.java.Util;
 import libpomdp.common.java.ValueFunction;
 import libpomdp.common.java.add.PomdpAdd;
 import libpomdp.common.java.add.ValueFunctionAdd;
 import libpomdp.online.java.AndNode;
 import libpomdp.online.java.AndOrTree;
-import libpomdp.online.java.OrNode;
 import libpomdp.online.java.ExpandHeuristic;
+import libpomdp.online.java.OrNode;
 
 import org.math.array.DoubleArray;
 import org.math.array.IntegerArray;
@@ -56,7 +57,7 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 	this.root    = new HybridValueIterationOrNode();
 	this.problem = (PomdpAdd) super.problem;
 	this.bakH    =  bakh;
-	this.treeSupportSetSize = IntegerArray.fill(offlineLower.getSize(), 0);
+	this.treeSupportSetSize = IntegerArray.fill(offlineLower.size(), 0);
     }
 
     /// Overridden initializer (is there another way???)
@@ -85,7 +86,7 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 	HybridValueIterationAndNode a;
 	HybridValueIterationOrNode  o;
 	// poba vector for each action
-	double pOba[];
+	CustomVector pOba;
 	// save this node's old bounds
 	double old_l = en.l;
 	double old_u = en.u;
@@ -93,43 +94,43 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 	//en.children = new HybridValueIterationAndNode[problem.getnrAct()];
 	//for(int action = 0; action < problem.getnrAct(); action++) 
 	//    en.children[action] = new HybridValueIterationAndNode();
-	en.initChildren(problem.getnrAct());
+	en.initChildren(problem.nrActions());
 	// iterate through the AND nodes
-	for (int action = 0; action < problem.getnrAct(); action++) {
+	for (int action = 0; action < problem.nrActions(); action++) {
 	    // type-cast, doon't yet know of a nicer way to do this
 	    a = en.getChild(action);
 	    // initialize this node, precompute and store Rba
-	    a.init(action, en, problem.Rba(en.getBeliefState(), action));
+	    a.init(action, en, problem.expectedImmediateReward(en.getBeliefState(), action));
 	    // pre-compute observation probabilities for the children of this node
-	    pOba = problem.P_Oba(en.getBeliefState(), action);
+	    pOba = problem.observationProbabilities(en.getBeliefState(), action);
 	    // allocate space for the children OR nodes 
 	    //	    a.children = new HybridValueIterationOrNode[problem.getnrObs()];
 	    //	    for(int observation = 0; observation < problem.getnrObs(); observation++) {
 	    //		if(pOba[observation] != 0)
 	    //		    a.children[observation] = new HybridValueIterationOrNode();
 	    //	    }
-	    a.initChildren(problem.getnrObs(), pOba);
+	    a.initChildren(problem.nrObservations(), pOba);
 	    // iterate through new fringe OR nodes
-	    for (int observation = 0; observation < problem.getnrObs(); observation++) {
+	    for (int observation = 0; observation < problem.nrObservations(); observation++) {
 		// type-cast, doon't yet know of a nicer way to do this
 		o = a.getChild(observation);
 		// ZERO-PROB OBSERVATIONS:
 		// here we should continue the loop and avoid re-computing V^L and V^U
 		// for belief nodes with poba == 0              
-		if (pOba[observation] == 0) {
+		if (pOba.get(observation) == 0) {
 		    //a.children[observation] = null;
 		    //observation++;
 		    continue;
 		} 
 		// initialize this node with factored belief, set its poba		
-		o.init(problem.tao(en.getBeliefState(),action,observation), observation, a);
-		o.getBeliefState().setpoba(pOba[observation]);		
+		o.init(problem.nextBeliefState(en.getBeliefState(),action,observation), observation, a);
+		o.getBeliefState().setPoba(pOba.get(observation));		
 		// compute upper and lower bounds for this node
 		o.u = offlineUpper.V(o.getBeliefState());		
 		o.l = offlineLower.V(o.getBeliefState());
 		// save one valid plan id for this andNode
 		// may be saved multiple times, but it's ok
-		a.validPlanid = o.getBeliefState().getplanid();
+		a.validPlanid = o.getBeliefState().getAlpha();
 		// H(b)
 		o.h_b = expH.h_b(o);
 		// H(b,a,o)	
@@ -141,7 +142,7 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 		// increase subtree size of en accordingly
 		en.setSubTreeSize(en.getSubTreeSize() + 1);
 		// add each of these to the support set sizes
-		treeSupportSetSize[o.getBeliefState().getplanid()]++; 
+		treeSupportSetSize[o.getBeliefState().getAlpha()]++; 
 	    } // HybridValueIterationOrNode loop
 
 	    // L(b,a) = R(b,a) + \gamma \sum_o P(o|b,a)L(tao(b,a,o))
@@ -158,8 +159,8 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 	    // initialization of the andNode since none of its children
 	    // can be backed-up given that they are all fringe nodes
 	    // we only allocate the right amount of space for bakHeuristicStar
-	    a.bakHeuristicStar = new double[offlineLower.getSize()]; // all zeros
-	    a.bakCandidate     = new HybridValueIterationOrNode[offlineLower.getSize()]; // all nulls
+	    a.bakHeuristicStar = new double[offlineLower.size()]; // all zeros
+	    a.bakCandidate     = new HybridValueIterationOrNode[offlineLower.size()]; // all nulls
 	}  // andNode loop
 
 	// update values in en
@@ -184,10 +185,10 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 	en.bakHeuristic = bakH.h_b(en); 
 	// the backup candidate is still itself and it has its own value as best
 	// we can now allocate the right amount of space for the bakheuristics
-	en.bakHeuristicStar = new double[offlineLower.getSize()]; // all zeros
-	en.bakCandidate     = new HybridValueIterationOrNode[offlineLower.getSize()]; // all nulls 
-	en.bakHeuristicStar[en.getBeliefState().getplanid()] = en.bakHeuristic;
-	en.bakCandidate[en.getBeliefState().getplanid()]     = en;
+	en.bakHeuristicStar = new double[offlineLower.size()]; // all zeros
+	en.bakCandidate     = new HybridValueIterationOrNode[offlineLower.size()]; // all nulls 
+	en.bakHeuristicStar[en.getBeliefState().getAlpha()] = en.bakHeuristic;
+	en.bakCandidate[en.getBeliefState().getAlpha()]     = en;
     } // (overridden) expand
 
 
@@ -221,7 +222,7 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 	    // b*(b,a) - propagate ref of b*
 	    a.bStar = a.getChild(a.oStar).bStar;
 	    // propagate references of backup candidates and its H value
-	    for (int i = 0; i < offlineLower.getSize(); i++) {
+	    for (int i = 0; i < offlineLower.size(); i++) {
 		a.bakCandidate[i] = bakH.updateBakStar(a, n.getObs(), i);
 	    }
 	    // increase subtree size by the branching factor |A||O|
@@ -241,7 +242,7 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 	    // update reference to best fringe node in the subtree of en
 	    o.bStar = o.getChild(o.aStar).bStar;
 	    // update reference of backup candidate and its H value
-	    for (int i = 0; i < offlineLower.getSize(); i++) {
+	    for (int i = 0; i < offlineLower.size(); i++) {
 		o.bakCandidate[i] = bakH.updateBakStar(o, a.getAct(), i);
 	    }
 	    // increase subtree size accordingly
@@ -261,7 +262,7 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 	this.root = newroot;
 	this.root.disconnect();
 	// reset treeSupportSetSize
-	this.treeSupportSetSize = IntegerArray.fill(offlineLower.getSize(), 0);
+	this.treeSupportSetSize = IntegerArray.fill(offlineLower.size(), 0);
     } // (overridden) moveTree  
 
 
@@ -281,7 +282,7 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
      */
     protected double ORpropagateLexpand(HybridValueIterationOrNode o) {
 	// construct array with L(b,a)
-	double Lba[] = new double[problem.getnrAct()];
+	double Lba[] = new double[problem.nrActions()];
 	for(HybridValueIterationAndNode a : o.getChildren()) 
 	    Lba[a.getAct()] = a.l;
 	o.oneStepBestAction = Util.argmax(Lba);
@@ -305,7 +306,7 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 	    // compute g_{a,o}^{planid}
 	    // problem.gao(lowerBound[o.belief.getplanid()], bestA, o.getobs()).display();
 	    gab = OP.add(gab, problem.
-		    gao(lowerBound[o.getBeliefState().getplanid()], bestA, o.getObs()));
+		    gao(lowerBound[o.getBeliefState().getAlpha()], bestA, o.getObs()));
 	}    
 	// multiply result by discount factor and add it to r_a
 	gab = OP.mult(gamma, gab);
@@ -347,7 +348,7 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 	    } else {
 		// compute g_{a,o}^{planid}
 		gab = OP.add(gab, problem.
-			gao(lowerBound[o.getBeliefState().getplanid()], 
+			gao(lowerBound[o.getBeliefState().getAlpha()], 
 				on.oneStepBestAction, 
 				obs));
 	    }
@@ -385,7 +386,7 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 	double expR = 0;
 	for(OrNode o : root.getChild(bestA).getChildren()) {
 	    // null nodes do not contribute to this sum
-	    if(o!=null) expR += o.getBeliefState().getpoba() * o.getSubTreeSize();
+	    if(o!=null) expR += o.getBeliefState().getPoba() * o.getSubTreeSize();
 	}
 	return expR;
     } // expectedReuse
@@ -394,12 +395,13 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
     /// correct the extra |A||O| in subTreeSize of root node
     public double expectedReuseRatio() {
 	return expectedReuse() / 
-	(root.getSubTreeSize() - problem.getnrObs() * problem.getnrAct());
+	(root.getSubTreeSize() - problem.nrObservations() * problem.nrActions());
     } // expectedReuseRatio
 
     /// overriden here to print the backupHeuristic of each node
     /// output a dot-formatted file to print the tree
     /// starting from a given HybridValueIterationOrNode
+    @Override
     public void printdot(String filename) {
 	OrNode root = this.root;
 	PrintStream out = null;
@@ -422,8 +424,9 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
     private void orprint(HybridValueIterationOrNode o, PrintStream out) {
 	// print this node
 	String b = "";
-	if (o.getBeliefState().getbPoint().length < 4)
-	    b = "b=[" + DoubleArray.toString("%.2f",o.getBeliefState().getbPoint()) + "]\\n";
+	if (problem.nrStates() < 4)
+	    b = "b=[" + DoubleArray.toString("%.2f",
+		    o.getBeliefState().getPoint().getArray()) + "]\\n";
 	out.format(o.hashCode() + "[label=\"" +
 		//b +
 		"U(b)= %.2f\\n" +
@@ -471,22 +474,22 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
     protected void andprint(HybridValueIterationAndNode a, PrintStream out) {
 	// print this node
 	out.format(a.hashCode() + "[label=\"" + 
-		"a=" + problem.getactStr(a.getAct()) + "\\n" + 	
-		"U(b,a)= %.2f\\n" +
-		"L(b,a)= %.2f" +
-		"\"];\n", a.u, a.l);
-
+		   "a=" + problem.getActionString(a.getAct()) + "\\n" + 	
+		   "U(b,a)= %.2f\\n" +
+		   "L(b,a)= %.2f" +
+		   "\"];\n", a.u, a.l);
+	
 	// print outgoing edges for this node
 	for(HybridValueIterationOrNode o : a.getChildren()) {
 	    if (!(o==null))
 		out.format(a.hashCode() + "->" + o.hashCode() + 
-			"[label=\"" +
-			"obs: " + problem.getobsStr(o.getObs()) + "\\n" +
-			"P(o|b,a)= %.2f\\n" + 
-			"H(b,a,o)= %.2f" +  
-			"\"];",
-			o.getBeliefState().getpoba(),
-			o.h_bao);
+			   "[label=\"" +
+			   "obs: " + problem.getObservationString(o.getObs()) + "\\n" +
+			   "P(o|b,a)= %.2f\\n" + 
+			   "H(b,a,o)= %.2f" +  
+			   "\"];",
+			   o.getBeliefState().getPoba(),
+			   o.h_bao);
 	}
 	out.println();
 
@@ -497,6 +500,5 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 	// recurse
 	for(HybridValueIterationOrNode o : a.getChildren()) if(!(o==null)) orprint(o,out);
     }
-
 
 } // AndOrTreeUpdateAdd

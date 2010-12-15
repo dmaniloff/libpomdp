@@ -14,16 +14,17 @@
 package libpomdp.common.java.add;
 
 // imports
-import symPerseusJava.*;
-import org.math.array.*;
-import java.io.*;
+import java.io.Serializable;
 
 import libpomdp.common.java.BeliefState;
+import libpomdp.common.java.CustomVector;
 import libpomdp.common.java.Util;
 import libpomdp.common.java.ValueFunction;
+import symPerseusJava.DD;
+import symPerseusJava.OP;
 
 public class ValueFunctionAdd implements ValueFunction, Serializable {
-    
+
     // ------------------------------------------------------------------------
     // properties
     // ------------------------------------------------------------------------
@@ -51,34 +52,43 @@ public class ValueFunctionAdd implements ValueFunction, Serializable {
     // interface methods
     // ------------------------------------------------------------------------
 
+    // return value of a belief state
+    @Override
+    public double V(BeliefState bel) {
+        // declarations
+        DD     b;
+        DD     m[];
+        double dotProds[];
+        // compute dot products
+        if (bel instanceof BeliefStateAdd) {
+            b = ((BeliefStateAdd)bel).bAdd; 
+            dotProds = OP.dotProductNoMem(b, vAdd, staIds);
+        } else {
+            m = ((BelStateFactoredAdd)bel).marginals;
+            dotProds = OP.factoredExpectationSparseNoMem(m, vAdd);
+        }
+        // find best vector
+        int argmax = Util.argmax(dotProds);
+        // save the index of the alpha that supports this belief point
+        bel.setAlpha(argmax);
+        return dotProds[argmax];
+    }
+
+    @Override
+    public CustomVector getVector(int idx) {
+        double[][] val=OP.convert2array(vAdd, staIds);
+        return new CustomVector(val[idx]);
+    }
+
     // list of actions associated with each alpha
+    @Override
     public int[] getActions() {
 	return a;
     }
-    
-    public int getSize() {
-	return a.length;	
-    }
 
-    // return value of a belief state
-    public double V(BeliefState bel) {
-	// declarations
-	DD     b;
-	DD     m[];
-	double dotProds[];
-	// compute dot products
-	if (bel instanceof BeliefStateAdd) {
-	    b = ((BeliefStateAdd)bel).bAdd; 
-	    dotProds = OP.dotProductNoMem(b, vAdd, staIds);
-	} else {
-	    m = ((BelStateFactoredAdd)bel).marginals;
-	    dotProds = OP.factoredExpectationSparseNoMem(m, vAdd);
-	}
-	// find best vector
-	int argmax = Util.argmax(dotProds);
-	// save the index of the alpha that supports this belief point
-	bel.setplanid(argmax);
-	return dotProds[argmax];
+    @Override
+    public int size() {
+	return a.length;	
     }
 
     // return flat value function
@@ -91,4 +101,4 @@ public class ValueFunctionAdd implements ValueFunction, Serializable {
 	return vAdd;
     }
 
-} // ValueFunctionAdd
+} // valueFunctionAdd

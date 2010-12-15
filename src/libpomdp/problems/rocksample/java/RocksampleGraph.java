@@ -7,9 +7,9 @@
  * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
 
-package libpomdp.problems.rocksample;
+package libpomdp.problems.rocksample.java;
 
-public class rocksampleGraph {
+public class RocksampleGraph {
     
     // draw the world
     public void drawState(int n, int k[][], int factoredS[][]) {

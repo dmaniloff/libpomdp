@@ -14,20 +14,20 @@ package libpomdp.common.java;
 public interface BeliefState {
 
     /// flat belief point
-    public double[] getbPoint();
+    public CustomVector getPoint();
 
-    /// reachability prob = P(o|b,a)
+    /// reachability probability = P(o|b,a)
     /// that is associated with the computation of tao(b,a,o)
-    public double getpoba();
+    public double getPoba();
 
-    /// set reachability prob
-    public void setpoba(double poba);
-
-    /// get index of the alpha vector that supports this point 
-    public int getplanid();
+    /// set reachability probability
+    public void setPoba(double poba);
 
     /// get index of the alpha vector that supports this point 
-    public void setplanid(int planid);
+    public int getAlpha();
+
+    /// get index of the alpha vector that supports this point 
+    public void setAlpha(int planid);
 
     /// returns the entropy of the belief in nats
     public double getEntropy();

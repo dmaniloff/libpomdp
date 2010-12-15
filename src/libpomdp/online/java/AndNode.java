@@ -9,6 +9,8 @@
 
 package libpomdp.online.java;
 
+import libpomdp.common.java.CustomVector;
+
 public abstract class AndNode {
 
     // should these be private too?
@@ -22,7 +24,7 @@ public abstract class AndNode {
 	act_              = action;
     }
 
-    public abstract void initChildren(int nrObs, double pOba[]);
+    public abstract void initChildren(int nrObs, CustomVector pOba);
 
     public abstract OrNode getParent();
 

@@ -1,8 +1,8 @@
 /** ------------------------------------------------------------------------- *
  * libpomdp
  * ========
- * File: BeliefStateAdd.java
- * Description: implements BeliefState via an ADD
+ * File: belStateAdd.java
+ * Description: implements belState via an ADD
  *              uses Popuart's implementation from Symbolic Perseus
  * Copyright (c) 2009, 2010 Diego Maniloff 
  * W3: http://www.cs.uic.edu/~dmanilof
@@ -10,11 +10,11 @@
 
 package libpomdp.common.java.add;
 
-// imports
 import libpomdp.common.java.BeliefState;
+import libpomdp.common.java.CustomVector;
 import symPerseusJava.DD;
 import symPerseusJava.OP;
-
+ 
 public class BeliefStateAdd implements BeliefState {
     
     // main property is the DD itself
@@ -23,7 +23,7 @@ public class BeliefStateAdd implements BeliefState {
     // probability of reaching this belief when computing tao
     private double poba = -1.0;
 
-    // plain id that suuports this belief point
+    // plain id that supports this belief point
     private int planid = -1;
 
     // we need the state variable ids to call convert2array
@@ -38,29 +38,35 @@ public class BeliefStateAdd implements BeliefState {
     }
 
     // compute this only if we actually need it
-    public double[] getbPoint() {
-	return	OP.convert2array(bAdd, staIds);
+    @Override
+    public CustomVector getPoint() {
+    	return(new CustomVector(OP.convert2array(bAdd, staIds)));
     }
 
-    public double getpoba() {
+    @Override
+    public double getPoba() {
 	return poba;
     }
 
-    public void setpoba(double poba) {
+    @Override
+    public void setPoba(double poba) {
 	this.poba = poba;
     }
 
-    public int getplanid() {
+    @Override
+    public int getAlpha() {
 	return planid;
     }
 
-    public void setplanid(int planid) {
+    @Override
+    public void setAlpha(int planid) {
 	this.planid = planid;
     }
 
+    @Override
     public double getEntropy() {
 	// TODO Auto-generated method stub
-	return -1;
+	return 0;
     }
 
-} // BeliefState
+} // BelStateAdd

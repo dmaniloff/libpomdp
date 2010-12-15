@@ -9,43 +9,46 @@
 
 package libpomdp.common.java;
 
+
 public interface Pomdp {
 
-    /// P(o|b,a) in vector form for all o's
-    public double[] P_Oba(BeliefState b, int a);
-
     /// tao(b,a,o)
-    public BeliefState tao(BeliefState b, int a, int o);
+    public BeliefState nextBeliefState(BeliefState b, int a, int o);
 
-    /// R(b,a)
-    public double Rba(BeliefState b, int a);
+    /// R(b,a): scalar value
+    public double expectedImmediateReward(BeliefState b, int a);
+
+    /// P(o|b,a): 1 x o in vector form for all o's
+    public CustomVector observationProbabilities(BeliefState bel, int a);
 
     /// T(s,a,s'): s x s' matrix
-    /// will generally be used by mdp.java
-    public double[][] getT(int a);
+    public CustomMatrix getTransitionTable(int a);
 
+    /// O(s',a,o): s' x o matrix
+    public CustomMatrix getObservationTable(int a);
+    
     /// R(s,a): 1 x s vector
-    public double[] getR(int a);
+    public CustomVector getImmediateRewards(int a);
+
+    /// initial belief state
+    public BeliefState getInitialBeliefState();
 
     /// nrSta: total # of states
-    public int getnrSta();
+    public int nrStates();
 
     /// nrAct: # of actions
-    public int getnrAct();
+    public int nrActions();
 
     /// nrObs: total # of observations
-    public int getnrObs();
+    public int nrObservations();
 
     /// \gamma
     public double getGamma();
 
-    /// initial belief state
-    public BeliefState getInit();
-
     /// action names
-    public String getactStr(int a);
+    public String getActionString(int a);
 
     /// observation names
-    public String getobsStr(int o);
+    public String getObservationString(int o);
 
 } // Pomdp

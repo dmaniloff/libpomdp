@@ -11,6 +11,8 @@
 
 package libpomdp.online.java;
 
+import libpomdp.common.java.CustomVector;
+
 public class HeuristicSearchAndNode extends AndNode {
 
     public double                l;
@@ -26,10 +28,10 @@ public class HeuristicSearchAndNode extends AndNode {
     }
 
     @Override
-    public void initChildren(int nrObs, double pOba[]) {
+    public void initChildren(int nrObs, CustomVector pOba) {
 	children_ = new HeuristicSearchOrNode[nrObs];
 	for(int observation = 0; observation < nrObs; observation++) {
-	    if(pOba[observation] != 0)
+	    if(pOba.get(observation) != 0)
 		children_[observation] = new HeuristicSearchOrNode();
 	} 
     }

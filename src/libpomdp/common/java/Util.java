@@ -4,7 +4,7 @@
  * File: Util.java
  * Description: useful general routines - everything in this class is static
  * Copyright (c) 2009, 2010 Diego Maniloff 
- * W3: http://www.cs.uic.edu/~dmanilof
+ * Copyright (c) 2010 Mauricio Araya
  --------------------------------------------------------------------------- */
 
 package libpomdp.common.java;
@@ -29,8 +29,8 @@ public class Util {
 		return i;
 	return d.length-1;
     }
-		
-    
+
+
     /// randomized argmax
     public static int argmax(double v[]) {
 	// declarations
@@ -49,7 +49,7 @@ public class Util {
 	    }
 	}
 	return argmax;
-		
+
     } // argmax
 
     // arternative, possibly slower, but more uniform
@@ -72,7 +72,25 @@ public class Util {
 
     } // argmax2
 
-
+    public static int argmin(double[] v) {
+	// declarations
+	double minv = Double.POSITIVE_INFINITY;
+	int argmin  = -1;
+	int c;
+	for(c=0; c<v.length; c++) {
+	    if (v[c] < minv) {
+		minv   = v[c];
+		argmin = c;
+	    } 
+	    if (v[c] == minv) {
+		// randomly decide to change index - this will no be uniform!
+		if (gen.nextInt(2) == 0)
+		    argmin = c;
+	    }
+	}
+	return argmin;
+}
+    
     /// concatenate DD arrays
     public static DD[] concat(DD[] first, DD[]... rest) {
 	int totalLength = first.length;
@@ -101,7 +119,7 @@ public class Util {
 	last[0]   = l;
 	return concat(first, last);
     }
-    
+
     /**
      * sdecode:
      * 
@@ -149,6 +167,14 @@ public class Util {
 	}
 	// back to format from 1
 	return s + 1;
+    }
+
+    public static int[] convertIntegers(ArrayList<Integer> integers) {
+	int[] ret = new int[integers.size()];
+	for (int i=0; i < ret.length; i++) {
+	    ret[i] = integers.get(i).intValue();
+	}
+	return ret;
     }
 
 } // Util

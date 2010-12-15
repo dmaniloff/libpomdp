@@ -11,13 +11,13 @@
 package libpomdp.offline.java;
 
 // imports
-import libpomdp.common.java.*;
 import libpomdp.common.java.add.PomdpAdd;
 import libpomdp.common.java.add.ValueFunctionAdd;
-import symPerseusJava.*;
-import org.math.array.*;
+import symPerseusJava.DD;
+import symPerseusJava.DDleaf;
+import symPerseusJava.OP;
 
-public class qmdpAdd {
+public class QmdpAdd {
 
     // parameters
     final int MAXITERATIONS = 500;
@@ -30,13 +30,13 @@ public class qmdpAdd {
 	double maxdelta;
 
 	// allocate alpha vectors
-	DD Vqmdp[]  = new DD[factoredProb.getnrAct()];
+	DD Vqmdp[]  = new DD[factoredProb.nrActions()];
 	DD Vmdp     = DD.zero;
 	DD old_Vmdp = DD.zero;
 
 	// allocate policy - one vec per action
-	int policy[]    = new int [factoredProb.getnrAct()]; 
-	for (int a=0; a<factoredProb.getnrAct(); a++) policy[a] = a;
+	int policy[]    = new int [factoredProb.nrActions()]; 
+	for (int a=0; a<factoredProb.nrActions(); a++) policy[a] = a;
 
 	DD ddDiscFact   = DDleaf.myNew(factoredProb.getGamma());
 
@@ -48,7 +48,7 @@ public class qmdpAdd {
 	    // prime vars forward
 	    Vmdp = OP.primeVars(Vmdp, factoredProb.getnrTotV());
 
-	    for(int a=0; a<factoredProb.getnrAct(); a++) {
+	    for(int a=0; a<factoredProb.nrActions(); a++) {
 		// concat all ADDs into one array        
 		adds                = new DD[1+factoredProb.T[a].length+1];
 		adds[0]             = ddDiscFact;

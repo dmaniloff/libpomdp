@@ -10,8 +10,8 @@
 
 package libpomdp.common.java.add;
 
-// imports
 import libpomdp.common.java.BeliefState;
+import libpomdp.common.java.CustomVector;
 import symPerseusJava.DD;
 import symPerseusJava.OP;
 
@@ -43,35 +43,41 @@ public class BelStateFactoredAdd implements BeliefState {
 	this.staIds    = staIds;	
     }
 
+    // compute this only if we actually need it
+    @Override
+    public CustomVector getPoint() {
+	return	new CustomVector(OP.convert2array(OP.multN(marginals), staIds));
+    }
+
+    @Override
+    public double getPoba() {
+	return poba;
+    }
+
+    @Override
+    public void setPoba(double poba) {
+	this.poba = poba;
+    }
+
+    @Override
+    public int getAlpha() {
+	return planid;
+    }
+
+    @Override
+    public void setAlpha(int planid) {
+	this.planid = planid;
+    }
+
     // compute entropy of this point in nats
+    @Override
     public double getEntropy() {
-	DD m[] = new DD[marginals.length-1];
-	System.arraycopy(marginals, 0, m, 0, marginals.length-1);
-	return -OP.dotProductNoMem(
+        DD m[] = new DD[marginals.length-1];
+        System.arraycopy(marginals, 0, m, 0, marginals.length-1);
+        return -OP.dotProductNoMem(
                 	OP.log(OP.multN(m)),
                         OP.multN(m),
                         staIds);
     }
-    
-    // compute this only if we actually need it
-    public double[] getbPoint() {
-	return	OP.convert2array(OP.multN(marginals), staIds); // bug here, should be marginals(1:10)
-    }
 
-    public double getpoba() {
-	return poba;
-    }
-
-    public void setpoba(double poba) {
-	this.poba = poba;
-    }
-
-    public int getplanid() {
-	return planid;
-    }
-
-    public void setplanid(int planid) {
-	this.planid = planid;
-    }
-
-} // BeliefState
+} // BeliefStateFactoredAdd

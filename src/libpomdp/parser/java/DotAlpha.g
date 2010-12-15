@@ -1,37 +1,37 @@
 /** ------------------------------------------------------------------------- *
  * libpomdp
  * ========
- * File: dotalpha.g
+ * File: DotAlpha.g
  * Description: 
  * Copyright (c) 2009, 2010 Diego Maniloff 
  * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
 
-grammar dotalpha;
+grammar DotAlpha;
 
 /*------------------------------------------------------------------
  * LEXER INITIALIZATIONS
  *------------------------------------------------------------------*/
 @lexer::header {
-    package libpomdp.general.java;
+    package libpomdp.parser.java;
 }
 
 /*------------------------------------------------------------------
  * PARSER INITIALIZATIONS
  *------------------------------------------------------------------*/
 @header {
-    package libpomdp.general.java;
+    package libpomdp.parser.java;
 }
 
 @members {
     // main method
     public static void main(String[] args) throws Exception {
-        dotalphaLexer lex = new dotalphaLexer(new ANTLRFileStream(args[0]));
+        DotAlphaLexer lex = new DotAlphaLexer(new ANTLRFileStream(args[0]));
        	CommonTokenStream tokens = new CommonTokenStream(lex);
-        dotalphaParser parser = new dotalphaParser(tokens);
+        DotAlphaParser parser = new DotAlphaParser(tokens);
 
         try {
-            parser.dotalpha();
+            parser.dotAlpha();
         } catch (RecognitionException e)  {
             e.printStackTrace();
         }
@@ -83,7 +83,7 @@ EXPONENT : ('e'|'E') ('+'|'-')? ('0'..'9')+ ;
 /*------------------------------------------------------------------
  * PARSER RULES
  *------------------------------------------------------------------*/
-dotalpha
+dotAlpha
     :           
         (
             action_decl 
