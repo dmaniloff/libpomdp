@@ -16,9 +16,9 @@ import org.antlr.runtime.RecognitionException;
 
 public class DotPomdpParserStandard {
 
-    static PomdpSpecStandard dotpomdpSpec = null;
+    //static PomdpSpecStandard dotpomdpSpec = null;
 
-    public static void parse (String filename) throws Exception {
+    public static PomdpSpecStandard parse (String filename) throws Exception {
 	DotPomdpLexer lex = new DotPomdpLexer(new ANTLRFileStream(filename));
        	CommonTokenStream tokens = new CommonTokenStream(lex);
         DotPomdpParser parser = new DotPomdpParser(tokens);
@@ -28,12 +28,13 @@ public class DotPomdpParserStandard {
             e.printStackTrace();
         }
 
-	dotpomdpSpec = parser.getSpec();
-
+	//dotpomdpSpec = parser.getSpec();
+	
+	return parser.getSpec();
 
     }
 
-    public static PomdpSpecStandard getSpec() {
-	return dotpomdpSpec;
-    }
+//    public static PomdpSpecStandard getSpec() {
+//	return dotpomdpSpec;
+//    }
 }

@@ -26,10 +26,14 @@
 package libpomdp.common.java.standard;
 
 // imports
+import java.util.ArrayList;
+
 import libpomdp.common.java.BeliefState;
 import libpomdp.common.java.CustomMatrix;
 import libpomdp.common.java.CustomVector;
 import libpomdp.common.java.Pomdp;
+import libpomdp.parser.java.DotPomdpParserStandard;
+import libpomdp.parser.java.PomdpSpecStandard;
 
 public class PomdpStandard implements Pomdp {
 
@@ -59,31 +63,56 @@ public class PomdpStandard implements Pomdp {
     private double gamma;
 
     // action names
-    private String actStr[];
+    private ArrayList<String>  actStr;
 
     // observation names
-    private String obsStr[];
-
+    private ArrayList<String> obsStr;
+    
     // starting belief
     private BeliefStateStandard initBelief;
-
-    private String staStr[];
 
     // ------------------------------------------------------------------------
     // methods
     // ------------------------------------------------------------------------
 
     /// constructor
-    public PomdpStandard(CustomMatrix[]  O, 
+
+    public PomdpStandard(String pomdpFilename) {
+
+	// specs of the problem
+	PomdpSpecStandard prob = null;
+
+	// instantiate parser and parse
+	try {
+	    prob =
+		DotPomdpParserStandard.parse(pomdpFilename);
+	} catch (Exception e) {
+	    // TODO Auto-generated catch block
+	    e.printStackTrace();
+	    System.exit(-1);
+	}
+
+	init(prob.O,
+		prob.T,
+		prob.R,
+		prob.nrSta,
+		prob.nrAct,
+		prob.nrObs,
+		prob.discount,
+		prob.actList,
+		prob.obsList,
+		prob.startState);
+    }
+
+    private void init(CustomMatrix[]  O, 
 	    CustomMatrix[]  T, 
 	    CustomVector[]  R,
 	    int          nrSta, 
 	    int          nrAct, 
 	    int          nrObs, 
 	    double       gamma,
-	    String 	   staStr[],
-	    String       actStr[],
-	    String       obsStr[],
+	    ArrayList<String> actStr,
+	    ArrayList<String> obsStr,
 	    CustomVector init) {
 
 	// allocate space for the pomdp models
@@ -94,7 +123,6 @@ public class PomdpStandard implements Pomdp {
 	this.O      = new CustomMatrix[nrAct];
 	this.R      = new CustomVector[nrAct];
 	this.gamma  = gamma;
-	this.staStr = staStr;
 	this.actStr = actStr;
 	this.obsStr = obsStr;
 
@@ -204,17 +232,17 @@ public class PomdpStandard implements Pomdp {
 
     @Override
     public String getActionString(int a) {
-	return actStr[a];
+	return actStr.get(a);
     }
 
     @Override
     public String getObservationString(int o) {	
-	return obsStr[o];
+	return obsStr.get(o);
     }
 
-    public String[] getStateString() {
-	return staStr;
-    }
+//    public String[] getStateString() {
+//	return staStr.;
+//    }
 
 } // PomdpStandard
 
