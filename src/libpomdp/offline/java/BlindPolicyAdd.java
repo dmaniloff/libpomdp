@@ -19,7 +19,7 @@ import symPerseusJava.DD;
 import symPerseusJava.DDleaf;
 import symPerseusJava.OP;
 
-public class BlindAdd {
+public class BlindPolicyAdd {
 
     // parameters
     final int MAXITERATIONS = 500;

@@ -17,7 +17,7 @@ import symPerseusJava.DD;
 import symPerseusJava.DDleaf;
 import symPerseusJava.OP;
 
-public class QmdpAdd {
+public class QmdpPolicyAdd {
 
     // parameters
     final int MAXITERATIONS = 500;
