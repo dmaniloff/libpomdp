@@ -10,9 +10,14 @@
 package libpomdp.offline.java;
 
 // imports
-import libpomdp.general.java.*;
-import symPerseusJava.*;
-import org.math.array.*;
+import libpomdp.general.java.pomdpAdd;
+import libpomdp.general.java.valueFunctionAdd;
+
+import org.math.array.DoubleArray;
+
+import symPerseusJava.DD;
+import symPerseusJava.DDleaf;
+import symPerseusJava.OP;
 
 public class blindAdd {
 

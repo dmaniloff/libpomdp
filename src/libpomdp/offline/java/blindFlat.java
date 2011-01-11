@@ -12,9 +12,12 @@
 package libpomdp.offline.java;
 
 // imports
-import libpomdp.general.java.*;
-import symPerseusJava.*;
-import org.math.array.*;
+import libpomdp.general.java.pomdpFlat;
+import libpomdp.general.java.valueFunctionFlat;
+
+import org.math.array.DoubleArray;
+import org.math.array.IntegerArray;
+import org.math.array.LinearAlgebra;
 
 public class blindFlat {
     // ------------------------------------------------------------------------

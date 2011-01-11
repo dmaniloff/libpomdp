@@ -43,10 +43,10 @@
     <!--     </antlr> -->
     <!-- ANTRL is called with a java task, this should be changed to use antlr  -->
     <java classname="org.antlr.Tool" classpathref="classpath">
-	<arg value="${src}/libpomdp/general/java/pomdp-parser/dotpomdpMTJ.g"/>	
+	<arg value="${src}/libpomdp/parser/DotPomdp.g"/>	
     </java>
     <java classname="org.antlr.Tool" classpathref="classpath">
-	<arg value="${src}/libpomdp/general/java/alpha-parser/dotalpha.g"/>	
+	<arg value="${src}/libpomdp/parser/DotAlpha.g"/>	
     </java>
     <javac srcdir="${src}" destdir="${build}" classpathref="classpath"/>
   </target>

@@ -10,8 +10,7 @@
 package libpomdp.general.java;
 
 // imports
-import org.ujmp.core.*;
-import org.ujmp.core.doublematrix.impl.*;
+import org.ujmp.core.doublematrix.impl.DefaultSparseDoubleMatrix;
 
 public class belStateSparseUJMP implements belState {
 

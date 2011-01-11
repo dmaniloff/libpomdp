@@ -12,10 +12,11 @@
 package libpomdp.parser;
 
 // imports
-import java.util.*;
-import java.io.*;
-import no.uib.cipr.matrix.*;
-import no.uib.cipr.matrix.sparse.*;
+import java.io.Serializable;
+import java.util.ArrayList;
+
+import no.uib.cipr.matrix.DenseMatrix;
+import no.uib.cipr.matrix.sparse.SparseVector;
 
 public class PomdpSpecSparse implements Serializable{
 

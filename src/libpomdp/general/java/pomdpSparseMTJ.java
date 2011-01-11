@@ -26,8 +26,12 @@
 package libpomdp.general.java;
 
 // imports
-import no.uib.cipr.matrix.*;
-import no.uib.cipr.matrix.sparse.*;
+import no.uib.cipr.matrix.DenseMatrix;
+import no.uib.cipr.matrix.Matrices;
+import no.uib.cipr.matrix.Vector;
+import no.uib.cipr.matrix.VectorEntry;
+import no.uib.cipr.matrix.sparse.CompColMatrix;
+import no.uib.cipr.matrix.sparse.SparseVector;
 
 public class pomdpSparseMTJ implements pomdp {
 

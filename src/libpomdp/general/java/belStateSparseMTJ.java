@@ -10,8 +10,8 @@
 package libpomdp.general.java;
 
 // imports
-import no.uib.cipr.matrix.*;
-import no.uib.cipr.matrix.sparse.*;
+import no.uib.cipr.matrix.Matrices;
+import no.uib.cipr.matrix.sparse.SparseVector;
 
 public class belStateSparseMTJ implements belState {
 

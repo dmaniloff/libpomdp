@@ -15,9 +15,18 @@
 package libpomdp.general.java;
 
 // imports
-import symPerseusJava.*;
-import java.util.*;
-import org.math.array.*;
+import java.util.ArrayList;
+
+import libpomdp.general.java.belState;
+import libpomdp.general.java.belStateAdd;
+import libpomdp.general.java.pomdp;
+
+import org.math.array.DoubleArray;
+import org.math.array.IntegerArray;
+
+import symPerseusJava.DD;
+import symPerseusJava.OP;
+import symPerseusJava.ParseSPUDD;
 
 public class pomdpAdd implements pomdp {
     	

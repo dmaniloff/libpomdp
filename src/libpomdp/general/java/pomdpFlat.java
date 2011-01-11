@@ -15,8 +15,8 @@
 package libpomdp.general.java;
 
 // imports
-import org.math.array.*;
-import org.math.array.util.*; //dont't know why the above is not enough
+import org.math.array.DoubleArray;
+import org.math.array.LinearAlgebra;
 
 public class pomdpFlat implements pomdp {
 

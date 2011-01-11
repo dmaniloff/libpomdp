@@ -12,17 +12,18 @@
 package libpomdp.parser;
 
 // imports
-import org.antlr.runtime.*;
-import java.io.*;
+import org.antlr.runtime.ANTLRFileStream;
+import org.antlr.runtime.CommonTokenStream;
+import org.antlr.runtime.RecognitionException;
 
 public class DotPomdpParserSparse {
 
     static PomdpSpecSparse dotpomdpSpec = null;
 
     public static void parse (String filename) throws Exception {
-	dotpomdpMTJLexer lex = new dotpomdpMTJLexer(new ANTLRFileStream(filename));
+	DotPomdpLexer lex = new DotPomdpLexer(new ANTLRFileStream(filename));
        	CommonTokenStream tokens = new CommonTokenStream(lex);
-        dotpomdpMTJParser parser = new dotpomdpMTJParser(tokens);
+        DotPomdpParser parser = new DotPomdpParser(tokens);
 
         try {
             parser.dotpomdp();

@@ -14,9 +14,10 @@
 package libpomdp.general.java;
 
 // imports
-import symPerseusJava.*;
-import org.math.array.*;
-import java.io.*;
+import java.io.Serializable;
+
+import symPerseusJava.DD;
+import symPerseusJava.OP;
 
 public class valueFunctionAdd implements valueFunction, Serializable {
     

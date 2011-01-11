@@ -10,9 +10,13 @@
 package libpomdp.general.java;
 
 // imports
-import symPerseusJava.*;
-import java.util.*;
-import org.math.array.*;
+import java.util.ArrayList;
+import java.util.Random;
+
+import org.math.array.DoubleArray;
+import org.math.array.IntegerArray;
+
+import symPerseusJava.DD;
 
 public class Common {
 

@@ -1,7 +1,7 @@
 /** ------------------------------------------------------------------------- *
  * libpomdp
  * ========
- * File: dotpomdpMTJ.g
+ * File: Dotpomdp.g
  * Description: ANTLRv3 grammar specification to parse a .POMDP file in
  *              Cassandra's format. Not all features are supported yet.
  *              Sparse matrices and arrays use the MTJ matrix package.
@@ -9,7 +9,7 @@
  * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
 
-grammar dotpomdpMTJ;
+grammar DotPomdp;
 
 
 /*------------------------------------------------------------------
@@ -42,14 +42,14 @@ tokens {
  * LEXER INITIALIZATIONS
  *------------------------------------------------------------------*/
 @lexer::header {
-    package libpomdp.general.java;
+    package libpomdp.parser;
 }
 
 /*------------------------------------------------------------------
  * PARSER INITIALIZATIONS
  *------------------------------------------------------------------*/
 @header {
-    package libpomdp.general.java;
+    package libpomdp.parser;
 
     // we're using mtj to store the data
     import no.uib.cipr.matrix.*;    
@@ -59,9 +59,9 @@ tokens {
 @members {
     // main method
     public static void main(String[] args) throws Exception {
-        dotpomdpMTJLexer lex = new dotpomdpMTJLexer(new ANTLRFileStream(args[0]));
+        DotPomdpLexer lex = new DotPomdpLexer(new ANTLRFileStream(args[0]));
        	CommonTokenStream tokens = new CommonTokenStream(lex);
-        dotpomdpMTJParser parser = new dotpomdpMTJParser(tokens);
+        DotPomdpParser parser = new DotPomdpParser(tokens);
 
         try {
             parser.dotpomdp();
@@ -71,13 +71,13 @@ tokens {
     }
 
     // main structure
-    private pomdpSpecSparseMTJ dotpomdpSpec = new pomdpSpecSparseMTJ();
+    private PomdpSpecSparse dotpomdpSpec = new PomdpSpecSparse();
 
     // threshold for sums of distros
     final double THRESHOLD = 1e-5;
 
     // return main structure
-    public pomdpSpecSparseMTJ getSpec() {
+    public PomdpSpecSparse getSpec() {
         return dotpomdpSpec;
     }
 

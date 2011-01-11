@@ -20,8 +20,8 @@ import libpomdp.general.java.valueFunction;
 import libpomdp.general.java.valueFunctionAdd;
 import libpomdp.online.java.AndNode;
 import libpomdp.online.java.AndOrTree;
-import libpomdp.online.java.OrNode;
 import libpomdp.online.java.ExpandHeuristic;
+import libpomdp.online.java.OrNode;
 
 import org.math.array.DoubleArray;
 import org.math.array.IntegerArray;

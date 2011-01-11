@@ -10,9 +10,12 @@
 package libpomdp.general.java;
 
 // imports
-import java.io.*;
-import no.uib.cipr.matrix.*;
-import no.uib.cipr.matrix.sparse.*;
+import java.io.Serializable;
+
+import no.uib.cipr.matrix.Matrices;
+import no.uib.cipr.matrix.Vector;
+import no.uib.cipr.matrix.sparse.CompColMatrix;
+import no.uib.cipr.matrix.sparse.SparseVector;
 
 public class valueFunctionSparseMTJ implements valueFunction, Serializable {
     

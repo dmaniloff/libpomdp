@@ -10,11 +10,9 @@
 package libpomdp.general.java;
 
 // imports
-import org.math.array.*;
-import org.ujmp.core.*;
-import org.ujmp.core.calculation.Calculation.Ret;
-import org.ujmp.core.doublematrix.impl.*;
-import java.io.*;
+import java.io.Serializable;
+
+import org.ujmp.core.doublematrix.impl.DefaultSparseDoubleMatrix;
 
 public class valueFunctionSparseUJMP implements valueFunction, Serializable {
     
