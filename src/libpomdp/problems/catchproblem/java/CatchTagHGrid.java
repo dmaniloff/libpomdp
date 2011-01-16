@@ -4,7 +4,6 @@
  * File: CatchTagGrid.java
  * Description: Defines wallAhead according to Pineau's T-shaped Tag POMDP
  * Copyright (c) 2009, 2010 Diego Maniloff 
- * W3: http://www.cs.uic.edu/~dmanilof
  *
  * -----------------------------------------
  * |   |   |   |   |   |   |   |   |   |   |

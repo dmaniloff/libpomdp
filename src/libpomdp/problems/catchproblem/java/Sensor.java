@@ -5,7 +5,6 @@
  * Description: Interface to implement different observation functions
  *              for the agent in the catch environment
  * Copyright (c) 2009, 2010 Diego Maniloff 
- * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
 
 package libpomdp.problems.catchproblem.java;

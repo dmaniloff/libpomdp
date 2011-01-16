@@ -4,10 +4,11 @@
  * File: AndNode.java
  * Description: class for an AND node in an AND-OR tree
  * Copyright (c) 2009, 2010 Diego Maniloff  
- * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
 
 package libpomdp.online.java;
+
+import libpomdp.common.java.CustomVector;
 
 public abstract class AndNode {
 
@@ -22,7 +23,7 @@ public abstract class AndNode {
 	act_              = action;
     }
 
-    public abstract void initChildren(int nrObs, double pOba[]);
+    public abstract void initChildren(int nrObs, CustomVector pOba);
 
     public abstract OrNode getParent();
 

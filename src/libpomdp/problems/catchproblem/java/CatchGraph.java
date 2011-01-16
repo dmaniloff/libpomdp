@@ -4,7 +4,6 @@
  * File: CatchGraph.java
  * Description: simple class to graph the state of a catch problem
  * Copyright (c) 2009, 2010 Diego Maniloff 
- * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
 
 package libpomdp.problems.catchproblem.java;

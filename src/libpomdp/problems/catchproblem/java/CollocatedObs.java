@@ -5,7 +5,6 @@
  * Description: this observation fires up whenever the agent collocates with
  *              the wumpus
  * Copyright (c) 2009, 2010 Diego Maniloff 
- * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
 
 package libpomdp.problems.catchproblem.java;

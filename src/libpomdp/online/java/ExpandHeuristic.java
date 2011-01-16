@@ -5,7 +5,6 @@
  * Description: interface to define different online expansion heuristics
  *              see README reference [2] in root dir
  * Copyright (c) 2009, 2010 Diego Maniloff
- * W3: http://www.cs.uic.edu/~dmanilof 
  --------------------------------------------------------------------------- */
 
 package libpomdp.online.java;

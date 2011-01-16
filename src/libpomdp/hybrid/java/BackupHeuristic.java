@@ -4,7 +4,6 @@
  * File: backupHeuristic.java
  * Description: interface to define different online backup heuristics
  * Copyright (c) 2009, 2010 Diego Maniloff
- * W3: http://www.cs.uic.edu/~dmanilof 
  --------------------------------------------------------------------------- */
 
 package libpomdp.hybrid.java;

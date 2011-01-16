@@ -5,7 +5,6 @@
  * Description: Wumpus-world like observation function: fires up whenever the
  *              wumpus is adjacent (in the N-S-E-W sense) to the agent.
  * Copyright (c) 2009, 2010 Diego Maniloff 
- * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
 
 package libpomdp.problems.catchproblem.java;

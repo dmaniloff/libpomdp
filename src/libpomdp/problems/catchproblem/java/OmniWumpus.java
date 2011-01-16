@@ -7,7 +7,6 @@
  *              omniciency level. Uses a CatchGridProperties to make sure
  *              the returned action distribution is consistent with the world.
  * Copyright (c) 2009, 2010 Diego Maniloff 
- * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
 
 package libpomdp.problems.catchproblem.java;

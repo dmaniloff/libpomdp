@@ -22,7 +22,7 @@ javaaddpath '../../online/java'
 % addpath     '../../offline/matlab' -end
 
 %% load problem parameters - factored representation
-factoredProb  = pomdpAdd  ('../../problems/network/cycle10.SPUDD');
+factoredProb  = PomdpAdd  ('../../problems/network/cycle10.SPUDD');
 
 %% compute offline lower and upper bounds
 % blindCalc = blindAdd;
@@ -36,8 +36,8 @@ load 'saved-data/network/blindAdd_NetCycle_10.mat';
 load 'saved-data/network/qmdpAdd_NetCycle_10.mat';
 
 %% create heuristic search AND-OR tree
-% instantiate an aems2 heuristic object
-aems2h  = aems2(factoredProb);
+% instantiate an AEMS2 heuristic object
+AEMS2h  = AEMS2(factoredProb);
 
 %% there is only one possible initial belief state
 states = [];
@@ -85,8 +85,8 @@ for run = 1:TOTALRUNS
         
         % re - initialize tree at starting belief
         aoTree = [];
-        aoTree = AndOrTree(factoredProb, aems2h, lBound, uBound);
-        aoTree.init(factoredProb.getInit());
+        aoTree = AndOrTree(factoredProb, AEMS2h, lBound, uBound);
+        aoTree.init(factoredProb.getInitialBeliefState());
         rootNode = aoTree.getRoot();
 
         % starting state for this set of EPISODECOUNT episodes
@@ -106,7 +106,7 @@ for run = 1:TOTALRUNS
             fprintf(1, '******************** INSTANCE %d ********************\n', iter);
             tc = cell(factoredProb.printS(factoredS));
             fprintf(1, 'Current world state is:         %s\n', tc{1});
-            if rootNode.belief.getClass.toString == 'class BelStateFactoredADD'
+            if rootNode.belief.getClass.toString == 'class BeliefStateFactoredAdd'
               fprintf(1, 'Current belief agree prob:      %d\n', ...                       
                       OP.evalN(rootNode.belief.marginals, factoredS));
             else
@@ -174,7 +174,7 @@ for run = 1:TOTALRUNS
             o = factoredProb.sencode(factoredO(2,:), ...
                                      factoredProb.getnrObsV(), ...
                                      factoredProb.getobsArity()); 
-            aoTree.moveTree(rootNode.children(a).children(o));             
+            aoTree.moveTree(rootNode.getChild(a-1).getChild(o-1));             
             % update reference to rootNode
             rootNode = aoTree.getRoot();
 

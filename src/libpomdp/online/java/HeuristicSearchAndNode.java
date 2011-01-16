@@ -6,10 +6,11 @@
  *              placeholders to be filled by a method that implements
  *              the heuristic interface
  * Copyright (c) 2009, 2010 Diego Maniloff  
- * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
 
 package libpomdp.online.java;
+
+import libpomdp.common.java.CustomVector;
 
 public class HeuristicSearchAndNode extends AndNode {
 
@@ -26,10 +27,10 @@ public class HeuristicSearchAndNode extends AndNode {
     }
 
     @Override
-    public void initChildren(int nrObs, double pOba[]) {
+    public void initChildren(int nrObs, CustomVector pOba) {
 	children_ = new HeuristicSearchOrNode[nrObs];
 	for(int observation = 0; observation < nrObs; observation++) {
-	    if(pOba[observation] != 0)
+	    if(pOba.get(observation) != 0)
 		children_[observation] = new HeuristicSearchOrNode();
 	} 
     }

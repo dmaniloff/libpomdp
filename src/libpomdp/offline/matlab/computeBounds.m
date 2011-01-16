@@ -24,7 +24,8 @@ javaaddpath '../../../../dist/libpomdp.jar'
 
 % java imports
 import symPerseusJava.*;
-import libpomdp.general.java.*;
+import libpomdp.common.java.*;
+import libpomdp.common.java.add.*;
 import libpomdp.online.java.*;
 import libpomdp.offline.java.*;
 import libpomdp.hybrid.java.*;
@@ -34,20 +35,20 @@ import libpomdp.problems.rocksample.*;
 % addpath     '../../external/symPerseusMatlab' -end
 
 %% load problem parameters - factored representation
-factoredProb = pomdpAdd(problem_filename);
+factoredProb = PomdpAdd(problem_filename);
 
 %% compute offline lower and upper bounds
-blindCalc = blindAdd;
+blindCalc = BlindPolicyAdd;
 lBound    = blindCalc.getBlindAdd(factoredProb);
 
-qmdpCalc  = qmdpAdd;
+qmdpCalc  = QmdpPolicyAdd;
 uBound    = qmdpCalc.getqmdpAdd(factoredProb);
 
 %% save data
 problem_name = textscan(problem_filename,'%s','Delimiter', '/');
 problem_name = problem_name{1}{end};
 problem_name = textscan(problem_name, '%s', 'Delimiter', '.');
-problem_name = problem_name{1}{end};
+problem_name = problem_name{1}{1};
 
 save(strcat(output_dir, '/', problem_name, '_blind_ADD.mat'), 'lBound');
 save(strcat(output_dir, '/', problem_name, '_qmdp_ADD.mat' ), 'uBound');

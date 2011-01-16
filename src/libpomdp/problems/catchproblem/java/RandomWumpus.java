@@ -4,7 +4,6 @@
  * File: RandomWumpus.java
  * Description: Random-moving wumpus with bouncing off the walls of the world.
  * Copyright (c) 2009, 2010 Diego Maniloff 
- * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
 
 package libpomdp.problems.catchproblem.java;

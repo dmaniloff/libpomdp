@@ -14,27 +14,27 @@ clear java
 clear java
 
 % add dynamic classpath
-javaaddpath '../../../../external/jmatharray.jar'
+javaaddpath '../../../../external/mtj-0.9.12.jar'
 javaaddpath '../../../../external/symPerseusJava.jar'
 javaaddpath '../../../../dist/libpomdp.jar'
 
 % java imports
 import symPerseusJava.*;
-import libpomdp.general.java.*;
+import libpomdp.common.java.*;
 import libpomdp.online.java.*;
 import libpomdp.offline.java.*;
 import libpomdp.hybrid.java.*;
 
 %% load problem 
-factoredProb  = pomdpAdd  ('../../problems/network/cycle9.SPUDD');
+factoredProb  = PomdpAdd  ('../../problems/network/cycle9.SPUDD');
 
 %% load pre-computed offline bounds
 load '../../problems/network/cycle9_blind_ADD.mat';
 load '../../problems/network/cycle9_qmdp_ADD.mat';
 
 %% create heuristic search AND-OR tree
-% instantiate an aems2 heuristic object
-aems2h  = aems2(factoredProb);
+% instantiate an AEMS2 heuristic object
+AEMS2h  = AEMS2(factoredProb);
 
 %% there is only one possible initial belief state
 states = [];
@@ -95,16 +95,16 @@ for run = 1:TOTALRUNS
         % are we approximating beliefs with the product of marginals?
         if USE_FACTORED_BELIEFS
           b_init    = javaArray('symPerseusJava.DD', 1);          
-          b_init(1) = factoredProb.getInit().bAdd;
-          b_init    = BelStateFactoredADD( ...
+          b_init(1) = factoredProb.getInitialBeliefState().bAdd;
+          b_init    = BeliefStateFactoredAdd( ...
               OP.marginals(b_init,factoredProb.getstaIds(),factoredProb.getstaIdsPr()), ...
               factoredProb.getstaIds());
         else
-          b_init    = factoredProb.getInit();
+          b_init    = factoredProb.getInitialBeliefState();
         end
         
         % re - initialize tree at starting belief
-        aoTree = AndOrTree(factoredProb, aems2h, lBound, uBound);
+        aoTree = AndOrTree(factoredProb, AEMS2h, lBound, uBound);
         aoTree.init(b_init);
         rootNode = aoTree.getRoot();
 
@@ -126,7 +126,7 @@ for run = 1:TOTALRUNS
             tc = cell(factoredProb.printS(factoredS));
             fprintf(1, 'Current world state is:         %s\n', tc{1});
             if strcmp(rootNode.belief.getClass.toString,...
-                      'class libpomdp.general.java.BelStateFactoredADD')
+                      'class libpomdp.common.java.add.BelStateFactoredAdd')
               fprintf(1, 'Current belief agree prob:      %d\n', ...                       
                       OP.evalN(rootNode.belief.marginals, factoredS));
             else
@@ -194,7 +194,7 @@ for run = 1:TOTALRUNS
             o = Common.sencode(factoredO(2,:), ...
                                factoredProb.getnrObsV(), ...
                                factoredProb.getobsArity()); 
-            aoTree.moveTree(rootNode.children(a).children(o));             
+            aoTree.moveTree(rootNode.getChild(a-1).getChild(o-1));             
             % update reference to rootNode
             rootNode = aoTree.getRoot();
 

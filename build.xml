@@ -3,7 +3,7 @@
 <!--  * ========                                                                      -->
 <!--  * File: build.xml                                                               -->
 <!--  * Description:                                                                  -->
-<!--  * Copyright (c) 2009, 2010 Diego Maniloff                                       -->
+<!--  * Copyright (c) 2008, 2010 Diego Maniloff                                       -->
 <!--  * W3: http://www.cs.uic.edu/~dmanilof                                           -->
 <!--  ******************************************************************************* -->
 
@@ -18,10 +18,11 @@
   <property name="dist"    location="dist"/>
   <property name="lib"     location="external"/>
 
-  <!-- external libraries classpath -->
+<!-- external libraries classpath 
+-->
   <path id="classpath">
-        <fileset dir="${lib}" />
-	<fileset dir="."      />
+    <fileset dir="${lib}" />
+    <fileset dir="."      />
   </path>
 
   <!-- default excludes -->
@@ -34,21 +35,22 @@
     <!-- Create the build directory structure used by compile -->
     <mkdir dir="${build}"/>
   </target>
+  
+  <target name="parser">
+    <!-- ANTRL is called with a java task, this should be changed to use antlr  -->
+    <java classname="org.antlr.Tool" classpathref="classpath">
+	<arg value="${src}/libpomdp/parser/java/DotPomdp.g"/>	
+    </java>
+    <java classname="org.antlr.Tool" classpathref="classpath">
+	<arg value="${src}/libpomdp/parser/java/DotAlpha.g"/>	
+    </java>
+  </target>
 
+  
   <target name="compile" depends="init"
 	  description="compile the source " >
     <!-- Compile the java code from ${src} into ${build} -->
-    <!-- antlr target="${src}/libpomdp/general/java/pomdp-parser/dotpomdpMTJ.g">  -->
-    <!--       <classpath refid="classpath"/> -->
-    <!--     </antlr> -->
-    <!-- ANTRL is called with a java task, this should be changed to use antlr  -->
-    <java classname="org.antlr.Tool" classpathref="classpath">
-	<arg value="${src}/libpomdp/parser/DotPomdp.g"/>	
-    </java>
-    <java classname="org.antlr.Tool" classpathref="classpath">
-	<arg value="${src}/libpomdp/parser/DotAlpha.g"/>	
-    </java>
-    <javac srcdir="${src}" destdir="${build}" classpathref="classpath"/>
+    <javac srcdir="${src}" destdir="${build}" classpathref="classpath" includeantruntime="false"/>
   </target>
 
   <target name="dist" depends="compile"
