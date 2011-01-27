@@ -44,43 +44,43 @@ public class BeliefStateStd implements BeliefState, Serializable {
 
     // calling this method should be for debugging
     // purposes only, otherwise we loose the sparse rep
-    @Override
+    
     public CustomVector getPoint() {
 	return bSparse;
     }
 
-    @Override
+    
     public double getPoba() {
 	return poba;
     }
 
-    @Override
+    
     public void setPoba(double poba) {
 	this.poba = poba;
     }
 
-    @Override
+    
     public int getAlpha() {
 	return planid;
     }
 
-    @Override
+    
     public void setAlpha(int planid) {
 	this.planid = planid;
     }
 
-    @Override
+    
     public double getEntropy() {
 	// TODO Auto-generated method stub
 	return 0;
     }
 
-    @Override
+    
     public boolean compare(BeliefState arg0) {
 	return (bSparse.compare(arg0.getPoint()));
     }
 
-    @Override
+    
     public BeliefState copy() {
 	return (new BeliefStateStd(bSparse, poba));
     }

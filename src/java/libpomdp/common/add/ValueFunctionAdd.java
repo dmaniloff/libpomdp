@@ -15,14 +15,13 @@ package libpomdp.common.add;
 // imports
 import java.io.Serializable;
 
-import symPerseusJava.DD;
-import symPerseusJava.OP;
-
 import libpomdp.common.AlphaVector;
 import libpomdp.common.BeliefState;
 import libpomdp.common.CustomVector;
 import libpomdp.common.Utils;
 import libpomdp.common.ValueFunction;
+import libpomdp.common.add.symbolic.DD;
+import libpomdp.common.add.symbolic.OP;
 
 public class ValueFunctionAdd implements ValueFunction, Serializable {
 
@@ -54,7 +53,6 @@ public class ValueFunctionAdd implements ValueFunction, Serializable {
     // ------------------------------------------------------------------------
 
     // return value of a belief state
-    @Override
     public double value(BeliefState bel) {
 	// declarations
 	DD b;
@@ -76,29 +74,29 @@ public class ValueFunctionAdd implements ValueFunction, Serializable {
     }
 
     // list of actions associated with each alpha
-    @Override
+    
     public int[] getActions() {
 	return a;
     }
 
-    @Override
+    
     public AlphaVector getAlpha(int idx) {
 	// TODO Auto-generated method stub
 	return null;
     }
 
-    @Override
+    
     public CustomVector getAlphaValues(int idx) {
 	double[][] val = OP.convert2array(vAdd, staIds);
 	return new CustomVector(val[idx]);
     }
 
-    @Override
+    
     public int size() {
 	return a.length;
     }
 
-    @Override
+    
     public void sort() {
 	// TODO Auto-generated method stub
     }

@@ -16,7 +16,7 @@
   <property name="src"     location="src/java"/>
   <property name="build"   location="build"/>
   <property name="dist"    location="dist"/>
-  <property name="lib"     location="external"/>
+  <property name="lib"     location="../libraries"/>
 
 <!-- external libraries classpath 
 -->
@@ -37,13 +37,12 @@
   </target>
   
   <target name="parsers">
-    <!-- ANTRL is called with a java task, this should be changed to use antlr  -->
-    <java classname="org.antlr.Tool" classpathref="classpath">
-	<arg value="${src}/libpomdp/parser/DotPomdp.g"/>	
-    </java>
-    <java classname="org.antlr.Tool" classpathref="classpath">
-	<arg value="${src}/libpomdp/parser/DotAlpha.g"/>	
-    </java>
+  	 <exec executable="antlr3">
+		<arg value="${src}/libpomdp/parser/DotPomdp.g"/>
+	 </exec>
+  	 <exec executable="antlr3">
+		<arg value="${src}/libpomdp/parser/DotAlpha.g"/>	
+	 </exec>
   </target>
 
   <target name="test">

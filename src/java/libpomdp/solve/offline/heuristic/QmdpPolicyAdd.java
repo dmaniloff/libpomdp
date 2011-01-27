@@ -12,9 +12,9 @@ package libpomdp.solve.offline.heuristic;
 // imports
 import libpomdp.common.add.PomdpAdd;
 import libpomdp.common.add.ValueFunctionAdd;
-import symPerseusJava.DD;
-import symPerseusJava.DDleaf;
-import symPerseusJava.OP;
+import libpomdp.common.add.symbolic.DD;
+import libpomdp.common.add.symbolic.DDleaf;
+import libpomdp.common.add.symbolic.OP;
 
 public class QmdpPolicyAdd {
 

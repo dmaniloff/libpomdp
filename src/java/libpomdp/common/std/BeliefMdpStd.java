@@ -48,34 +48,34 @@ public class BeliefMdpStd implements BeliefMdp, Serializable {
 	}
     }
 
-    @Override
+    
     public BeliefState nextBeliefState(BeliefState b, int a, int o) {
 	CustomVector vect = tau[o][a].mult(b.getPoint());
 	vect = vect.scale(1.0 / vect.norm(1.0));
 	return (new BeliefStateStd(vect));
     }
 
-    @Override
+    
     public double expectedImmediateReward(BeliefState b, int a) {
 	return (pom.expectedImmediateReward(b, a));
     }
 
-    @Override
+    
     public CustomVector observationProbabilities(BeliefState b, int a) {
 	return pom.observationProbabilities(b, a);
     }
 
-    @Override
+    
     public CustomMatrix getTransitionTable(int a) {
 	return pom.getTransitionTable(a);
     }
 
-    @Override
+    
     public CustomMatrix getObservationTable(int a) {
 	return pom.getObservationTable(a);
     }
 
-    @Override
+    
     // / R(s,a): 1 x s vector
     public CustomVector getImmediateRewards(int a) {
 	return pom.getImmediateRewards(a);
@@ -85,52 +85,51 @@ public class BeliefMdpStd implements BeliefMdp, Serializable {
 	return pom.getRewardValueFunction(a);
     }
 
-    @Override
+    
     public BeliefState getInitialBeliefState() {
 	return pom.getInitialBeliefState();
     }
 
-    @Override
+    
     public int nrStates() {
 	return pom.nrStates();
     }
 
-    @Override
+    
     public int nrActions() {
 	return pom.nrActions();
     }
 
-    @Override
+    
     public int nrObservations() {
 	return pom.nrObservations();
     }
 
-    @Override
+    
     public double getGamma() {
 	return pom.getGamma();
     }
 
-    @Override
+    
     public String getActionString(int a) {
 	return pom.getActionString(a);
     }
 
-    @Override
+    
     public String getObservationString(int o) {
 	return pom.getObservationString(o);
     }
 
-    @Override
+    
     public String getStateString(int s) {
 	return pom.getStateString(s);
     }
 
-    @Override
     public Pomdp getPomdp() {
 	return pom;
     }
 
-    @Override
+    
     public CustomMatrix getTau(int a, int o) {
 	return (tau[o][a].copy());
     }

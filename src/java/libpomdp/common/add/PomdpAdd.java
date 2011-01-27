@@ -16,19 +16,16 @@ package libpomdp.common.add;
 // imports
 import java.util.ArrayList;
 
+import org.math.array.*;
+
 import libpomdp.common.BeliefState;
 import libpomdp.common.CustomMatrix;
 import libpomdp.common.CustomVector;
 import libpomdp.common.Pomdp;
 import libpomdp.common.Utils;
-import libpomdp.common.std.BeliefStateStd;
-
-import org.math.array.DoubleArray;
-import org.math.array.IntegerArray;
-
-import symPerseusJava.DD;
-import symPerseusJava.OP;
-import symPerseusJava.ParseSPUDD;
+import libpomdp.common.add.symbolic.DD;
+import libpomdp.common.add.symbolic.OP;
+import libpomdp.common.add.symbolic.ParseSPUDD;
 
 public class PomdpAdd implements Pomdp {
 
@@ -154,7 +151,7 @@ public class PomdpAdd implements Pomdp {
     /**
      * tao(b,a,o): compute new belief state from current and a,o pair
      */
-    @Override
+    
     public BeliefState nextBeliefState(BeliefState bel, int a, int o) {
 	if (bel instanceof BeliefStateAdd) {
 	    return regulartao((BeliefStateAdd) bel, a, o);
@@ -235,7 +232,6 @@ public class PomdpAdd implements Pomdp {
     // / R(b,a)
     // / Poupart's Matlab code has a loop indexed over
     // / 1:length(POMDP.actions(actId).rewFn) - when would this be > 1?
-    @Override
     public double expectedImmediateReward(BeliefState bel, int a) {
 	// obtain subclass and the dd for this belief
 	DD b;
@@ -254,7 +250,7 @@ public class PomdpAdd implements Pomdp {
      * quickly identify zero-prob obs and avoid building an or node for those
      * beliefs
      */
-    @Override
+   
     public CustomVector observationProbabilities(BeliefState bel, int a) {
 	// obtain subclass and the dd for this belief
 	// DD b = ((BeliefStateAdd)bel).bAdd;
@@ -278,7 +274,7 @@ public class PomdpAdd implements Pomdp {
 
     // / return s x s' matrix with T[a]
     // / to be used by mdp.java
-    @Override
+    
     public CustomMatrix getTransitionTable(int a) {
 	int vars[] = IntegerArray.merge(staIds, staIdsPr);
 	double T_a_v[] = OP.convert2array(OP.multN(T[a]), vars);
@@ -298,7 +294,7 @@ public class PomdpAdd implements Pomdp {
 
     // / return s' x o matrix with O[a]
     // / this will prob become part of the interface as well...
-    @Override
+    
     public CustomMatrix getObservationTable(int a) {
 	int vars[] = IntegerArray.merge(staIdsPr, obsIdsPr);
 	double O_a_v[] = OP.convert2array(OP.multN(O[a]), vars);
@@ -316,53 +312,53 @@ public class PomdpAdd implements Pomdp {
     }
 
     // / R(s,a)
-    @Override
+    
     public CustomVector getImmediateRewards(int a) {
 	DD R = OP.sub(problemAdd.reward, problemAdd.actCosts.get(a));
 	return new CustomVector(OP.convert2array(R, staIds));
     }
 
     // / get initial belief state
-    @Override
+    
     public BeliefState getInitialBeliefState() {
 	return initBelief;
     }
 
     // / nrSta is the product of the arity of
     // / each state variable in the DBN
-    @Override
+    
     public int nrStates() {
 	return totnrSta;
     }
 
     // / nrAct
-    @Override
+    
     public int nrActions() {
 	return nrAct;
     }
 
     // / nrObs is the product of the arity of
     // / each observation variable in the DBN
-    @Override
+    
     public int nrObservations() {
 	return totnrObs;
     }
 
     // / \gamma
-    @Override
+    
     public double getGamma() {
 	return gamma;
     }
 
     // takes an action starting from 0
-    @Override
+    
     public String getActionString(int a) {
 	return actStr[a];
     }
 
     // / string describing the values each obs var took
     // / the observation starts from 0
-    @Override
+    
     public String getObservationString(int o) {
 	int[] a = Utils.sdecode(o, nrObsV, obsArity);
 	String v = "";
@@ -374,7 +370,7 @@ public class PomdpAdd implements Pomdp {
 	return v;
     }
 
-    @Override
+    
     public String getStateString(int s) {
 	// TODO Auto-generated method stub
 	return null;

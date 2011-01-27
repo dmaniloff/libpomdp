@@ -16,7 +16,7 @@ import java.util.Random;
 import org.math.array.DoubleArray;
 import org.math.array.IntegerArray;
 
-import symPerseusJava.DD;
+import libpomdp.common.add.symbolic.DD;
 
 public class Utils {
 
