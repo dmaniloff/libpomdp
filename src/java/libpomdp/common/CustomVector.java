@@ -17,6 +17,9 @@ import no.uib.cipr.matrix.sparse.SparseVector;
 
 public class CustomVector implements Serializable, Comparable<CustomVector> {
 
+
+    protected SparseVector v;
+    
     /**
      * 
      */
@@ -41,8 +44,6 @@ public class CustomVector implements Serializable, Comparable<CustomVector> {
     public void zero() {
 	v.zero();
     }
-
-    protected SparseVector v;
 
     public CustomVector(double[] list) {
 	this(list.length);
@@ -200,5 +201,14 @@ public class CustomVector implements Serializable, Comparable<CustomVector> {
 	}
 	return maxv;
     }
+
+	public double cumulate() {
+		double cum=0;
+		for (int i=0;i<v.size();i++){
+			cum+=v.get(i);
+			v.set(i,cum);			
+		}
+		return cum;
+	}
 
 }

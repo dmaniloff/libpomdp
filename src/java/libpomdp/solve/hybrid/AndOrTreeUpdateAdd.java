@@ -26,9 +26,6 @@ import libpomdp.solve.online.AndOrTree;
 import libpomdp.solve.online.ExpandHeuristic;
 import libpomdp.solve.online.OrNode;
 
-import org.math.array.DoubleArray;
-import org.math.array.IntegerArray;
-
 public class AndOrTreeUpdateAdd extends AndOrTree {
 
     // ------------------------------------------------------------------------
@@ -52,7 +49,7 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 	this.root = new HybridValueIterationOrNode();
 	this.problem = (PomdpAdd) super.problem;
 	this.bakH = bakh;
-	this.treeSupportSetSize = IntegerArray.fill(offlineLower.size(), 0);
+	this.treeSupportSetSize = new int[offlineLower.size()];
     }
 
     // / Overridden initializer (is there another way???)
@@ -266,7 +263,7 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 	this.root = newroot;
 	this.root.disconnect();
 	// reset treeSupportSetSize
-	this.treeSupportSetSize = IntegerArray.fill(offlineLower.size(), 0);
+	this.treeSupportSetSize = new int[offlineLower.size()];
     } // (overridden) moveTree
 
     /**
@@ -362,7 +359,7 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 	// add newly computed vector to the tree's offline lower bound - NO
 	// PRUNING FOR NOW
 	ValueFunctionAdd newLB = new ValueFunctionAdd(Utils.append(lowerBound,
-		gab), problem.getstaIds(), IntegerArray.merge(
+		gab), problem.getstaIds(), Utils.concat(
 		offlineLower.getActions(), new int[] { on.oneStepBestAction }));
 	offlineLower = newLB;
 	// return
@@ -427,8 +424,8 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 	String b = "";
 	if (problem.nrStates() < 4)
 	    b = "b=["
-		    + DoubleArray.toString("%.2f", o.getBeliefState()
-			    .getPoint().getArray()) + "]\\n";
+		    + (new CustomVector(o.getBeliefState().getPoint().getArray())).toString()
+			+ "]\\n";
 	out.format(o.hashCode() + "[label=\""
 		+
 		// b +

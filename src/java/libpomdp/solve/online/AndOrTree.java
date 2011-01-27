@@ -18,8 +18,6 @@ import libpomdp.common.Pomdp;
 import libpomdp.common.Utils;
 import libpomdp.common.ValueFunction;
 
-import org.math.array.DoubleArray;
-
 public class AndOrTree {
 
     // ------------------------------------------------------------------------
@@ -364,8 +362,8 @@ public class AndOrTree {
 	@SuppressWarnings("unused")
 	String b = "";
 	b = "b=[\\n "
-		+ DoubleArray.toString("%.2f", o.getBeliefState().getPoint()
-			.getArray()) + "]\\n";
+		+ o.getBeliefState().getPoint().toString()
+		+ "]\\n";
 	out.format(o.hashCode() + "[label=\"" +
 	// b +
 		"U(b)= %.2f\\n" + "L(b)= %.2f\\n" + "H(b)= %.2f" + "\"];\n",

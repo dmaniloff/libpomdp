@@ -16,8 +16,6 @@ package libpomdp.common.add;
 // imports
 import java.util.ArrayList;
 
-import org.math.array.*;
-
 import libpomdp.common.BeliefState;
 import libpomdp.common.CustomMatrix;
 import libpomdp.common.CustomVector;
@@ -144,8 +142,8 @@ public class PomdpAdd implements Pomdp {
 	// set initial belief state
 	initBelief = new BeliefStateAdd(problemAdd.init, staIds, 0.0);
 	// compute total nr of states and obs
-	totnrSta = IntegerArray.product(staArity);
-	totnrObs = IntegerArray.product(obsArity);
+	totnrSta = Utils.product(staArity);
+	totnrObs = Utils.product(obsArity);
     } // constructor
 
     /**
@@ -175,7 +173,7 @@ public class PomdpAdd implements Pomdp {
 	DD O_o[];
 	int oc[][];
 	// restrict the prime observation variables to the ones that occurred
-	oc = IntegerArray.mergeRows(obsIdsPr,
+	oc = Utils.join(obsIdsPr,
 		Utils.sdecode(o, nrObsV, obsArity));
 	// System.out.println(IntegerArray.toString(oc));
 	O_o = OP.restrictN(O[a], oc);
@@ -213,7 +211,7 @@ public class PomdpAdd implements Pomdp {
 	DD O_o[];
 	int oc[][];
 	// restrict the prime observation variables to the ones that occurred
-	oc = IntegerArray.mergeRows(obsIdsPr,
+	oc = Utils.join(obsIdsPr,
 		Utils.sdecode(o, nrObsV, obsArity));
 	O_o = OP.restrictN(O[a], oc);
 	// gather all necessary ADDs for variable elimination
@@ -266,7 +264,7 @@ public class PomdpAdd implements Pomdp {
 	}
 	// O_a * T_a * b1
 	DD[] vars = Utils.concat(b1, T[a], O[a]);
-	int[] svars = IntegerArray.merge(staIds, staIdsPr);
+	int[] svars = Utils.concat(staIds, staIdsPr);
 	pObadd = OP.addMultVarElim(vars, svars);
 	pOba = OP.convert2array(pObadd, obsIdsPr);
 	return new CustomVector(pOba);
@@ -276,15 +274,15 @@ public class PomdpAdd implements Pomdp {
     // / to be used by mdp.java
     
     public CustomMatrix getTransitionTable(int a) {
-	int vars[] = IntegerArray.merge(staIds, staIdsPr);
+	int vars[] = Utils.concat(staIds, staIdsPr);
 	double T_a_v[] = OP.convert2array(OP.multN(T[a]), vars);
 	// double T_a[][] = new double[totnrSta][totnrSta];
-	double T_a[][] = DoubleArray.fill(totnrSta, totnrSta, 0.0);
+	CustomMatrix T_a = new CustomMatrix(totnrSta, totnrSta);
 	int i, j;
 	// convert this vector into an s x s' matrix columnwise
 	for (j = 0; j < totnrSta; j++) {
 	    for (i = 0; i < totnrSta; i++) {
-		T_a[i][j] = T_a_v[j * totnrSta + i];
+		T_a.set(i,j,T_a_v[j * totnrSta + i]);
 	    }
 	}
 	// transpose so that we have s' x s and maintain Spaans convention
@@ -296,15 +294,15 @@ public class PomdpAdd implements Pomdp {
     // / this will prob become part of the interface as well...
     
     public CustomMatrix getObservationTable(int a) {
-	int vars[] = IntegerArray.merge(staIdsPr, obsIdsPr);
+	int vars[] = Utils.concat(staIdsPr, obsIdsPr);
 	double O_a_v[] = OP.convert2array(OP.multN(O[a]), vars);
 	// double O_a[][] = new double[totnrSta][totnrSta];
-	double O_a[][] = DoubleArray.fill(totnrSta, totnrObs, 0.0);
+	CustomMatrix O_a = new CustomMatrix(totnrSta, totnrObs);
 	int i, j;
 	// convert this vector into an s' x o matrix columnwise
 	for (j = 0; j < totnrObs; j++) {
 	    for (i = 0; i < totnrSta; i++) {
-		O_a[i][j] = O_a_v[j * totnrSta + i];
+		O_a.set(i, j, O_a_v[j * totnrSta + i]);
 	    }
 	}
 	// return
@@ -386,10 +384,10 @@ public class PomdpAdd implements Pomdp {
 	// we receive the factored representation of the state
 	// whereby each element of the array contains the value of each of
 	// the state variables - there are no var ids here
-	int factoredS[][] = IntegerArray.mergeRows(staIds, state);
+	int factoredS[][] = Utils.join(staIds, state);
 	DD[] restrictedT = OP.restrictN(T[action], factoredS);
 	int factoredS1[][] = OP.sampleMultinomial(restrictedT, staIdsPr);
-	System.out.println(IntegerArray.toString(factoredS1));
+	//System.out.println(Utils.toString(factoredS1));
 	// and we don't return any var ids either
 	return factoredS1[1];
     }
@@ -401,9 +399,9 @@ public class PomdpAdd implements Pomdp {
 	// we receive the factored representation of the state
 	// whereby each element of the array contains the value of each of
 	// the state variables - there are no var ids here
-	int[] ids = IntegerArray.merge(staIds, staIdsPr);
-	int[] vals = IntegerArray.merge(s, s1);
-	int[][] restriction = IntegerArray.mergeRows(ids, vals);
+	int[] ids = Utils.concat(staIds, staIdsPr);
+	int[] vals = Utils.concat(s, s1);
+	int[][] restriction = Utils.join(ids, vals);
 	DD[] restrictedO = OP.restrictN(O[action], restriction);
 	int factoredO[][] = OP.sampleMultinomial(restrictedO, obsIdsPr);
 	// and we don't return any var ids either
@@ -416,7 +414,7 @@ public class PomdpAdd implements Pomdp {
 	ArrayList<Integer> states = new ArrayList<Integer>();
 	int factoredS[][];
 	for (int r = 0; r < totnrSta; r++) {
-	    factoredS = IntegerArray.mergeRows(staIds,
+	    factoredS = Utils.join(staIds,
 		    Utils.sdecode(r, nrStaV, staArity));
 	    if (OP.eval(initBelief.bAdd, factoredS) > 0)
 		states.add(r);
@@ -467,7 +465,7 @@ public class PomdpAdd implements Pomdp {
 	// alpha(s')
 	primedAlpha = OP.primeVars(alpha, nrTotV);
 	// restrict the O model to o
-	oc = IntegerArray.mergeRows(obsIdsPr,
+	oc = Utils.join(obsIdsPr,
 		Utils.sdecode(o, nrObsV, obsArity));
 	O_o = OP.restrictN(O[a], oc);
 	vars = Utils.concat(primedAlpha, T[a], O_o);

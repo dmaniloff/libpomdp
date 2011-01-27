@@ -50,6 +50,6 @@ public interface Pomdp {
     public String getObservationString(int o);
 
     /// state names
-    public String getStateString(int s);
+    public String getStateString(int s) throws Exception;
 
 } // Pomdp

@@ -13,9 +13,6 @@ package libpomdp.common;
 import java.util.ArrayList;
 import java.util.Random;
 
-import org.math.array.DoubleArray;
-import org.math.array.IntegerArray;
-
 import libpomdp.common.add.symbolic.DD;
 
 public class Utils {
@@ -27,14 +24,24 @@ public class Utils {
     // planning loop
     // / so this will be O(n), instead of log(n) using binary search
     public static int sample(double d[]) {
-	double[] cumSum = DoubleArray.cumSum(d);
+    CustomVector cumSum=new CustomVector(d);
+    cumSum.cumulate();
+	//double[] cumSum = DoubleArray.cumSum(d);
 	double r = gen.nextDouble();
-	for (int i = 0; i < cumSum.length; i++)
-	    if (cumSum[i] > r)
+	for (int i = 0; i < cumSum.size(); i++)
+	    if (cumSum.get(i) > r)
 		return i;
 	return d.length - 1;
     }
-
+    
+    public static int product(int arr[]){
+    	int retval=1;
+    	for (int e:arr){
+    		retval*=e;
+    	}
+    	return(retval);
+    }
+    
     // / randomized argmax
     public static int argmax(double v[]) {
 	// declarations
@@ -62,9 +69,10 @@ public class Utils {
 	ArrayList<Integer> repi = new ArrayList<Integer>();
 	int a, r;
 	double maxv;
+	CustomVector vv = new CustomVector(v);
 
 	// compute maximum
-	maxv = DoubleArray.max(v);
+	maxv = vv.max();
 	// locate repeated values
 	for (a = 0; a < v.length; a++)
 	    if (v[a] == maxv)
@@ -135,13 +143,13 @@ public class Utils {
      */
     public static int[] sdecode(int sid, int n, int sizes[]) {
 	// make sure sid is in the right range
-	if (sid < 0 || sid > IntegerArray.product(sizes) - 1) {
+	if (sid < 0 || sid > Utils.product(sizes) - 1) {
 	    System.out.println("Error calling sdecode");
 	    return null;
 	}
 	// calculate joint assignment
 	int q = sid;
-	int ja[] = IntegerArray.fill(n, 0);
+	int ja[] = new int[n];
 	for (int i = 0; i < n; i++) {
 	    if (q == 0)
 		break;
@@ -182,4 +190,23 @@ public class Utils {
 	return ret;
     }
 
+	public static int[] concat(int[] a, int[] b) {
+		int conc[]=new int[a.length + b.length];
+		for (int i=0;i<a.length;i++){
+			conc[i]=a[i];
+		}
+		for (int i=0;i<b.length;i++){
+			conc[a.length+i]=b[i];
+		}
+		return conc;
+	}
+
+	public static int[][] join(int[] a, int[] b) {
+		int retval[][]=new int[a.length][2];
+		for (int i=0;i<a.length;i++){
+			retval[i][0]=a[i];
+			retval[i][1]=b[i];
+		}
+		return null;
+	}
 } // Utils

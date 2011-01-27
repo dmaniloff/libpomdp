@@ -13,8 +13,6 @@ package libpomdp.solve.online;
 import libpomdp.common.Pomdp;
 import libpomdp.common.Utils;
 
-import org.math.array.DoubleArray;
-
 public class AEMS2 implements ExpandHeuristic {
 
     // / main property is the Pomdp spec
@@ -48,7 +46,7 @@ public class AEMS2 implements ExpandHeuristic {
 	double Hba[];
 	for (HeuristicSearchAndNode a : o.getChildren())
 	    UbA[a.getAct()] = a.u;
-	Hba = DoubleArray.fill(problem.nrActions(), 0.0);
+	Hba = new double[problem.nrActions()];
 	// compute maximum upper bound
 	// set the chosen action's Hba value to 1
 	int aStar = Utils.argmax(UbA);

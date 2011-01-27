@@ -9,13 +9,12 @@
 package libpomdp.solve.offline.heuristic;
 
 // imports
+import libpomdp.common.CustomVector;
 import libpomdp.common.add.PomdpAdd;
 import libpomdp.common.add.ValueFunctionAdd;
 import libpomdp.common.add.symbolic.DD;
 import libpomdp.common.add.symbolic.DDleaf;
 import libpomdp.common.add.symbolic.OP;
-
-import org.math.array.DoubleArray;
 
 public class BlindPolicyAdd {
 
@@ -27,7 +26,7 @@ public class BlindPolicyAdd {
 
 	// decls
 	DD[] adds;
-	double deltas[] = new double[factoredProb.nrActions()];
+	CustomVector deltas = new CustomVector(factoredProb.nrActions());
 	double maxdelta;
 
 	// allocate a alpha vectors
@@ -66,12 +65,13 @@ public class BlindPolicyAdd {
 	    }
 
 	    // convergence check
+	  
 	    for (int a = 0; a < factoredProb.nrActions(); a++) {
-		deltas[a] = OP.maxAll(OP.abs(OP.sub(old_alphas[a], alphas[a])));
+	    	deltas.set(a,OP.maxAll(OP.abs(OP.sub(old_alphas[a], alphas[a]))));
 		// deltas[a] = OP.maxAll(OP.abs(OP.subNoMem(old_alphas[a],
 		// alphas[a])));
 	    }
-	    maxdelta = DoubleArray.max(deltas);
+	    maxdelta = deltas.max();
 	    System.out.println("Max delta at iteration " + iter + " is: "
 		    + maxdelta);
 	    if (maxdelta <= EPSILON) {
