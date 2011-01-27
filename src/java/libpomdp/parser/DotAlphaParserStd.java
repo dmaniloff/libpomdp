@@ -11,10 +11,6 @@
 
 package libpomdp.parser;
 
-// imports
-import libpomdp.common.CustomVector;
-import libpomdp.common.ValueFunction;
-import libpomdp.common.std.ValueFunctionStd;
 
 import org.antlr.runtime.ANTLRFileStream;
 import org.antlr.runtime.CommonTokenStream;

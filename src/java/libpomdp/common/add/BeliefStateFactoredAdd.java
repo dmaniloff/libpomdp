@@ -11,8 +11,8 @@ package libpomdp.common.add;
 
 import libpomdp.common.BeliefState;
 import libpomdp.common.CustomVector;
-import symPerseusJava.DD;
-import symPerseusJava.OP;
+import libpomdp.common.add.symbolic.DD;
+import libpomdp.common.add.symbolic.OP;
 
 public class BeliefStateFactoredAdd implements BeliefState {
 
@@ -43,46 +43,46 @@ public class BeliefStateFactoredAdd implements BeliefState {
     }
 
     // compute this only if we actually need it
-    @Override
     public CustomVector getPoint() {
 	return new CustomVector(OP.convert2array(OP.multN(marginals), staIds));
     }
 
-    @Override
+    
     public double getPoba() {
 	return poba;
     }
 
-    @Override
+    
     public void setPoba(double poba) {
 	this.poba = poba;
     }
 
-    @Override
+    
     public int getAlpha() {
 	return planid;
     }
 
-    @Override
+    
     public void setAlpha(int planid) {
 	this.planid = planid;
     }
 
     // compute entropy of this point in nats
-    @Override
+    
     public double getEntropy() {
-	DD m[] = new DD[marginals.length - 1];
-	System.arraycopy(marginals, 0, m, 0, marginals.length - 1);
-	return -OP.dotProductNoMem(OP.log(OP.multN(m)), OP.multN(m), staIds);
+    	DD m[] = new DD[marginals.length - 1];
+    	System.arraycopy(marginals, 0, m, 0, marginals.length - 1);
+//    	return -OP.dotProductNoMem(OP.log(OP.multN(m)), OP.multN(m), staIds);
+		return 0.0;
     }
 
-    @Override
+    
     public boolean compare(BeliefState bel) {
 	// TODO Auto-generated method stub
 	return false;
     }
 
-    @Override
+
     public BeliefState copy() {
 	// TODO Auto-generated method stub
 	return null;

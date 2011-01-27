@@ -126,7 +126,7 @@ public class PomdpStd implements Pomdp, Serializable {
     }
 
     // / tao(b,a,o)
-    @Override
+    
     public BeliefState nextBeliefState(BeliefState b, int a, int o) {
 	// long start = System.currentTimeMillis();
 	// System.out.println("made it to tao");
@@ -162,14 +162,14 @@ public class PomdpStd implements Pomdp, Serializable {
     }
 
     /// R(b,a)
-    @Override
+    
     public double expectedImmediateReward(BeliefState bel, int a) {
 	CustomVector b = ((BeliefStateStd) bel).bSparse;
 	return b.dot(R[a]);
     }
 
     // P(o|b,a) in vector form for all o's
-    @Override
+
     public CustomVector observationProbabilities(BeliefState b, int a) {
 	CustomVector b1 = b.getPoint();
 	CustomVector Tb = new CustomVector(nrSta);
@@ -179,57 +179,57 @@ public class PomdpStd implements Pomdp, Serializable {
 	return Poba;
     }
 
-    @Override
+    
     public CustomMatrix getTransitionTable(int a) {
 	return T[a].copy();
     }
 
-    @Override
+    
     public CustomMatrix getObservationTable(int a) {
 	return O[a].copy();
     }
 
-    @Override
+    
     public CustomVector getImmediateRewards(int a) {
 	return R[a].copy();
     }
 
-    @Override
+    
     public BeliefState getInitialBeliefState() {
 	return initBelief.copy();
     }
 
-    @Override
+    
     public int nrStates() {
 	return nrSta;
     }
 
-    @Override
+    
     public int nrActions() {
 	return nrAct;
     }
 
-    @Override
+    
     public int nrObservations() {
 	return nrObs;
     }
 
-    @Override
+    
     public double getGamma() {
 	return gamma;
     }
 
-    @Override
+    
     public String getActionString(int a) {
 	return actStr[a];
     }
 
-    @Override
+    
     public String getObservationString(int o) {
 	return obsStr[o];
     }
 
-    @Override
+    
     public String getStateString(int s) {
 	return staStr[s];
     }

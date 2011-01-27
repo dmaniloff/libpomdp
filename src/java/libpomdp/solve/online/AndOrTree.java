@@ -361,6 +361,7 @@ public class AndOrTree {
     // / print HeuristicSearchOrNode
     private void orprint(HeuristicSearchOrNode o, PrintStream out) {
 	// print this node
+	@SuppressWarnings("unused")
 	String b = "";
 	b = "b=[\\n "
 		+ DoubleArray.toString("%.2f", o.getBeliefState().getPoint()

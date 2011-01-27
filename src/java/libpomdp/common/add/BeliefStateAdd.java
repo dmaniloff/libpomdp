@@ -11,8 +11,8 @@ package libpomdp.common.add;
 
 import libpomdp.common.BeliefState;
 import libpomdp.common.CustomVector;
-import symPerseusJava.DD;
-import symPerseusJava.OP;
+import libpomdp.common.add.symbolic.DD;
+import libpomdp.common.add.symbolic.OP;
 
 public class BeliefStateAdd implements BeliefState {
 
@@ -37,44 +37,39 @@ public class BeliefStateAdd implements BeliefState {
     }
 
     // compute this only if we actually need it
-    @Override
     public CustomVector getPoint() {
-	return (new CustomVector(OP.convert2array(bAdd, staIds)));
+    	return (new CustomVector(OP.convert2array(bAdd, staIds)));
     }
 
-    @Override
     public double getPoba() {
 	return poba;
     }
 
-    @Override
     public void setPoba(double poba) {
 	this.poba = poba;
     }
 
-    @Override
     public int getAlpha() {
 	return planid;
     }
 
-    @Override
     public void setAlpha(int planid) {
 	this.planid = planid;
     }
 
-    @Override
+    
     public double getEntropy() {
 	// TODO Auto-generated method stub
 	return 0;
     }
 
-    @Override
+  
     public boolean compare(BeliefState bel) {
 	// TODO Auto-generated method stub
 	return false;
     }
 
-    @Override
+ 
     public BeliefState copy() {
 	// TODO Auto-generated method stub
 	return null;

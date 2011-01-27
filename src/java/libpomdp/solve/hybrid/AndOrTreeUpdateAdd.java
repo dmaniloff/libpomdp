@@ -18,6 +18,9 @@ import libpomdp.common.Utils;
 import libpomdp.common.ValueFunction;
 import libpomdp.common.add.PomdpAdd;
 import libpomdp.common.add.ValueFunctionAdd;
+import libpomdp.common.add.symbolic.DD;
+import libpomdp.common.add.symbolic.DDleaf;
+import libpomdp.common.add.symbolic.OP;
 import libpomdp.solve.online.AndNode;
 import libpomdp.solve.online.AndOrTree;
 import libpomdp.solve.online.ExpandHeuristic;
@@ -25,10 +28,6 @@ import libpomdp.solve.online.OrNode;
 
 import org.math.array.DoubleArray;
 import org.math.array.IntegerArray;
-
-import symPerseusJava.DD;
-import symPerseusJava.DDleaf;
-import symPerseusJava.OP;
 
 public class AndOrTreeUpdateAdd extends AndOrTree {
 
@@ -424,6 +423,7 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
     // / print HybridValueIterationOrNode
     private void orprint(HybridValueIterationOrNode o, PrintStream out) {
 	// print this node
+	@SuppressWarnings("unused")
 	String b = "";
 	if (problem.nrStates() < 4)
 	    b = "b=["
