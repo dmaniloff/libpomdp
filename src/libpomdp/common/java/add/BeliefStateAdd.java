@@ -7,7 +7,12 @@
  * Copyright (c) 2009, 2010 Diego Maniloff 
  --------------------------------------------------------------------------- */
 
-package libpomdp.common.java.add;
+package libpomdp.common.add;
+
+import libpomdp.common.BeliefState;
+import libpomdp.common.CustomVector;
+import libpomdp.common.add.symbolic.DD;
+import libpomdp.common.add.symbolic.OP;
 
 import libpomdp.common.java.BeliefState;
 import libpomdp.common.java.CustomVector;
@@ -38,9 +43,8 @@ public class BeliefStateAdd implements BeliefState {
 
 
     // compute this only if we actually need it
-    @Override
     public CustomVector getPoint() {
-    	return(new CustomVector(OP.convert2array(bAdd, staIds)));
+    	return (new CustomVector(OP.convert2array(bAdd, staIds)));
     }
 
 
@@ -74,9 +78,8 @@ public class BeliefStateAdd implements BeliefState {
 	return 0;
     }
 
-
-    public boolean compare(BeliefState arg0) {
-	System.out.println("UUuuups... Compare not implemented yet for ADDs");
+  
+    public boolean compare(BeliefState bel) {
 	// TODO Auto-generated method stub
 	return false;
     }

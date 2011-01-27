@@ -9,10 +9,10 @@
 
 package libpomdp.common.java.add;
 
-import libpomdp.common.java.BeliefState;
-import libpomdp.common.java.CustomVector;
-import libpomdp.common.java.add.symbolic.DD;
-import libpomdp.common.java.add.symbolic.OP;
+import libpomdp.common.BeliefState;
+import libpomdp.common.CustomVector;
+import libpomdp.common.add.symbolic.DD;
+import libpomdp.common.add.symbolic.OP;
 
 public class BeliefStateFactoredAdd implements BeliefState {
     
@@ -46,7 +46,6 @@ public class BeliefStateFactoredAdd implements BeliefState {
 
 
     // compute this only if we actually need it
-    @Override
     public CustomVector getPoint() {
 	return	new CustomVector(OP.convert2array(OP.multN(marginals), staIds));
     }
@@ -87,9 +86,8 @@ public class BeliefStateFactoredAdd implements BeliefState {
 				   staIds);
     }
 
-
-    public boolean compare(BeliefState arg0) {
-	System.out.println("UUuuups... Compare not implemented yet for ADDs");
+    
+    public boolean compare(BeliefState bel) {
 	// TODO Auto-generated method stub
 	return false;
     }

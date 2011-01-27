@@ -12,23 +12,22 @@ package libpomdp.hybrid.java;
 // imports
 import java.io.PrintStream;
 
-import libpomdp.common.java.CustomVector;
-import libpomdp.common.java.Pomdp;
-import libpomdp.common.java.Utils;
-import libpomdp.common.java.ValueFunction;
-import libpomdp.common.java.add.PomdpAdd;
-import libpomdp.common.java.add.ValueFunctionAdd;
-import libpomdp.online.java.AndNode;
-import libpomdp.online.java.AndOrTree;
-import libpomdp.online.java.ExpandHeuristic;
-import libpomdp.online.java.OrNode;
+import libpomdp.common.CustomVector;
+import libpomdp.common.Pomdp;
+import libpomdp.common.Utils;
+import libpomdp.common.ValueFunction;
+import libpomdp.common.add.PomdpAdd;
+import libpomdp.common.add.ValueFunctionAdd;
+import libpomdp.common.add.symbolic.DD;
+import libpomdp.common.add.symbolic.DDleaf;
+import libpomdp.common.add.symbolic.OP;
+import libpomdp.solve.online.AndNode;
+import libpomdp.solve.online.AndOrTree;
+import libpomdp.solve.online.ExpandHeuristic;
+import libpomdp.solve.online.OrNode;
 
 import org.math.array.DoubleArray;
 import org.math.array.IntegerArray;
-
-import symPerseusJava.DD;
-import symPerseusJava.DDleaf;
-import symPerseusJava.OP;
 
 public class AndOrTreeUpdateAdd extends AndOrTree {
 
@@ -422,6 +421,7 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
     /// print HybridValueIterationOrNode
     private void orprint(HybridValueIterationOrNode o, PrintStream out) {
 	// print this node
+	@SuppressWarnings("unused")
 	String b = "";
 	if (problem.nrStates() < 4)
 	    b = "b=[" + DoubleArray.toString("%.2f",

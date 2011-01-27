@@ -40,7 +40,7 @@ public class BeliefStateStd implements BeliefState, Serializable {
     }
     // calling this method should be for debugging
     // purposes only, otherwise we loose the sparse rep
-    @Override
+    
     public CustomVector getPoint() {
 	return bSparse;
     }
@@ -69,14 +69,8 @@ public class BeliefStateStd implements BeliefState, Serializable {
 	this.planid = planid;
     }
 
-
-    public BeliefState copy() {
-	return (new BeliefStateStd(bSparse,poba));
-    }
-
-
-    @Override
-	public double getEntropy() {
+    
+    public double getEntropy() {
 	// TODO Auto-generated method stub
 	return 0;
     }
@@ -93,7 +87,7 @@ public class BeliefStateStd implements BeliefState, Serializable {
 
 
     public boolean compare(BeliefState arg0) {
-	return(bSparse.compare(arg0.getPoint()));
+	return (bSparse.compare(arg0.getPoint()));
     }
 
 

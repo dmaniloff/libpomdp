@@ -83,29 +83,31 @@ public class ValueFunctionAdd implements ValueFunction, Serializable {
 
 
     // list of actions associated with each alpha
-    @Override
+    
     public int[] getActions() {
 	return a;
     }
 
+    
+    public AlphaVector getAlpha(int idx) {
+	// TODO Auto-generated method stub
+	return null;
+    }
 
-    @Override
+    
+    public CustomVector getAlphaValues(int idx) {
+	double[][] val = OP.convert2array(vAdd, staIds);
+	return new CustomVector(val[idx]);
+    }
+
+    
     public int size() {
 	return a.length;
     }
 
-
-    @Override
-    public CustomVector getVectorRef(int idx) {
-	System.out.println("Warning: getVectorRef is not implemented for ADD representation, passing a copy...");
-	return getVectorCopy(idx);
-    }
-
-
-    @Override
-    public CustomVector getVectorCopy(int idx) {
-	double[][] val=OP.convert2array(vAdd, staIds);
-	return new CustomVector(val[idx]);
+    
+    public void sort() {
+	// TODO Auto-generated method stub
     }
 
 

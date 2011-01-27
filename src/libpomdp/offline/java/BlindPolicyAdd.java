@@ -9,14 +9,13 @@
 package libpomdp.offline.java;
 
 // imports
-import libpomdp.common.java.add.PomdpAdd;
-import libpomdp.common.java.add.ValueFunctionAdd;
+import libpomdp.common.add.PomdpAdd;
+import libpomdp.common.add.ValueFunctionAdd;
+import libpomdp.common.add.symbolic.DD;
+import libpomdp.common.add.symbolic.DDleaf;
+import libpomdp.common.add.symbolic.OP;
 
 import org.math.array.DoubleArray;
-
-import symPerseusJava.DD;
-import symPerseusJava.DDleaf;
-import symPerseusJava.OP;
 
 public class BlindPolicyAdd {
 

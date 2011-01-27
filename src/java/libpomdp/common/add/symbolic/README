@@ -1,0 +1,183 @@
+
+Author: Pascal Poupart (Copyright 2007)
+
+Here are a few notes concerning java ADDs.  Java ADDs can be used
+within any Java code or Matlab code.  The next two sections exlain how
+to use Java ADDs in Matlab and provide some very basic docuumentation
+on Java ADDs.
+
+============= Using Java ADDs in Matlab ==================
+
+1) Compiling the code
+
+Compile the code by typing "javac *.java". Make sure to compile the
+code with the same version as Matlab's java virtual machine.  To check
+the java version used by Matlab, type "version -java" at the Matlab
+prompt.  The java code has been compiled with java 1.3.1 to 1.5.0
+without any problem.
+
+2) Memory
+
+By default, Matlab gives the jvm just a few Mb of memory. This will be
+insufficient for most applications.  You can increase the java virtual
+machine's memory by creating a file called "java.opts".  Put this file
+in the directory where you usually launch Matlab.  In "java.opts", add
+a line that specifies the number of Mb you'd like to make available to
+the jvm.  For example, to allow 1800 Mb, put the following line in
+"java.opts":
+
+-Xmx1800m
+
+3) classpath
+
+Matlab needs to know where the java classes are.  By default, Matlab
+executes the commands in the file startup.m when it starts.  Add the
+command "javaaddpath javaClassPathDirectory" to your startup.m file,
+where javaClassPathDirectory is to be replaced by the right directory.
+
+4) Java virtual machine (jvm)
+
+Launch matlab *without* the -nojvm flag.  This flag prevents the jvm from
+starting. The jvm is essential when running java code in Matlab.
+
+================ Very Basic documentation on Java ADDs ==================
+
+At this point you should be able to run the java ADD code.  Here are a 
+few more notes about the code itself.  Although Java is slower
+than C, Java ADDs have been optimized for operations typical in
+AI and consequently yield better performance than the CUDD package
+written in C for many operations typical in Bayes nets, influence diagrams,
+MDPs and POMDPs.  In addition, java ADDs can handle multi-valued
+variables (not just Boolean variables as in CUDD) and have automatic
+memory management via garbage collection (instead of manual memory
+management subject to leaks as in CUDD).
+
+A) Global class
+
+The class "Global" contains a bunch of global objects such as the
+hashtables, varDomSize, varNames and valNames.  These are static
+variables which means that they are equivalent to matlab global
+variables.  The interface between matlab and java isn't perfect, so it
+turns out that you *can't* modify static java variables directly in
+matlab.  This must be done via a static java method.  The static
+methods Global.setVarDomSize(), Global.setVarNames() and
+Global.setValNames() were created precisely for that purpose.
+
+B) Hashtables
+
+In general, Java does garbage collection for us except in
+hashtables. In order to prevent hashtables to grow indefinitely, they
+are implemented as caches with a "last-accessed-first-removed"
+policy. That is, when the size limit of a hashtable is reached, the
+element that hasn't been accessed for the longest amount of time is
+removed.  Note that removing elements from a hashtable doesn't affect
+the accuracy of the code, it may simply slow it down since operations
+that are cached in a hashtable are not recomputed.  However, as the
+size of a hashtable increases, it's performance decreases, hence it is
+sometimes a good idea to flush the hashtables by calling
+"Global.clearHashtables()" or "Global.newHashtables()"
+
+C) saving and loading java objects
+
+In Matlab, you can save and load Java objects using the "save"
+ and "load" commands.  These commands also work with java objects as
+long as they implement serializable.  The classes "DD", "DDnode" and
+"DDleaf" do implement serializable, which means that Java ADDs can be
+saved and loaded seamlessly in Matlab.  There is a catch
+though. You can only load Java objects as long as the class has not
+changed since it was saved.  Since the Java ADD code is still under
+development, this is a serious problem.  In order to minimize the
+problem, the methods that normally operate on the DD, DDleaf or DDnode 
+classes have been moved into a separate class called "OP" (which
+stands for OPerations on DDs).  This way we can freely modify the
+methods that operate on DDs without affecting the DD, DDnode and
+DDleaf classes.
+
+D) DD, DDnode and DDleaf classes
+
+These classes form the core of the Java ADDs.  They define the data
+structures encoding ADDs.  DD is an abstract class from which DDnode
+and DDleaf are derived. Do not modify those classes to make sure that
+previously saved ADDs can be re-loaded.  The methods that operate on
+ADDs have been moved into a separate class called OP which can be
+modified freely.
+
+E) OP class
+
+As explained above, this class was created for the sole purpose of
+separating methods that are likely to be changed from the classes that 
+contain the ADDs.  The OP class can be freely recompiled without
+fear of affecting the DD, DDnode and DDleaf classes.  It contains all
+the methods that operate on ADDs such as mult, div, add, sub, max,
+min, maxout, minout, addMultVarElim, maxxAddVarElim, minAddVarElim,
+restrict, etc.
+
+The most common operations on ADDs are arithmetic operations:
+add,sub,mult,div,max,min which take two ADDs and return the ADD
+resulting from applying the corresponding arithmetic operation.  Note
+also that addN,multN, minN and maxN can also be used to perform
+arithmetic operations on N ADDs stored in an array.  Other useful
+unary arithmetic operations are neg and inv whcih compute the negative
+and inverse of an ADD.
+
+It is also common to eliminate variables by addout, multout, minout or
+maxout. These functions eliminate a single variable by adding,
+multiplying, minimizing or maximizing the children of the variable to
+eliminate.  There is also a restrict function which can be used to
+eliminate a variable by restricting it to one of its children.
+
+Another class of useful functions (addMultVarElim, maxAddVarElim and
+minAddVarElim) implements the classic variable elimination algorithm
+in the context of a sum-product, max-sum or min-sum. The variable
+ordering is chosen automatically and greedily, to free the programmer
+from the burden of coming up with a variable ordering. In particular,
+addMultVarElim can be used to do probabilistic inference, Bellman
+backups or more generally, matrix multiplications.  The function
+maxAddVarElim can be used to maximize Q-functions or to compute
+Bellman error from two successive value functions.
+
+The functions maxAll and minAll are used to find the maximum and
+minimum leaf of an ADD.  The function dotProduct, computes the dot
+product of two ADDs.
+
+The functions nEdges, nNodes and nLeaves compute the number of edges,
+the number of nodes and the number of leaves of an ADD.
+
+F) MySet, Config and DDcollection classes 
+
+These classes are more or less equivalent to the "Set", "Map" and
+"Collection" container classes except that they are encoded using
+simple arrays.  This was done mostly because arrays are orders of
+magnitude faster than the container classes.  You'll notice that those
+classes only have a bunch of static methods that operate on arrays.
+Again, this is to ensure that they can be modified freely without
+affecting the DD, DDnode and DDleaf classes.
+
+G) Pair, TripletSet, TripletConfig classes
+
+These classes were created to aggregate together 
+(i) a pair of DDs (Pair), 
+(ii) a triplet of two DDs and one Set (TripletSet)
+(iii) a triplet of two DDs and one Config (TripletConfig)
+
+These are necessary for the hashtables.  Therefore, they also include 
+methods such as "hashCode" and "equals".
+
+H) ParseSPUDD class
+
+This class is used to parse MDPs and POMDPs in the *explicit* SPUDD
+format.  That is, you must *explicitly* specify the values of each
+variable.  To parse an MDP, do
+
+ParseSPUDD MDP = new ParseSPUDD(filename);
+MDP.parsePOMDP(true);
+
+To parse a POMDP, do
+
+ParseSPUDD POMDP = new ParseSPUDD(filename);
+POMDP.parsePOMDP(false);
+
+N.B. The true or false argument for parsePOMDP indicates whether the
+problem is fully observable.
+
+
