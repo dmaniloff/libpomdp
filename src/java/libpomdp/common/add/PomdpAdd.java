@@ -369,9 +369,9 @@ public class PomdpAdd implements Pomdp {
     }
 
     
-    public String getStateString(int s) {
-	// TODO Auto-generated method stub
-	return null;
+    public String getStateString(int s) throws Exception {
+		throw new Exception("Not Implemented");
+		//return null;
     }
 
     // ------------------------------------------------------------------------
