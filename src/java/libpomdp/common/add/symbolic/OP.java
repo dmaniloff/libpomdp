@@ -2947,6 +2947,11 @@ public class OP {
         return arrayMargs;
     }
 
+	public static double entropy(DD dd, int[] staIds,double base) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
 
 }
 

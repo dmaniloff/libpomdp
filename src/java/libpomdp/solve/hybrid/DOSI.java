@@ -30,7 +30,7 @@ public class DOSI implements BackupHeuristic {
 	// well,
 	// probably need to change this class' name as well!
 	return o.oneStepDeltaLower * Math.pow(problem.getGamma(), o.getDepth())
-		* o.getBeliefState().getEntropy()
+		* o.getBeliefState().getEntropy(Math.E)
 		/ Math.log(problem.nrStates());
     }
 

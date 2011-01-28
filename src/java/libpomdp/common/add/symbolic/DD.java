@@ -41,5 +41,7 @@ public abstract class DD implements Serializable {
 		abstract public DD store();
 
 		public static DD cast(DDleaf leaf) { return (DD)leaf; }
-		public static DD cast(DDnode node) { return (DD)node; }		
+		public static DD cast(DDnode node) { return (DD)node; }
+
+		abstract public DD copy();	
 }

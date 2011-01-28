@@ -58,21 +58,16 @@ public class BeliefStateAdd implements BeliefState {
     }
 
     
-    public double getEntropy() {
-	// TODO Auto-generated method stub
-	return 0;
+    public double getEntropy(double base) {
+    	return OP.entropy(bAdd,staIds,base);
     }
 
-  
-    public boolean compare(BeliefState bel) {
-	// TODO Auto-generated method stub
-	return false;
+    public boolean compare(BeliefState arg0) {
+    	return (this.getPoint().compare(arg0.getPoint()));
     }
-
- 
+    
     public BeliefState copy() {
-	// TODO Auto-generated method stub
-	return null;
+    	return new BeliefStateAdd(bAdd.copy(),staIds,poba);
     }
 
 } // BelStateAdd

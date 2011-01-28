@@ -70,9 +70,8 @@ public class BeliefStateStd implements BeliefState, Serializable {
     }
 
     
-    public double getEntropy() {
-	// TODO Auto-generated method stub
-	return 0;
+    public double getEntropy(double base) {
+    	return bSparse.getEntropy(base);
     }
 
     

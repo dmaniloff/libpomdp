@@ -106,4 +106,10 @@ public class DDleaf extends DD {
     public void printSpuddDD(PrintStream ps) {
 	ps.print("(" + Double.toString(val) + ")");
     }
+
+	@Override
+	public DD copy() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

@@ -9,6 +9,7 @@
 package libpomdp.common;
 
 import java.io.Serializable;
+import java.util.Iterator;
 
 import no.uib.cipr.matrix.Matrices;
 import no.uib.cipr.matrix.Vector;
@@ -209,6 +210,18 @@ public class CustomVector implements Serializable, Comparable<CustomVector> {
 			v.set(i,cum);			
 		}
 		return cum;
+	}
+
+	public double getEntropy(double base) {
+		SparseVector logv=v.copy();
+		Iterator<VectorEntry> it = logv.iterator();
+		do{
+			VectorEntry val=it.next();
+			val.set(Math.log(val.get()));
+		} while (it.hasNext());
+		if 	(base!=Math.E)
+			logv.scale(1.0/Math.log(base));
+		return(-logv.dot(v));
 	}
 
 }

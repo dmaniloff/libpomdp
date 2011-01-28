@@ -68,24 +68,23 @@ public class BeliefStateFactoredAdd implements BeliefState {
     }
 
     // compute entropy of this point in nats
-    
-    public double getEntropy() {
+    public double getEntropy(double base) {
     	DD m[] = new DD[marginals.length - 1];
     	System.arraycopy(marginals, 0, m, 0, marginals.length - 1);
-//    	return -OP.dotProductNoMem(OP.log(OP.multN(m)), OP.multN(m), staIds);
-		return 0.0;
+    	//return -OP.dotProductNoMem(OP.log(OP.multN(m)), OP.multN(m), staIds);
+		return OP.entropy(OP.multN(m),staIds,base);
     }
 
-    
-    public boolean compare(BeliefState bel) {
-	// TODO Auto-generated method stub
-	return false;
+    public boolean compare(BeliefState arg0) {
+    	return (this.getPoint().compare(arg0.getPoint()));
     }
-
 
     public BeliefState copy() {
-	// TODO Auto-generated method stub
-	return null;
+    	DD newm[]=new DD[marginals.length];
+    	for (int i=0;i<marginals.length;i++){
+    		newm[i]=marginals[i].copy();
+    	}
+    	return new BeliefStateFactoredAdd(newm,staIds,poba);
     }
 
 } // BeliefStateFactoredAdd

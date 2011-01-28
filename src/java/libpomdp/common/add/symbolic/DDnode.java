@@ -166,4 +166,10 @@ class DDnode extends DD {
 	ps.print(")\n");
     }
 
+	@Override
+	public DD copy() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
