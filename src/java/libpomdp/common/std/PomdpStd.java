@@ -251,11 +251,11 @@ public class PomdpStd implements Pomdp, Serializable {
 	return (-1);
     }
 
-    public AlphaVector mdpValueUpdate(AlphaVector alpha, int a) {
+    public AlphaVector mdpValueUpdate(AlphaVectorStd alpha, int a) {
 	CustomVector vec = getTransitionTable(a).mult(getGamma(),
-		alpha.getVectorRef());
-	vec.add(getRewardValueFunction(a).getAlpha(0).getVectorRef());
-	return (new AlphaVector(vec, a));
+		alpha.getInternalRef());
+	vec.add(getRewardValueFunction(a).getAlpha(0).getInternalRef());
+	return (new AlphaVectorStd(vec, a));
     }
 
     public ValueFunctionStd getRewardValueFunction(int a) {
@@ -303,7 +303,7 @@ public class PomdpStd implements Pomdp, Serializable {
     }
 
     public AlphaVector getRewardVec(int a, BeliefState bel) {
-	return (new AlphaVector(R[a].copy(), a));
+	return (new AlphaVectorStd(R[a].copy(), a));
     }
 
 } // PomdpStd.java

@@ -138,10 +138,10 @@ public class BeliefMdpStd implements BeliefMdp, Serializable {
 	return pom.sampleObservation(bel, a);
     }
 
-    public AlphaVector projection(AlphaVector alpha, int a, int o) {
+    public AlphaVector projection(AlphaVectorStd alpha, int a, int o) {
 	CustomVector vect = new CustomVector(nrStates());
-	vect.add(tau[o][a].mult(getGamma(), alpha.getVectorRef()));
-	return (new AlphaVector(vect, a));
+	vect.add(tau[o][a].mult(getGamma(), alpha.getInternalRef()));
+	return (new AlphaVectorStd(vect, a));
     }
 
     public int getRandomAction() {

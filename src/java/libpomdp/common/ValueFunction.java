@@ -18,7 +18,7 @@ public interface ValueFunction {
 
     public AlphaVector getAlpha(int idx);
 
-    public CustomVector getAlphaValues(int idx);
+    public Object getAlphaValues(int idx);
 
     public int size();
 

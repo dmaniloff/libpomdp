@@ -15,8 +15,14 @@ import libpomdp.common.add.ValueFunctionAdd;
 import libpomdp.common.add.symbolic.DD;
 import libpomdp.common.add.symbolic.DDleaf;
 import libpomdp.common.add.symbolic.OP;
+import libpomdp.common.std.PomdpStd;
+import libpomdp.common.std.ValueFunctionStd;
+import libpomdp.solve.IterationStats;
+import libpomdp.solve.offline.ValueIterationAdd;
 
-public class BlindPolicyAdd {
+public class BlindPolicyAdd  {
+
+	
 
     // parameters
     final int MAXITERATIONS = 500;
@@ -84,6 +90,6 @@ public class BlindPolicyAdd {
 	return new ValueFunctionAdd(alphas, factoredProb.getstaIds(), policy);
 
     } // getBlindAdd
-
+	
 } // blindAdd
 

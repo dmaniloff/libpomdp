@@ -9,65 +9,25 @@
 
 package libpomdp.common;
 
-public class AlphaVector implements Comparable<AlphaVector> {
+public abstract class AlphaVector implements Comparable<AlphaVector> {
 
-    protected CustomVector v;
-    protected int a;
-
-    /**
-     * Constructor using an existing vector.
-     * 
-     * @param v
-     *            the reference of the vector to use
-     * @param a
-     *            the action associated to the vector v
-     */
-    public AlphaVector(CustomVector v, int a) {
-	this.v = v;
-	this.a = a;
-    }
-
-    /**
-     * Constructor by vector dimension. Creates a zero-vector associated with
-     * the action -1
-     * 
-     * @param dim
-     *            the size of the zero-vector to create
-     */
-    public AlphaVector(int dim) {
-	this(new CustomVector(dim), -1);
-    }
-
-    /**
-     * Constructor by vector dimension and action.
-     * 
-     * @param dim
-     *            the size of the zero-vector to create
-     * @param a
-     *            the action associated to the vector v
-     */
-    public AlphaVector(int dim, int a) {
-	this(new CustomVector(dim), a);
-    }
+	protected int a;
 
     /**
      * Evaluates a belief-point for this alpha.
      * 
-     * @param bel
-     *            the belief-state point
-     * @return the dot product between both vectors.
+     * @param bel the belief-state point
+     * @return the evaluation on that point.
      */
-    public double eval(BeliefState bel) {
-	return (v.dot(bel.getPoint()));
-    }
+    public abstract double eval(BeliefState bel);
 
     /**
      * Get the associated action
      * 
      * @return the associated action
      */
-    public int getAction() {
-	return a;
+    public int getAction(){
+    	return(a);
     }
 
     /**
@@ -75,28 +35,15 @@ public class AlphaVector implements Comparable<AlphaVector> {
      * 
      * @return an alpha-vector copy
      */
-    public AlphaVector copy() {
-	return (new AlphaVector(v.copy(), a));
-    }
-
-    /**
-     * Create a proper copy on the vector contents
-     * 
-     * @return a custom vector copy
-     */
-    public CustomVector getVectorCopy() {
-	return (v.copy());
-    }
+    public abstract AlphaVector copy();
 
     /**
      * Size of the alpha-vector
      * 
      * @return size of the vector
      */
-    public int size() {
-	return v.size();
-    }
-
+    public abstract int size();
+    
     /**
      * Compare to an alpha-vector with delta tolerance.
      * 
@@ -107,9 +54,7 @@ public class AlphaVector implements Comparable<AlphaVector> {
      * @return zero if (almost) equal, positive if is higher, and negative if is
      *         lower;
      */
-    public int compareTo(AlphaVector vec, double delta) {
-	return (v.compareTo(vec.v));
-    }
+    public abstract int compareTo(AlphaVector vec, double delta);
 
     /**
      * Compare to an alpha-vector with delta tolerance.
@@ -118,29 +63,31 @@ public class AlphaVector implements Comparable<AlphaVector> {
      *            the vector to compare to
      * @return zero if equal, positive if is higher, and negative if is lower.
      */
-    public int compareTo(AlphaVector vec) {
-	return (v.compareTo(vec.v));
-    }
+    public abstract int compareTo(AlphaVector vec);
 
     /**
-     * Get the reference of the internal custom vector. Used for optimize
+     * Get the reference of the internal data structure. Used for optimize
      * read-only operations.
      * 
      * @return a custom vector copy
      */
-    public CustomVector getVectorRef() {
-	return (v);
-    }
+    public abstract Object getInternalRef(); 
 
+    /**
+     * Get a copy of the internal data structure.
+     * 
+     * @return a custom vector copy
+     */
+    public abstract Object getInternalCopy(); 
+
+    
     /**
      * Reset the vector reference to a new one.
      * 
      * @param v
      *            the new custom vector
      */
-    public void setValues(CustomVector v) {
-	this.v = v;
-    }
+    public abstract void setValues(Object newref);
 
     /**
      * Action setter.
@@ -148,8 +95,8 @@ public class AlphaVector implements Comparable<AlphaVector> {
      * @param a
      *            a valid action
      */
-    public void setAction(int a) {
-	this.a = a;
+    public  void setAction(int a){
+    	this.a=a;
     }
 
     /**
@@ -158,23 +105,9 @@ public class AlphaVector implements Comparable<AlphaVector> {
      * @param res
      *            the alpha vector to copy from
      */
-    public void set(AlphaVector res) {
-	setValues(res.v.copy());
-	setAction(res.a);
-    }
+    public abstract void set(AlphaVector res);
 
-    /**
-     * Change one value of the alpha-vector.
-     * 
-     * @param idx
-     *            the vector index
-     * @param value
-     *            the nez value
-     */
-    public void setValue(int idx, double value) {
-	v.set(idx, value);
-    }
-
+   
     /**
      * Add the values of other alpha-vector. This does not modify the action
      * value.
@@ -182,17 +115,13 @@ public class AlphaVector implements Comparable<AlphaVector> {
      * @param alpha
      *            the alpha-vector to add
      */
-    public void add(AlphaVector alpha) {
-	add(alpha.v);
-    }
+    public abstract void add(AlphaVector alpha);
 
     /**
-     * Add the values of a custom vector.
+     * Add the values of a internal reference.
      * 
      * @param vec
      *            the custom vector to sum
      */
-    public void add(CustomVector vec) {
-	v.add(vec);
-    }
+    public abstract void add(Object iref);
 }
