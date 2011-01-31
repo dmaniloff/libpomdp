@@ -4,7 +4,7 @@ import libpomdp.common.std.PomdpStd;
 import libpomdp.parser.FileParser;
 import libpomdp.solve.MaxIterationsCriteria;
 import libpomdp.solve.offline.ValueIterationStats;
-import libpomdp.solve.offline.exact.BatchEnumerationStd;
+import libpomdp.solve.offline.exact.BatchEnumeration;
 
 public class BatchEnumerationTest {
 
@@ -16,7 +16,7 @@ public class BatchEnumerationTest {
 	PomdpStd pomdp = (PomdpStd) FileParser.loadPomdp(
 		"data/problems/tiger/tiger.95.POMDP",
 		FileParser.PARSE_CASSANDRA_POMDP);
-	BatchEnumerationStd algo = new BatchEnumerationStd(pomdp, 1e-1);
+	BatchEnumeration algo = new BatchEnumeration(pomdp, 1e-1);
 	algo.addStopCriteria(new MaxIterationsCriteria(10));
 	algo.run();
 	ValueIterationStats stat = (ValueIterationStats) algo.getStats();

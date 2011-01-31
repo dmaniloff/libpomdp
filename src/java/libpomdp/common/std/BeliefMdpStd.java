@@ -134,8 +134,8 @@ public class BeliefMdpStd implements BeliefMdp, Serializable {
 	return (tau[o][a].copy());
     }
 
-    public int getRandomObservation(BeliefStateStd bel, int a) {
-	return pom.sampleObservation(bel, a);
+    public int sampleObservation(BeliefStateStd bel, int a) {
+    	return pom.sampleObservation(bel, a);
     }
 
     public AlphaVector projection(AlphaVectorStd alpha, int a, int o) {
@@ -159,5 +159,33 @@ public class BeliefMdpStd implements BeliefMdp, Serializable {
     public double getRewardMaxMin() {
 	return (pom.getRewardMaxMin());
     }
+
+	public AlphaVector mdpValueUpdate(AlphaVector vec, int a) {
+		return(pom.mdpValueUpdate(vec, a));
+	}
+
+	public AlphaVector getEmptyAlpha() {
+		return(pom.getEmptyAlpha());
+	}
+
+	public BeliefMdp getBeliefMdp() {
+		return this;
+	}
+
+	public AlphaVector projection(AlphaVector prev, int a, int o) {
+		return projection((AlphaVectorStd)prev,a,o);
+	}
+
+	public AlphaVector getEmptyAlpha(int a) {
+		return(pom.getEmptyAlpha(a));
+	}
+
+	public AlphaVector getHomogeneAlpha(double bestVal) {
+		return pom.getHomogeneAlpha(bestVal);
+	}
+
+	public int sampleObservation(BeliefState b, int a) {
+		return pom.sampleObservation(b, a);
+	}
 
 }

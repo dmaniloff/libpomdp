@@ -6,7 +6,7 @@ import libpomdp.solve.Criteria;
 import libpomdp.solve.MaxIterationsCriteria;
 import libpomdp.solve.offline.ValueConvergenceCriteria;
 import libpomdp.solve.offline.ValueIterationStats;
-import libpomdp.solve.offline.exact.IncrementalPruningStd;
+import libpomdp.solve.offline.exact.IncrementalPruning;
 
 public class IncrementalPruningTest {
 
@@ -20,7 +20,7 @@ public class IncrementalPruningTest {
 		"data/problems/tiger/tiger.95.POMDP",
 		FileParser.PARSE_CASSANDRA_POMDP);
 	double epsi = 1e-6 * (1 - pomdp.getGamma()) / (2 * pomdp.getGamma());
-	IncrementalPruningStd algo = new IncrementalPruningStd(pomdp, epsi);
+	IncrementalPruning algo = new IncrementalPruning(pomdp, epsi);
 	algo.addStopCriteria(new MaxIterationsCriteria(100));
 	algo.addStopCriteria(new ValueConvergenceCriteria(epsi,
 		Criteria.CC_MAXDIST));

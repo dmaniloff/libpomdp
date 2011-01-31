@@ -7,7 +7,7 @@ import libpomdp.solve.MaxIterationsCriteria;
 import libpomdp.solve.offline.ValueConvergenceCriteria;
 import libpomdp.solve.offline.ValueIterationStats;
 import libpomdp.solve.offline.pointbased.PbParams;
-import libpomdp.solve.offline.pointbased.PointBasedStd;
+import libpomdp.solve.offline.pointbased.PointBased;
 
 public class PbviTest {
 
@@ -23,7 +23,7 @@ public class PbviTest {
 	double epsi = 1e-6 * (1 - pomdp.getGamma()) / (2 * pomdp.getGamma());
 	PbParams params = new PbParams(PbParams.BACKUP_SYNC_FULL,
 		PbParams.EXPAND_GREEDY_ERROR_REDUCTION, 100);
-	PointBasedStd algo = new PointBasedStd(pomdp, params);
+	PointBased algo = new PointBased(pomdp, params);
 	algo.addStopCriteria(new MaxIterationsCriteria(100));
 	algo.addStopCriteria(new ValueConvergenceCriteria(epsi,
 		Criteria.CC_MAXDIST));

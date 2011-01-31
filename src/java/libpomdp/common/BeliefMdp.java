@@ -28,4 +28,9 @@ public interface BeliefMdp extends Pomdp {
      *            the observation
      */
     public CustomMatrix getTau(int a, int o);
+
+	public AlphaVector projection(AlphaVector prev, int a, int o);
+
+
+	
 }

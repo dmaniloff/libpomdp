@@ -52,4 +52,26 @@ public interface Pomdp {
     /// state names
     public String getStateString(int s) throws Exception;
 
+	public double getRewardMin();
+
+	public AlphaVector mdpValueUpdate(AlphaVector vec, int a);
+
+	public AlphaVector getEmptyAlpha();
+
+	public BeliefMdp getBeliefMdp();
+	
+	public ValueFunction getRewardValueFunction(int a);
+
+	public double getRewardMaxMin();
+
+	public AlphaVector getHomogeneAlpha(double bestVal);
+
+	public AlphaVector getEmptyAlpha(int a);
+	
+	public int sampleObservation(BeliefState b, int a);
+	
+	public double getRewardMax();
+
+	public int getRandomAction();	
+
 } // Pomdp

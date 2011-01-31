@@ -29,6 +29,7 @@ package libpomdp.common.std;
 import java.io.Serializable;
 
 import libpomdp.common.AlphaVector;
+import libpomdp.common.BeliefMdp;
 import libpomdp.common.BeliefState;
 import libpomdp.common.CustomMatrix;
 import libpomdp.common.CustomVector;
@@ -239,7 +240,7 @@ public class PomdpStd implements Pomdp, Serializable {
     }
 
     /// ???
-    public int sampleObservation(BeliefStateStd bel, int a) {
+    public int sampleObservation(BeliefState bel, int a) {
 	double roulette = Utils.gen.nextDouble();
 	CustomVector vect = O[a].mult(bel.getPoint());
 	double sum = 0.0;
@@ -251,15 +252,15 @@ public class PomdpStd implements Pomdp, Serializable {
 	return (-1);
     }
 
-    public AlphaVector mdpValueUpdate(AlphaVectorStd alpha, int a) {
+    public AlphaVectorStd mdpValueUpdate(AlphaVector alpha, int a) {
 	CustomVector vec = getTransitionTable(a).mult(getGamma(),
-		alpha.getInternalRef());
+		(CustomVector)alpha.getInternalRef());
 	vec.add(getRewardValueFunction(a).getAlpha(0).getInternalRef());
 	return (new AlphaVectorStd(vec, a));
     }
 
     public ValueFunctionStd getRewardValueFunction(int a) {
-	ValueFunctionStd vf = new ValueFunctionStd(nrSta);
+	ValueFunctionStd vf = new ValueFunctionStd();
 	vf.push(R[a].copy(), a);
 	return vf;
     }
@@ -305,6 +306,25 @@ public class PomdpStd implements Pomdp, Serializable {
     public AlphaVector getRewardVec(int a, BeliefState bel) {
 	return (new AlphaVectorStd(R[a].copy(), a));
     }
+
+	public AlphaVector getEmptyAlpha() {
+		return new AlphaVectorStd(nrSta);
+	}
+
+	public BeliefMdp getBeliefMdp() {
+		return new BeliefMdpStd(this);
+	}
+	
+	public AlphaVector getHomogeneAlpha(double bestVal) {
+		return (new AlphaVectorStd(CustomVector.getHomogene(nrStates(),
+				bestVal), -1));
+	}
+
+	public AlphaVector getEmptyAlpha(int a) {
+		return (new AlphaVectorStd(nrStates(), a));
+	}
+
+
 
 } // PomdpStd.java
 

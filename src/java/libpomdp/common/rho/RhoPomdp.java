@@ -25,8 +25,6 @@
 
 package libpomdp.common.rho;
 
-// imports
-import libpomdp.common.AlphaVector;
 import libpomdp.common.BeliefState;
 import libpomdp.common.std.PomdpStd;
 import libpomdp.common.std.ValueFunctionStd;
@@ -56,11 +54,6 @@ public class RhoPomdp extends PomdpStd {
 
     public double getRewardMin(int a) {
 	return (reward.min(a));
-    }
-
-    public AlphaVector mdpValueUpdate(AlphaVector alpha, int a) {
-	// TODO
-	return alpha;
     }
 
     public void approxReward(PointSet bset) {

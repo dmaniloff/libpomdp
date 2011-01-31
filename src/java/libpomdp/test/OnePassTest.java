@@ -4,7 +4,7 @@ import libpomdp.common.std.PomdpStd;
 import libpomdp.parser.FileParser;
 import libpomdp.solve.MaxIterationsCriteria;
 import libpomdp.solve.offline.ValueIterationStats;
-import libpomdp.solve.offline.exact.OnePassStd;
+import libpomdp.solve.offline.exact.OnePass;
 
 public class OnePassTest {
 
@@ -16,7 +16,7 @@ public class OnePassTest {
 	PomdpStd pomdp = (PomdpStd) FileParser.loadPomdp(
 		"data/problems/tiger/tiger.95.POMDP",
 		FileParser.PARSE_CASSANDRA_POMDP);
-	OnePassStd algo = new OnePassStd(pomdp);
+	OnePass algo = new OnePass(pomdp);
 	algo.addStopCriteria(new MaxIterationsCriteria(10));
 	algo.run();
 	ValueIterationStats stat = (ValueIterationStats) algo.getStats();

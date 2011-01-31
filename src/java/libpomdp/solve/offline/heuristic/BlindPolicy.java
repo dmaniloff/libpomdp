@@ -1,7 +1,7 @@
 /** ------------------------------------------------------------------------- *
  * libpomdp
  * ========
- * File: BlindPolicyStd.java
+ * File: BlindPolicy.java
  * Description: 
  * Copyright (c) 2010 Mauricio Araya
  --------------------------------------------------------------------------- */
@@ -9,26 +9,19 @@
 package libpomdp.solve.offline.heuristic;
 
 import libpomdp.common.AlphaVector;
-import libpomdp.common.CustomVector;
-import libpomdp.common.std.PomdpStd;
-import libpomdp.common.std.ValueFunctionStd;
+import libpomdp.common.Pomdp;
+import libpomdp.common.ValueFunctionFactory;
 import libpomdp.solve.IterationStats;
-import libpomdp.solve.offline.ValueIterationStd;
+import libpomdp.solve.offline.ValueIteration;
 
-public class BlindPolicyStd extends ValueIterationStd {
+public class BlindPolicy extends ValueIteration {
 
-    public BlindPolicyStd(PomdpStd pomdp) {
+    public BlindPolicy(Pomdp pomdp) {
 	startTimer();
-	initValueIteration(pomdp);
+	initValueIteration(pomdp);	
 	// Blind is |A| x |S| - initialize each \alpha^a_{0} to \min_s
 	// {R(s,a)/(1-\gamma)}
-	current = new ValueFunctionStd(pomdp.nrStates());
-	for (int a = 0; a < pomdp.nrActions(); a++) {
-	    double factor = 1.0 / (1.0 - pomdp.getGamma());
-	    double val = pomdp.getRewardMin();
-	    val *= factor;
-	    current.push(CustomVector.getHomogene(pomdp.nrStates(), val), a);
-	}
+	current = ValueFunctionFactory.getLowerBoundPerAction(pomdp);
 	registerInitTime();
     }
 

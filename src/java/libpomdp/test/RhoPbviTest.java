@@ -8,7 +8,7 @@ import libpomdp.solve.MaxIterationsCriteria;
 import libpomdp.solve.offline.ValueConvergenceCriteria;
 import libpomdp.solve.offline.ValueIterationStats;
 import libpomdp.solve.offline.pointbased.PbParams;
-import libpomdp.solve.offline.pointbased.PointBasedStd;
+import libpomdp.solve.offline.pointbased.PointBased;
 
 public class RhoPbviTest {
 
@@ -25,7 +25,7 @@ public class RhoPbviTest {
 	RhoPomdp rpomdp = new RhoPomdp(pomdp, new TigerRho());
 	PbParams params = new PbParams(PbParams.BACKUP_SYNC_FULL,
 		PbParams.EXPAND_GREEDY_ERROR_REDUCTION, 100);
-	PointBasedStd algo = new PointBasedStd(rpomdp, params);
+	PointBased algo = new PointBased(rpomdp, params);
 	algo.addStopCriteria(new MaxIterationsCriteria(100));
 	algo.addStopCriteria(new ValueConvergenceCriteria(epsi,
 		Criteria.CC_MAXDIST));

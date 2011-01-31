@@ -9,25 +9,25 @@
 package libpomdp.solve.offline.exact;
 
 import libpomdp.common.AlphaVector;
-import libpomdp.common.std.BeliefMdpStd;
-import libpomdp.common.std.PomdpStd;
-import libpomdp.common.std.ValueFunctionStd;
+import libpomdp.common.BeliefMdp;
+import libpomdp.common.Pomdp;
+import libpomdp.common.ValueFunctionFactory;
 import libpomdp.solve.IterationStats;
 import libpomdp.solve.offline.ValueIterationStats;
-import libpomdp.solve.offline.ValueIterationStd;
+import libpomdp.solve.offline.ValueIteration;
 
-public class BatchEnumerationStd extends ValueIterationStd {
+public class BatchEnumeration extends ValueIteration {
 
-    BeliefMdpStd bmdp;
+    BeliefMdp bmdp;
     double delta;
 
-    public BatchEnumerationStd(PomdpStd pomdp, double delta) {
+    public BatchEnumeration(Pomdp pomdp, double delta) {
 	startTimer();
 	initValueIteration(pomdp);
 	this.delta = delta;
-	bmdp = new BeliefMdpStd(pomdp);
-	current = new ValueFunctionStd(pomdp.nrStates());
-	current.push(new AlphaVector(bmdp.nrStates()));
+	bmdp = pomdp.getBeliefMdp();
+	current = ValueFunctionFactory.getEmpty(pomdp);
+	current.push(bmdp.getEmptyAlpha());
 	registerInitTime();
     }
 
@@ -35,17 +35,17 @@ public class BatchEnumerationStd extends ValueIterationStd {
     public IterationStats iterate() {
 	startTimer();
 	old = current;
-	current = new ValueFunctionStd(bmdp.nrStates());
+	current = ValueFunctionFactory.getEmpty(pomdp);
 	for (int a = 0; a < bmdp.nrActions(); a++) {
 	    for (int idx = 0; idx < old.size(); idx++) {
 		AlphaVector prev = old.getAlpha(idx);
-		AlphaVector alpha = new AlphaVector(bmdp.nrStates());
+		AlphaVector alpha = bmdp.getEmptyAlpha();
 		for (int o = 0; o < bmdp.nrObservations(); o++) {
 		    alpha.add(bmdp.projection(prev, a, o));
 		}
 		current.push(alpha);
 	    }
-	    current.crossSum(bmdp.getRewardValueFunction(a));
+	    current.crossSum(ValueFunctionFactory.getRewardValueFunction(pomdp,a));
 	}
 	((ValueIterationStats) iterationStats).registerLp(current.prune(delta));
 	registerValueIterationStats();

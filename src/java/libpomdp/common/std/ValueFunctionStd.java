@@ -21,9 +21,11 @@ import org.gnu.glpk.SWIGTYPE_p_int;
 import org.gnu.glpk.glp_prob;
 import org.gnu.glpk.glp_smcp;
 
+import libpomdp.common.AlphaVector;
 import libpomdp.common.BeliefState;
 import libpomdp.common.CustomVector;
 import libpomdp.common.ValueFunction;
+import libpomdp.solve.Criteria;
 
 public class ValueFunctionStd implements ValueFunction, Serializable {
 
@@ -40,13 +42,11 @@ public class ValueFunctionStd implements ValueFunction, Serializable {
 
     // represent a value function via a Matrix object
     private ArrayList<AlphaVectorStd> set;
-    private int states;
     long total_lp_time;
 
     // constructor
-    public ValueFunctionStd(int states) {
+    public ValueFunctionStd() {
 	set = new ArrayList<AlphaVectorStd>();
-	this.states = states;
     }
 
     // ------------------------------------------------------------------------
@@ -54,7 +54,7 @@ public class ValueFunctionStd implements ValueFunction, Serializable {
     // ------------------------------------------------------------------------
 
     public ValueFunctionStd(double[][] v, int[] a) {
-	this(v[0].length);
+	this();
 	for (int i = 0; i < a.length; i++) {
 	    push(v[i], a[i]);
 	}
@@ -107,7 +107,7 @@ public class ValueFunctionStd implements ValueFunction, Serializable {
     }
 
     public ValueFunctionStd copy() {
-	ValueFunctionStd newv = new ValueFunctionStd(states);
+	ValueFunctionStd newv = new ValueFunctionStd();
 	for (int i = 0; i < set.size(); i++)
 	    newv.push(set.get(i).copy());
 	return newv;
@@ -201,6 +201,7 @@ public class ValueFunctionStd implements ValueFunction, Serializable {
 	    ArrayList<AlphaVectorStd> newv, double delta) {
 	// Can Sparsity play a role here?, nice question!
 	BeliefStateStd bel = null;
+	int states=selVect.size();
 	glp_prob lp;
 	glp_smcp parm;
 	SWIGTYPE_p_int ind;
@@ -226,7 +227,7 @@ public class ValueFunctionStd implements ValueFunction, Serializable {
 	for (int i = 0; i < newv.size(); i++) {
 	    GLPK.glp_set_row_bnds(lp, i + 1, GLPKConstants.GLP_LO, 0.0,
 		    Double.POSITIVE_INFINITY);
-	    CustomVector testVect = newv.get(i).getInternalRef();
+	    CustomVector testVect = newv.get(i).getInternalCopy();
 	    for (int j = 0; j < states; j++) {
 		GLPK.doubleArray_setitem(val, j + 1, selVect.getInternalRef()
 			.get(j) - testVect.get(j));
@@ -284,7 +285,7 @@ public class ValueFunctionStd implements ValueFunction, Serializable {
 	    ArrayList<AlphaVectorStd> tempv = new ArrayList<AlphaVectorStd>();
 	    double max_dom = Double.NEGATIVE_INFINITY;
 	    for (AlphaVectorStd test_vect : newv) {
-		CustomVector res = test_vect.getInternalRef();
+		CustomVector res = test_vect.getInternalCopy();
 		res.add(-1.0, sel_vect.getInternalRef());
 		double min_dom = res.min();
 		if (min_dom > max_dom)
@@ -336,5 +337,69 @@ public class ValueFunctionStd implements ValueFunction, Serializable {
     public double getAlphaElement(int i, int s) {
 	return set.get(i).getInternalRef().get(s);
     }
+
+	public double performance(ValueFunctionStd oldv, int perfCriteria) {
+		if (oldv == null || this.size() != oldv.size()) {
+			return Double.POSITIVE_INFINITY;
+		}
+		this.sort();
+		oldv.sort();
+		double conv = 0;
+		for (int j = 0; j < this.size(); j++) {
+		    AlphaVectorStd newAlpha = this.getAlpha(j);
+		    AlphaVectorStd oldAlpha = oldv.getAlpha(j);
+		    if (newAlpha.getAction() != oldAlpha.getAction()) {
+				return Double.POSITIVE_INFINITY;
+		    }
+		    CustomVector perf = newAlpha.getInternalCopy();
+		    perf.add(-1.0, oldAlpha.getInternalRef());
+		    double a_value = 0;
+		    switch (perfCriteria) {
+		    case Criteria.CC_MAXEUCLID:
+			a_value = perf.norm(2.0);
+			break;
+		    case Criteria.CC_MAXDIST:
+			a_value = perf.norm(1.0);
+			break;
+		    }
+		    if (a_value > conv)
+			conv = a_value;
+		}
+		return conv;
+	}
+
+	public double performance(ValueFunction oldv, int perfCriteria) {
+		return performance((ValueFunctionStd)oldv,perfCriteria);
+	}
+
+	public void push(AlphaVector vec) {
+		push((AlphaVectorStd)vec);
+	}
+
+	public AlphaVector getUpperBound() {
+		if (this.set.size()<1){
+			return null;
+		}
+		int states=set.get(0).size();
+		AlphaVectorStd ub=new AlphaVectorStd(states);
+		for (int s = 0; s < states; s++) {
+		    double colmax = Double.NEGATIVE_INFINITY;
+		    for (int a = 0; a < set.size(); a++) {
+		    	double val = getAlphaElement(a, s);
+		    	if (val > colmax)
+		    		colmax = val;
+		    	}
+		    ub.setValue(s, colmax);
+		}
+		return ub;
+	}
+
+	public void crossSum(ValueFunction vf) {
+		crossSum((ValueFunctionStd)vf);
+	}
+
+	public void merge(ValueFunction vfA) {
+		merge((ValueFunctionStd)vfA);
+	}
 
 } // ValueFunctionStd

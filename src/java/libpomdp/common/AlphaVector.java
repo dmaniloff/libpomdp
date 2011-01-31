@@ -124,4 +124,7 @@ public abstract class AlphaVector implements Comparable<AlphaVector> {
      *            the custom vector to sum
      */
     public abstract void add(Object iref);
+
+	public abstract double get(int s);
+	
 }
