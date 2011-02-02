@@ -23,13 +23,12 @@
  * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
 
-package libpomdp.common.rho;
+package libpomdp.common.std;
 
 // imports
 import libpomdp.common.AlphaVector;
 import libpomdp.common.BeliefState;
-import libpomdp.common.std.PomdpStd;
-import libpomdp.common.std.ValueFunctionStd;
+import libpomdp.common.RhoFunction;
 import libpomdp.solve.offline.pointbased.PointSet;
 
 public class RhoPomdp extends PomdpStd {
@@ -38,10 +37,10 @@ public class RhoPomdp extends PomdpStd {
 
     private static final long serialVersionUID = -5511401938934887929L;
 
-    RewardFunction reward;
+    RhoFunction reward;
 
     // / constructor
-    public RhoPomdp(PomdpStd pomdp, RewardFunction reward) {
+    public RhoPomdp(PomdpStd pomdp, RhoFunction reward) {
 	super(pomdp);
 	this.reward = reward;
     } // constructor
@@ -66,7 +65,7 @@ public class RhoPomdp extends PomdpStd {
     public void approxReward(PointSet bset) {
 	rewardCache = new ValueFunctionStd[nrActions()];
 	for (int a = 0; a < nrActions(); a++) {
-	    rewardCache[a] = reward.approximate(a, bset);
+	    rewardCache[a] = (ValueFunctionStd) reward.approximate(a, bset);
 	    // System.out.println(rewardCache[a]);
 	}
     }

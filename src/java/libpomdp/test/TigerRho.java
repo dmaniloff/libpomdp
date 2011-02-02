@@ -3,11 +3,11 @@ package libpomdp.test;
 import libpomdp.common.AlphaVector;
 import libpomdp.common.BeliefState;
 import libpomdp.common.CustomVector;
-import libpomdp.common.rho.RewardFunction;
+import libpomdp.common.RhoFunction;
 import libpomdp.common.std.ValueFunctionStd;
 import libpomdp.solve.offline.pointbased.PointSet;
 
-public class TigerRho extends RewardFunction {
+public class TigerRho extends RhoFunction {
 
     @Override
     public ValueFunctionStd approximate(int a, PointSet bset) {

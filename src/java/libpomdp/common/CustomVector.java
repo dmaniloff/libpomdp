@@ -65,7 +65,17 @@ public class CustomVector implements Serializable, Comparable<CustomVector> {
 	v = cv.v.copy();
     }
 
-    public double dot(CustomVector cv) {
+    public CustomVector(long[] val) {
+    	this(val.length);
+    	int idx = 0;
+    	for (long value : val) {
+    	    if (value != 0.0)
+    		v.set(idx, value);
+    	    idx++;
+    	}	
+	}
+
+	public double dot(CustomVector cv) {
 	return (v.dot(cv.v));
     }
 
@@ -222,6 +232,11 @@ public class CustomVector implements Serializable, Comparable<CustomVector> {
 		if 	(base!=Math.E)
 			logv.scale(1.0/Math.log(base));
 		return(-logv.dot(v));
+	}
+
+	public void normalize() {
+		double norm=v.norm(Vector.Norm.One);
+		v.scale(1.0/norm);
 	}
 
 }

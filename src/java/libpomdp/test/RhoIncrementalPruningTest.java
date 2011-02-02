@@ -1,8 +1,8 @@
 package libpomdp.test;
 
-import libpomdp.common.rho.RhoPomdp;
 import libpomdp.common.std.BeliefStateStd;
 import libpomdp.common.std.PomdpStd;
+import libpomdp.common.std.RhoPomdp;
 import libpomdp.parser.FileParser;
 import libpomdp.solve.Criteria;
 import libpomdp.solve.MaxIterationsCriteria;
