@@ -61,7 +61,7 @@ public class CustomMatrix implements Serializable {
 	CustomMatrix uni = new CustomMatrix(siz, siz2);
 	for (int i = 0; i < siz; i++)
 	    for (int j = 0; j < siz2; j++)
-		uni.set(i, j, 1.0 / siz2);
+		uni.set(i, j, 1.0 / siz);
 	return (uni);
     }
 
@@ -69,8 +69,8 @@ public class CustomMatrix implements Serializable {
 	m.set(i, j, d);
     }
 
-    public double get(int o, int s) {
-	return m.get(o, s);
+    public double get(int r, int c) {
+	return m.get(r, c);
     }
 
     public CustomMatrix mult(CustomMatrix in) {
@@ -139,5 +139,11 @@ public class CustomMatrix implements Serializable {
     public CustomMatrix copy() {
 	return new CustomMatrix(this);
     }
+
+	public CustomVector getRow(int idx) {
+		CustomVector retval = new CustomVector(m.numColumns());
+		retval.v = m.getColumn(idx).copy();
+		return retval;
+	}
 
 }

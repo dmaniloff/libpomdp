@@ -6,7 +6,7 @@ import libpomdp.solve.Criteria;
 import libpomdp.solve.MaxIterationsCriteria;
 import libpomdp.solve.offline.ValueConvergenceCriteria;
 import libpomdp.solve.offline.ValueIterationStats;
-import libpomdp.solve.offline.heuristic.BlindPolicyStd;
+import libpomdp.solve.offline.heuristic.BlindPolicy;
 
 public class BpviTest {
 
@@ -18,7 +18,7 @@ public class BpviTest {
 	PomdpStd pomdp = (PomdpStd) FileParser.loadPomdp(
 		"data/problems/tiger/tiger.95.POMDP",
 		FileParser.PARSE_CASSANDRA_POMDP);
-	BlindPolicyStd algo = new BlindPolicyStd(pomdp);
+	BlindPolicy algo = new BlindPolicy(pomdp);
 	algo.addStopCriteria(new MaxIterationsCriteria(50000));
 	algo.addStopCriteria(new ValueConvergenceCriteria(1e-3,
 		Criteria.CC_MAXEUCLID));

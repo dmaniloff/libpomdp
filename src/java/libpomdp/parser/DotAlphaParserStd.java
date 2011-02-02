@@ -43,7 +43,7 @@ public class DotAlphaParserStd {
     public ValueFunction getValueFunction() {
 	int s = actions.length;
 	int d = alphas[0].length;
-	ValueFunctionStd v = new ValueFunctionStd(d);
+	ValueFunctionStd v = new ValueFunctionStd();
 	// convert from Integer to int and Double to double
 	for (int i = 0; i < s; i++) {
 	    CustomVector vec = new CustomVector(d);

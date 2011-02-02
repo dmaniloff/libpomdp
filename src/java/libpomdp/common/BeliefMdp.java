@@ -11,13 +11,6 @@ package libpomdp.common;
 public interface BeliefMdp extends Pomdp {
 
     /**
-     * Obtain the POMDP for which the belief MDP was calculated.
-     * 
-     * @return the POMDP reference
-     */
-    public Pomdp getPomdp();
-
-    /**
      * Get the tau matrix. The tau matrix is the matrix that represents the
      * projection over the next value, given an action and an observation.
      * Formally is the matrix Matrix diag(O^{o,a})*T^{o,a}.
@@ -28,4 +21,9 @@ public interface BeliefMdp extends Pomdp {
      *            the observation
      */
     public CustomMatrix getTau(int a, int o);
+
+	public AlphaVector project(AlphaVector prev, int a, int o);
+
+
+	
 }

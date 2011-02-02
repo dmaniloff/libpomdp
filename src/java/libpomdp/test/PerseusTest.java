@@ -7,7 +7,7 @@ import libpomdp.solve.MaxIterationsCriteria;
 import libpomdp.solve.offline.ValueConvergenceCriteria;
 import libpomdp.solve.offline.ValueIterationStats;
 import libpomdp.solve.offline.pointbased.PbParams;
-import libpomdp.solve.offline.pointbased.PointBasedStd;
+import libpomdp.solve.offline.pointbased.PointBased;
 
 public class PerseusTest {
 
@@ -23,7 +23,7 @@ public class PerseusTest {
 	double epsi = 1e-6 * (1 - pomdp.getGamma()) / (2 * pomdp.getGamma());
 	PbParams params = new PbParams(PbParams.BACKUP_ASYNC_FULL,
 		PbParams.EXPAND_RANDOM_EXPLORE_STATIC, 1, 100, 100);
-	PointBasedStd algo = new PointBasedStd(pomdp, params);
+	PointBased algo = new PointBased(pomdp, params);
 	algo.addStopCriteria(new MaxIterationsCriteria(100));
 	algo.addStopCriteria(new ValueConvergenceCriteria(epsi,
 		Criteria.CC_MAXDIST));

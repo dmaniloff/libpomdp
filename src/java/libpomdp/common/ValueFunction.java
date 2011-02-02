@@ -18,10 +18,28 @@ public interface ValueFunction {
 
     public AlphaVector getAlpha(int idx);
 
-    public CustomVector getAlphaValues(int idx);
+    public Object getAlphaValues(int idx);
 
     public int size();
 
     public void sort();
+
+	public double performance(ValueFunction oldv, int convCriteria);
+
+	public ValueFunction copy();
+
+	public void push(AlphaVector vec);
+
+	public AlphaVector getUpperBound();
+
+	public void crossSum(ValueFunction rewardValueFunction);
+
+	public long prune(double delta);
+
+	public void merge(ValueFunction vfA);
+
+	public long prune();
+
+	public AlphaVector getBestAlpha(BeliefState bel);
 
 } // valueFunction

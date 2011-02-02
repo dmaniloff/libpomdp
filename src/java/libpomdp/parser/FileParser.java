@@ -19,16 +19,13 @@ public class FileParser {
 	    PomdpSpecStd data = DotPomdpParserStd.parse(filename);
 	    String actStr[] = null;
 	    if (data.actList != null)
-		actStr = (String[]) data.actList
-			.toArray(new String[data.actList.size()]);
+		actStr = (String[]) data.actList.toArray(new String[data.actList.size()]);
 	    String obsStr[] = null;
 	    if (data.obsList != null)
-		obsStr = (String[]) data.obsList
-			.toArray(new String[data.obsList.size()]);
+		obsStr = (String[]) data.obsList.toArray(new String[data.obsList.size()]);
 	    String staStr[] = null;
 	    if (data.staList != null)
-		obsStr = (String[]) data.staList
-			.toArray(new String[data.staList.size()]);
+		obsStr = (String[]) data.staList.toArray(new String[data.staList.size()]);
 	    newPomdp = new PomdpStd(data.O, data.T, data.R, data.nrSta,
 		    data.nrAct, data.nrObs, data.discount, staStr, actStr,
 		    obsStr, data.startState);

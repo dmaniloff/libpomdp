@@ -29,10 +29,14 @@ package libpomdp.common.std;
 import java.io.Serializable;
 
 import libpomdp.common.AlphaVector;
+import libpomdp.common.BeliefMdp;
 import libpomdp.common.BeliefState;
 import libpomdp.common.CustomMatrix;
 import libpomdp.common.CustomVector;
+import libpomdp.common.ObservationModel;
 import libpomdp.common.Pomdp;
+import libpomdp.common.RewardFunction;
+import libpomdp.common.TransitionModel;
 import libpomdp.common.Utils;
 
 public class PomdpStd implements Pomdp, Serializable {
@@ -47,37 +51,37 @@ public class PomdpStd implements Pomdp, Serializable {
     // ------------------------------------------------------------------------
 
     // number of states
-    private int nrSta;
+    protected int nrSta;
 
     // private nrAct
-    private int nrAct;
+    protected int nrAct;
 
     // private nrObs
-    private int nrObs;
+    protected int nrObs;
 
     // transition model: a x s x s'
-    private CustomMatrix T[];
+    protected TransitionModelStd T;
 
     // observation model: a x s' x o
-    private CustomMatrix O[];
+    protected ObservationModelStd O;
 
     // reward model: a x s'
-    private CustomVector R[];
+    protected RewardFunctionStd R;
 
     // discount factor
-    private double gamma;
+    protected double gamma;
 
     // action names
-    private String actStr[];
+    protected String actStr[];
 
     // observation names
-    private String obsStr[];
+    protected String obsStr[];
 
     // state names
-    private String staStr[];
+    protected String staStr[];
 
     // starting belief
-    private BeliefStateStd initBelief;
+    protected BeliefStateStd initBelief;
 
     // ------------------------------------------------------------------------
     // methods
@@ -92,9 +96,6 @@ public class PomdpStd implements Pomdp, Serializable {
 	this.nrSta = nrSta;
 	this.nrAct = nrAct;
 	this.nrObs = nrObs;
-	this.T = new CustomMatrix[nrAct];
-	this.O = new CustomMatrix[nrAct];
-	this.R = new CustomVector[nrAct];
 	this.gamma = gamma;
 	this.actStr = actStr;
 	this.obsStr = obsStr;
@@ -105,9 +106,9 @@ public class PomdpStd implements Pomdp, Serializable {
 	// copy the model matrices - transform from dense to comprow
 	// do we really need this? dense is in sparse form already...
 	for (int a = 0; a < nrAct; a++) {
-	    this.O[a] = new CustomMatrix(T[a]);
-	    this.T[a] = new CustomMatrix(O[a]);
-	    this.R[a] = new CustomVector(R[a]);
+	    this.T = new TransitionModelStd(T);
+	    this.O = new ObservationModelStd(O);
+	    this.R = new RewardFunctionStd(R);
 	}
     } // constructor
 
@@ -131,20 +132,18 @@ public class PomdpStd implements Pomdp, Serializable {
 	// long start = System.currentTimeMillis();
 	// System.out.println("made it to tao");
 	BeliefState bPrime;
-	// compute T[a]' * b1
-	CustomVector b1 = b.getPoint();
-	CustomVector b2 = new CustomVector(nrSta);
-	b2 = T[a].transMult(b1);
-	// System.out.println("Elapsed in tao - T[a] * b1" +
+	// compute T[a] * b
+	CustomVector v = T.project(b.getPoint(),a);
+	// System.out.println("Elapsed in tao - T[a] * b" +
 	// (System.currentTimeMillis() - start));
 
 	// element-wise product with O[a](:,o)
-	b2.elementMult(O[a].getColumn(o));
+	v.elementMult(O.getRow(o,a));
 	// System.out.println("Elapsed in tao - O[a] .* b2" +
 	// (System.currentTimeMillis() - start));
 
 	// compute P(o|b,a) - norm1 is the sum of the absolute values
-	double poba = b2.norm(1.0);
+	double poba = v.norm(1.0);
 	// make sure we can normalize
 	if (poba < 0.00001) {
 	    // System.err.println("Zero prob observation - resetting to init");
@@ -152,8 +151,8 @@ public class PomdpStd implements Pomdp, Serializable {
 	    bPrime = initBelief;
 	} else {
 	    // safe to normalize now
-	    b2 = b2.scale(1.0 / poba);
-	    bPrime = new BeliefStateStd(b2, poba);
+	    v.normalize();
+	    bPrime = new BeliefStateStd(v, poba);
 	}
 	// System.out.println("Elapsed in tao" + (System.currentTimeMillis() -
 	// start));
@@ -163,37 +162,18 @@ public class PomdpStd implements Pomdp, Serializable {
 
     /// R(b,a)
     
-    public double expectedImmediateReward(BeliefState bel, int a) {
-	CustomVector b = ((BeliefStateStd) bel).bSparse;
-	return b.dot(R[a]);
+    public double expectedImmediateReward(BeliefState b, int a) {
+	return R.getExpectation(b,a);
     }
 
     // P(o|b,a) in vector form for all o's
 
     public CustomVector observationProbabilities(BeliefState b, int a) {
-	CustomVector b1 = b.getPoint();
-	CustomVector Tb = new CustomVector(nrSta);
-	Tb = T[a].mult(b1);
-	CustomVector Poba = new CustomVector(nrObs);
-	Poba = O[a].transMult(Tb);
+	CustomVector Tb = T.project(b.getPoint(),a);
+	CustomVector Poba = O.project(Tb,a);
+	Poba.normalize();
 	return Poba;
     }
-
-    
-    public CustomMatrix getTransitionTable(int a) {
-	return T[a].copy();
-    }
-
-    
-    public CustomMatrix getObservationTable(int a) {
-	return O[a].copy();
-    }
-
-    
-    public CustomVector getImmediateRewards(int a) {
-	return R[a].copy();
-    }
-
     
     public BeliefState getInitialBeliefState() {
 	return initBelief.copy();
@@ -238,10 +218,9 @@ public class PomdpStd implements Pomdp, Serializable {
         return (Utils.gen.nextInt(Integer.MAX_VALUE) % nrActions());
     }
 
-    /// ???
-    public int sampleObservation(BeliefStateStd bel, int a) {
+    public int sampleObservation(BeliefState b, int a) {
 	double roulette = Utils.gen.nextDouble();
-	CustomVector vect = O[a].mult(bel.getPoint());
+	CustomVector vect=observationProbabilities(b,a);
 	double sum = 0.0;
 	for (int o = 0; o < nrObs; o++) {
 	    sum += vect.get(o);
@@ -251,16 +230,16 @@ public class PomdpStd implements Pomdp, Serializable {
 	return (-1);
     }
 
-    public AlphaVector mdpValueUpdate(AlphaVector alpha, int a) {
-	CustomVector vec = getTransitionTable(a).mult(getGamma(),
-		alpha.getVectorRef());
-	vec.add(getRewardValueFunction(a).getAlpha(0).getVectorRef());
-	return (new AlphaVector(vec, a));
+    public AlphaVectorStd mdpValueUpdate(AlphaVector alpha, int a) {
+	CustomVector vec = T.project((CustomVector)alpha.getInternalRef(),a);
+	vec.scale(gamma);
+	vec.add((CustomVector)getRewardValueFunction(a).getAlpha().getInternalRef());
+	return (new AlphaVectorStd(vec, a));
     }
 
     public ValueFunctionStd getRewardValueFunction(int a) {
-	ValueFunctionStd vf = new ValueFunctionStd(nrSta);
-	vf.push(R[a].copy(), a);
+	ValueFunctionStd vf = new ValueFunctionStd();
+	vf.push(R.getVector(a), a);
 	return vf;
     }
 
@@ -295,16 +274,43 @@ public class PomdpStd implements Pomdp, Serializable {
     }
 
     public double getRewardMin(int a) {
-	return (R[a].min());
+	return (R.min(a));
     }
 
     public double getRewardMax(int a) {
-	return (R[a].max());
+	return (R.max(a));
     }
 
-    public AlphaVector getRewardVec(int a, BeliefState bel) {
-	return (new AlphaVector(R[a].copy(), a));
-    }
+	public AlphaVector getEmptyAlpha() {
+		return new AlphaVectorStd(nrSta);
+	}
+
+	public BeliefMdp getBeliefMdp() {
+		return new BeliefMdpStd(this);
+	}
+	
+	public AlphaVector getHomogeneAlpha(double bestVal) {
+		return (new AlphaVectorStd(CustomVector.getHomogene(nrStates(),
+				bestVal), -1));
+	}
+
+	public AlphaVector getEmptyAlpha(int a) {
+		return (new AlphaVectorStd(nrStates(), a));
+	}
+
+	public ObservationModel getObservationModel() {
+		return O;
+	}
+
+	public RewardFunction getRewardFunction() {
+		return R;
+	}
+
+	public TransitionModel getTransitionModel() {
+		return T;
+	}
+
+
 
 } // PomdpStd.java
 

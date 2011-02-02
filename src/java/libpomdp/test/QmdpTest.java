@@ -6,7 +6,7 @@ import libpomdp.solve.Criteria;
 import libpomdp.solve.MaxIterationsCriteria;
 import libpomdp.solve.offline.ValueConvergenceCriteria;
 import libpomdp.solve.offline.ValueIterationStats;
-import libpomdp.solve.offline.heuristic.QmdpPolicyStd;
+import libpomdp.solve.offline.heuristic.QmdpPolicy;
 
 public class QmdpTest {
 
@@ -18,7 +18,7 @@ public class QmdpTest {
 	PomdpStd pomdp = (PomdpStd) FileParser.loadPomdp(
 		"data/problems/tiger/tiger.95.POMDP",
 		FileParser.PARSE_CASSANDRA_POMDP);
-	QmdpPolicyStd algo = new QmdpPolicyStd(pomdp);
+	QmdpPolicy algo = new QmdpPolicy(pomdp);
 	double epsi = 1e-6 * (1 - pomdp.getGamma()) / (2 * pomdp.getGamma());
 	algo.addStopCriteria(new MaxIterationsCriteria(100));
 	algo.addStopCriteria(new ValueConvergenceCriteria(epsi,

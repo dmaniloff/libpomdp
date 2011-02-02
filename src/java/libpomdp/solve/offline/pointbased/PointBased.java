@@ -1,20 +1,19 @@
 package libpomdp.solve.offline.pointbased;
 
 import libpomdp.common.AlphaVector;
+import libpomdp.common.BeliefMdp;
 import libpomdp.common.BeliefState;
 import libpomdp.common.CustomVector;
 import libpomdp.common.Pomdp;
-import libpomdp.common.std.BeliefMdpStd;
-import libpomdp.common.std.BeliefStateStd;
-import libpomdp.common.std.PomdpStd;
+import libpomdp.common.ValueFunction;
+import libpomdp.common.ValueFunctionFactory;
 import libpomdp.common.std.RhoPomdp;
-import libpomdp.common.std.ValueFunctionStd;
 import libpomdp.solve.IterationStats;
-import libpomdp.solve.offline.ValueIterationStd;
+import libpomdp.solve.offline.ValueIteration;
 
-public class PointBasedStd extends ValueIterationStd {
+public class PointBased extends ValueIteration {
 
-    BeliefMdpStd bmdp;
+    BeliefMdp bmdp;
     PointSet fullBset;
     PointSet newBset;
     PbParams params;
@@ -22,16 +21,16 @@ public class PointBasedStd extends ValueIterationStd {
     public AlphaVector getLowestAlpha() {
 	double best_val = bmdp.getRewardMaxMin();
 	best_val = best_val / (1 - bmdp.getGamma());
-	return (new AlphaVector(CustomVector.getHomogene(bmdp.nrStates(),
-		best_val), -1));
+	return(bmdp.getHomogeneAlpha(best_val));
     }
 
-    public PointBasedStd(PomdpStd pomdp, PbParams params) {
+
+    public PointBased(Pomdp pomdp, PbParams params) {
 	startTimer();
 	initValueIteration(pomdp);
 	this.params = params;
-	bmdp = new BeliefMdpStd(pomdp);
-	current = new ValueFunctionStd(pomdp.nrStates());
+	bmdp = pomdp.getBeliefMdp();
+	current = ValueFunctionFactory.getEmpty(pomdp);
 	current.push(getLowestAlpha());
 	registerInitTime();
     }
@@ -40,8 +39,8 @@ public class PointBasedStd extends ValueIterationStd {
 	startTimer();
 	old = current;
 	expand();
-	if (bmdp.getPomdp() instanceof RhoPomdp) {
-	    ((RhoPomdp) bmdp.getPomdp()).approxReward(fullBset);
+	if (bmdp instanceof RhoPomdp) {
+	    ((RhoPomdp) bmdp).approxReward(fullBset);
 	}
 	// System.out.println("size(B)="+fullBset.size());
 
@@ -73,17 +72,17 @@ public class PointBasedStd extends ValueIterationStd {
 	}
     }
 
-    private AlphaVector backup(BeliefState bel, ValueFunctionStd vf) {
+    private AlphaVector backup(BeliefState bel, ValueFunction vf) {
 	AlphaVector alpha_max = null;
 	double alpha_max_val = Double.NEGATIVE_INFINITY;
 	for (int a = 0; a < bmdp.nrActions(); a++) {
-	    AlphaVector alpha_sum = new AlphaVector(bmdp.nrStates(), a);
+	    AlphaVector alpha_sum = bmdp.getEmptyAlpha(a);
 	    for (int o = 0; o < bmdp.nrObservations(); o++) {
 		double max_val = Double.NEGATIVE_INFINITY;
 		AlphaVector max_vect = null;
 		for (int idx = 0; idx < vf.size(); idx++) {
 		    AlphaVector prev = vf.getAlpha(idx);
-		    AlphaVector vect = bmdp.projection(prev, a, o);
+		    AlphaVector vect = bmdp.project(prev, a, o);
 		    double val = vect.eval(bel);
 		    if (val > max_val) {
 			max_val = val;
@@ -103,8 +102,8 @@ public class PointBasedStd extends ValueIterationStd {
 	return (alpha_max);
     }
 
-    private ValueFunctionStd asyncBackup(PointSet bset) {
-	ValueFunctionStd newv = new ValueFunctionStd(bmdp.nrStates());
+    private ValueFunction asyncBackup(PointSet bset) {
+	ValueFunction newv = ValueFunctionFactory.getEmpty(bmdp);
 	PointSet testBset = bset.copy();
 	while (testBset.size() != 0) {
 	    BeliefState bel = testBset.getRandom();
@@ -126,8 +125,8 @@ public class PointBasedStd extends ValueIterationStd {
 	return newv;
     }
 
-    protected ValueFunctionStd syncBackup(PointSet bset) {
-	ValueFunctionStd newv = new ValueFunctionStd(bmdp.nrStates());
+    protected ValueFunction syncBackup(PointSet bset) {
+	ValueFunction newv = ValueFunctionFactory.getEmpty(bmdp);
 	for (BeliefState bel : bset) {
 	    newv.push(backup(bel, old));
 	}
@@ -147,7 +146,7 @@ public class PointBasedStd extends ValueIterationStd {
 	PointSet testBset = fullBset.copy();
 	while (fullBset.size() < params.getMaxTotalPoints()
 		|| newBset.size() < params.getMaxNewPoints()) {
-	    BeliefStateStd point = null;
+	    BeliefState point = null;
 	    switch (params.getExpandMethod()) {
 	    case PbParams.EXPAND_GREEDY_ERROR_REDUCTION:
 		point = collectGreedyErrorReduction(testBset);
@@ -173,13 +172,13 @@ public class PointBasedStd extends ValueIterationStd {
 	}
     }
 
-    private BeliefStateStd collectExploratoryAction(PointSet testBset) {
-	BeliefStateStd b = (BeliefStateStd) testBset.remove(0);
+    private BeliefState collectExploratoryAction(PointSet testBset) {
+    	BeliefState b = (BeliefState) testBset.remove(0);
 	double max_dist = Double.NEGATIVE_INFINITY;
-	BeliefStateStd bnew = null;
+	BeliefState bnew = null;
 	for (int a = 0; a < bmdp.nrActions(); a++) {
-	    int o = bmdp.getRandomObservation(b, a);
-	    BeliefStateStd ba = (BeliefStateStd) bmdp.nextBeliefState(b, a, o);
+	    int o = bmdp.sampleObservation(b, a);
+	    BeliefState ba = (BeliefState) bmdp.nextBeliefState(b, a, o);
 	    double dist = distance(ba, fullBset);
 	    if (dist > max_dist) {
 		max_dist = dist;
@@ -191,7 +190,7 @@ public class PointBasedStd extends ValueIterationStd {
 	return (bnew);
     }
 
-    private BeliefStateStd collectGreedyErrorReduction(PointSet testBset) {
+    private BeliefState collectGreedyErrorReduction(PointSet testBset) {
 	double max_val = Double.NEGATIVE_INFINITY;
 	BeliefState bprime = null;
 	int aprime = -1;
@@ -224,7 +223,7 @@ public class PointBasedStd extends ValueIterationStd {
 	    }
 	}
 	testBset.remove(bprime);
-	return (BeliefStateStd) (bmdp.nextBeliefState(bprime, aprime, oprime));
+	return (BeliefState) (bmdp.nextBeliefState(bprime, aprime, oprime));
     }
 
     private double minError(BeliefState beliefState, PointSet bset) {
@@ -238,9 +237,9 @@ public class PointBasedStd extends ValueIterationStd {
 		double bdiff = beliefState.getPoint().get(s)
 			- b.getPoint().get(s);
 		if (bdiff >= 0)
-		    sum += (rmax - vect.getVectorRef().get(s)) * bdiff;
+		    sum += (rmax - vect.get(s)) * bdiff;
 		else
-		    sum += (rmin - vect.getVectorRef().get(s)) * bdiff;
+		    sum += (rmin - vect.get(s)) * bdiff;
 	    }
 	    if (sum < min_val)
 		min_val = sum;
@@ -248,17 +247,17 @@ public class PointBasedStd extends ValueIterationStd {
 	return (min_val);
     }
 
-    public static BeliefStateStd collectRandomExplore(PointSet testBset,
+    public static BeliefState collectRandomExplore(PointSet testBset,
 	    Pomdp bmdp) {
-	BeliefStateStd b = (BeliefStateStd) testBset.remove(0);
-	BeliefStateStd bprime;
-	int a = ((PomdpStd) bmdp).getRandomAction();
-	int o = ((PomdpStd) bmdp).sampleObservation(b, a);
-	bprime = (BeliefStateStd) bmdp.nextBeliefState(b, a, o);
+	BeliefState b = (BeliefState) testBset.remove(0);
+	BeliefState bprime;
+	int a = ((Pomdp) bmdp).getRandomAction();
+	int o = ((Pomdp) bmdp).sampleObservation(b, a);
+	bprime = (BeliefState) bmdp.nextBeliefState(b, a, o);
 	return bprime;
     }
 
-    private double distance(BeliefStateStd ba, PointSet newBset) {
+    private double distance(BeliefState ba, PointSet newBset) {
 	double min_val = Double.POSITIVE_INFINITY;
 	for (BeliefState bprime : newBset) {
 	    CustomVector vect = bprime.getPoint().copy();

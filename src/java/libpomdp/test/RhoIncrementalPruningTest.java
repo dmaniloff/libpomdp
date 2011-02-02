@@ -1,6 +1,7 @@
 package libpomdp.test;
 
-import libpomdp.common.std.BeliefStateStd;
+import libpomdp.common.BeliefState;
+import libpomdp.common.Pomdp;
 import libpomdp.common.std.PomdpStd;
 import libpomdp.common.std.RhoPomdp;
 import libpomdp.parser.FileParser;
@@ -8,8 +9,8 @@ import libpomdp.solve.Criteria;
 import libpomdp.solve.MaxIterationsCriteria;
 import libpomdp.solve.offline.ValueConvergenceCriteria;
 import libpomdp.solve.offline.ValueIterationStats;
-import libpomdp.solve.offline.exact.IncrementalPruningStd;
-import libpomdp.solve.offline.pointbased.PointBasedStd;
+import libpomdp.solve.offline.exact.IncrementalPruning;
+import libpomdp.solve.offline.pointbased.PointBased;
 import libpomdp.solve.offline.pointbased.PointSet;
 
 public class RhoIncrementalPruningTest {
@@ -26,7 +27,7 @@ public class RhoIncrementalPruningTest {
 	RhoPomdp rpomdp = new RhoPomdp(pomdp, new TigerRho());
 	double epsi = 1e-6 * (1 - pomdp.getGamma()) / (2 * pomdp.getGamma());
 	rpomdp.approxReward(randomPoints(pomdp, 10));
-	IncrementalPruningStd algo = new IncrementalPruningStd(rpomdp, epsi);
+	IncrementalPruning algo = new IncrementalPruning(rpomdp, epsi);
 	algo.addStopCriteria(new MaxIterationsCriteria(100));
 	algo.addStopCriteria(new ValueConvergenceCriteria(epsi,
 		Criteria.CC_MAXDIST));
@@ -37,13 +38,13 @@ public class RhoIncrementalPruningTest {
 	// System.out.println(val);
     }
 
-    private static PointSet randomPoints(PomdpStd pomdp, int size) {
+    private static PointSet randomPoints(Pomdp pomdp, int size) {
 	PointSet bset = new PointSet();
 	bset.add(pomdp.getInitialBeliefState());
 	PointSet testBset = bset.copy();
 	while (bset.size() < size) {
-	    BeliefStateStd point = null;
-	    point = PointBasedStd.collectRandomExplore(testBset, pomdp);
+	    BeliefState point = null;
+	    point = PointBased.collectRandomExplore(testBset, pomdp);
 	    if (point != null)
 		bset.add(point);
 	    if (testBset.size() == 0)

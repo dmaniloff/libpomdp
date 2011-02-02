@@ -8,8 +8,6 @@
 
 package libpomdp.solve.offline;
 
-import libpomdp.common.AlphaVector;
-import libpomdp.common.CustomVector;
 import libpomdp.common.ValueFunction;
 import libpomdp.solve.Criteria;
 import libpomdp.solve.Iteration;
@@ -25,35 +23,7 @@ public class ValueConvergenceCriteria extends Criteria {
 	ValueIteration vi = (ValueIteration) i;
 	ValueFunction newv = vi.getValueFunction();
 	ValueFunction oldv = vi.getOldValueFunction();
-	if (oldv == null || newv.size() != oldv.size()) {
-	    System.out.println("Eval(" + i.getStats().iterations + ") = Inf");
-	    return false;
-	}
-	newv.sort();
-	oldv.sort();
-	double conv = 0;
-	for (int j = 0; j < newv.size(); j++) {
-	    AlphaVector newAlpha = newv.getAlpha(j);
-	    AlphaVector oldAlpha = oldv.getAlpha(j);
-	    if (newAlpha.getAction() != oldAlpha.getAction()) {
-		System.out.println("Eval(" + i.getStats().iterations
-			+ ") = Inf");
-		return false;
-	    }
-	    CustomVector perf = newAlpha.getVectorCopy();
-	    perf.add(-1.0, oldAlpha.getVectorRef());
-	    double a_value = 0;
-	    switch (convCriteria) {
-	    case CC_MAXEUCLID:
-		a_value = perf.norm(2.0);
-		break;
-	    case CC_MAXDIST:
-		a_value = perf.norm(1.0);
-		break;
-	    }
-	    if (a_value > conv)
-		conv = a_value;
-	}
+	double conv=newv.performance(oldv,convCriteria);
 	System.out.println("Eval(" + i.getStats().iterations + ") = " + conv);
 	if (conv <= epsilon && i.getStats().iterations > MIN_ITERATIONS)
 	    return (true);

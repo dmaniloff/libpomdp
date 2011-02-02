@@ -8,19 +8,46 @@
 
 package libpomdp.solve.offline;
 
+import libpomdp.common.Pomdp;
 import libpomdp.common.ValueFunction;
 import libpomdp.solve.Iteration;
 import libpomdp.solve.IterationStats;
 
 public abstract class ValueIteration extends Iteration {
 
+    protected Pomdp pomdp;
+    protected ValueFunction current;
+    protected ValueFunction old;
+
     public IterationStats getStats() {
-	return (iterationStats);
+    	return (iterationStats);
+    }
+    
+    protected void initValueIteration(Pomdp pomdp) {
+	this.pomdp = pomdp;
+	initIteration();
+	iterationStats = new ValueIterationStats(pomdp);
     }
 
-    public abstract void registerValueIterationStats();
+    public Pomdp getPomdp() {
+	return pomdp;
+    }
 
-    public abstract ValueFunction getValueFunction();
+    public ValueFunction getValueFunction() {
+	return current;
+    }
 
-    public abstract ValueFunction getOldValueFunction();
+    public ValueFunction getOldValueFunction() {
+	return old;
+    }
+
+    public abstract IterationStats iterate();
+
+    public void registerValueIterationStats() {
+	if (current != null) {
+	    ((ValueIterationStats) iterationStats).iteration_vector_count
+		    .add(new Integer(current.size()));
+	}
+	registerIterationTime();
+    }
 }
