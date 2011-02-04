@@ -18,8 +18,6 @@ public interface ValueFunction {
 
     public AlphaVector getAlpha(int idx);
 
-    public Object getAlphaValues(int idx);
-
     public int size();
 
     public void sort();

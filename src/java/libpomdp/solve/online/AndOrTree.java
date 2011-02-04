@@ -14,9 +14,9 @@ import java.io.PrintStream;
 
 import libpomdp.common.BeliefState;
 import libpomdp.common.CustomVector;
-import libpomdp.common.Pomdp;
 import libpomdp.common.Utils;
 import libpomdp.common.ValueFunction;
+import libpomdp.common.add.PomdpAdd;
 
 public class AndOrTree {
 
@@ -25,7 +25,7 @@ public class AndOrTree {
     // ------------------------------------------------------------------------
 
     // Pomdp problem specification
-    protected Pomdp problem;
+    protected PomdpAdd problem;
 
     // expansion heuristic
     protected ExpandHeuristic expH;
@@ -42,7 +42,7 @@ public class AndOrTree {
     // ------------------------------------------------------------------------
 
     // / constructor
-    public AndOrTree(Pomdp prob, ExpandHeuristic h, ValueFunction L,
+    public AndOrTree(PomdpAdd prob, ExpandHeuristic h, ValueFunction L,
 	    ValueFunction U) {
 	this.root = new HeuristicSearchOrNode();
 	this.problem = prob;
@@ -89,7 +89,7 @@ public class AndOrTree {
 	    // pre-compute observation probabilities for the children of this
 	    // node
 	    pOba = problem
-		    .observationProbabilities(en.getBeliefState(), action);
+		    .observationProbabilitiesVector(en.getBeliefState(), action);
 	    // allocate space for the children OR nodes, the ones with poba == 0
 	    // are left null
 	    // a.children = new HeuristicSearchOrNode[problem.getnrObs()];

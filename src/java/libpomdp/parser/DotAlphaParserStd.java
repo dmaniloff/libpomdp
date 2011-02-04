@@ -49,7 +49,7 @@ public class DotAlphaParserStd {
 	    CustomVector vec = new CustomVector(d);
 	    for (int j = 0; j < d; j++)
 		vec.set(j, alphas[i][j].doubleValue());
-	    v.push(vec, actions[i].intValue());
+	    v.newAlpha(vec, actions[i].intValue());
 	}
 	// generate flat value function
 	return v;

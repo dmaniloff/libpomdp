@@ -1,5 +1,6 @@
 package libpomdp.common.std;
 
+import libpomdp.common.AlphaVector;
 import libpomdp.common.CustomMatrix;
 import libpomdp.common.CustomVector;
 import libpomdp.common.TransitionModel;
@@ -10,10 +11,11 @@ public class TransitionModelStd extends TransitionModel {
 	protected int states;
 	protected int actions;
 	protected CustomMatrix model[];
-	
 
 	public TransitionModelStd(CustomMatrix[] t) {
-		// TODO Auto-generated constructor stub
+		actions=t.length;
+		states=t[0].numColumns();
+		model=t;
 	}
 
 
@@ -29,8 +31,8 @@ public class TransitionModelStd extends TransitionModel {
 	}
 
 
-	public CustomVector project(CustomVector customVector,int a) {
-		return model[a].mult(customVector);
+	public CustomVector project(CustomVector vec,CustomMatrix matrix) {
+		return matrix.mult(vec);
 	}
 
 
@@ -38,6 +40,12 @@ public class TransitionModelStd extends TransitionModel {
 		return model[a];
 	}
 
-
+	@Override
+	public AlphaVectorStd project(AlphaVector alpha, int a) {
+		AlphaVectorStd vec = (AlphaVectorStd)alpha;
+		vec = AlphaVectorStd.transform(project((CustomVector)vec,model[a]));
+		vec.setAction(a);
+		return(vec);
+	}
 
 }

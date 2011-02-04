@@ -3,7 +3,9 @@ package libpomdp.test;
 import libpomdp.common.BeliefState;
 import libpomdp.common.CustomVector;
 import libpomdp.common.RhoFunction;
+import libpomdp.common.ValueFunction;
 import libpomdp.common.std.AlphaVectorStd;
+import libpomdp.common.std.BeliefStateStd;
 import libpomdp.common.std.ValueFunctionStd;
 import libpomdp.solve.offline.pointbased.PointSet;
 
@@ -72,5 +74,32 @@ public class TigerRho extends RhoFunction {
 	}
 	return val;
     }
+
+	@Override
+	public ValueFunction getValueFunction(int a) {
+		BeliefStateStd b = BeliefStateStd.getUniformBelief(2);
+		PointSet bset=new PointSet();
+		bset.add(b);
+		return approximate(a,bset);
+	}
+
+	@Override
+	public double max() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public double min() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int size() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
 
 }

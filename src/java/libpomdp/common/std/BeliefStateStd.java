@@ -12,19 +12,23 @@ package libpomdp.common.std;
 // imports
 import java.io.Serializable;
 
+import no.uib.cipr.matrix.sparse.SparseVector;
+
 import libpomdp.common.BeliefState;
 import libpomdp.common.CustomVector;
 
-public class BeliefStateStd implements BeliefState, Serializable {
+public class BeliefStateStd extends CustomVector implements BeliefState, Serializable  {
 
     /**
      * 
      */
     private static final long serialVersionUID = 1232321752664518575L;
 
-    // sparse representation of the belief
-    public CustomVector bSparse;
-
+	public static BeliefStateStd transform(CustomVector vec){
+		return new BeliefStateStd(vec.getInternal());
+	}
+	
+    
     // associated P(o|b,a)
     private double poba = -1.0;
 
@@ -34,23 +38,23 @@ public class BeliefStateStd implements BeliefState, Serializable {
     // constructor
     // in case this is the initial belief, poba = 0.0
     public BeliefStateStd(CustomVector bSparse, double poba) {
-	this.bSparse = bSparse;
+    this(bSparse);
 	this.poba = poba;
     }
 
     public BeliefStateStd(CustomVector bSparse) {
-	this(bSparse, -1);
+	super(bSparse);
     }
 
-    // calling this method should be for debugging
-    // purposes only, otherwise we loose the sparse rep
+    public BeliefStateStd(int length) {
+    	super(length);
+     }
     
-    public CustomVector getPoint() {
-	return bSparse;
-    }
+    public BeliefStateStd(SparseVector internal) {
+		super(internal);
+	}
 
-    
-    public double getPoba() {
+	public double getPoba() {
 	return poba;
     }
 
@@ -70,18 +74,22 @@ public class BeliefStateStd implements BeliefState, Serializable {
     }
 
     
-    public double getEntropy(double base) {
-    	return bSparse.getEntropy(base);
+    public BeliefStateStd copy() {
+    	BeliefStateStd bel = new BeliefStateStd(this, poba);
+    	bel.setAlpha(this.planid);
+		return bel;
     }
 
-    
-    public boolean compare(BeliefState arg0) {
-	return (bSparse.compare(arg0.getPoint()));
-    }
+	public boolean compare(BeliefState bel) {
+		return(compare((CustomVector)bel));
+	}
 
-    
-    public BeliefState copy() {
-	return (new BeliefStateStd(bSparse, poba));
-    }
+	public CustomVector getPoint() {
+		return this;
+	}
+
+	public static BeliefStateStd getUniformBelief(int size) {
+		return BeliefStateStd.transform(CustomVector.getUniform(size));
+	}
 
 } // BeliefStateStandard

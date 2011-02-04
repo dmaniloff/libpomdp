@@ -16,11 +16,17 @@ package libpomdp.common.add;
 // imports
 import java.util.ArrayList;
 
+import libpomdp.common.AlphaVector;
+import libpomdp.common.BeliefMdp;
 import libpomdp.common.BeliefState;
 import libpomdp.common.CustomMatrix;
 import libpomdp.common.CustomVector;
+import libpomdp.common.ObservationModel;
 import libpomdp.common.Pomdp;
+import libpomdp.common.RewardFunction;
+import libpomdp.common.TransitionModel;
 import libpomdp.common.Utils;
+import libpomdp.common.ValueFunction;
 import libpomdp.common.add.symbolic.DD;
 import libpomdp.common.add.symbolic.OP;
 import libpomdp.common.add.symbolic.ParseSPUDD;
@@ -31,56 +37,19 @@ public class PomdpAdd implements Pomdp {
     // properties
     // ------------------------------------------------------------------------
 
-    // number of state variables
-    private int nrStaV;
-
-    // id of state variables
-    private int staIds[];
-
-    // id of prime state variables
-    private int staIdsPr[];
-
-    // arity of state variables
-    public int staArity[];
-
-    // total number of states
-    private int totnrSta;
-
-    // number of observation variables
-    private int nrObsV;
-
-    // id of observation variables
-    public int obsIds[];
-
-    // id of prime observation variables
-    private int obsIdsPr[];
-
-    // arity of observation variables
-    private int obsArity[];
-
-    // total number of observations
-    private int totnrObs;
-
-    // total number of variables
-    private int nrTotV;
-
-    // number of actions
-    private int nrAct;
-
+	private AddConfiguration conf;
+	
     // transition model: a-dim ADD[]
-    public DD T[][];
+    public TransitionModelAdd T;
 
     // observation model: a-dim ADD[]
-    public DD O[][];
+    public ObservationModelAdd O;
 
     // reward model: a-dim ADD
-    public DD R[];
+    public RewardFunctionAdd R;
 
     // discount factor
     private double gamma;
-
-    // action names
-    private String actStr[];
 
     // starting belief
     private BeliefStateAdd initBelief;
@@ -94,56 +63,23 @@ public class PomdpAdd implements Pomdp {
 
     // / constructor
     public PomdpAdd(String spuddfile) {
+    	Utils.error("Adds are disable in the maray's branch for a while... I promise to fix them soon");
 	// parse SPUDD file
 	problemAdd = new ParseSPUDD(spuddfile);
 	problemAdd.parsePOMDP(false);
 	// assign values to local vars
-	nrStaV = problemAdd.nStateVars;
-	nrObsV = problemAdd.nObsVars;
-	nrTotV = nrStaV + nrObsV;
-	nrAct = problemAdd.actTransitions.size();
+	conf=new AddConfiguration(problemAdd);
 	gamma = problemAdd.discount.getVal();
 	// allocate arrays
-	staIds = new int[nrStaV];
-	staIdsPr = new int[nrStaV];
-	staArity = new int[nrStaV];
-	obsIds = new int[nrObsV];
-	obsIdsPr = new int[nrObsV];
-	obsArity = new int[nrObsV];
-	T = new DD[nrAct][];
-	O = new DD[nrAct][];
-	R = new DD[nrAct];
-	actStr = new String[nrAct];
-	// get variable ids, arities and prime ids
-	int c, a;
-	for (c = 0; c < nrStaV; c++) {
-	    staIds[c] = c + 1;
-	    staIdsPr[c] = c + 1 + nrTotV;
-	    staArity[c] = problemAdd.valNames.get(c).size();
-	}
-	for (c = 0; c < nrObsV; c++) {
-	    obsIds[c] = nrStaV + c + 1;
-	    obsIdsPr[c] = nrStaV + c + 1 + nrTotV;
-	    obsArity[c] = problemAdd.valNames.get(nrStaV + c).size();
-	}
+	
+	T = new TransitionModelAdd(problemAdd.actTransitions,conf);
+	O = new ObservationModelAdd(problemAdd.actObserve,conf);
+	R = new RewardFunctionAdd(problemAdd.reward, problemAdd.actCosts,conf);
 	// get DDs for T, O, R
-	for (a = 0; a < nrAct; a++) {
-	    // ^ this is cptid !!!!
-	    T[a] = problemAdd.actTransitions.get(a);
-	    O[a] = problemAdd.actObserve.get(a);
-	    // reward for a is reward for the state - the cost of a
-	    R[a] = OP.sub(problemAdd.reward, problemAdd.actCosts.get(a));
-	    // if we wanted to have a model for R(s,a,s'), then we need this:
-	    // actStruct.rewFn =
-	    // OP.addMultVarElim([actStruct.rewFn,actStruct.transFn],
-	    // ddPOMDP.nVars+1:ddPOMDP.nVars+ddPOMDP.nStateVars);
-	    actStr[a] = problemAdd.actNames.get(a);
-	}
+	
 	// set initial belief state
-	initBelief = new BeliefStateAdd(problemAdd.init, staIds, 0.0);
-	// compute total nr of states and obs
-	totnrSta = Utils.product(staArity);
-	totnrObs = Utils.product(obsArity);
+	initBelief = new BeliefStateAdd(problemAdd.init, conf.staIds, 0.0);
+
     } // constructor
 
     /**
@@ -173,17 +109,17 @@ public class PomdpAdd implements Pomdp {
 	DD O_o[];
 	int oc[][];
 	// restrict the prime observation variables to the ones that occurred
-	oc = Utils.join(obsIdsPr,
-		Utils.sdecode(o, nrObsV, obsArity));
+	oc = Utils.join(conf.obsIdsPr,
+		Utils.sdecode(o, conf.nrObsV, conf.obsArity));
 	// System.out.println(IntegerArray.toString(oc));
-	O_o = OP.restrictN(O[a], oc);
-	DD[] vars = Utils.concat(b1, T[a], O_o);
+	O_o = OP.restrictN(O.model[a], oc);
+	DD[] vars = Utils.concat(b1, T.model[a], O_o);
 	// compute var elim on O * T * b
-	b2 = OP.addMultVarElim(vars, staIds);
+	b2 = OP.addMultVarElim(vars, conf.staIds);
 	// prime the b2 DD
-	b2 = OP.primeVars(b2, -nrTotV);
+	b2 = OP.primeVars(b2, -conf.nrTotV);
 	// compute P(o|b,a)
-	oProb = OP.addMultVarElim(b2, staIds);
+	oProb = OP.addMultVarElim(b2, conf.staIds);
 	// make sure we can normalize
 	if (oProb.getVal() < 0.00001) {
 	    // this branch will have poba = 0.0 - also reset to init
@@ -191,7 +127,7 @@ public class PomdpAdd implements Pomdp {
 	} else {
 	    // safe to normalize now
 	    b2 = OP.div(b2, oProb);
-	    bPrime = new BeliefStateAdd(b2, staIds, oProb.getVal());
+	    bPrime = new BeliefStateAdd(b2, conf.staIds, oProb.getVal());
 	}
 	// return
 	return bPrime;
@@ -206,23 +142,23 @@ public class PomdpAdd implements Pomdp {
 	// declarations
 	DD b1[] = bel.marginals;
 	DD b2[];
-	DD b2u[] = new DD[nrStaV];
+	DD b2u[] = new DD[conf.nrStaV];
 	BeliefState bPrime;
 	DD O_o[];
 	int oc[][];
 	// restrict the prime observation variables to the ones that occurred
-	oc = Utils.join(obsIdsPr,
-		Utils.sdecode(o, nrObsV, obsArity));
-	O_o = OP.restrictN(O[a], oc);
+	oc = Utils.join(conf.obsIdsPr,
+		Utils.sdecode(o, conf.nrObsV, conf.obsArity));
+	O_o = OP.restrictN(O.model[a], oc);
 	// gather all necessary ADDs for variable elimination
-	DD[] vars = Utils.concat(b1, T[a], O_o);
+	DD[] vars = Utils.concat(b1, T.model[a], O_o);
 	// compute var elim on O * T * b
-	b2 = OP.marginals(vars, staIdsPr, staIds);
+	b2 = OP.marginals(vars, conf.staIdsPr, conf.staIds);
 	// unprime the b2 DD
-	for (int i = 0; i < nrStaV; i++)
-	    b2u[i] = OP.primeVars(b2[i], -nrTotV);
+	for (int i = 0; i < conf.nrStaV; i++)
+	    b2u[i] = OP.primeVars(b2[i], -conf.nrTotV);
 	// no need to normalize, done inside OP.marginals()
-	bPrime = new BeliefStateFactoredAdd(b2u, staIds);
+	bPrime = new BeliefStateFactoredAdd(b2u, conf.staIds);
 	// return
 	return bPrime;
     }
@@ -236,10 +172,10 @@ public class PomdpAdd implements Pomdp {
 	DD m[];
 	if (bel instanceof BeliefStateAdd) {
 	    b = ((BeliefStateAdd) bel).bAdd;
-	    return OP.dotProductNoMem(b, R[a], staIds);
+	    return OP.dotProductNoMem(b, R.model[a], conf.staIds);
 	} else {
 	    m = ((BeliefStateFactoredAdd) bel).marginals;
-	    return OP.factoredExpectationSparseNoMem(m, R[a]);
+	    return OP.factoredExpectationSparseNoMem(m, R.model[a]);
 	}
     }
 
@@ -249,13 +185,13 @@ public class PomdpAdd implements Pomdp {
      * beliefs
      */
    
-    public CustomVector observationProbabilities(BeliefState bel, int a) {
+    public AlphaVectorAdd observationProbabilities(BeliefState bel, int a) {
 	// obtain subclass and the dd for this belief
 	// DD b = ((BeliefStateAdd)bel).bAdd;
 	// declarations
 	DD b1[];
 	DD pObadd;
-	double pOba[];
+	//double pOba[];
 	if (bel instanceof BeliefStateAdd) {
 	    b1 = new DD[1];
 	    b1[0] = ((BeliefStateAdd) bel).bAdd;
@@ -263,26 +199,32 @@ public class PomdpAdd implements Pomdp {
 	    b1 = ((BeliefStateFactoredAdd) bel).marginals;
 	}
 	// O_a * T_a * b1
-	DD[] vars = Utils.concat(b1, T[a], O[a]);
-	int[] svars = Utils.concat(staIds, staIdsPr);
+	DD[] vars = Utils.concat(b1, T.model[a], O.model[a]);
+	int[] svars = Utils.concat(conf.staIds, conf.staIdsPr);
 	pObadd = OP.addMultVarElim(vars, svars);
-	pOba = OP.convert2array(pObadd, obsIdsPr);
-	return new CustomVector(pOba);
+	return(new AlphaVectorAdd(pObadd,-1));
+	//pOba = OP.convert2array(pObadd, conf.obsIdsPr);
+	//return new AlphaVectorAdd(new CustomVector(pOba);
     }
 
+	public CustomVector observationProbabilitiesVector(BeliefState bel, int a) {
+		return new CustomVector(OP.convert2array(observationProbabilities(bel,a).v, conf.obsIdsPr));
+	}
+
+    
     // / return s x s' matrix with T[a]
     // / to be used by mdp.java
     
     public CustomMatrix getTransitionTable(int a) {
-	int vars[] = Utils.concat(staIds, staIdsPr);
-	double T_a_v[] = OP.convert2array(OP.multN(T[a]), vars);
+	int vars[] = Utils.concat(conf.staIds, conf.staIdsPr);
+	double T_a_v[] = OP.convert2array(OP.multN(T.model[a]), vars);
 	// double T_a[][] = new double[totnrSta][totnrSta];
-	CustomMatrix T_a = new CustomMatrix(totnrSta, totnrSta);
+	CustomMatrix T_a = new CustomMatrix(conf.totnrSta, conf.totnrSta);
 	int i, j;
 	// convert this vector into an s x s' matrix columnwise
-	for (j = 0; j < totnrSta; j++) {
-	    for (i = 0; i < totnrSta; i++) {
-		T_a.set(i,j,T_a_v[j * totnrSta + i]);
+	for (j = 0; j < conf.totnrSta; j++) {
+	    for (i = 0; i < conf.totnrSta; i++) {
+		T_a.set(i,j,T_a_v[j * conf.totnrSta + i]);
 	    }
 	}
 	// transpose so that we have s' x s and maintain Spaans convention
@@ -294,15 +236,15 @@ public class PomdpAdd implements Pomdp {
     // / this will prob become part of the interface as well...
     
     public CustomMatrix getObservationTable(int a) {
-	int vars[] = Utils.concat(staIdsPr, obsIdsPr);
-	double O_a_v[] = OP.convert2array(OP.multN(O[a]), vars);
+	int vars[] = Utils.concat(conf.staIdsPr, conf.obsIdsPr);
+	double O_a_v[] = OP.convert2array(OP.multN(O.model[a]), vars);
 	// double O_a[][] = new double[totnrSta][totnrSta];
-	CustomMatrix O_a = new CustomMatrix(totnrSta, totnrObs);
+	CustomMatrix O_a = new CustomMatrix(conf.totnrSta, conf.totnrObs);
 	int i, j;
 	// convert this vector into an s' x o matrix columnwise
-	for (j = 0; j < totnrObs; j++) {
-	    for (i = 0; i < totnrSta; i++) {
-		O_a.set(i, j, O_a_v[j * totnrSta + i]);
+	for (j = 0; j < conf.totnrObs; j++) {
+	    for (i = 0; i < conf.totnrSta; i++) {
+		O_a.set(i, j, O_a_v[j * conf.totnrSta + i]);
 	    }
 	}
 	// return
@@ -313,7 +255,7 @@ public class PomdpAdd implements Pomdp {
     
     public CustomVector getImmediateRewards(int a) {
 	DD R = OP.sub(problemAdd.reward, problemAdd.actCosts.get(a));
-	return new CustomVector(OP.convert2array(R, staIds));
+	return new CustomVector(OP.convert2array(R, conf.staIds));
     }
 
     // / get initial belief state
@@ -326,20 +268,20 @@ public class PomdpAdd implements Pomdp {
     // / each state variable in the DBN
     
     public int nrStates() {
-	return totnrSta;
+	return conf.totnrSta;
     }
 
     // / nrAct
     
     public int nrActions() {
-	return nrAct;
+	return conf.nrAct;
     }
 
     // / nrObs is the product of the arity of
     // / each observation variable in the DBN
     
     public int nrObservations() {
-	return totnrObs;
+	return conf.totnrObs;
     }
 
     // / \gamma
@@ -351,27 +293,27 @@ public class PomdpAdd implements Pomdp {
     // takes an action starting from 0
     
     public String getActionString(int a) {
-	return actStr[a];
+	return conf.actStr[a];
     }
 
     // / string describing the values each obs var took
     // / the observation starts from 0
     
     public String getObservationString(int o) {
-	int[] a = Utils.sdecode(o, nrObsV, obsArity);
+	int[] a = Utils.sdecode(o, conf.nrObsV, conf.obsArity);
 	String v = "";
 	int c;
-	for (c = 0; c < nrObsV; c++) {
-	    v = v.concat(problemAdd.varNames.get(nrStaV + c) + "="
-		    + problemAdd.valNames.get(nrStaV + c).get(a[c] - 1) + ", ");
+	for (c = 0; c < conf.nrObsV; c++) {
+	    v = v.concat(problemAdd.varNames.get(conf.nrStaV + c) + "="
+		    + problemAdd.valNames.get(conf.nrStaV + c).get(a[c] - 1) + ", ");
 	}
 	return v;
     }
 
     
-    public String getStateString(int s) throws Exception {
-		throw new Exception("Not Implemented");
-		//return null;
+    public String getStateString(int s) {
+		Utils.error("getStateString not implemented yet for Adds");
+		return null;
     }
 
     // ------------------------------------------------------------------------
@@ -384,9 +326,9 @@ public class PomdpAdd implements Pomdp {
 	// we receive the factored representation of the state
 	// whereby each element of the array contains the value of each of
 	// the state variables - there are no var ids here
-	int factoredS[][] = Utils.join(staIds, state);
-	DD[] restrictedT = OP.restrictN(T[action], factoredS);
-	int factoredS1[][] = OP.sampleMultinomial(restrictedT, staIdsPr);
+	int factoredS[][] = Utils.join(conf.staIds, state);
+	DD[] restrictedT = OP.restrictN(T.model[action], factoredS);
+	int factoredS1[][] = OP.sampleMultinomial(restrictedT, conf.staIdsPr);
 	//System.out.println(Utils.toString(factoredS1));
 	// and we don't return any var ids either
 	return factoredS1[1];
@@ -399,11 +341,11 @@ public class PomdpAdd implements Pomdp {
 	// we receive the factored representation of the state
 	// whereby each element of the array contains the value of each of
 	// the state variables - there are no var ids here
-	int[] ids = Utils.concat(staIds, staIdsPr);
+	int[] ids = Utils.concat(conf.staIds, conf.staIdsPr);
 	int[] vals = Utils.concat(s, s1);
 	int[][] restriction = Utils.join(ids, vals);
-	DD[] restrictedO = OP.restrictN(O[action], restriction);
-	int factoredO[][] = OP.sampleMultinomial(restrictedO, obsIdsPr);
+	DD[] restrictedO = OP.restrictN(O.model[action], restriction);
+	int factoredO[][] = OP.sampleMultinomial(restrictedO, conf.obsIdsPr);
 	// and we don't return any var ids either
 	return factoredO[1];
     }
@@ -413,9 +355,9 @@ public class PomdpAdd implements Pomdp {
     public int[] getListofInitStates() {
 	ArrayList<Integer> states = new ArrayList<Integer>();
 	int factoredS[][];
-	for (int r = 0; r < totnrSta; r++) {
-	    factoredS = Utils.join(staIds,
-		    Utils.sdecode(r, nrStaV, staArity));
+	for (int r = 0; r < conf.totnrSta; r++) {
+	    factoredS = Utils.join(conf.staIds,
+		    Utils.sdecode(r, conf.nrStaV, conf.staArity));
 	    if (OP.eval(initBelief.bAdd, factoredS) > 0)
 		states.add(r);
 	}
@@ -426,31 +368,31 @@ public class PomdpAdd implements Pomdp {
     }
 
     public int getnrTotV() {
-	return nrTotV;
+	return conf.nrTotV;
     }
 
     public int getnrStaV() {
-	return nrStaV;
+	return conf.nrStaV;
     }
 
     public int getnrObsV() {
-	return nrObsV;
+	return conf.nrObsV;
     }
 
     public int[] getobsIdsPr() {
-	return obsIdsPr;
+	return conf.obsIdsPr;
     }
 
     public int[] getstaIds() {
-	return staIds;
+	return conf.staIds;
     }
 
     public int[] getstaIdsPr() {
-	return staIdsPr;
+	return conf.staIdsPr;
     }
 
     public int[] getobsArity() {
-	return obsArity;
+	return conf.obsArity;
     }
 
     // / transform a given alpha vector with respect to an a,o pair
@@ -463,26 +405,26 @@ public class PomdpAdd implements Pomdp {
 	DD vars[];
 	int oc[][];
 	// alpha(s')
-	primedAlpha = OP.primeVars(alpha, nrTotV);
+	primedAlpha = OP.primeVars(alpha, conf.nrTotV);
 	// restrict the O model to o
-	oc = Utils.join(obsIdsPr,
-		Utils.sdecode(o, nrObsV, obsArity));
-	O_o = OP.restrictN(O[a], oc);
-	vars = Utils.concat(primedAlpha, T[a], O_o);
+	oc = Utils.join(conf.obsIdsPr,
+		Utils.sdecode(o, conf.nrObsV, conf.obsArity));
+	O_o = OP.restrictN(O.model[a], oc);
+	vars = Utils.concat(primedAlpha, T.model[a], O_o);
 	// compute var elim on O * T * \alpha(s')
-	gao = OP.addMultVarElim(vars, staIdsPr);
+	gao = OP.addMultVarElim(vars, conf.staIdsPr);
 	return gao;
     }
 
     // / print a factored representation of a state
     public String printS(int factoredS[][]) {
-	if (factoredS.length != 2 || factoredS[0].length != nrStaV) {
+	if (factoredS.length != 2 || factoredS[0].length != conf.nrStaV) {
 	    System.err.println("Unexpected factored state matrix");
 	    return null;
 	}
 	String v = "";
 	int c;
-	for (c = 0; c < nrStaV; c++) {
+	for (c = 0; c < conf.nrStaV; c++) {
 	    v = v.concat(problemAdd.varNames.get(c) + "="
 		    + problemAdd.valNames.get(c).get(factoredS[1][c] - 1)
 		    + ", ");
@@ -493,20 +435,98 @@ public class PomdpAdd implements Pomdp {
     // / print a factored representation of an observation
     // / takes factoredO starting from 1
     public String printO(int factoredO[][]) {
-	if (factoredO.length != 2 || factoredO[0].length != nrObsV) {
+	if (factoredO.length != 2 || factoredO[0].length != conf.nrObsV) {
 	    System.err.println("Unexpected factored state matrix");
 	    return null;
 	}
 	String v = "";
 	int c;
-	for (c = 0; c < nrObsV; c++) {
-	    v = v.concat(problemAdd.varNames.get(nrStaV + c)
+	for (c = 0; c < conf.nrObsV; c++) {
+	    v = v.concat(problemAdd.varNames.get(conf.nrStaV + c)
 		    + "="
-		    + problemAdd.valNames.get(nrStaV + c).get(
+		    + problemAdd.valNames.get(conf.nrStaV + c).get(
 			    factoredO[1][c] - 1) + ", ");
 	}
 	return v;
     } // printO
+
+	public BeliefMdp getBeliefMdp() {
+		try {
+			throw new Exception("Belief-MDPs are not implemented yet for ADDs");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public AlphaVector getEmptyAlpha() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public AlphaVector getEmptyAlpha(int a) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public AlphaVector getHomogeneAlpha(double bestVal) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ObservationModel getObservationModel() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public int getRandomAction() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	public RewardFunction getRewardFunction() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public double getRewardMax() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	public double getRewardMaxMin() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	public double getRewardMin() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	public ValueFunction getRewardValueFunction(int a) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public TransitionModel getTransitionModel() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public AlphaVector mdpValueUpdate(AlphaVector vec, int a) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public int sampleObservation(BeliefState b, int a) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	public AddConfiguration getConf() {
+		return conf;
+	}
 
 } // PomdpAdd
 

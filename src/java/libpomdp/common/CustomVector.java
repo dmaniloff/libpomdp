@@ -60,6 +60,10 @@ public class CustomVector implements Serializable, Comparable<CustomVector> {
 	v = new SparseVector(length);
     }
 
+    public CustomVector(SparseVector v){
+    	v=this.v;
+    }
+    
     public CustomVector(CustomVector cv) {
 	this(cv.size());
 	v = cv.v.copy();
@@ -237,6 +241,10 @@ public class CustomVector implements Serializable, Comparable<CustomVector> {
 	public void normalize() {
 		double norm=v.norm(Vector.Norm.One);
 		v.scale(1.0/norm);
+	}
+
+	public SparseVector getInternal() {
+		return v;
 	}
 
 }

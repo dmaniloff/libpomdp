@@ -1,32 +1,9 @@
-/** ------------------------------------------------------------------------- *
- * libpomdp
- * ========
- * File: 
- * Description: Represent a POMDP model using a flat representation and
- *              sparse matrices and vectors. This class can be constructed
- *              from a pomdpSpecSparseMTJ object after parsing a .POMDP file.
- *              Sparse matriced by matrix-toolkits-java, 
- *              every matrix will be CustomMatrix:
- *              
- * S =
- *  (3,1)        1
- *  (2,2)        2
- *  (3,2)        3
- *  (4,3)        4
- *  (1,4)        5
- * A =
- *   0     0     0     5
- *   0     2     0     0
- *   1     3     0     0
- *   0     0     4     0
- * Copyright (c) 2009, 2010 Diego Maniloff
- * W3: http://www.cs.uic.edu/~dmanilof
- --------------------------------------------------------------------------- */
 
 package libpomdp.common.std;
 
 import libpomdp.common.BeliefState;
 import libpomdp.common.RhoFunction;
+import libpomdp.common.Utils;
 import libpomdp.solve.offline.pointbased.PointSet;
 
 public class RhoPomdp extends PomdpStd {
@@ -47,14 +24,6 @@ public class RhoPomdp extends PomdpStd {
 	return (reward.sample(b, a));
     }
 
-    public double getRewardMax(int a) {
-	return (reward.max(a));
-    }
-
-    public double getRewardMin(int a) {
-	return (reward.min(a));
-    }
-
     public void approxReward(PointSet bset) {
 	rewardCache = new ValueFunctionStd[nrActions()];
 	for (int a = 0; a < nrActions(); a++) {
@@ -65,9 +34,7 @@ public class RhoPomdp extends PomdpStd {
 
     public ValueFunctionStd getRewardValueFunction(int a) {
 	if (rewardCache == null) {
-	    System.out
-		    .println("ERROR: you have to approximate the reward first (approxReward)");
-	    System.exit(1);
+	    Utils.error("ERROR: you have to approximate the reward first (approxReward)");
 	}
 	return (rewardCache[a]);
     }

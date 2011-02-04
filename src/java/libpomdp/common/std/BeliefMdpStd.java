@@ -52,7 +52,7 @@ public class BeliefMdpStd extends PomdpStd implements BeliefMdp, Serializable {
 
     public AlphaVector project(AlphaVectorStd alpha, int a, int o) {
 	CustomVector vect = new CustomVector(nrStates());
-	vect.add(tau[o][a].mult(getGamma(), alpha.getInternalRef()));
+	vect.add(tau[o][a].mult(getGamma(), alpha));
 	return (new AlphaVectorStd(vect, a));
     }
 

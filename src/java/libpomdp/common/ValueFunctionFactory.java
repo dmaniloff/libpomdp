@@ -39,7 +39,7 @@ public class ValueFunctionFactory {
 			double factor = 1.0 / (1.0 - pomdp.getGamma());
 			double val = pomdp.getRewardMin();
 			val *= factor;
-		    vf.push(CustomVector.getHomogene(pomdp.nrStates(), val), a);
+		    vf.newAlpha(CustomVector.getHomogene(pomdp.nrStates(), val), a);
 		}
 		return(vf);
 	}

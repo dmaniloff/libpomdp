@@ -13,7 +13,6 @@ package libpomdp.solve.hybrid;
 import java.io.PrintStream;
 
 import libpomdp.common.CustomVector;
-import libpomdp.common.Pomdp;
 import libpomdp.common.Utils;
 import libpomdp.common.ValueFunction;
 import libpomdp.common.add.PomdpAdd;
@@ -43,7 +42,7 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
     public int treeSupportSetSize[];
 
     // / same constructor with backup heuristic
-    public AndOrTreeUpdateAdd(Pomdp prob, ExpandHeuristic h,
+    public AndOrTreeUpdateAdd(PomdpAdd prob, ExpandHeuristic h,
 	    BackupHeuristic bakh, ValueFunction L, ValueFunction U) {
 	super(prob, h, L, U);
 	this.root = new HybridValueIterationOrNode();
@@ -96,8 +95,7 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 		    en.getBeliefState(), action));
 	    // pre-compute observation probabilities for the children of this
 	    // node
-	    pOba = problem
-		    .observationProbabilities(en.getBeliefState(), action);
+	    pOba = problem.observationProbabilitiesVector(en.getBeliefState(), action);
 	    // allocate space for the children OR nodes
 	    // a.children = new HybridValueIterationOrNode[problem.getnrObs()];
 	    // for(int observation = 0; observation < problem.getnrObs();
@@ -309,7 +307,7 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 	}
 	// multiply result by discount factor and add it to r_a
 	gab = OP.mult(gamma, gab);
-	gab = OP.add(problem.R[bestA], gab);
+	gab = OP.add((DD) problem.R.getValueFunction(bestA).getAlpha(0), gab);
 	return OP.convert2array(gab, problem.getstaIds());
 
     } // backupLowerAtRoot
@@ -355,12 +353,11 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 	}
 	// multiply result by discount factor and add it to r_a
 	gab = OP.mult(gamma, gab);
-	gab = OP.add(problem.R[on.oneStepBestAction], gab);
+	gab = OP.add((DD) problem.R.getValueFunction(on.oneStepBestAction).getAlpha(0), gab);
 	// add newly computed vector to the tree's offline lower bound - NO
 	// PRUNING FOR NOW
-	ValueFunctionAdd newLB = new ValueFunctionAdd(Utils.append(lowerBound,
-		gab), problem.getstaIds(), Utils.concat(
-		offlineLower.getActions(), new int[] { on.oneStepBestAction }));
+	ValueFunctionAdd newLB = new ValueFunctionAdd(Utils.append(lowerBound,gab), Utils.concat(
+		offlineLower.getActions(), new int[] { on.oneStepBestAction }),problem.getConf());
 	offlineLower = newLB;
 	// return
 	return newLB;

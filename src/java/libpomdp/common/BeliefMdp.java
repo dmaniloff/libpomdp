@@ -24,6 +24,4 @@ public interface BeliefMdp extends Pomdp {
 
 	public AlphaVector project(AlphaVector prev, int a, int o);
 
-
-	
 }

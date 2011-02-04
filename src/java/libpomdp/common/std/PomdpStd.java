@@ -131,19 +131,20 @@ public class PomdpStd implements Pomdp, Serializable {
     public BeliefState nextBeliefState(BeliefState b, int a, int o) {
 	// long start = System.currentTimeMillis();
 	// System.out.println("made it to tao");
-	BeliefState bPrime;
+	AlphaVectorStd bVec=AlphaVectorStd.transform((BeliefStateStd)b);
+	BeliefStateStd bPrime;
 	// compute T[a] * b
-	CustomVector v = T.project(b.getPoint(),a);
+	bVec = T.project(bVec,a);
 	// System.out.println("Elapsed in tao - T[a] * b" +
 	// (System.currentTimeMillis() - start));
 
 	// element-wise product with O[a](:,o)
-	v.elementMult(O.getRow(o,a));
+	bVec.elementMult(O.getRow(o,a));
 	// System.out.println("Elapsed in tao - O[a] .* b2" +
 	// (System.currentTimeMillis() - start));
 
 	// compute P(o|b,a) - norm1 is the sum of the absolute values
-	double poba = v.norm(1.0);
+	double poba = bVec.norm(1.0);
 	// make sure we can normalize
 	if (poba < 0.00001) {
 	    // System.err.println("Zero prob observation - resetting to init");
@@ -151,8 +152,9 @@ public class PomdpStd implements Pomdp, Serializable {
 	    bPrime = initBelief;
 	} else {
 	    // safe to normalize now
-	    v.normalize();
-	    bPrime = new BeliefStateStd(v, poba);
+	    bVec.normalize();
+	    bPrime=BeliefStateStd.transform(bVec);
+	    bPrime.setPoba(poba);
 	}
 	// System.out.println("Elapsed in tao" + (System.currentTimeMillis() -
 	// start));
@@ -163,14 +165,14 @@ public class PomdpStd implements Pomdp, Serializable {
     /// R(b,a)
     
     public double expectedImmediateReward(BeliefState b, int a) {
-	return R.getExpectation(b,a);
+	return R.sample(b,a);
     }
 
     // P(o|b,a) in vector form for all o's
 
-    public CustomVector observationProbabilities(BeliefState b, int a) {
-	CustomVector Tb = T.project(b.getPoint(),a);
-	CustomVector Poba = O.project(Tb,a);
+    public AlphaVectorStd observationProbabilities(BeliefState b, int a) {
+	AlphaVectorStd Tb = T.project(AlphaVectorStd.transform((BeliefStateStd)b),a);
+	AlphaVectorStd Poba = O.project(Tb,a);
 	Poba.normalize();
 	return Poba;
     }
@@ -231,36 +233,14 @@ public class PomdpStd implements Pomdp, Serializable {
     }
 
     public AlphaVectorStd mdpValueUpdate(AlphaVector alpha, int a) {
-	CustomVector vec = T.project((CustomVector)alpha.getInternalRef(),a);
+	AlphaVectorStd vec = T.project((AlphaVectorStd)alpha,a);
 	vec.scale(gamma);
-	vec.add((CustomVector)getRewardValueFunction(a).getAlpha().getInternalRef());
-	return (new AlphaVectorStd(vec, a));
+	vec.add((CustomVector)getRewardValueFunction(a).getFirstAlpha());
+	return (vec);
     }
 
     public ValueFunctionStd getRewardValueFunction(int a) {
-	ValueFunctionStd vf = new ValueFunctionStd();
-	vf.push(R.getVector(a), a);
-	return vf;
-    }
-
-    public double getRewardMax() {
-	double max_val = Double.NEGATIVE_INFINITY;
-	for (int a = 0; a < nrActions(); a++) {
-	    double test_val = getRewardMax(a);
-	    if (test_val > max_val)
-		max_val = test_val;
-	}
-	return max_val;
-    }
-
-    public double getRewardMin() {
-	double min_val = Double.POSITIVE_INFINITY;
-	for (int a = 0; a < nrActions(); a++) {
-	    double test_val = getRewardMin(a);
-	    if (test_val < min_val)
-		min_val = test_val;
-	}
-	return min_val;
+	return (ValueFunctionStd) R.getValueFunction(a);
     }
 
     public double getRewardMaxMin() {
@@ -289,9 +269,8 @@ public class PomdpStd implements Pomdp, Serializable {
 		return new BeliefMdpStd(this);
 	}
 	
-	public AlphaVector getHomogeneAlpha(double bestVal) {
-		return (new AlphaVectorStd(CustomVector.getHomogene(nrStates(),
-				bestVal), -1));
+	public AlphaVectorStd getHomogeneAlpha(double val) {
+		return(AlphaVectorStd.transform(CustomVector.getHomogene(nrStates(),val)));
 	}
 
 	public AlphaVector getEmptyAlpha(int a) {
@@ -308,6 +287,14 @@ public class PomdpStd implements Pomdp, Serializable {
 
 	public TransitionModel getTransitionModel() {
 		return T;
+	}
+
+	public double getRewardMax() {
+		return R.max();
+	}
+
+	public double getRewardMin() {
+		return R.min();
 	}
 
 

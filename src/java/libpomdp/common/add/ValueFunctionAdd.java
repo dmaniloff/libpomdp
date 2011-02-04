@@ -35,24 +35,25 @@ public class ValueFunctionAdd implements ValueFunction, Serializable {
     // represent a value function via an array of Adds
     private DD vAdd[];
 
-    // staIds of the problem
-    private int staIds[];
-
     // actions associated to each alpha vector
     private int a[];
 
+    private AddConfiguration conf;
+    
     // constructor
-    public ValueFunctionAdd(DD vAdd[], int staIds[], int a[]) {
+    public ValueFunctionAdd(DD vAdd[], int a[],AddConfiguration conf) {
 	this.vAdd = vAdd;
 	this.a = a;
-	this.staIds = staIds;
+	this.conf = conf;
     }
 
     // ------------------------------------------------------------------------
     // interface methods
     // ------------------------------------------------------------------------
 
-    // return value of a belief state
+
+
+	// return value of a belief state
     public double value(BeliefState bel) {
 	// declarations
 	DD b;
@@ -61,7 +62,7 @@ public class ValueFunctionAdd implements ValueFunction, Serializable {
 	// compute dot products
 	if (bel instanceof BeliefStateAdd) {
 	    b = ((BeliefStateAdd) bel).bAdd;
-	    dotProds = OP.dotProductNoMem(b, vAdd, staIds);
+	    dotProds = OP.dotProductNoMem(b, vAdd, conf.staIds);
 	} else {
 	    m = ((BeliefStateFactoredAdd) bel).marginals;
 	    dotProds = OP.factoredExpectationSparseNoMem(m, vAdd);
@@ -76,19 +77,17 @@ public class ValueFunctionAdd implements ValueFunction, Serializable {
     // list of actions associated with each alpha
     
     public int[] getActions() {
-	return a;
-    }
-
+    	return a;
+    }    
     
     public AlphaVector getAlpha(int idx) {
-	// TODO Auto-generated method stub
-	return null;
+    	return(new AlphaVectorAdd(vAdd[idx],a[idx]));
     }
 
     
     public CustomVector getAlphaValues(int idx) {
-	double[][] val = OP.convert2array(vAdd, staIds);
-	return new CustomVector(val[idx]);
+    	double[][] val = OP.convert2array(vAdd, conf.staIds);
+    	return new CustomVector(val[idx]);
     }
 
     
@@ -98,12 +97,70 @@ public class ValueFunctionAdd implements ValueFunction, Serializable {
 
     
     public void sort() {
+    	// Can a set of Adds be sorted?
 	// TODO Auto-generated method stub
+    	Utils.warning("Add-based value functions cannot be sorted yet...");
     }
 
     // return Add representation of this value function
     public DD[] getvAdd() {
 	return vAdd;
     }
+
+	public ValueFunction copy() {
+		DD newVAdd[] = new DD[vAdd.length];
+		int newA[] = new int[a.length];
+		System.arraycopy(vAdd, 0, newVAdd, 0, vAdd.length);
+		System.arraycopy(a, 0, newA, 0, a.length);
+		return(new ValueFunctionAdd(newVAdd,newA,conf));
+	}
+
+	public void crossSum(ValueFunction rewardValueFunction) {
+		// Can ADDs be crossSummed?
+		// TODO Auto-generated method stub
+		Utils.error("crossSum not implemented yet for Adds");
+	}
+
+	public AlphaVector getBestAlpha(BeliefState bel) {
+		// TODO Auto-generated method stub
+		Utils.error("getBestAlpha not implemented yet for Adds");
+		return null;
+	}
+
+	public AlphaVector getUpperBound() {
+		Utils.error("getUpperBound not implemented yet for Adds");
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void merge(ValueFunction vfA) {
+		Utils.error("merge not implemented yet for Adds");
+		// TODO Auto-generated method stub
+		
+	}
+
+	public double performance(ValueFunction oldv, int convCriteria) {
+		Utils.error("performance not implemented yet for Adds");
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	public long prune(double delta) {
+		Utils.error("prune not implemented yet for Adds");
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	public long prune() {
+		Utils.error("prune not implemented yet for Adds");
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	public void push(AlphaVector vec) {
+		Utils.error("prune not implemented yet for Adds");
+		// TODO Auto-generated method stub
+		
+	}
 
 } // valueFunctionAdd

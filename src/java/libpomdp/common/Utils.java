@@ -209,4 +209,14 @@ public class Utils {
 		}
 		return null;
 	}
+
+	public static void error(String string) {
+		System.err.println("ERROR: "+string);
+		System.exit(1);
+		
+	}
+
+	public static void warning(String string) {
+		System.err.println("WARNING: "+string);
+	}
 } // Utils

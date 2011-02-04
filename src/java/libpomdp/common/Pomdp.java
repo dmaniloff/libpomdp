@@ -17,23 +17,13 @@ public interface Pomdp {
     public double expectedImmediateReward(BeliefState b, int a);
 
     /// P(o|b,a): 1 x o in vector form for all o's
-    public CustomVector observationProbabilities(BeliefState bel, int a);
-
+    public AlphaVector observationProbabilities(BeliefState b, int a);
     
     public TransitionModel getTransitionModel();
     
     public ObservationModel getObservationModel();
     
     public RewardFunction getRewardFunction();
-    
-    /// T(s,a,s'): s x s' matrix
-    //public CustomMatrix getTransitionTable(int a);
-
-    /// O(s',a,o): s' x o matrix
-    //public CustomMatrix getObservationTable(int a);
-
-    /// R(s,a): 1 x s vector
-    //public CustomVector getImmediateRewards(int a);
 
     /// initial belief state
     public BeliefState getInitialBeliefState();
@@ -57,7 +47,7 @@ public interface Pomdp {
     public String getObservationString(int o);
 
     /// state names
-    public String getStateString(int s) throws Exception;
+    public String getStateString(int s);
 
 	public double getRewardMin();
 
@@ -71,7 +61,7 @@ public interface Pomdp {
 
 	public double getRewardMaxMin();
 
-	public AlphaVector getHomogeneAlpha(double bestVal);
+	public AlphaVector getHomogeneAlpha(double val);
 
 	public AlphaVector getEmptyAlpha(int a);
 	

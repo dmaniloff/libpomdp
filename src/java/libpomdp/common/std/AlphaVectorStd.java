@@ -9,16 +9,31 @@
 
 package libpomdp.common.std;
 
+import no.uib.cipr.matrix.sparse.SparseVector;
 import libpomdp.common.AlphaVector;
 import libpomdp.common.BeliefState;
 import libpomdp.common.CustomVector;
 
 
 
-public class AlphaVectorStd extends AlphaVector {
+public class AlphaVectorStd  extends CustomVector implements AlphaVector {
 
-    protected CustomVector v;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -9053379653819618307L;
+	protected int a;
 
+	public static AlphaVectorStd transform(CustomVector vec){
+		return new AlphaVectorStd(vec.getInternal());
+	}
+	
+	public static AlphaVectorStd transform(CustomVector vec,int a){
+		AlphaVectorStd ne=new AlphaVectorStd(vec.getInternal());
+		ne.setAction(a);
+		return(ne);
+	}
+	
     /**
      * Constructor using an existing vector.
      * 
@@ -28,10 +43,15 @@ public class AlphaVectorStd extends AlphaVector {
      *            the action associated to the vector v
      */
     public AlphaVectorStd(CustomVector v, int a) {
-    	this.v = v;
+    	super(v);
     	this.a = a;
     }
 
+    public AlphaVectorStd(AlphaVectorStd vec) {
+    	super(vec);
+    	this.a = vec.a;
+    }
+    
     /**
      * Constructor by vector dimension. Creates a zero-vector associated with
      * the action -1
@@ -55,7 +75,11 @@ public class AlphaVectorStd extends AlphaVector {
     	this(new CustomVector(dim), a);
     }
 
-    /**
+    public AlphaVectorStd(SparseVector internal) {
+		super(internal);
+	}
+
+	/**
      * Evaluates a belief-point for this alpha.
      * 
      * @param bel
@@ -63,7 +87,7 @@ public class AlphaVectorStd extends AlphaVector {
      * @return the dot product between both vectors.
      */
     public double eval(BeliefState bel) {
-    	return (v.dot(bel.getPoint()));
+    	return (dot(bel.getPoint()));
     }
 
     /**
@@ -72,17 +96,9 @@ public class AlphaVectorStd extends AlphaVector {
      * @return an alpha-vector copy
      */
     public AlphaVectorStd copy() {
-    	return (new AlphaVectorStd(v.copy(), a));
+    	return new AlphaVectorStd(this);
     }
 
-    /**
-     * Size of the alpha-vector
-     * 
-     * @return size of the vector
-     */
-    public int size() {
-	return v.size();
-    }
 
     /**
      * Compare to an alpha-vector with delta tolerance.
@@ -94,9 +110,10 @@ public class AlphaVectorStd extends AlphaVector {
      * @return zero if (almost) equal, positive if is higher, and negative if is
      *         lower;
      */
-    public int compareTo(AlphaVector vec, double delta) {
-	return (v.compareTo((CustomVector)vec.getInternalRef(),delta));
-    }
+    //public int compareTo(AlphaVector vec, double delta) {
+    //	AlphaVectorStd v=(AlphaVectorStd) vec;
+    //	return (compareTo((CustomVector)v,delta));
+    //}
 
     /**
      * Compare to an alpha-vector with delta tolerance.
@@ -106,19 +123,9 @@ public class AlphaVectorStd extends AlphaVector {
      * @return zero if equal, positive if is higher, and negative if is lower.
      */
     public int compareTo(AlphaVector vec) {
-	return (v.compareTo((CustomVector)vec.getInternalRef()));
+     	AlphaVectorStd v=(AlphaVectorStd) vec;
+    	return (compareTo((CustomVector)v));
     }
-
-    /**
-     * Reset the vector reference to a new one.
-     * 
-     * @param v
-     *            the new custom vector
-     */
-    public void setValues(Object v) {
-    	this.v = (CustomVector)v;
-    }
-    
     
     /**
      * Action setter.
@@ -137,7 +144,8 @@ public class AlphaVectorStd extends AlphaVector {
      *            the alpha vector to copy from
      */
     public void set(AlphaVector res) {
-    	setValues((CustomVector)res.getInternalCopy());
+    	AlphaVectorStd vec=(AlphaVectorStd) res;
+    	set((CustomVector)vec);
     	setAction(res.getAction());
     }
 
@@ -150,7 +158,7 @@ public class AlphaVectorStd extends AlphaVector {
      *            the nez value
      */
     public void setValue(int idx, double value) {
-    	v.set(idx, value);
+    	set(idx, value);
     }
     
     /**
@@ -161,46 +169,13 @@ public class AlphaVectorStd extends AlphaVector {
      *            the alpha-vector to add
      */
     public void add(AlphaVector alpha) {
-    	add(alpha.getInternalRef());
-    }
-
-    /**
-     * Add the values of a custom vector.
-     * 
-     * @param vec
-     *            the custom vector to sum
-     */
-    public void add(Object vec) {
-    	v.add((CustomVector)vec);
+    	AlphaVectorStd stdAlpha=(AlphaVectorStd) alpha;
+    	add((CustomVector)stdAlpha);
     }
     
-    /**
-     * Add the values of a custom vector.
-     * 
-     * @param vec
-     *            the custom vector to sum
-     */
-    public void add(CustomVector vec) {
-    	v.add(vec);
-    }
-    
-    
-
-	@Override
-	public CustomVector getInternalCopy() {
-		return v.copy();
+	public int getAction() {
+		return a;
 	}
-
-	@Override
-	public CustomVector getInternalRef() {
-		return v;
-	}
-
-	@Override
-	public double get(int s) {
-		return v.get(s);
-	}
-	
 	
 	
 }
