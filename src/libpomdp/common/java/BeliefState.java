@@ -29,5 +29,5 @@ public interface BeliefState {
     public void setAlpha(int planid);
 
     /// returns the entropy of the belief in nats
-    public double getEntropy();
+    public double getEntropy(); 
 }
