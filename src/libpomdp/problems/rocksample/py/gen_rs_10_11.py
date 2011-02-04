@@ -1,11 +1,10 @@
-# /** ------------------------------------------------------------------------- *
-#  * libpomdp
-#  * ========
-#  * File: gen_rs_10_11.py
-#  * Description: jython script to generate RockSample[10,11]
-#  * Copyright (c) 2009, 2010 Diego Maniloff 
-#  * W3: http://www.cs.uic.edu/~dmanilof
-#  --------------------------------------------------------------------------- */
+'''
+ libpomdp
+ ========
+ File: gen_rs_10_11.py
+ Description: jython script to generate RockSample[10,11]
+ Copyright (c) 2009, 2010, 2011 Diego Maniloff 
+'''
 
 # imports
 import sys
