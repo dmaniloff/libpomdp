@@ -1,8 +1,8 @@
 /** ------------------------------------------------------------------------- *
  * libpomdp
  * ========
- * File: CatchTagGrid.java
- * Description: Defines wallAhead according to Pineau's T-shaped Tag POMDP
+ * File: CatchTagHGrid.java
+ * Description: H-shaped extension of Pineau's Tag domain.
  * Copyright (c) 2009, 2010 Diego Maniloff 
  *
  * -----------------------------------------

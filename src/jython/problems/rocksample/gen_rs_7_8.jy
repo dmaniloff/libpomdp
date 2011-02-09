@@ -1,11 +1,10 @@
-# /** ------------------------------------------------------------------------- *
-#  * libpomdp
-#  * ========
-#  * File: gen_rs_7_8.py
-#  * Description: jython script to generate RockSample[7,8]
-#  * Copyright (c) 2009, 2010 Diego Maniloff 
-#  * W3: http://www.cs.uic.edu/~dmanilof
-#  --------------------------------------------------------------------------- */
+'''
+ libpomdp
+ ========
+ File: gen_rs_7_8.py
+ Description: jython script to generate RockSample[7,8]
+ Copyright (c) 2009, 2010, 2011 Diego Maniloff 
+'''
 
 import java.io.PrintStream as PrintStream
 import rocksampleGen
