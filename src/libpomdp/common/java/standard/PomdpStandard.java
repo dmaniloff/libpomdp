@@ -5,7 +5,7 @@
  * Description: Represent a POMDP model using a flat representation and
  *              sparse matrices and vectors. This class can be constructed
  *              from a pomdpSpecSparseMTJ object after parsing a .POMDP file.
- *              Sparse matriced by matrix-toolkits-java, 
+ *              Sparse matrices by matrix-toolkits-java, 
  *              every matrix will be CustomMatrix:
  *              
  * S =
@@ -57,7 +57,7 @@ public class PomdpStandard implements Pomdp {
     private CustomMatrix O[];
 
     // reward model: a x s'
-    private CustomVector  R[];
+    private CustomVector R[];
 
     // discount factor
     private double gamma;
@@ -75,7 +75,7 @@ public class PomdpStandard implements Pomdp {
     // methods
     // ------------------------------------------------------------------------
 
-    /// constructor
+    /// constructor - need to integrate file reader....doing this for now.
 
     public PomdpStandard(String pomdpFilename) {
 
@@ -89,11 +89,10 @@ public class PomdpStandard implements Pomdp {
 	} catch (Exception e) {
 	    // TODO Auto-generated catch block
 	    e.printStackTrace();
-	    System.exit(-1);
 	}
 
-	init(prob.O,
-		prob.T,
+	init(prob.T,
+		prob.O,
 		prob.R,
 		prob.nrSta,
 		prob.nrAct,
@@ -104,8 +103,8 @@ public class PomdpStandard implements Pomdp {
 		prob.startState);
     }
 
-    private void init(CustomMatrix[]  O, 
-	    CustomMatrix[]  T, 
+    private void init(CustomMatrix[]  T, 
+	    CustomMatrix[]  O, 
 	    CustomVector[]  R,
 	    int          nrSta, 
 	    int          nrAct, 
@@ -129,13 +128,12 @@ public class PomdpStandard implements Pomdp {
 	// set initial belief state
 	this.initBelief = new BeliefStateStandard(init, 0.0);
 
-	// copy the model matrices - transform from dense to comprow
-	// do we really need this? dense is in sparse form already...
-	int a;
-	for(a = 0; a < nrAct; a++) {
-	    this.R[a] = new CustomVector(R[a]);
-	    this.T[a] = new CustomMatrix(O[a]);
-	    this.O[a] = new CustomMatrix(T[a]);	    
+	// copy the model matrices 
+	// sneaky one here, i wonder how long this's been like that
+	for(int a = 0; a < nrAct; a++) {
+	    this.T[a] = new CustomMatrix(T[a]);
+	    this.O[a] = new CustomMatrix(O[a]);
+	    this.R[a] = new CustomVector(R[a]);	    
 	}
     } // constructor
 
