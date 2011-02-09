@@ -20,8 +20,17 @@ public class PomdpSpecStandard implements Serializable{
 
     // serial id
     static final long serialVersionUID = 1L;
+
+    // R(a), R(s,a), R(s,a,s'), R(s,a,s',o')
+    public enum RewardType { 
+    	R_s_a(1), R_s_a_sp(2), R_s_a_sp_op(3);
+    	private final int _p;
+    	private RewardType(int p) { _p = p; }
+    	public int getP() { return _p; }
+    }
     
-    public boolean compReward;
+    // the reward representation used
+    public RewardType rewardType;
     
     // discount factor
     public double discount;
@@ -59,6 +68,10 @@ public class PomdpSpecStandard implements Serializable{
     // R: <action> : <start-state> : * : * %f
     public CustomVector R[];
     
+    // R(s,a,s)
+    public CustomMatrix partialR[];
+    
+    // R(s,a,s',o')
     public CustomMatrix fullR[][];
     
 } // PomdpSpecStandard

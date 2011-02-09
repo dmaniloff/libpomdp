@@ -138,24 +138,28 @@ dotPomdp
         }            
       preamble
         {
-        	dotPomdpSpec.compReward=true;
+            /* initally assume that rewards are specified as R(s,a) */
+        	dotPomdpSpec.rewardType = PomdpSpecStandard.RewardType.R_s_a;
+
+            /* print out summary info from the preamble */
         	System.out.println("PARSER: Summary -> states "+dotPomdpSpec.nrSta);
         	System.out.println("                -> observations "+dotPomdpSpec.nrObs);
         	System.out.println("                -> actions "+dotPomdpSpec.nrAct);
+            
             // we can now initialize the data structures for T, O, R
-            /* initialize |A| s x s' dense matrices (they're actually sparse)
+            /* initialize |A| s x s' matrices
                T: <action> : <start-state> : <end-state> prob  */
             dotPomdpSpec.T = new CustomMatrix[dotPomdpSpec.nrAct];
             for(int a=0; a<dotPomdpSpec.nrAct; a++) 
                 dotPomdpSpec.T[a] = new CustomMatrix(dotPomdpSpec.nrSta,
                                                     dotPomdpSpec.nrSta);
-            /* initialize |A| s' x o dense matrices (they're actually sparse)
+            /* initialize |A| s' x o matrices
                O : <action> : <end-state> : <observation> prob */        
             dotPomdpSpec.O = new CustomMatrix[dotPomdpSpec.nrAct];
             for(int a=0; a<dotPomdpSpec.nrAct; a++) 
                 dotPomdpSpec.O[a] = new CustomMatrix(dotPomdpSpec.nrSta,
                                                     dotPomdpSpec.nrObs);
-            /* initialize |A| 1 x s' sparse vectors (comp reward)
+            /* initialize |A| 1 x s' sparse vectors (since we'll return R in this form)
                R: <action> : <start-state> : * : * float */
                dotPomdpSpec.R = new CustomVector[dotPomdpSpec.nrAct];
                for(int a=0; a<dotPomdpSpec.nrAct; a++)
@@ -174,23 +178,41 @@ dotPomdp
       param_list 
         {
             // there should be a check for the parameter distros here...
-            // System.out.println("Successfully parsed parameters");
-            if (dotPomdpSpec.compReward==false){
-            	System.out.println("PARSER: Compressing rewards...");
-            	//Create the R(a,s) type of reward (not very efficient, but only one time)
-				for (int a=0;a<dotPomdpSpec.nrAct;a++){
-					//R[a]=new CustomVector(dotPomdpSpec.nrSta);
-					for (int s=0;s<dotPomdpSpec.nrSta;s++){
-						CustomMatrix prod=new CustomMatrix(dotPomdpSpec.nrSta,dotPomdpSpec.nrSta);
-						prod=dotPomdpSpec.O[a].transBmult(dotPomdpSpec.fullR[a][s]);
-						double value=0;
-						for (int sp=0;sp<dotPomdpSpec.nrSta;sp++){
-							value+=prod.get(sp,sp)*dotPomdpSpec.T[a].get(s, sp);
-						}
-						dotPomdpSpec.R[a].set(s,value);
-					}
-				}
+
+            /* reward compression: is this the right approach? shouldn't we change the VI eqs instead? */
+            double value;
+            switch(dotPomdpSpec.rewardType) {                
+                case R_s_a_sp:
+                    /* R(s,a) = \sum_sp R(s,a,s') T(s,a,s') */
+                    System.out.println("PARSER: Compressing R(s,a,s') rewards...");
+                    for (int a=0;a<dotPomdpSpec.nrAct;a++) {
+                        for (int s=0;s<dotPomdpSpec.nrSta;s++) {
+                            value = 0;
+                            for (int sp=0;sp<dotPomdpSpec.nrSta;sp++) { // would need a getRow() to avoid this
+                                value += dotPomdpSpec.partialR[a].get(s, sp) * dotPomdpSpec.T[a].get(s, sp);
+                            }
+                            dotPomdpSpec.R[a].set(s, value);
+                        }
+                    }
+                    break;
+                case R_s_a_sp_op:
+                    System.out.println("PARSER: Compressing R(s,a,s',o') rewards...");
+                    //Create the R(a,s) type of reward (not very efficient, but only one time)
+                    for (int a=0;a<dotPomdpSpec.nrAct;a++){
+                        //R[a]=new CustomVector(dotPomdpSpec.nrSta);
+                        for (int s=0;s<dotPomdpSpec.nrSta;s++){
+                            CustomMatrix prod=new CustomMatrix(dotPomdpSpec.nrSta,dotPomdpSpec.nrSta);
+                            prod=dotPomdpSpec.O[a].transBmult(dotPomdpSpec.fullR[a][s]);
+                            value = 0;
+                            for (int sp=0;sp<dotPomdpSpec.nrSta;sp++){
+                                value+=prod.get(sp,sp) * dotPomdpSpec.T[a].get(s, sp); // bug here?
+                            }
+                            dotPomdpSpec.R[a].set(s,value);
+                        }
+                    }
+                    break;
             }
+
             System.out.println("PARSER: [DONE]");
             
         }
@@ -368,13 +390,31 @@ reward_spec
 reward_spec_tail 
     : paction COLONTOK s_1=state COLONTOK s_2=state COLONTOK obs number
         {   
-        	if(dotPomdpSpec.compReward && $s_2.text.compareTo(Character.toString('*'))!=0 ||
-                        $obs.text.compareTo(Character.toString('*'))!=0){
-                System.out.println("PARSER: full reward representation detected, probably you will get out of memory");        
-            	// Compressed rewards do not apply any more :(, trying full rewards
-            	dotPomdpSpec.compReward=false;
+            /* first, detect the spec type of this spec_tail -- assumes paction will never be '*', can it? */
+            /* change type based on hierarchy of mem allocation after seeing new type for the first time */
+            if ($s_2.text.equals(Character.toString('*')) && $obs.text.equals(Character.toString('*'))
+                 && dotPomdpSpec.rewardType.getP() < PomdpSpecStandard.RewardType.R_s_a.getP()) {
+                /* R(s,a) */
+                /* do nothing, this is the initially assumed reward type */
+                /* actually, should never go in here unless R(a) was specified, which we could easily support */
+            } else if ($obs.text.equals(Character.toString('*'))
+                        && dotPomdpSpec.rewardType.getP() < PomdpSpecStandard.RewardType.R_s_a_sp.getP()) {
+                /* R(s,a,s') */
+                System.out.println("PARSER: R(s,a,s') reward representation detected.");
+                dotPomdpSpec.rewardType = PomdpSpecStandard.RewardType.R_s_a_sp;
+                /* create |A| matrices */
+                dotPomdpSpec.partialR = new CustomMatrix[dotPomdpSpec.nrAct];
+                for(int a=0; a<dotPomdpSpec.nrAct; a++) {
+                    dotPomdpSpec.partialR[a] = new CustomMatrix(dotPomdpSpec.nrSta, dotPomdpSpec.nrSta);
+                }
+                /* will need some transfer code here if .pomdp file has mixed specs */
+
+            } else if(dotPomdpSpec.rewardType.getP() < PomdpSpecStandard.RewardType.R_s_a_sp_op.getP()){
+                /* R(s,a,s',o') */
+                System.out.println("PARSER: R(s,a,s',o') reward representation detected, you'll probably run out of memory."); 
+                dotPomdpSpec.rewardType = PomdpSpecStandard.RewardType.R_s_a_sp_op;
                 // Creating Huge Reward Matrix (4D)
-                dotPomdpSpec.fullR=new CustomMatrix[dotPomdpSpec.nrAct][dotPomdpSpec.nrSta];    
+                dotPomdpSpec.fullR = new CustomMatrix[dotPomdpSpec.nrAct][dotPomdpSpec.nrSta];    
             	for(int a=0; a<dotPomdpSpec.nrAct; a++) 
             		for(int s=0; s<dotPomdpSpec.nrSta; s++){ 
                 		dotPomdpSpec.fullR[a][s] = new CustomMatrix(dotPomdpSpec.nrSta,dotPomdpSpec.nrObs);
@@ -387,19 +427,30 @@ reward_spec_tail
                 			dotPomdpSpec.fullR[a][s].setColumn(o,colV);
                 	}
             }
-        	if (dotPomdpSpec.compReward){
-        	    if($number.n != 0.0)
-        			for(int a : $paction.l)
-                		for(int s1 : $s_1.l)
-                    		dotPomdpSpec.R[a].set(s1, $number.n); 
-        	}
-        	else{         
-            	if($number.n != 0.0)
-            		for(int a : $paction.l)
-                		for(int s1 : $s_1.l)
-                			for(int s2 : $s_2.l)
-                				for(int o : $obs.l) 
-                    				dotPomdpSpec.fullR[a][s1].set(s2,o,$number.n);                   
+
+            /* now fill in values accordingly */
+            switch(dotPomdpSpec.rewardType) {
+                case R_s_a:
+                    if($number.n != 0.0)
+                        for(int a : $paction.l)
+                            for(int s1 : $s_1.l)
+                                dotPomdpSpec.R[a].set(s1, $number.n); 
+                    break;
+                case R_s_a_sp:
+            	    if($number.n != 0.0)
+                        for(int a : $paction.l)
+                            for(int s1 : $s_1.l)
+                                for(int s2 : $s_2.l)
+                                        dotPomdpSpec.partialR[a].set(s1, s2, $number.n);
+                    break;
+                case R_s_a_sp_op:
+                    if($number.n != 0.0)
+                        for(int a : $paction.l)
+                            for(int s1 : $s_1.l)
+                                for(int s2 : $s_2.l)
+                                    for(int o : $obs.l) 
+                                        dotPomdpSpec.fullR[a][s1].set(s2, o, $number.n);
+                    break;
         	}
         }
     | paction COLONTOK state COLONTOK state num_matrix
