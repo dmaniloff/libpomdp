@@ -187,8 +187,9 @@ dotPomdp
                     System.out.println("PARSER: Compressing R(s,a,s') rewards...");
                     for (int a=0;a<dotPomdpSpec.nrAct;a++) {
                         for (int s=0;s<dotPomdpSpec.nrSta;s++) {
+                            
                             value = 0;
-                            for (int sp=0;sp<dotPomdpSpec.nrSta;sp++) { // would need a getRow() to avoid this
+                            for (int sp=0;sp<dotPomdpSpec.nrSta;sp++) { // would need a getRow() to avoid this, this dot prod is VERY slow
                                 value += dotPomdpSpec.partialR[a].get(s, sp) * dotPomdpSpec.T[a].get(s, sp);
                             }
                             dotPomdpSpec.R[a].set(s, value);
@@ -393,7 +394,7 @@ reward_spec_tail
             /* first, detect the spec type of this spec_tail -- assumes paction will never be '*', can it? */
             /* change type based on hierarchy of mem allocation after seeing new type for the first time */
             if ($s_2.text.equals(Character.toString('*')) && $obs.text.equals(Character.toString('*'))
-                 && dotPomdpSpec.rewardType.getP() < PomdpSpecStandard.RewardType.R_s_a.getP()) {
+                 && dotPomdpSpec.rewardType.getP() <= PomdpSpecStandard.RewardType.R_s_a.getP()) {
                 /* R(s,a) */
                 /* do nothing, this is the initially assumed reward type */
                 /* actually, should never go in here unless R(a) was specified, which we could easily support */
@@ -409,7 +410,8 @@ reward_spec_tail
                 }
                 /* will need some transfer code here if .pomdp file has mixed specs */
 
-            } else if(dotPomdpSpec.rewardType.getP() < PomdpSpecStandard.RewardType.R_s_a_sp_op.getP()){
+            } else if(!$obs.text.equals(Character.toString('*'))
+                      && dotPomdpSpec.rewardType.getP() < PomdpSpecStandard.RewardType.R_s_a_sp_op.getP()){
                 /* R(s,a,s',o') */
                 System.out.println("PARSER: R(s,a,s',o') reward representation detected, you'll probably run out of memory."); 
                 dotPomdpSpec.rewardType = PomdpSpecStandard.RewardType.R_s_a_sp_op;
