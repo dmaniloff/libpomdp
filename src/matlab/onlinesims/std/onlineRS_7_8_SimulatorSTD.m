@@ -16,39 +16,41 @@ clear java
 clear java
 
 % add dynamic classpath
-javaaddpath '../../../../external/mtj-0.9.12.jar'
-javaaddpath '../../../../external/symPerseusJava.jar'
-javaaddpath '../../../../dist/libpomdp.jar'
+javaaddpath '../../../../../external/jmatharray.jar'
+javaaddpath '../../../../../external/antlr-3.2.jar'
+javaaddpath '../../../../../external/mtj-0.9.12.jar'
+javaaddpath '../../../../../external/symPerseusJava.jar'
+javaaddpath '../../../../../dist/libpomdp.jar'
 
 % java imports
 import symPerseusJava.*;
 import libpomdp.common.java.*;
-import libpomdp.common.java.add.*;
+import libpomdp.common.java.standard.*;
 import libpomdp.online.java.*;
 import libpomdp.offline.java.*;
 import libpomdp.hybrid.java.*;
 import libpomdp.problems.rocksample.java.*;
 
 %% load problem
-factoredProb = PomdpAdd  ('../../problems/rocksample/7-8/RockSample_7_8.SPUDD');
+standardProb = PomdpStandard  ('../../../problems/rocksample/7-8/RockSample_7_8.POMDP');
 
 %% load pre-computed offline bounds
-load '../../problems/rocksample/7-8/RockSample_7_8_blind_ADD.mat';
-load '../../problems/rocksample/7-8/RockSample_7_8_qmdp_ADD.mat';
+load '../../../problems/rocksample/7-8/RockSample_7_8_blind_ADD.mat';
+load '../../../problems/rocksample/7-8/RockSample_7_8_qmdp_ADD.mat';
 
 %% create heuristic search AND-OR tree
-% instantiate an AEMS2 heuristic object
-AEMS2h  = AEMS2(factoredProb);
+% instantiate an aems2 heuristic object
+aems2h  = AEMS2(factoredProb);
 
 %% play the pomdp
-logFilename = sprintf('simulation-logs/rocksample/RS78-online-AEMS2-ADD-%s.log', datestr(now, 'yyyy-mmm-dd-HHMMSS'));
+logFilename = sprintf('simulation-logs/rocksample/RS78-online-AEMS2-STD-%s.log', datestr(now, 'yyyy-mmm-dd-HHMMSS'));
 diary(logFilename);
 
 % rocksample parameters for the grapher
 GRID_SIZE         = 7;
 ROCK_POSITIONS    = [2 0; 0 1; 3 1; 6 3; 2 4; 3 4; 5 5; 1 6];
 SARTING_POS       = [0 3];
-drawer            = RockSampleGraph;
+drawer            = RocksampleGraph;
 NUM_ROCKS         = size(ROCK_POSITIONS,1);
 
 % parameters
@@ -101,15 +103,15 @@ for run = 1:TOTALRUNS
         if USE_FACTORED_BELIEFS
           b_init    = javaArray('symPerseusJava.DD', 1);          
           b_init(1) = factoredProb.getInitialBeliefState().bAdd;
-          b_init    = BeliefStateFactoredAdd( ...
+          b_init    = BelStateFactoredAdd( ...
               OP.marginals(b_init,factoredProb.getstaIds(),factoredProb.getstaIdsPr()), ...
               factoredProb.getstaIds());
         else
-          b_init    = factoredProb.getInitialBeliefState();
+          b_init    = factoredProb.getInit();
         end
         
-        % re - initialize tree at starting belief        
-        aoTree = AndOrTree(factoredProb, AEMS2h, lBound, uBound);
+        % re - initialize tree at starting belief
+        aoTree = AndOrTree(factoredProb, aems2h, lBound, uBound);
         aoTree.init(b_init);
         rootNode = aoTree.getRoot();
 
@@ -137,7 +139,7 @@ for run = 1:TOTALRUNS
                       OP.evalN(rootNode.getBeliefState().marginals, factoredS));
             else
               fprintf(1, 'Current belief agree prob:      %d\n', ... 
-                      OP.eval(rootNode.getBeliefState().bAdd, factoredS));
+                      OP.eval(rootNode.belief.bAdd, factoredS));
             end            
             fprintf(1, 'Current |T| is:                 %d\n', rootNode.getSubTreeSize());
 
@@ -203,7 +205,7 @@ for run = 1:TOTALRUNS
             end
 
             % transform factoredO into absolute o 
-            o = Utils.sencode(factoredO(2,:), ...
+            o = Util.sencode(factoredO(2,:), ...
                 factoredProb.getnrObsV(), ...
                 factoredProb.getobsArity());
             % compute an exact update of the new belief we will move into...this should not matter for RS!
@@ -244,5 +246,5 @@ end % runs loop
 
 % save statistics before quitting
 statsFilename = ...
-    sprintf('simulation-logs/rocksample/RS78-online-ALLSTATS-AEMS2-ADD-%s.mat', datestr(now, 'yyyy-mmm-dd-HHMMSS'));
+    sprintf('simulation-logs/rocksample/RS78-online-ALLSTATS-AEMS2-STD-%s.mat', datestr(now, 'yyyy-mmm-dd-HHMMSS'));
 save(statsFilename, 'all');

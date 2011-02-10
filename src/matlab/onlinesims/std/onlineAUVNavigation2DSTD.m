@@ -16,26 +16,35 @@ clear java
 clear java
 
 % add dynamic classpath
-javaaddpath '../../../../../external/jmatharray.jar'
-javaaddpath '../../../../../external/antlr-3.2.jar'
-javaaddpath '../../../../../external/mtj-0.9.12.jar'
-javaaddpath '../../../../../external/symPerseusJava.jar'
-javaaddpath '../../../../../dist/libpomdp.jar'
+javaaddpath '../../../../external/jmatharray.jar'
+javaaddpath '../../../../external/antlr-3.2.jar'
+javaaddpath '../../../../external/mtj-0.9.12.jar'
+javaaddpath '../../../../external/symPerseusJava.jar'
+javaaddpath '../../../../dist/libpomdp.jar'
 
 % java imports
 import symPerseusJava.*;
-import libpomdp.common.java.*;
-import libpomdp.common.java.standard.*;
-import libpomdp.online.java.*;
-import libpomdp.offline.java.*;
+import libpomdp.common.*;
+import libpomdp.parser.*;
+import libpomdp.common.std.*;
+import libpomdp.solve.*;
+import libpomdp.solve.offline.*;
+import libpomdp.solve.offline.heuristic.*;
 
 %% load problem
-standardProb = PomdpStandard  ('../../../problems/auvnavigation/auvnavigation2d.pomdp');
+standardProb = FileParser.loadPomdp  ('../../../../data/problems/auvnavigation/auvnavigation2d.pomdp', ...
+    FileParser.PARSE_CASSANDRA_POMDP);
 
-%% load pre-computed offline bounds
-load '../../../problems/rocksample/7-8/RockSample_7_8_blind_ADD.mat';
-load '../../../problems/rocksample/7-8/RockSample_7_8_qmdp_ADD.mat';
-
+%% compute offline bounds
+qmdpCalc = QmdpPolicyStd(pomdp);
+	double epsi = 1e-6 * (1 - pomdp.getGamma()) / (2 * pomdp.getGamma());
+	algo.addStopCriteria(new MaxIterationsCriteria(100));
+	algo.addStopCriteria(new ValueConvergenceCriteria(epsi,
+		Criteria.CC_MAXDIST));
+	algo.run();
+	System.out.println(algo.getValueFunction());
+	ValueIterationStats stat = (ValueIterationStats) algo.getStats();
+	System.out.println(stat);
 %% create heuristic search AND-OR tree
 % instantiate an aems2 heuristic object
 aems2h  = AEMS2(factoredProb);
