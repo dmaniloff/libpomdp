@@ -17,12 +17,17 @@ import libpomdp.common.add.symbolic.DD;
 
 public class Utils {
 
-    // / set the gen only once for every instance
+    // / set the gen only once for every instance (default)
     public static Random gen = new Random(System.currentTimeMillis());
 
+    public static void setSeed(long seed){
+    	gen=new Random(seed);
+    }
+    
     // / sample from a distribution - need not be fast, this is outside the
     // planning loop
     // / so this will be O(n), instead of log(n) using binary search
+  /*
     public static int sample(double d[]) {
     CustomVector cumSum=new CustomVector(d);
     cumSum.cumulate();
@@ -33,7 +38,7 @@ public class Utils {
 		return i;
 	return d.length - 1;
     }
-    
+    */
     public static int product(int arr[]){
     	int retval=1;
     	for (int e:arr){
@@ -63,6 +68,7 @@ public class Utils {
 
     } // argmax
 
+  /*
     // arternative, possibly slower, but more uniform
     public static int argmax2(double v[]) {
 	// declarations
@@ -84,8 +90,9 @@ public class Utils {
 	return repi.get(r);
 
     } // argmax2
-
-    public static int argmin(double[] v) {
+*/
+    
+ /*  public static int argmin(double[] v) {
 	// declarations
 	double minv = Double.POSITIVE_INFINITY;
 	int argmin = -1;
@@ -103,7 +110,7 @@ public class Utils {
 	}
 	return argmin;
     }
-
+*/
     // / concatenate DD arrays
     public static DD[] concat(DD[] first, DD[]... rest) {
 	int totalLength = first.length;
@@ -218,5 +225,25 @@ public class Utils {
 
 	public static void warning(String string) {
 		System.err.println("WARNING: "+string);
+	}
+
+	public static long max(long[] v) {
+		long maxv = Integer.MIN_VALUE;
+		int c;
+		for (c = 0; c < v.length; c++) {
+		    if (v[c] > maxv) 
+		    	maxv = v[c];
+		 }
+		return maxv;
+	}
+
+	public static double max(double[] v) {
+		double maxv = Double.MIN_VALUE;
+		int c;
+		for (c = 0; c < v.length; c++) {
+		    if (v[c] > maxv) 
+		    	maxv = v[c];
+		 }
+		return maxv;
 	}
 } // Utils

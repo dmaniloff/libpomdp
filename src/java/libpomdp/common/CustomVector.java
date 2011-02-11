@@ -190,7 +190,7 @@ public class CustomVector implements Serializable, Comparable<CustomVector> {
 	for (int i = 0; i < dim; i++) {
 	    retval.set(i, Utils.gen.nextDouble());
 	}
-	retval.scale(retval.norm(1));
+	retval.normalize();
 	return retval;
     }
 
@@ -226,6 +226,17 @@ public class CustomVector implements Serializable, Comparable<CustomVector> {
 		return cum;
 	}
 
+	public int sample() {
+		double cum=0;
+		double prob=Utils.gen.nextDouble();
+		for (int i=0;i<v.size();i++){
+			cum+=v.get(i);
+			if (cum>=prob)
+				return i;
+		}
+		return -1;
+	}
+	
 	public double getEntropy(double base) {
 		SparseVector logv=v.copy();
 		Iterator<VectorEntry> it = logv.iterator();

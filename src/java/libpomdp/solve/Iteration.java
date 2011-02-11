@@ -2,23 +2,14 @@ package libpomdp.solve;
 
 import java.util.ArrayList;
 
-import libpomdp.common.Pomdp;
-
 public abstract class Iteration {
 
     protected IterationStats iterationStats;
     protected ArrayList<Criteria> stopCriterias;
     protected long tempTime;
 
-    public abstract IterationStats iterate();
-
-    public IterationStats run() {
-	while (!finished()) {
-	    System.out.println("== Iteration " + iterationStats.iterations
-		    + " ==");
-	    iterate();
-	}
-	return iterationStats;
+    public IterationStats getStats() {
+    	return (iterationStats);
     }
 
     public boolean finished() {
@@ -49,9 +40,5 @@ public abstract class Iteration {
     protected void registerIterationTime() {
 	iterationStats.register(System.currentTimeMillis() - tempTime);
     }
-
-    public abstract IterationStats getStats();
-
-    public abstract Pomdp getPomdp();
 
 }

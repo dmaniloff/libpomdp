@@ -46,7 +46,7 @@ public class PomdpAdd implements Pomdp {
     public ObservationModelAdd O;
 
     // reward model: a-dim ADD
-    public RewardFunctionAdd R;
+    public LinearRhoAdd R;
 
     // discount factor
     private double gamma;
@@ -74,7 +74,7 @@ public class PomdpAdd implements Pomdp {
 	
 	T = new TransitionModelAdd(problemAdd.actTransitions,conf);
 	O = new ObservationModelAdd(problemAdd.actObserve,conf);
-	R = new RewardFunctionAdd(problemAdd.reward, problemAdd.actCosts,conf);
+	R = new LinearRhoAdd(problemAdd.reward, problemAdd.actCosts,conf);
 	// get DDs for T, O, R
 	
 	// set initial belief state

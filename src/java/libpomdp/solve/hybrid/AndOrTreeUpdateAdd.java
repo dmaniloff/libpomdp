@@ -15,6 +15,7 @@ import java.io.PrintStream;
 import libpomdp.common.CustomVector;
 import libpomdp.common.Utils;
 import libpomdp.common.ValueFunction;
+import libpomdp.common.add.BeliefStateAdd;
 import libpomdp.common.add.PomdpAdd;
 import libpomdp.common.add.ValueFunctionAdd;
 import libpomdp.common.add.symbolic.DD;
@@ -421,7 +422,7 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 	String b = "";
 	if (problem.nrStates() < 4)
 	    b = "b=["
-		    + (new CustomVector(o.getBeliefState().getPoint().getArray())).toString()
+		    + (new CustomVector(((BeliefStateAdd)o.getBeliefState()).getPoint())).toString()
 			+ "]\\n";
 	out.format(o.hashCode() + "[label=\""
 		+

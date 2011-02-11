@@ -4,50 +4,100 @@ public class TransitionModelBelief {
 	protected int states;
 	protected int actions;
 	protected DirichletBelief bel[][];
-	protected int infoCriteria;
 	
-	final public static int IC_ENTROPY = 1;
-	final public static int IC_LOGMAX = 2;
+	
+	
 	
 	public TransitionModelBelief(int n_x,int n_a){
-		infoCriteria=IC_LOGMAX;
 		states=n_x;
 		actions=n_a;
 		bel=new DirichletBelief[states][actions];
-		for (int a=0;a<states;a++){
+		for (int a=0;a<actions;a++){
 			for (int x=0;x<states;x++){
 				bel[x][a]=new DirichletBelief(states);
 			}
 		}
+	//	level=0;
 	}
 	
-	public void setInfoCriteria(int info){
-		infoCriteria=info;
+	public TransitionModelBelief(DirichletBelief[][] newbel) {
+		setBel(newbel);
+//		calculateLevel();
 	}
 	
+	private void setBel(DirichletBelief[][] newbel){
+		states=newbel.length;
+		actions=newbel[0].length;
+		bel=new DirichletBelief[states][actions];
+		for (int a=0;a<actions;a++){
+			for (int x=0;x<states;x++){
+				bel[x][a]=new DirichletBelief(newbel[x][a]);
+			}
+		}
+	}
+
+	/*
+	private void calculateLevel(){
+		level=0;
+		for (int a=0;a<actions;a++){
+			for (int x=0;x<states;x++){
+				level+=bel[x][a].getParameterNorm();
+			}
+		}
+		level-=states;
+	}*/
+	
+	public TransitionModelBelief(TransitionModelBelief tmod) {
+		setBel(tmod.bel);
+//		level=tmod.level();
+	}
+	
+	/*public long level() {
+		return level;
+	}*/
+
 	public void bayesUpdate(int x,int a,int x_next){
 		bel[x][a].bayesUpdate(x_next);
+//		level++;
+	}
+		public int getNrStates() {
+		return states;
 	}
 	
+	public int getNrActions() {
+		return actions;
+	}
+
+	public TransitionModelBelief copy() {
+		return new TransitionModelBelief(bel);
+	}
+
+	public double prob(int x, int a, int s) {
+		return bel[x][a].expectedValue().get(s);
+	}
 	
-	public double getDeltaInfo(int x, int a, int x_next){
-		DirichletBelief select=bel[x][a];
-		double th=select.getParameter(x_next);
-		double tot=select.getParameterNorm();
-		double retval;
-		switch (infoCriteria){
-		case IC_ENTROPY:
-			retval=(states-1.0)/tot - Math.log(th/tot);
-			for (int i=(int)th;i<tot;i++){
-				retval-=1.0/(double)i;
+	public String toString(){
+		String retval="";
+		for (int a=0;a<actions;a++){
+			for (int x=0;x<states;x++){
+				retval+="("+x+","+a+") "+bel[x][a].toString()+"\n";
 			}
-			break;
-		case IC_LOGMAX:
-		default: //IC_LOGMAX
-			retval=Math.log(tot) + (th-1)*Math.log(th/(th-1));
-			break;
 		}
 		return retval;
+	}
+
+	public DirichletBelief getDirichlet(int s, int a) {
+		return bel[s][a];
+	}
+	
+	public boolean compare(TransitionModelBelief other){
+		for (int a=0;a<actions;a++){
+			for (int x=0;x<states;x++){
+				if (!bel[x][a].compare(other.getDirichlet(x, a)))
+					return false;
+			}
+		}
+		return true;
 	}
 	
 }

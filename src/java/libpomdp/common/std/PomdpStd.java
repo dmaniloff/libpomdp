@@ -36,6 +36,7 @@ import libpomdp.common.CustomVector;
 import libpomdp.common.ObservationModel;
 import libpomdp.common.Pomdp;
 import libpomdp.common.RewardFunction;
+import libpomdp.common.RhoFunction;
 import libpomdp.common.TransitionModel;
 import libpomdp.common.Utils;
 
@@ -66,9 +67,17 @@ public class PomdpStd implements Pomdp, Serializable {
     protected ObservationModelStd O;
 
     // reward model: a x s'
-    protected RewardFunctionStd R;
+    protected RhoFunction R;
 
-    // discount factor
+    public RhoFunction getR() {
+		return R;
+	}
+
+	public void setR(RhoFunction r) {
+		R = r;
+	}
+
+	// discount factor
     protected double gamma;
 
     // action names
@@ -105,11 +114,10 @@ public class PomdpStd implements Pomdp, Serializable {
 
 	// copy the model matrices - transform from dense to comprow
 	// do we really need this? dense is in sparse form already...
-	for (int a = 0; a < nrAct; a++) {
-	    this.T = new TransitionModelStd(T);
-	    this.O = new ObservationModelStd(O);
-	    this.R = new RewardFunctionStd(R);
-	}
+	
+	this.T = new TransitionModelStd(T);
+	this.O = new ObservationModelStd(O);
+	this.R = new LinearRhoStd(R);
     } // constructor
 
     public PomdpStd(PomdpStd pomdp) {
@@ -221,15 +229,9 @@ public class PomdpStd implements Pomdp, Serializable {
     }
 
     public int sampleObservation(BeliefState b, int a) {
-	double roulette = Utils.gen.nextDouble();
 	CustomVector vect=observationProbabilities(b,a);
-	double sum = 0.0;
-	for (int o = 0; o < nrObs; o++) {
-	    sum += vect.get(o);
-	    if (roulette < sum)
-		return o;
-	}
-	return (-1);
+	return(vect.sample());
+	
     }
 
     public AlphaVectorStd mdpValueUpdate(AlphaVector alpha, int a) {

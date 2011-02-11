@@ -48,4 +48,11 @@ public class TransitionModelStd extends TransitionModel {
 		return(vec);
 	}
 
+
+	@Override
+	public int sampleNextState(int state, int action) {
+		CustomVector vec=model[action].getColumn(state);
+		return vec.sample();
+	}
+
 }

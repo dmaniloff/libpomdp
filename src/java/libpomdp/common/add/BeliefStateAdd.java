@@ -63,7 +63,7 @@ public class BeliefStateAdd implements BeliefState {
     }
 
     public boolean compare(BeliefState arg0) {
-    	return (this.getPoint().compare(arg0.getPoint()));
+    	return (this.compare(arg0));
     }
     
     public BeliefState copy() {

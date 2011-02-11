@@ -9,9 +9,9 @@ import libpomdp.common.std.BeliefStateStd;
 import libpomdp.common.std.ValueFunctionStd;
 import libpomdp.solve.offline.pointbased.PointSet;
 
-public class TigerRho extends RhoFunction {
+public class TigerRho implements RhoFunction {
 
-    @Override
+    
     public ValueFunctionStd approximate(int a, PointSet bset) {
 	ValueFunctionStd retval = new ValueFunctionStd();
 	if (a == 0) {
@@ -38,7 +38,7 @@ public class TigerRho extends RhoFunction {
 	return (retval);
     }
 
-    @Override
+    
     public double max(int a) {
 	if (a == 0)
 	    return 0;
@@ -46,7 +46,7 @@ public class TigerRho extends RhoFunction {
 	    return 10;
     }
 
-    @Override
+    
     public double min(int a) {
 	if (a == 0)
 	    return -1;
@@ -54,7 +54,7 @@ public class TigerRho extends RhoFunction {
 	    return -100;
     }
 
-    @Override
+    
     public double sample(BeliefState b, int a) {
 	double val = 0;
 	if (a == 0) {
@@ -75,7 +75,7 @@ public class TigerRho extends RhoFunction {
 	return val;
     }
 
-	@Override
+	
 	public ValueFunction getValueFunction(int a) {
 		BeliefStateStd b = BeliefStateStd.getUniformBelief(2);
 		PointSet bset=new PointSet();
@@ -83,22 +83,33 @@ public class TigerRho extends RhoFunction {
 		return approximate(a,bset);
 	}
 
-	@Override
+	
 	public double max() {
-		// TODO Auto-generated method stub
-		return 0;
+		return 10;
 	}
 
-	@Override
+	
 	public double min() {
-		// TODO Auto-generated method stub
-		return 0;
+		return -100;
 	}
 
-	@Override
-	public int size() {
-		// TODO Auto-generated method stub
-		return 0;
+	
+	public double get(int state, int action) {
+		switch (action){
+			case 0:
+				return(-1);
+			case 1:
+				if (state==1)
+					return(10);
+				else 
+					return(-100);
+			case 2:
+				if (state==1)
+					return(-100);
+				else 
+					return(10);
+			}
+		return Double.NEGATIVE_INFINITY;
 	}
 
 

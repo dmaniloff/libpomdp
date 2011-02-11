@@ -32,4 +32,10 @@ public class TransitionModelAdd extends TransitionModel {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public int sampleNextState(int state, int action) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 }

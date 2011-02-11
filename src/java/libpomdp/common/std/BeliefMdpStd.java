@@ -41,7 +41,7 @@ public class BeliefMdpStd extends PomdpStd implements BeliefMdp, Serializable {
 
     
     public BeliefState nextBeliefState(BeliefState b, int a, int o) {
-	CustomVector vect = tau[o][a].mult(b.getPoint());
+	CustomVector vect = tau[o][a].mult((BeliefStateStd)b);
 	vect.normalize();
 	return (new BeliefStateStd(vect));
     }

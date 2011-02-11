@@ -2,11 +2,8 @@ package libpomdp.solve;
 
 import java.util.ArrayList;
 
-import libpomdp.common.Pomdp;
-
 public abstract class IterationStats {
 
-    protected Pomdp pomdp;
 
     public int register(long iTime) {
 	iteration_time.add(new Long(iTime));
@@ -18,8 +15,7 @@ public abstract class IterationStats {
     public ArrayList<Long> iteration_time;
     public int iterations;
 
-    public IterationStats(Pomdp pomdp) {
-	this.pomdp = pomdp;
+    public IterationStats() {
 	iteration_time = new ArrayList<Long>();
 	iterations = 0;
     }

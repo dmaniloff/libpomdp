@@ -87,7 +87,7 @@ public class AlphaVectorStd  extends CustomVector implements AlphaVector {
      * @return the dot product between both vectors.
      */
     public double eval(BeliefState bel) {
-    	return (dot(bel.getPoint()));
+    	return (dot((BeliefStateStd)bel));
     }
 
     /**

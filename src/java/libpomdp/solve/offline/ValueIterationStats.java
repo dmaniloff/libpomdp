@@ -10,15 +10,14 @@ package libpomdp.solve.offline;
 
 import java.util.ArrayList;
 
-import libpomdp.common.Pomdp;
 import libpomdp.solve.IterationStats;
 
 public class ValueIterationStats extends IterationStats {
 
     public long total_lp_time;
 
-    public ValueIterationStats(Pomdp pomdp) {
-	super(pomdp);
+    public ValueIterationStats() {
+	super();
 	iteration_vector_count = new ArrayList<Integer>();
 	total_lp_time = 0;
     }

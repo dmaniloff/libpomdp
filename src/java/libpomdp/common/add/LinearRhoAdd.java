@@ -3,17 +3,18 @@ package libpomdp.common.add;
 import java.util.Vector;
 
 import libpomdp.common.BeliefState;
-import libpomdp.common.RewardFunction;
+import libpomdp.common.RhoFunction;
 import libpomdp.common.ValueFunction;
 import libpomdp.common.add.symbolic.DD;
 import libpomdp.common.add.symbolic.OP;
+import libpomdp.solve.offline.pointbased.PointSet;
 
-public class RewardFunctionAdd extends RewardFunction {
+public class LinearRhoAdd implements RhoFunction {
 
 	protected AddConfiguration conf;
 	protected DD[] model;
 
-	public RewardFunctionAdd(DD reward, Vector<DD> actCosts,
+	public LinearRhoAdd(DD reward, Vector<DD> actCosts,
 			AddConfiguration conf) {
 		this.conf=conf;
 		model=new DD[conf.nrAct];
@@ -22,44 +23,51 @@ public class RewardFunctionAdd extends RewardFunction {
 		}
 	}
 
-	@Override
-	public double sample(BeliefState b, int a) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
 	public double max(int a) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
-	@Override
+	
 	public double min(int a) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
-	@Override
-	public ValueFunction getValueFunction(int i) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
+	
 	public double max() {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
-	@Override
+	
 	public double min() {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
-	@Override
-	public int size() {
+
+	public ValueFunction getValueFunction(int bestA) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	
+	public ValueFunction approximate(int a, PointSet bset) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	
+	public double sample(BeliefState b, int a) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	
+	public double get(int state, int action) {
 		// TODO Auto-generated method stub
 		return 0;
 	}

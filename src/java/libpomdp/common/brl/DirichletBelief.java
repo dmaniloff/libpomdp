@@ -1,6 +1,7 @@
 package libpomdp.common.brl;
 
 import libpomdp.common.CustomVector;
+import libpomdp.common.Utils;
 
 public class DirichletBelief {
 	protected long[] params;
@@ -14,11 +15,15 @@ public class DirichletBelief {
 		this.params=params.clone();
 	}
 	
+	public DirichletBelief(DirichletBelief dirichletBelief) {
+		this(dirichletBelief.params);
+	}
+
 	public void bayesUpdate(int x){
 		params[x]++;
 	}
 	
-	public CustomVector expectedValue(int x){
+	public CustomVector expectedValue(){
 		CustomVector retval=new CustomVector(params);
 		retval.normalize();
 		return retval;
@@ -34,7 +39,25 @@ public class DirichletBelief {
 	public long getParameter(int x){
 		return(params[x]);
 	}
+
+	public long max() {
+		return(Utils.max(params));
+	}
 	
+	public String toString(){
+		String retval = "";
+		int states = params.length;
+		for (int i=0;i<states;i++)
+			retval+=params[i]+" ";
+		return retval;
+	}
+
+	public boolean compare(DirichletBelief dirichlet) {
+		for (int i=0;i<params.length;i++)
+			if (params[i]!=dirichlet.params[i])
+				return false;
+		return true;
+	}
 	
 	
 }

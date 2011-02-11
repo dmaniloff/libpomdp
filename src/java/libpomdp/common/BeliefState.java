@@ -72,4 +72,5 @@ public interface BeliefState {
      * @return a belief-state copy
      */
     public BeliefState copy();
+
 }
