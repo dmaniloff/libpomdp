@@ -36,15 +36,20 @@ standardProb = FileParser.loadPomdp  ('../../../../data/problems/auvnavigation/a
     FileParser.PARSE_CASSANDRA_POMDP);
 
 %% compute offline bounds
-qmdpCalc = QmdpPolicyStd(pomdp);
-	double epsi = 1e-6 * (1 - pomdp.getGamma()) / (2 * pomdp.getGamma());
-	algo.addStopCriteria(new MaxIterationsCriteria(100));
-	algo.addStopCriteria(new ValueConvergenceCriteria(epsi,
-		Criteria.CC_MAXDIST));
-	algo.run();
-	System.out.println(algo.getValueFunction());
-	ValueIterationStats stat = (ValueIterationStats) algo.getStats();
-	System.out.println(stat);
+epsi = 1e-6 * (1 - standardProb.getGamma()) / (2 * standardProb.getGamma());
+
+qmdpCalc    = QmdpPolicyStd(standardProb);
+qmdpCalc.addStopCriteria(MaxIterationsCriteria(100));
+qmdpCalc.addStopCriteria(ValueConvergenceCriteria(epsi, Criteria.CC_MAXDIST));
+qmdpCalc.run();
+uBound = qmdpCalc.getValueFunction();
+
+blindCalc  = BlindPolicyStd(standardProb);
+blindCalc.addStopCriteria(MaxIterationsCriteria(100));
+blindCalc.addStopCriteria(ValueConvergenceCriteria(epsi, Criteria.CC_MAXDIST));
+blindCalc.run();
+lBound = blindCalc.getValueFunction();
+
 %% create heuristic search AND-OR tree
 % instantiate an aems2 heuristic object
 aems2h  = AEMS2(factoredProb);
