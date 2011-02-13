@@ -46,6 +46,15 @@
     </java>
   </target>
 
+  <target name="qmdp">
+    <echo message="Running QmdpTest"/>
+    <exec executable="java">
+      <arg value="-classpath"/>
+      <arg value="external/*:dist/*"/>
+      <arg value="libpomdp.test.QmdpTest"/>
+    </exec>
+  </target>
+
   <target name="test">
   	 <echo message="Running Spaan's Perseus Algorithm"/>
     <exec executable="java">
@@ -140,8 +149,14 @@
         description="generate the distribution" >
     <!-- Create the distribution directory -->
     <mkdir dir="${dist}"/>
+    <delete file="MANIFEST.MF"/>
     <!-- Put everything in ${build} into the MyProject-${DSTAMP}.jar file -->
-    <jar jarfile="${dist}/${ant.project.name}.jar" basedir="${build}"/>
+    <jar basedir="${build}" jarfile="${dist}/${ant.project.name}.jar">
+	 <manifest>
+	   <attribute name="Built-By" value="${user.name}"/>
+	   <attribute name="Main-Class" value="libpomdp.test.QmdpTest"/>
+	 </manifest>
+    </jar>
   </target>
 
   <target name="clean"
