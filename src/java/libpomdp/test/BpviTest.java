@@ -19,7 +19,7 @@ public class BpviTest {
 		"data/problems/tiger/tiger.95.POMDP",
 		FileParser.PARSE_CASSANDRA_POMDP);
 	BlindPolicyStd algo = new BlindPolicyStd(pomdp);
-	algo.addStopCriteria(new MaxIterationsCriteria(50000));
+	algo.addStopCriteria(new MaxIterationsCriteria(500));
 	algo.addStopCriteria(new ValueConvergenceCriteria(1e-3,
 		Criteria.CC_MAXEUCLID));
 	algo.run();

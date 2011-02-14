@@ -105,8 +105,8 @@ public class PomdpStd implements Pomdp, Serializable {
 	// copy the model matrices - transform from dense to comprow
 	// do we really need this? dense is in sparse form already...
 	for (int a = 0; a < nrAct; a++) {
-	    this.O[a] = new CustomMatrix(T[a]);
-	    this.T[a] = new CustomMatrix(O[a]);
+	    this.O[a] = new CustomMatrix(O[a]);
+	    this.T[a] = new CustomMatrix(T[a]);
 	    this.R[a] = new CustomVector(R[a]);
 	}
     } // constructor

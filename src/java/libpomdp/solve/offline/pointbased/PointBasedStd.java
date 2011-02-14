@@ -1,6 +1,7 @@
 package libpomdp.solve.offline.pointbased;
 
 import libpomdp.common.AlphaVector;
+import libpomdp.common.BeliefMdp;
 import libpomdp.common.BeliefState;
 import libpomdp.common.CustomVector;
 import libpomdp.common.Pomdp;
@@ -252,8 +253,8 @@ public class PointBasedStd extends ValueIterationStd {
 	    Pomdp bmdp) {
 	BeliefStateStd b = (BeliefStateStd) testBset.remove(0);
 	BeliefStateStd bprime;
-	int a = ((PomdpStd) bmdp).getRandomAction();
-	int o = ((PomdpStd) bmdp).sampleObservation(b, a);
+	int a = ((BeliefMdpStd) bmdp).getRandomAction();
+	int o = ((BeliefMdpStd) bmdp).getRandomObservation(b, a);
 	bprime = (BeliefStateStd) bmdp.nextBeliefState(b, a, o);
 	return bprime;
     }
