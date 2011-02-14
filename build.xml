@@ -45,9 +45,7 @@
 	 </exec>
   </target>
 
-<<<<<<< HEAD
-
-  <target name="poly">
+  <target name="bayesDP">
   <exec executable="java">
   <arg value="-Djava.library.path=/usr/lib/jni"/>
   <arg value="-classpath"/>
@@ -56,10 +54,7 @@
   </exec>
   </target>
 
-  <target name="test">
-=======
   <target name="offlineTest">
->>>>>>> bb844845cc0d6244c91c55ef2a10d06529d6c9ca
   	 <echo message="Running Spaan's Perseus Algorithm"/>
     <exec executable="java">
       <arg value="-Djava.library.path=/usr/lib/jni"/> 
