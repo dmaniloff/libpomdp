@@ -7,6 +7,7 @@ import libpomdp.common.CustomVector;
 import libpomdp.common.Pomdp;
 import libpomdp.common.ValueFunction;
 import libpomdp.common.ValueFunctionFactory;
+import libpomdp.common.std.BeliefStateStd;
 import libpomdp.common.std.RhoPomdp;
 import libpomdp.solve.IterationStats;
 import libpomdp.solve.offline.ValueIteration;
@@ -251,8 +252,8 @@ public class PointBased extends ValueIteration {
 	    Pomdp bmdp) {
 	BeliefStateStd b = (BeliefStateStd) testBset.remove(0);
 	BeliefStateStd bprime;
-	int a = ((BeliefMdpStd) bmdp).getRandomAction();
-	int o = ((BeliefMdpStd) bmdp).getRandomObservation(b, a);
+	int a = bmdp.getRandomAction();
+	int o = bmdp.sampleObservation(b, a);
 	bprime = (BeliefStateStd) bmdp.nextBeliefState(b, a, o);
 	return bprime;
     }
