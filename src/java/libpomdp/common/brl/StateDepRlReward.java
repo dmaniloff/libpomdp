@@ -28,5 +28,9 @@ public class StateDepRlReward implements RlReward{
 		}
 		return new StateDepRlReward(func);
 	}
+
+	public CustomVector get(int state, int action, TransitionModelBelief bel) {
+		return func[state][action];
+	}
 	
 }

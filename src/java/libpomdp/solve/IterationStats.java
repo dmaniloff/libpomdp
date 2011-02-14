@@ -2,7 +2,7 @@ package libpomdp.solve;
 
 import java.util.ArrayList;
 
-public abstract class IterationStats {
+public class IterationStats {
 
 
     public int register(long iTime) {

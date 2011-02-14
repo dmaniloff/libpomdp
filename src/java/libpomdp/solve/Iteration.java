@@ -31,6 +31,8 @@ public abstract class Iteration {
 
     protected void initIteration() {
 	stopCriterias = new ArrayList<Criteria>();
+	if (iterationStats==null)
+		iterationStats = new IterationStats();
     }
 
     protected void registerInitTime() {

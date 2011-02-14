@@ -18,12 +18,10 @@ public abstract class ValueIteration extends OfflineIteration {
     protected ValueFunction current;
     protected ValueFunction old;
     
- 
-    
     protected void initValueIteration(Pomdp pomdp) {
 	this.pomdp = pomdp;
-	initIteration();
 	iterationStats = new ValueIterationStats();
+	initIteration();
     }
 
     public Pomdp getPomdp() {

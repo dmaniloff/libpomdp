@@ -1,6 +1,8 @@
 package libpomdp.common.brl;
 
-public interface RlReward {
-	public abstract double get(int state, int action, int nstate, TransitionModelBelief bel);
+import libpomdp.common.CustomVector;
 
+public interface RlReward {
+	public double get(int state, int action, int nstate, TransitionModelBelief bel);
+	public CustomVector get(int state, int action, TransitionModelBelief bel);
 }
