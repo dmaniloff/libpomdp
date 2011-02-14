@@ -249,11 +249,11 @@ public class PointBased extends ValueIteration {
 
     public static BeliefState collectRandomExplore(PointSet testBset,
 	    Pomdp bmdp) {
-	BeliefState b = (BeliefState) testBset.remove(0);
-	BeliefState bprime;
-	int a = ((Pomdp) bmdp).getRandomAction();
-	int o = ((Pomdp) bmdp).sampleObservation(b, a);
-	bprime = (BeliefState) bmdp.nextBeliefState(b, a, o);
+	BeliefStateStd b = (BeliefStateStd) testBset.remove(0);
+	BeliefStateStd bprime;
+	int a = ((BeliefMdpStd) bmdp).getRandomAction();
+	int o = ((BeliefMdpStd) bmdp).getRandomObservation(b, a);
+	bprime = (BeliefStateStd) bmdp.nextBeliefState(b, a, o);
 	return bprime;
     }
 

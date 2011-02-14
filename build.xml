@@ -22,7 +22,7 @@
 -->
   <path id="classpath">
     <fileset dir="${lib}" />
-    <fileset dir="${src}"      />
+    <fileset dir="${dist}"      />
   </path>
 
   <!-- default excludes -->
@@ -45,6 +45,7 @@
 	 </exec>
   </target>
 
+<<<<<<< HEAD
 
   <target name="poly">
   <exec executable="java">
@@ -56,6 +57,9 @@
   </target>
 
   <target name="test">
+=======
+  <target name="offlineTest">
+>>>>>>> bb844845cc0d6244c91c55ef2a10d06529d6c9ca
   	 <echo message="Running Spaan's Perseus Algorithm"/>
     <exec executable="java">
       <arg value="-Djava.library.path=/usr/lib/jni"/> 
@@ -100,12 +104,15 @@
 	</exec>
   	 <echo message="Running Sondik's One Pass Exact Algorithm"/>
     <java classname="libpomdp.test.OnePassTest" classpathref="classpath"/>
+  </target>
+
+
+  <target name="heuristicTest">
   	 <echo message="Running Hauskretcht's Blind Policy Value Iteration Heuristic"/>
     <java classname="libpomdp.test.BpviTest" classpathref="classpath"/>
   	 <echo message="Running Littman's QMDP Value Iteration Heuristic"/>
     <java classname="libpomdp.test.QmdpTest" classpathref="classpath"/>
   </target>
-
 
   <target name="rhotest">
    <!-- <echo message="Running RHO PBVI Algorithm"/>
