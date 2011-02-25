@@ -172,7 +172,7 @@ public class Utils {
     /**
      * sencode:
      * 
-     * encode state, complement of sdecode receives factored state starting from
+     * BrlBelief state, complement of sdecode receives factored state starting from
      * 1 and returns factored state in the same form
      */
     public static int sencode(int fstate[], int n, int sizes[]) {

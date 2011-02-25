@@ -2,13 +2,12 @@ package libpomdp.common.brl;
 
 import libpomdp.common.CustomVector;
 
-public class EntropyDiffReward implements RlReward {
+public class EntropyDiffReward implements BrlReward {
 
-	public double get(int state, int action, int nstate, TransitionModelBelief bel) {
-		int nrStates=bel.getNrStates();
-		DirichletBelief select=bel.getDirichlet(state,action);
-		int th=(int)select.getParameter(nstate);
-		double tot=select.getParameterNorm();
+	public double get(int state, int action, int nstate, BrlBelief bel) {
+		int nrStates=BrlBelief.states();
+		int th=bel.get(state,action,nstate);
+		double tot=bel.getMarginal(state,action);
 		double retval=(nrStates-1.0)/tot - Math.log(th/(double)tot);
 		for (int i=th;i<tot;i++){
 			retval-=1.0/(double)i;
@@ -16,8 +15,8 @@ public class EntropyDiffReward implements RlReward {
 		return retval;
 	}
 
-	public CustomVector get(int state, int action, TransitionModelBelief bel) {
-		// TODO Auto-generated method stub
+	public CustomVector get(int state, int action, BrlBelief bel) {
+	//	CustomVector.convert(bel.getSubVector(state,action));
 		return null;
 	}	
 }

@@ -258,4 +258,9 @@ public class CustomVector implements Serializable, Comparable<CustomVector> {
 		return v;
 	}
 
+	public void compact() {
+		v.compact();
+		
+	}
+
 }

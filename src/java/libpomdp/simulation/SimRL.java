@@ -1,17 +1,17 @@
 package libpomdp.simulation;
 
-import libpomdp.common.RewardFunction;
 import libpomdp.common.TransitionModel;
 import libpomdp.common.Utils;
+import libpomdp.common.brl.BrlReward;
 import libpomdp.solve.online.OnlineIteration;
 
 public class SimRL {
 	protected int states;
 	protected int actions;
 	protected TransitionModel model;
-	protected RewardFunction reward;
+	protected BrlReward reward;
 
-	public SimRL(int states,int actions,TransitionModel model,RewardFunction reward){
+	public SimRL(int states,int actions,TransitionModel model,BrlReward reward){
 		this.states=states;
 		this.actions=actions;
 		this.model=model;
@@ -25,8 +25,10 @@ public class SimRL {
 		double total_reward=0.0;
 		for (long i=0;i<horizon;i++){
 			action=algo.iterate(state);
-			state=model.sampleNextState(state,action);
-			total_reward+=Math.pow(discount,i)*reward.get(state,action);
+			System.out.println("** SimIter i="+i+" s="+state+" a="+action);
+			int nstate=model.sampleNextState(state,action);
+			total_reward+=Math.pow(discount,i)*reward.get(state,action,nstate,null);
+			state=nstate;
 		}
 		return total_reward;
 	}

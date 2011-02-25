@@ -2,9 +2,7 @@ package libpomdp.common.brl;
 
 import libpomdp.common.CustomVector;
 
-
-
-public class StateDepRlReward implements RlReward{
+public class StateDepRlReward implements BrlReward{
 	
 	CustomVector[][] func;
 	
@@ -12,7 +10,7 @@ public class StateDepRlReward implements RlReward{
 		func=r;
 	}
 
-	public double get(int state, int action, int nstate, TransitionModelBelief bel) {
+	public double get(int state, int action, int nstate, BrlBelief bel) {
 		return func[state][action].get(nstate);
 	}
 
@@ -29,7 +27,7 @@ public class StateDepRlReward implements RlReward{
 		return new StateDepRlReward(func);
 	}
 
-	public CustomVector get(int state, int action, TransitionModelBelief bel) {
+	public CustomVector get(int state, int action, BrlBelief bel) {
 		return func[state][action];
 	}
 	

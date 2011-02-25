@@ -45,14 +45,17 @@
 	 </exec>
   </target>
 
-  <target name="bayesDP">
+  <target name="brlDP">
   <exec executable="java">
+  <arg value="-Xmx2000m"/>
   <arg value="-Djava.library.path=/usr/lib/jni"/>
   <arg value="-classpath"/>
   <arg value="lib/*:dist/*"/>
-  <arg value="libpomdp.solve.offline.brl.BayesDP"/>
+  <arg value="libpomdp.test.OnlineBrlDpTest"/>
   </exec>
   </target>
+
+
 
   <target name="offlineTest">
   	 <echo message="Running Spaan's Perseus Algorithm"/>
@@ -144,7 +147,7 @@
   <target name="compile" depends="init"
 	  description="compile the source " >
     <!-- Compile the java code from ${src} into ${build} -->
-    <javac srcdir="${src}" destdir="${build}" classpathref="classpath" includeantruntime="false"/>
+    <javac debug="true" srcdir="${src}" destdir="${build}" classpathref="classpath" includeantruntime="true"/>
   </target>
 
   <target name="dist" depends="compile"
