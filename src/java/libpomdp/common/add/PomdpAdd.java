@@ -451,6 +451,10 @@ public class PomdpAdd implements Pomdp {
 	return staIdsPr;
     }
 
+    public int[] getstaArity() {
+	return staArity;
+    }
+    
     public int[] getobsArity() {
 	return obsArity;
     }
