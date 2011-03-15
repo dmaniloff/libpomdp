@@ -139,7 +139,7 @@ dotPomdp
       preamble
         {
             /* initally assume that rewards are specified as R(s,a) */
-        	dotPomdpSpec.rewardType = PomdpSpecStandard.RewardType.R_s_a;
+        	dotPomdpSpec.rewardType = PomdpSpecStd.RewardType.R_s_a;
 
             /* print out summary info from the preamble */
         	System.out.println("PARSER: Summary -> states "+dotPomdpSpec.nrSta);
@@ -394,15 +394,15 @@ reward_spec_tail
             /* first, detect the spec type of this spec_tail -- assumes paction will never be '*', can it? */
             /* change type based on hierarchy of mem allocation after seeing new type for the first time */
             if ($s_2.text.equals(Character.toString('*')) && $obs.text.equals(Character.toString('*'))
-                 && dotPomdpSpec.rewardType.getP() <= PomdpSpecStandard.RewardType.R_s_a.getP()) {
+                 && dotPomdpSpec.rewardType.getP() <= PomdpSpecStd.RewardType.R_s_a.getP()) {
                 /* R(s,a) */
                 /* do nothing, this is the initially assumed reward type */
                 /* actually, should never go in here unless R(a) was specified, which we could easily support */
             } else if ($obs.text.equals(Character.toString('*'))
-                        && dotPomdpSpec.rewardType.getP() < PomdpSpecStandard.RewardType.R_s_a_sp.getP()) {
+                        && dotPomdpSpec.rewardType.getP() < PomdpSpecStd.RewardType.R_s_a_sp.getP()) {
                 /* R(s,a,s') */
                 System.out.println("PARSER: R(s,a,s') reward representation detected.");
-                dotPomdpSpec.rewardType = PomdpSpecStandard.RewardType.R_s_a_sp;
+                dotPomdpSpec.rewardType = PomdpSpecStd.RewardType.R_s_a_sp;
                 /* create |A| matrices */
                 dotPomdpSpec.partialR = new CustomMatrix[dotPomdpSpec.nrAct];
                 for(int a=0; a<dotPomdpSpec.nrAct; a++) {
@@ -411,10 +411,10 @@ reward_spec_tail
                 /* will need some transfer code here if .pomdp file has mixed specs */
 
             } else if(!$obs.text.equals(Character.toString('*'))
-                      && dotPomdpSpec.rewardType.getP() < PomdpSpecStandard.RewardType.R_s_a_sp_op.getP()){
+                      && dotPomdpSpec.rewardType.getP() < PomdpSpecStd.RewardType.R_s_a_sp_op.getP()){
                 /* R(s,a,s',o') */
                 System.out.println("PARSER: R(s,a,s',o') reward representation detected, you'll probably run out of memory."); 
-                dotPomdpSpec.rewardType = PomdpSpecStandard.RewardType.R_s_a_sp_op;
+                dotPomdpSpec.rewardType = PomdpSpecStd.RewardType.R_s_a_sp_op;
                 // Creating Huge Reward Matrix (4D)
                 dotPomdpSpec.fullR = new CustomMatrix[dotPomdpSpec.nrAct][dotPomdpSpec.nrSta];    
             	for(int a=0; a<dotPomdpSpec.nrAct; a++) 
