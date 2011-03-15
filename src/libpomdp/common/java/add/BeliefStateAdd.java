@@ -59,9 +59,8 @@ public class BeliefStateAdd implements BeliefState {
 	this.poba = poba;
     }
 
-
     @Override
-    public int getAlpha() {
+    public int getAlphaVectorIndex() {
 	return planid;
     }
 
