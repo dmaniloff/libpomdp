@@ -11,7 +11,9 @@ package libpomdp.common;
 
 // imports
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Random;
+import java.util.Set;
 
 import org.math.array.DoubleArray;
 import org.math.array.IntegerArray;
@@ -20,8 +22,8 @@ import libpomdp.common.add.symbolic.DD;
 
 public class Utils {
 
-    // / set the gen only once for every instance
-    public static Random gen = new Random(System.currentTimeMillis());
+    //  set the gen only once for every instance
+    public static final Random gen = new Random(System.currentTimeMillis());
 
     // / sample from a distribution - need not be fast, this is outside the
     // planning loop
@@ -35,6 +37,21 @@ public class Utils {
 	return d.length - 1;
     }
 
+    
+    public static Set<Integer> sampleSubset(double d[]) {
+	double[] cumSum = DoubleArray.cumSum(d);
+	double r = gen.nextDouble();
+	Set<Integer> s = new HashSet<Integer>();
+	for (int i = 0; i < cumSum.length; i++)
+	    if (cumSum[i] > r) {
+		s.add(new Integer(i));
+		return s;
+	    }
+	s.add(d.length - 1);
+	return s;	
+    }
+    
+    
     // / randomized argmax
     public static int argmax(double v[]) {
 	// declarations
@@ -96,6 +113,33 @@ public class Utils {
 	return argmin;
     }
 
+    
+    /*
+     * horzCat:
+     * 
+     * Similar functionality to MATLAB's [A , B]
+     */
+    public static int[][] horzCat(int m1[][], int m2[][]) {
+	// number of rows must be the same
+	if ( m1.length != m2.length ) return null;
+	// allocate
+	int tcols = m1[0].length + m2[0].length;
+	int M[][] = new int[m1.length][tcols];
+	for (int i = 0; i < m1.length; ++i)
+	    M[i] = horzCat(m1[i], m2[i]);
+	return M;
+    }
+    
+    public static int[] horzCat(int[] m1, int... m2) {
+	// allocate
+	int tcols = m1.length + m2.length;
+	int M[] = new int[tcols];
+	// first row of M
+	System.arraycopy(m1[0], 0, M[0], 0, m1.length);
+	System.arraycopy(m2[0], 0, M[0], m1.length, m2.length);
+	return M;
+    }
+    
     // / concatenate DD arrays
     public static DD[] concat(DD[] first, DD[]... rest) {
 	int totalLength = first.length;
@@ -181,5 +225,31 @@ public class Utils {
 	}
 	return ret;
     }
+
+    /**
+     * everything not in sampledChildren is given a poba of zero
+     * returns so that the change in v is made more explicit
+     * @param v
+     * @param sampledChildren
+     */
+    public static CustomVector setZeroNonSampled(CustomVector v, Set<Integer> sampledChildren) {
+	for ( int i = 0; i < v.size(); ++i) 
+	    if (!sampledChildren.contains(new Integer(i)))
+		v.set(i, 0.0);
+	return v;
+    }
+
+    
+    // this is not trivial , think about this!
+
+//    public static Object sampleSubset(CustomVector pOba, int n) {
+//	List<Integer> = toList(pOba.getData());
+//	for (int i  = 0; i < n; ++i)
+//    }
+//
+//    public static List<Integer> toList(double[] data) {
+//	List<Integer> l = new ArrayList<Integer>(data.length);
+//	for (int i : data) l
+//    }
 
 } // Utils
