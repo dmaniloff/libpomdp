@@ -44,7 +44,7 @@ public interface BeliefState {
      * 
      * @return the index of the alpha vector that supports this point
      */
-    public int getAlpha();
+    public int getAlphaVectorIndex();
 
     /**
      * Set index of the alpha vector that supports this point.
