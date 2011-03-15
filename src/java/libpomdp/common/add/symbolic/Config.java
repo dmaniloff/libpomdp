@@ -8,7 +8,9 @@
 
 package libpomdp.common.add.symbolic;
 
-class Config {
+// package is the default access level of accessibility
+// but we need this one public for the simulators
+public class Config {
 
     public static int[][] empty = new int[2][0];
 
