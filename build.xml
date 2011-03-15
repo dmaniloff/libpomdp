@@ -133,7 +133,7 @@
   <target name="compile" depends="init"
 	  description="compile the source " >
     <!-- Compile the java code from ${src} into ${build} -->
-    <javac srcdir="${src}" destdir="${build}" classpathref="classpath" includeantruntime="false"/>
+    <javac srcdir="${src}" debug="true" destdir="${build}" classpathref="classpath" includeantruntime="false"/>
   </target>
 
   <target name="dist" depends="compile"
