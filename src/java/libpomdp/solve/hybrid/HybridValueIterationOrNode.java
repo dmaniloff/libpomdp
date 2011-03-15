@@ -11,6 +11,7 @@
 package libpomdp.solve.hybrid;
 
 import libpomdp.common.BeliefState;
+import libpomdp.common.CustomVector;
 import libpomdp.solve.online.AndNode;
 import libpomdp.solve.online.HeuristicSearchOrNode;
 
@@ -32,11 +33,11 @@ public class HybridValueIterationOrNode extends HeuristicSearchOrNode {
     /// backup heuristic for this node
     public double bakHeuristic;
 
-    /// value of the heuristic for the bakCandidate
-    /// this is NOT the same as bakCandidate.bakHeuristic
-    /// since there may be weighting factors along the path
-    /// this is now a list of nodes of size |V|, one per alpha-vector
-    public double bakHeuristicStar[];
+    // / value of the heuristic for the bakCandidate
+    // / this is NOT the same as bakCandidate.bakHeuristic
+    // / since there may be weighting factors along the path
+    // / this is now a list of nodes of size |V|, one per alpha-vector
+    public CustomVector bakHeuristicStar;
 
     @Override
     public void init(BeliefState belief, int obs, AndNode parent) {

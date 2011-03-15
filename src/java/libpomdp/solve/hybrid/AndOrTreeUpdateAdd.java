@@ -11,6 +11,7 @@ package libpomdp.solve.hybrid;
 
 // imports
 import java.io.PrintStream;
+import java.util.Set;
 
 import libpomdp.common.CustomVector;
 import libpomdp.common.Pomdp;
@@ -41,9 +42,10 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
     /// backup heuristic
     private BackupHeuristic bakH;
 
-    /// supportSetSize[i] is the number of beliefs in the subtree of 
-    /// this node that are supported by alpha-vector i
-    private int treeSupportSetSize[];
+    // / supportSetSize[i] is the number of beliefs in the subtree of
+    // / this node that are supported by alpha-vector i
+    public CustomVector treeSupportSetSize;
+
 
     /// same constructor with backup heuristic
     public AndOrTreeUpdateAdd(Pomdp prob,
@@ -53,8 +55,10 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 			      ExpandHeuristic exph, 
 			      BackupHeuristic bakh) {
 	super(prob, root, L, U, exph);
+
 	this.bakH = bakh;
-	this.treeSupportSetSize = IntegerArray.fill(getLB().size(), 0);
+	this.treeSupportSetSize = new CustomVector(offlineLower.size());
+	this.treeSupportSetSize.zero(); // not sure if this is necessary
     }
 
     /// Overridden initializer (is there another way???)
@@ -115,8 +119,8 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 		// here we should continue the loop and avoid re-computing V^L and V^U
 		// for belief nodes with poba == 0              
 		if (pOba.get(observation) == 0) {
-		    //a.children[observation] = null;
-		    //observation++;
+		    // this should never happen now
+		    System.err.println("SMTHIHNGS WRRRRONG");			
 		    continue;
 		} 
 		// initialize this node with factored belief, set its poba		
@@ -139,7 +143,8 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 		// increase subtree size of en accordingly
 		en.setSubTreeSize(en.getSubTreeSize() + 1);
 		// add each of these to the support set sizes
-		treeSupportSetSize[o.getBeliefState().getAlphaVectorIndex()]++; 
+		treeSupportSetSize.set(o.getBeliefState().getAlphaVectorIndex(), 
+			treeSupportSetSize.get(o.getBeliefState().getAlphaVectorIndex()) + 1);
 	    } // HybridValueIterationOrNode loop
 
 	    // L(b,a) = R(b,a) + \gamma \sum_o P(o|b,a)L(tao(b,a,o))
@@ -182,10 +187,13 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 	en.bakHeuristic = bakH.h_b(en); 
 	// the backup candidate is still itself and it has its own value as best
 	// we can now allocate the right amount of space for the bakheuristics
-	en.bakHeuristicStar = new double[getLB().size()]; // all zeros
-	en.bakCandidate     = new HybridValueIterationOrNode[getLB().size()]; // all nulls 
-	en.bakHeuristicStar[en.getBeliefState().getAlphaVectorIndex()] = en.bakHeuristic;
-	en.bakCandidate[en.getBeliefState().getAlphaVectorIndex()]     = en;
+	en.bakHeuristicStar = new CustomVector(offlineLower.size()); 
+	en.bakHeuristicStar.zero(); // all zeros
+	en.bakCandidate = new HybridValueIterationOrNode[offlineLower.size()]; // all
+									       // nulls
+	en.bakHeuristicStar.set(en.getBeliefState().getAlphaVectorIndex(),
+		en.bakHeuristic);
+	en.bakCandidate[en.getBeliefState().getAlphaVectorIndex()] = en;
     } // (overridden) expand
 
 
@@ -259,8 +267,8 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
     public void moveTree(OrNode newroot) {
 	super.moveTree(newroot);
 	// reset treeSupportSetSize
-	this.treeSupportSetSize = IntegerArray.fill(getLB().size(), 0);
-    } // (overridden) moveTree  
+	this.treeSupportSetSize.zero();
+    } // (overridden) moveTree
 
 
     @Override
@@ -359,14 +367,18 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 	}    
 	// multiply result by discount factor and add it to r_a
 	gab = OP.mult(gamma, gab);
-	gab = OP.add(getProblem().R[on.oneStepBestAction], gab);
-	// add newly computed vector to the tree's offline lower bound - NO PRUNING FOR NOW
-	ValueFunctionAdd newLB = new ValueFunctionAdd(Utils.append(lowerBound, gab), 
-		getProblem().getstaIds(),
-		IntegerArray.merge(getLB().getActions(), 
-			new int[] {on.oneStepBestAction}));
+    gab = OP.add(getProblem().R[on.oneStepBestAction], gab);
+	// add newly computed vector to the tree's offline lower bound - NO
+	// PRUNING FOR NOW
+	ValueFunctionAdd newLB = new ValueFunctionAdd(
+		Utils.append(lowerBound, gab), 
+		getProblem().getstaIds(), 
+		Utils.horzCat(
+                      getLB().getActions(), 
+                      on.oneStepBestAction));
 	setLB(newLB);
-	// return 
+
+    // return
 	return newLB;
 	// how about coding a union operation in ValueFunction?
 	// this function does not watch for repeated vectors yet
@@ -443,16 +455,16 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 	"[label=\"b*\",weight=0,color=blue];");
 	// if this is the root, then print an edge to the best candidate node to backup
 	if (o == getRoot()) {
-	    System.err.println("lenght is" + treeSupportSetSize.length);
-	    double nstar[] = new double[treeSupportSetSize.length];
-	    for (int i=0; i< treeSupportSetSize.length; i++) {
-		nstar[i] = treeSupportSetSize [i] / o.getSubTreeSize();
+	    System.err.println("lenght is" + treeSupportSetSize.size());
+	    double nstar[] = new double[treeSupportSetSize.size()];
+	    for (int i = 0; i < treeSupportSetSize.size(); i++) {
+		nstar[i] = treeSupportSetSize.get(i) / o.getSubTreeSize();
 		System.err.println(nstar[i]);
 	    }
-	    double f[] = new double[treeSupportSetSize.length];
-	    for (int i=0; i<treeSupportSetSize.length; i++) {
-		f[i] = o.bakHeuristicStar[i] * nstar[i];
-		System.err.println(f[i]);	
+	    double f[] = new double[treeSupportSetSize.size()];
+	    for (int i = 0; i < treeSupportSetSize.size(); i++) {
+		f[i] = o.bakHeuristicStar.get(i) * nstar[i];
+		System.err.println(f[i]);
 	    }
 	    int istar = Utils.argmax(f);
 	    System.err.println(istar);

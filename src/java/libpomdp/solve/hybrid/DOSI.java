@@ -35,14 +35,17 @@ public class DOSI implements BackupHeuristic {
 		o.getBeliefState().getEntropy() / Math.log(problem.nrStates()); 
     }
 
-    /// compare current bakCandidate with the child's
-    /// on the updated branch
-    /// now takes the index of the alpha vec to know what region we are comparing
-    @Override
-    public HybridValueIterationOrNode updateBakStar(HybridValueIterationAndNode a, int o, int i) {
-	double challengeH = a.getChild(o).bakHeuristicStar[i];
-	int argmax = Utils.argmax(new double[] {a.bakHeuristicStar[i], challengeH});
-	if(0==argmax) {
+    // / compare current bakCandidate with the child's
+    // / on the updated branch
+    // / now takes the index of the alpha vec to know what region we are
+    // comparing
+    
+    public HybridValueIterationOrNode updateBakStar(
+	    HybridValueIterationAndNode a, int o, int i) {
+	double challengeH = a.getChild(o).bakHeuristicStar.get(i);
+	int argmax = Utils.argmax(new double[] { a.bakHeuristicStar[i],
+		challengeH });
+	if (0 == argmax) {
 	    return a.bakCandidate[i];
 	} else {
 	    // update value
@@ -53,15 +56,18 @@ public class DOSI implements BackupHeuristic {
 
     // compare this node's bakHeuristic with the child's
     // on the updated branch
-    @Override
-    public HybridValueIterationOrNode updateBakStar(HybridValueIterationOrNode o, int a, int i) {
-	double challengeH = o.getChild(a).bakHeuristicStar[i] * 1; // weight here
-	int argmax = Utils.argmax(new double[] {o.bakHeuristicStar[i], challengeH}); 
-	if(0==argmax) {
+    
+    public HybridValueIterationOrNode updateBakStar(
+	    HybridValueIterationOrNode o, int a, int i) {
+	double challengeH = o.getChild(a).bakHeuristicStar[i] * 1; // weight
+								   // here
+	int argmax = Utils.argmax(new double[] { o.bakHeuristicStar.get(i),
+		challengeH });
+	if (0 == argmax) {
 	    return o.bakCandidate[i];
 	} else {
 	    // update value
-	    o.bakHeuristicStar[i] = challengeH;
+	    o.bakHeuristicStar.set(i, challengeH);
 	    return o.getChild(a).bakCandidate[i];
 	}
     } // updateBakStar
