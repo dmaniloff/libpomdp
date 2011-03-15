@@ -59,8 +59,8 @@ public class BeliefStateStd implements BeliefState, Serializable {
 	this.poba = poba;
     }
 
-    
-    public int getAlpha() {
+    @Override
+    public int getAlphaVectorIndex() {
 	return planid;
     }
 
