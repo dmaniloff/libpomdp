@@ -61,6 +61,27 @@
     <jar jarfile="${dist}/${ant.project.name}.jar" basedir="${build}"/>
   </target>
 
+    <target name="javadoc">
+      <javadoc 
+	  access="public" 
+	  author="true" 
+	  classpath="external/netlib-java-0.9.1.jar:external/ujmp-complete-0.2.4.jar:external/mtj-0.9.12.jar:external/glpk-java.jar:external/arpack_combo-0.1.jar:external/antlr-3.2.jar:external/jmatharray.jar" 
+	  destdir="doc" 
+	  doctitle="libpomdp" 
+	  nodeprecated="false" 
+	  nodeprecatedlist="false" 
+	  noindex="false" 
+	  nonavbar="false" 
+	  notree="false" 
+	  packagenames="java.libpomdp.solve.online,libpomdp.online.java,libpomdp.common.java,libpomdp.problems.catchproblem.java,libpomdp.parser.java,libpomdp.common.java.add,java.libpomdp.parser,libpomdp.common.java.standard,libpomdp.offline.java,libpomdp.problems.rocksample.java,libpomdp.hybrid.java" 
+	  source="1.6" 
+	  sourcepath="src" 
+	  splitindex="true" 
+	  use="true" 
+	  version="true"/>
+    </target>
+
+
   <target name="clean"
         description="clean up" >
     <!-- Delete the ${build} and ${dist} directory trees -->
