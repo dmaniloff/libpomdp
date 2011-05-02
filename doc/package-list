@@ -1,0 +1,9 @@
+libpomdp.common.java
+libpomdp.common.java.add
+libpomdp.common.java.standard
+libpomdp.hybrid.java
+libpomdp.offline.java
+libpomdp.online.java
+libpomdp.parser.java
+libpomdp.problems.catchproblem.java
+libpomdp.problems.rocksample.java
