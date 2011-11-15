@@ -9,6 +9,7 @@ public class AlphaVector implements Comparable<AlphaVector> {
 	protected CustomVector v;
 	protected int a;
 	
+
 	/** Constructor using an existing vector. 
 		@param v the reference of the vector to use
 		@param a the action asociated to the vector v
@@ -18,12 +19,14 @@ public class AlphaVector implements Comparable<AlphaVector> {
 		this.a=a;
 	}
 	
+
 	/** Constructor by vector dimension. Creates a zero-vector asociated with the action -1
 		@param dim the size of the zero-vector to create
 	*/
 	public AlphaVector(int dim) {
 		this(new CustomVector(dim),-1);
 	}
+
 
 	/** Constructor by vector dimension and action. 
 		@param dim the size of the zero-vector to create
@@ -50,12 +53,14 @@ public class AlphaVector implements Comparable<AlphaVector> {
 		return a;
 	}
 
+
 	/** Create a proper copy of the alpha-vector.
 		@return an alpha-vector copy
 	*/
 	public AlphaVector copy() {
 		return(new AlphaVector(v.copy(),a));
 	}
+
 
 	/** Create a proper copy on the vector contents 
 		@return a custom vector copy
@@ -82,12 +87,14 @@ public class AlphaVector implements Comparable<AlphaVector> {
 		return(v.compare(vec.v));
 	}
 	
+
 	/** Get the reference of the internal custom vector. Used for optimize read-only operations.
                 @return a custom vector copy
         */
 	public CustomVector getVectorRef() {
 		return(v);
 	}
+
 
 	/** Compare to an alpha-vector with delta tolerance.
 		@param vec the vector to compare to
@@ -97,11 +104,13 @@ public class AlphaVector implements Comparable<AlphaVector> {
 		return (v.compareTo(vec.v));
 	}
 
+
 	/** Reset the vector reference to a new one.
   		@param v the new custom vector */
 	public void setValues(CustomVector v) {
 		this.v=v;
 	}
+
 
 	/** Action setter.
 		@param a a valid action
@@ -109,6 +118,7 @@ public class AlphaVector implements Comparable<AlphaVector> {
 	public void setAction(int a){
 		this.a=a;
 	}
+
 	
 	/** New values for the alpha vector.
 		@param res the alpha vector to copy from
@@ -117,6 +127,7 @@ public class AlphaVector implements Comparable<AlphaVector> {
 		setValues(res.v.copy());
 		setAction(res.a);
 	}
+
 	
 	/** Change one value of the alpha-vector.
 		@param idx the vector index
@@ -126,12 +137,14 @@ public class AlphaVector implements Comparable<AlphaVector> {
 		v.set(idx, value);
 	}
 
+
 	/** Add the values of other alpha-vector. This does not modify the action value.
 		@param alpha the alpha-vector to add
 	*/
 	public void add(AlphaVector alpha) {
 		add(alpha.v);	
 	}
+
 
 	/** Add the values of a custom vector. 
 		@param vec the custom vector to sum
