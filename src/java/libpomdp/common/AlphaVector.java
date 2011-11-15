@@ -64,11 +64,14 @@ public class AlphaVector implements Comparable<AlphaVector> {
 		return(v.copy());
 	}
 	
+
    	/** Size of the alpha-vector
                 @return size of the vector
         */
 	public int size(){
 		return(v.size());
+	}
+
 
 	/** Compare to an alpha-vector with delta tolerance.
 		@param vec the vector to compare to
