@@ -1,12 +1,19 @@
-package libpomdp.common.add.symbolic;
+/** ------------------------------------------------------------------------- *
+ * File: DD.java
+ * Author: Pascal Poupart (Symbolic Perseus)
+ * libPOMDP Adaptation: Mauricio Araya 
+ --------------------------------------------------------------------------- */
 
-import java.io.*;
+package libpomdp.common.java.add.symbolic;
+
+import java.io.PrintStream;
+import java.io.Serializable;
 
 public abstract class DD implements Serializable {
 		/**
 	 * 
 	 */
-	private static final long serialVersionUID = -2110906271517248607L;
+	private static final long serialVersionUID = 1L;
 		public static DD one = DDleaf.myNew(1);
 		public static DD zero = DDleaf.myNew(0);
 
@@ -42,4 +49,32 @@ public abstract class DD implements Serializable {
 
 		public static DD cast(DDleaf leaf) { return (DD)leaf; }
 		public static DD cast(DDnode node) { return (DD)node; }		
+		/// concatenate DD arrays
+	    public static DD[] concat(DD[] first, DD[]... rest) {
+		int totalLength = first.length;
+		for (DD[] array : rest) totalLength += array.length;	
+		DD[] result = new DD[totalLength];
+		// copy fist array
+		System.arraycopy(first, 0, result, 0, first.length);
+		int offset = first.length;
+		for (DD[] array : rest) {
+		    System.arraycopy(array, 0, result, offset, array.length);
+		    offset += array.length;
+		}
+		return result;
+	    }
+
+	    /// first arg is not an array
+	    public static DD[] concat(DD f, DD[]... rest) {
+		DD[] first = new DD[1];
+		first[0]   = f;
+		return concat(first,rest);
+	    }
+
+	    /// append DD to a DD[]
+	    public static DD[] append(DD[] first, DD l) {
+		DD[] last = new DD[1];
+		last[0]   = l;
+		return concat(first, last);
+	    }
 }

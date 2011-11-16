@@ -1,4 +1,5 @@
-package libpomdp.common.std;
+package libpomdp.common.java.std;
+
 
 import java.io.Serializable;
 
@@ -9,155 +10,140 @@ import libpomdp.common.CustomMatrix;
 import libpomdp.common.CustomVector;
 import libpomdp.common.Pomdp;
 
-public class BeliefMdpStd implements BeliefMdp, Serializable {
+public class BeliefMdpStd implements BeliefMdp,Serializable {
 
-    /**
-     * 
-     */
-    private static final long serialVersionUID = -444173259260767792L;
-    PomdpStd pom;
-    CustomMatrix tau[][];
-
-    public BeliefMdpStd(CustomMatrix O[], CustomMatrix T[], CustomVector R[],
-	    int nrSta, int nrAct, int nrObs, double gamma, String staStr[],
-	    String actStr[], String obsStr[], CustomVector init) {
-	this(new PomdpStd(O, T, R, nrSta, nrAct, nrObs, gamma, staStr, actStr,
-		obsStr, init));
-    }
-
-    public BeliefMdpStd(PomdpStd pom) {
-	this.pom = pom;
-	init();
-    }
-
-    private void init() {
-	tau = new CustomMatrix[nrObservations()][nrActions()];
-	for (int a = 0; a < nrActions(); a++) {
-	    CustomMatrix tMat = this.getTransitionTable(a);
-	    CustomMatrix oMat = this.getObservationTable(a);
-	    // oMat.transpose();
-	    // System.out.println(oMat.toString());
-	    for (int o = 0; o < nrObservations(); o++) {
-		CustomMatrix oDiag = new CustomMatrix(nrStates(), nrStates());
-		for (int s = 0; s < nrStates(); s++) {
-		    oDiag.set(s, s, oMat.get(s, o));
-		}
-		// System.out.println(oDiag.toString());
-		tau[o][a] = tMat.mult(oDiag);
-	    }
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -444173259260767792L;
+	PomdpStd pom;
+	CustomMatrix tau[][];
+	
+	public BeliefMdpStd(CustomMatrix O[], 
+		     CustomMatrix T[], 
+		     CustomVector R[],
+		     int nrSta, int nrAct, int nrObs, 
+		     double gamma,
+		     String staStr[],
+		     String actStr[],
+		     String obsStr[],
+		     CustomVector init) {
+		this(new PomdpStd(O, T, R, nrSta, nrAct, nrObs, gamma,staStr, actStr, obsStr, init));
 	}
-    }
+	
+	public BeliefMdpStd(PomdpStd pom) {
+		this.pom = pom;
+		init();
+	}
+	
+	private void init(){
+		tau=new CustomMatrix[nrObservations()][nrActions()];
+		for (int a=0;a<nrActions();a++){
+			CustomMatrix tMat=this.getTransitionProbs(a);
+			CustomMatrix oMat=this.getObservationProbs(a);
+			//oMat.transpose();
+			//System.out.println(oMat.toString());
+			for (int o=0;o<nrObservations();o++){
+				CustomMatrix oDiag=new CustomMatrix(nrStates(),nrStates());
+				for (int s=0;s<nrStates();s++){
+					oDiag.set(s,s,oMat.get(s,o));
+				}
+				//System.out.println(oDiag.toString());
+				tau[o][a]=tMat.mult(oDiag);
+			}
+		}
+	}
+	
+	public Pomdp getPomdp() {
+		return pom;
+	}
 
-    
-    public BeliefState nextBeliefState(BeliefState b, int a, int o) {
-	CustomVector vect = tau[o][a].mult(b.getPoint());
-	vect = vect.scale(1.0 / vect.norm(1.0));
-	return (new BeliefStateStd(vect));
-    }
+	public CustomMatrix getTau(int a, int o) {
+		return(tau[o][a].copy());
+	}
 
-    
-    public double expectedImmediateReward(BeliefState b, int a) {
-	return (pom.expectedImmediateReward(b, a));
-    }
+	public String getActionString(int a) {
+		return pom.getActionString(a);
+	}
 
-    
-    public CustomVector observationProbabilities(BeliefState b, int a) {
-	return pom.observationProbabilities(b, a);
-    }
+	public double getGamma() {
+		return pom.getGamma();
+	}
 
-    
-    public CustomMatrix getTransitionTable(int a) {
-	return pom.getTransitionTable(a);
-    }
+	public BeliefState getInitialBelief() {
+		return pom.getInitialBelief();
+	}
 
-    
-    public CustomMatrix getObservationTable(int a) {
-	return pom.getObservationTable(a);
-    }
+	public CustomMatrix getObservationProbs(int a) {
+		return pom.getObservationProbs(a);
+	}
 
-    
-    // / R(s,a): 1 x s vector
-    public CustomVector getImmediateRewards(int a) {
-	return pom.getImmediateRewards(a);
-    }
+	public String getObservationString(int o) {
+		return pom.getObservationString(o);
+	}
 
-    public ValueFunctionStd getRewardValueFunction(int a) {
-	return pom.getRewardValueFunction(a);
-    }
+	public ValueFunctionStd getReward(int a) {
+		return pom.getReward(a);
+	}
 
-    
-    public BeliefState getInitialBeliefState() {
-	return pom.getInitialBeliefState();
-    }
+	public CustomMatrix getTransitionProbs(int a) {
+		return pom.getTransitionProbs(a);
+	}
 
-    
-    public int nrStates() {
-	return pom.nrStates();
-    }
+	public int nrActions() {
+		return pom.nrActions();
+	}
 
-    
-    public int nrActions() {
-	return pom.nrActions();
-    }
+	public int nrObservations() {
+		return pom.nrObservations();
+	}
 
-    
-    public int nrObservations() {
-	return pom.nrObservations();
-    }
+	public int nrStates() {
+		return pom.nrStates();
+	}
 
-    
-    public double getGamma() {
-	return pom.getGamma();
-    }
+	public CustomVector sampleObservationProbs(BeliefState b, int a) {
+		return pom.sampleObservationProbs(b, a);
+	}
 
-    
-    public String getActionString(int a) {
-	return pom.getActionString(a);
-    }
+	public BeliefState sampleNextBelief(BeliefState b, int a, int o) {
+		CustomVector vect=tau[o][a].mult(b.getPoint());
+		vect=vect.scale(1.0/vect.norm(1.0));
+		return(new BeliefStateStd(vect));
+	}
 
-    
-    public String getObservationString(int o) {
-	return pom.getObservationString(o);
-    }
+	public double sampleReward(BeliefState b, int a) {
+		return(pom.sampleReward(b, a));
+	}
 
-    
-    public String getStateString(int s) {
-	return pom.getStateString(s);
-    }
+	public int getRandomObservation(BeliefStateStd bel, int a) {
+		return pom.getRandomObservation(bel, a);
+	}
 
-    public Pomdp getPomdp() {
-	return pom;
-    }
+	public String[] getStateString() {
+		return pom.getStateString();
+	}
 
-    
-    public CustomMatrix getTau(int a, int o) {
-	return (tau[o][a].copy());
-    }
+	public AlphaVector projection(AlphaVector alpha, int a, int o) {
+		CustomVector vect=new CustomVector(nrStates());
+		vect.add(tau[o][a].mult(getGamma(),alpha.getVectorRef()));
+		return(new AlphaVector(vect,a));
+	}
 
-    public int getRandomObservation(BeliefStateStd bel, int a) {
-	return pom.sampleObservation(bel, a);
-    }
+	public int getRandomAction() {
+		return(pom.getRandomAction());
+	}
 
-    public AlphaVector projection(AlphaVector alpha, int a, int o) {
-	CustomVector vect = new CustomVector(nrStates());
-	vect.add(tau[o][a].mult(getGamma(), alpha.getVectorRef()));
-	return (new AlphaVector(vect, a));
-    }
+	public double getRewardMax() {
+		return(pom.getRewardMax());
+	}
 
-    public int getRandomAction() {
-	return (pom.getRandomAction());
-    }
+	public double getRewardMin() {
+		return(pom.getRewardMin());		
+	}
 
-    public double getRewardMax() {
-	return (pom.getRewardMax());
-    }
-
-    public double getRewardMin() {
-	return (pom.getRewardMin());
-    }
-
-    public double getRewardMaxMin() {
-	return (pom.getRewardMaxMin());
-    }
+	public double getRewardMaxMin() {
+		return(pom.getRewardMaxMin());		
+	}
 
 }

@@ -1,31 +1,14 @@
-package libpomdp.common.add.symbolic;
+package libpomdp.common.java.add.symbolic;
 
-import java.util.*;
-import java.lang.ref.*;
+import java.lang.ref.WeakReference;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Random;
+import java.util.Set;
 
-class CacheMap<K,V> extends LinkedHashMap<K,V> {
-		/**
-	 * 
-	 */
-	private static final long serialVersionUID = 4113140965999800901L;
-		public int maxCapacity;
 
-		public CacheMap() {
-				super();
-				maxCapacity = 10000;
-		}
 
-		public CacheMap(int maxCapacity) {
-				super();
-				this.maxCapacity = maxCapacity;
-		}
-
-		protected boolean removeEldestEntry(Map.Entry<K,V> eldest) {
-        return size() > maxCapacity;
-		}
-}
-
-class Global {
+public class Global {
 		public static int[] varDomSize = null;
 		//public static int[] varDomSize = {2,11,9,3,4,5,11,2,6,2,2,2,2,6,2,11,9,3,4,5,11,2,6,2,2,2,2,6};
 		//public static int[] varDomSize = {2,11,9,3,4,5,11,2,6,2,2,2,2,6,2,11,9,3,4,5,11,2,6,2,2,2,2,6,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3};
@@ -37,16 +20,16 @@ class Global {
 		// hash tables
 		//public static WeakHashMap leafHashtable = new WeakHashMap();
 		//public static WeakHashMap nodeHashtable = new WeakHashMap();
-		public static CacheMap<DD, WeakReference<DD>> leafHashtable = new CacheMap<DD,WeakReference<DD>>();
-		public static CacheMap<DD, WeakReference<DD>> nodeHashtable = new CacheMap<DD, WeakReference<DD>>();
-		public static CacheMap<Pair,DD> addHashtable = new CacheMap<Pair, DD>();
-		public static CacheMap<Pair,DD> multHashtable = new CacheMap<Pair,DD>();
-		public static CacheMap<TripletConfig, DD> maxHashtable = new CacheMap<TripletConfig, DD>();
-		public static CacheMap<TripletConfig, DD> minHashtable = new CacheMap<TripletConfig, DD>();
-		public static CacheMap<TripletSet, Double> dotProductHashtable = new CacheMap<TripletSet,Double>();
-		public static CacheMap<DD,Integer> nEdgesHashtable = new CacheMap<DD,Integer>();
-		public static CacheMap<DD,Integer> nLeavesHashtable = new CacheMap<DD, Integer>();
-		public static CacheMap<DD,Integer> nNodesHashtable = new CacheMap<DD,Integer>();
+		public static CacheMap leafHashtable = new CacheMap();
+		public static CacheMap nodeHashtable = new CacheMap();
+		public static CacheMap addHashtable = new CacheMap();
+		public static CacheMap multHashtable = new CacheMap();
+		public static CacheMap maxHashtable = new CacheMap();
+		public static CacheMap minHashtable = new CacheMap();
+		public static CacheMap dotProductHashtable = new CacheMap();
+		public static CacheMap nEdgesHashtable = new CacheMap();
+		public static CacheMap nLeavesHashtable = new CacheMap();
+		public static CacheMap nNodesHashtable = new CacheMap();
 
 		// random number generator
 		public static Random random = new Random();
@@ -140,10 +123,12 @@ class Global {
 						Global.addHashtable.clear();
 						Global.leafHashtable.clear();
 						Global.nodeHashtable.clear();
-//						for (int k=0; k<10000; k++) {
-//								DD dd1r = OP.restrict(dd1,config);
-//								DD dd2r = OP.restrict(dd2,config);
-//						}
+						/*
+						for (int k=0; k<10000; k++) {
+								DD dd1r = OP.restrict(dd1,config);
+								DD dd2r = OP.restrict(dd2,config);
+						}
+						*/
             //DD dd = OP.minAddVarElim(ddArray,varSet);
 						//dd1r.display();
 						//dd2r.display();
@@ -321,23 +306,23 @@ class Global {
 		public static void newHashtables() {
 				//Global.leafHashtable = new WeakHashMap();
 				//Global.nodeHashtable = new WeakHashMap();
-				Global.leafHashtable = new CacheMap<DD, WeakReference<DD>>();
-				Global.nodeHashtable = new CacheMap<DD, WeakReference<DD>>();
-				Global.addHashtable = new CacheMap<Pair, DD>();
-				Global.multHashtable = new CacheMap<Pair, DD>();
-				Global.maxHashtable = new CacheMap<TripletConfig, DD>();
-				Global.minHashtable = new CacheMap<TripletConfig, DD>();
-				Global.dotProductHashtable = new CacheMap<TripletSet, Double>();
-				Global.nEdgesHashtable = new CacheMap<DD, Integer>();
-				Global.nLeavesHashtable = new CacheMap<DD, Integer>();
-				Global.nNodesHashtable = new CacheMap<DD, Integer>();
+				Global.leafHashtable = new CacheMap();
+				Global.nodeHashtable = new CacheMap();
+				Global.addHashtable = new CacheMap();
+				Global.multHashtable = new CacheMap();
+				Global.maxHashtable = new CacheMap();
+				Global.minHashtable = new CacheMap();
+				Global.dotProductHashtable = new CacheMap();
+				Global.nEdgesHashtable = new CacheMap();
+				Global.nLeavesHashtable = new CacheMap();
+				Global.nNodesHashtable = new CacheMap();
 				Global.leafHashtable.put(DD.zero, new WeakReference<DD>(DD.zero));
 				Global.leafHashtable.put(DD.one, new WeakReference<DD>(DD.one));
 		}
 
-		public static int[] getKeyHashCodeSet(HashMap<DD, WeakReference<DD>> hashMap) {
-				Set<DD> keySet= hashMap.keySet();
-				Iterator<DD> iterator = keySet.iterator();
+		public static int[] getKeyHashCodeSet(HashMap hashMap) {
+				Set keySet = hashMap.keySet();
+				Iterator iterator = keySet.iterator();
 				int[] hashCodeCollection = new int[hashMap.size()];
 				int i = 0;
 				while (iterator.hasNext()) {

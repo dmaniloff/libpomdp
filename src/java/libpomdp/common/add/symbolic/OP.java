@@ -1,7 +1,14 @@
-package libpomdp.common.add.symbolic;
+package libpomdp.common.java.add.symbolic;
 
-import java.util.*;
-import java.io.*;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 public class OP {
 
@@ -97,11 +104,11 @@ public class OP {
 				return dd;
 		}
 
-		public static DD addN(Collection<DD> dds) {
+		public static DD addN(Collection dds) {
 				DD ddSum = DD.zero;
-				Iterator<DD> ddIterator = dds.iterator();
+				Iterator ddIterator = dds.iterator();
 				while (ddIterator.hasNext()) {
-						DD dd = ddIterator.next();
+						DD dd = (DD)ddIterator.next();
 						ddSum = OP.add(ddSum,dd);
 				}
 				return ddSum;
@@ -153,11 +160,11 @@ public class OP {
 		// shift variable index by of all variables by n (useful when priming variables in value iteration)
 		//////////////////////////////////////////////////////
 		public static DD primeVars(DD dd, int n) {
-				HashMap<DD,DD> hashtable = new HashMap<DD,DD>();
+				HashMap hashtable = new HashMap();
 				return primeVars(dd,n,hashtable);
 		}
 
-		public static DD primeVars(DD dd, int n, HashMap<DD,DD> hashtable) {
+		public static DD primeVars(DD dd, int n, HashMap hashtable) {
 				
 				// dd is a leaf
 				if (dd.getVar() == 0)
@@ -328,11 +335,11 @@ public class OP {
 				return dd;
 		}
 
-		public static DD multN(Collection<DD> dds) {
+		public static DD multN(Collection dds) {
 				DD ddProd = DD.one;
-				Iterator<DD> ddIterator = dds.iterator();
+				Iterator ddIterator = dds.iterator();
 				while (ddIterator.hasNext()) {
-						DD dd = ddIterator.next();
+						DD dd = (DD)ddIterator.next();
 						ddProd = OP.mult(ddProd,dd);
 				}
 				return ddProd;
@@ -386,11 +393,11 @@ public class OP {
 		//////////////////////////////////////////////////////
 		public static DD addout(DD dd, int var) {
 
-				HashMap<DD,DD> hashtable = new HashMap<DD,DD>();
+				HashMap hashtable = new HashMap();
 				return addout(dd, var, hashtable);
 		}
 
-		public static DD addout(DD dd, int var, HashMap<DD,DD> hashtable) {
+		public static DD addout(DD dd, int var, HashMap hashtable) {
 
 				// it's a leaf
 				if (dd.getVar() == 0) {
@@ -541,7 +548,7 @@ public class OP {
 				// dd1 and dd2 are leaves
 				else {
 						double result = dd1.getVal() * dd2.getVal();
-						Iterator<Integer> varIterator = vars.iterator();
+						Iterator varIterator = vars.iterator();
 						while(varIterator.hasNext()) {
 								Integer var = (Integer)varIterator.next();
 								result *= Global.varDomSize[var.intValue()-1];
@@ -882,12 +889,12 @@ public class OP {
 				for (int i=0; i<factDist.length; i++) {
 						factDistArray[factDist[i].getVar()] = factDist[i];
 				}
-				HashMap<DD,Double> hashtable = new HashMap<DD, Double>();
+				HashMap hashtable = new HashMap();
 
 				return factoredExpectationSparse(factDistArray, dd, hashtable);
 		}
 
-    public static double factoredExpectationSparse(DD[] factDistArray, DD dd, HashMap<DD, Double> hashtable) {
+    public static double factoredExpectationSparse(DD[] factDistArray, DD dd, HashMap hashtable) {
 
 				// it's a leaf
                 int varId = dd.getVar();
@@ -931,7 +938,7 @@ public class OP {
                 }
                 for (int i=0; i<factDistArray.length; i++)  {    
                     for (int j=0; j<ddArray.length; j++) {
-                        HashMap<DD, Double> hashtable = new HashMap<DD, Double>();
+                        HashMap hashtable = new HashMap();
                         results[i][j] = factoredExpectationSparse(factDistArray[i],ddArray[j],hashtable);
                     }
                 }
@@ -946,7 +953,7 @@ public class OP {
                 	for (int j=0; j<factDist[i].length; j++) {
                         factDistArray[i][factDist[i][j].getVar()] = factDist[i][j];
                     }
-                    HashMap<DD,Double> hashtable = new HashMap<DD, Double>();
+                    HashMap hashtable = new HashMap();
                     results[i] = factoredExpectationSparse(factDistArray[i], dd, hashtable);
 				}
 
@@ -1188,13 +1195,13 @@ public class OP {
 								factDistArray[i][factDist[i][j].getVar()] = factDist[i][j];
 						}
 				}
-				HashMap<DD,MyDoubleArray> hashtable = new HashMap<DD, MyDoubleArray>();
+				HashMap hashtable = new HashMap();
 
 				return factoredExpectationParallel(factDistArray, dd, hashtable);
 		}
 
     
-    public static double[] factoredExpectationParallel(DD[][] factDistArray, DD dd, HashMap<DD,MyDoubleArray> hashtable) {
+    public static double[] factoredExpectationParallel(DD[][] factDistArray, DD dd, HashMap hashtable) {
 
 				// it's a leaf
 				if (dd.getVar() == 0) {
@@ -1542,11 +1549,11 @@ public class OP {
 		// maxNormDiff
 		//////////////////////////////////////////////////////
 		public static boolean maxNormDiff(DD dd1, DD dd2, double threshold) {
-				HashMap<Pair,Boolean> hashtable = new HashMap<Pair,Boolean>();
+				HashMap hashtable = new HashMap();
 				return OP.maxNormDiff(dd1, dd2, threshold, hashtable);
 		}
 
-		public static boolean maxNormDiff(DD dd1, DD dd2, double threshold, HashMap<Pair,Boolean> hashtable) {
+		public static boolean maxNormDiff(DD dd1, DD dd2, double threshold, HashMap hashtable) {
 
 				// dd1 precedes dd2
 				if (dd1.getVar() > dd2.getVar()) {
@@ -1630,16 +1637,16 @@ public class OP {
 		}
 
 		public static double maxAllN(DD dd) {
-				HashMap<DD, Double> hashtable = new HashMap<DD, Double>();
+				HashMap hashtable = new HashMap();
 				return maxAll(dd,hashtable);
 		}
 
 		public static double maxAll(DD dd) {
-				HashMap<DD,Double> hashtable = new HashMap<DD, Double>();
+				HashMap hashtable = new HashMap();
 				return maxAll(dd,hashtable);
 		}
 
-		public static double maxAll(DD dd, HashMap<DD,Double> hashtable) {
+		public static double maxAll(DD dd, HashMap hashtable) {
 
 				Double storedResult = (Double)hashtable.get(dd);
 				if (storedResult != null) return storedResult.doubleValue();
@@ -1671,16 +1678,16 @@ public class OP {
 		}
 
         public static double minAllN(DD dd) {
-				HashMap<DD,Double> hashtable = new HashMap<DD, Double>();
+				HashMap hashtable = new HashMap();
 				return minAll(dd,hashtable);
 		}
 
         public static double minAll(DD dd) {
-				HashMap<DD,Double> hashtable = new HashMap<DD, Double>();
+				HashMap hashtable = new HashMap();
 				return minAll(dd,hashtable);
 		}
 
-		public static double minAll(DD dd, HashMap<DD, Double> hashtable) {
+		public static double minAll(DD dd, HashMap hashtable) {
 
 				Double storedResult = (Double)hashtable.get(dd);
 				if (storedResult != null) return storedResult.doubleValue();
@@ -2479,7 +2486,7 @@ public class OP {
 
 						// recursively compute numEdges
 						if (numEdges == null) {
-								HashMap<DD, Integer> hashtable = new HashMap<DD, Integer>();
+								HashMap hashtable = new HashMap();
 								int nEdges = OP.nEdges(dd, hashtable);
 								Global.nEdgesHashtable.put(dd,new Integer(nEdges));
 								return nEdges;
@@ -2489,7 +2496,7 @@ public class OP {
 				}
 		}
 
-		public static int nEdges(DD dd, HashMap<DD, Integer> hashtable) {
+		public static int nEdges(DD dd, HashMap hashtable) {
 
 				// it's a leaf
 				if (dd.getVar() == 0) 
@@ -2528,7 +2535,7 @@ public class OP {
 
 						// recursively compute numLeaves
 						if (numLeaves == null) {
-								HashMap<DD, Integer> hashtable = new HashMap<DD, Integer>();
+								HashMap hashtable = new HashMap();
 								int nLeaves = OP.nLeaves(dd, hashtable);
 								Global.nLeavesHashtable.put(dd,new Integer(nLeaves));
 								return nLeaves;
@@ -2538,7 +2545,7 @@ public class OP {
 				}
 		}
 
-		public static int nLeaves(DD dd, HashMap<DD, Integer> hashtable) {
+		public static int nLeaves(DD dd, HashMap hashtable) {
 
 				Integer numLeaves = (Integer)hashtable.get(dd);
 
@@ -2580,7 +2587,7 @@ public class OP {
 
 						// recursively compute numNodes
 						if (numNodes == null) {
-								HashMap<DD, Integer> hashtable = new HashMap<DD, Integer>();
+								HashMap hashtable = new HashMap();
 								int nNodes = OP.nNodes(dd, hashtable);
 								Global.nNodesHashtable.put(dd,new Integer(nNodes));
 								return nNodes;
@@ -2590,7 +2597,7 @@ public class OP {
 				}
 		}
 
-		public static int nNodes(DD dd, HashMap<DD, Integer> hashtable) {
+		public static int nNodes(DD dd, HashMap hashtable) {
 
 				// it's a leaf
 				if (dd.getVar() == 0) 
@@ -2620,7 +2627,7 @@ public class OP {
 		//////////////////////////////////////////////////////
 		public static DD approximateAll(DD dd, double tolerance) {
 
-				HashMap<DD, DD> hashtable = new HashMap<DD, DD>();
+				HashMap hashtable = new HashMap();
 				double[] leafTable = new double[OP.nLeaves(dd)];
 				DD[] nodeTable = new DD[OP.nNodes(dd)];
 				double[] maxTable = new double[nodeTable.length];
@@ -2632,7 +2639,7 @@ public class OP {
 				return OP.approximateAll(dd, tolerance, hashtable, leafTable, nodeTable, nLeavesPtr, nNodesPtr, maxTable, minTable);
 		}
 
-		public static DD approximateAll(DD dd, double tolerance, HashMap<DD, DD> hashtable, double[] leafTable, DD[] nodeTable, int[] nLeavesPtr, int[] nNodesPtr, double[] maxTable, double[] minTable) {
+		public static DD approximateAll(DD dd, double tolerance, HashMap hashtable, double[] leafTable, DD[] nodeTable, int[] nLeavesPtr, int[] nNodesPtr, double[] maxTable, double[] minTable) {
 				
 				// lookup apprDd
 				DD apprDd = (DD)hashtable.get(dd);
@@ -2735,7 +2742,7 @@ public class OP {
 		//////////////////////////////////////////////////////
 		public static DD approximate(DD dd, double tolerance) {
 
-				HashMap<DD, DD> hashtable = new HashMap<DD, DD>();
+				HashMap hashtable = new HashMap();
 				double[] leafValues = new double[OP.nLeaves(dd)+2];
 				//leafValues[0] = 0;
 				//leafValues[1] = 1;
@@ -2754,7 +2761,7 @@ public class OP {
 
 		public static DD approximate(DD dd, double tolerance, double[] prescribedLeafValues) {
 
-				HashMap<DD, DD> hashtable = new HashMap<DD, DD>();
+				HashMap hashtable = new HashMap();
 				double[] leafValues = new double[OP.nLeaves(dd)+prescribedLeafValues.length];
 				for (int i=0; i<prescribedLeafValues.length; i++) {
 						leafValues[i] = prescribedLeafValues[i];
@@ -2764,7 +2771,7 @@ public class OP {
 				return OP.approximate(dd, tolerance, hashtable, leafValues, nLeavesPtr);
 		}
 
-		public static DD approximate(DD dd, double tolerance, HashMap<DD, DD> hashtable, double[] leafValues, int[] nLeavesPtr) {
+		public static DD approximate(DD dd, double tolerance, HashMap hashtable, double[] leafValues, int[] nLeavesPtr) {
 				
 				// lookup apprDd
 				DD apprDd = (DD)hashtable.get(dd);
@@ -2831,11 +2838,11 @@ public class OP {
 		//////////////////////////////////////////////////////
 		public static DD findLeaf(DD dd, DD leaf) {
 
-				HashMap<DD, DD> hashtable = new HashMap<DD, DD>();
+				HashMap hashtable = new HashMap();
 				return OP.findLeaf(dd,leaf,hashtable);
 		}
 
-		public static DD findLeaf(DD dd, DD leaf, HashMap<DD, DD> hashtable) {
+		public static DD findLeaf(DD dd, DD leaf, HashMap hashtable) {
 
 				// it's a leaf
 				if (dd.getVar() == 0) {
@@ -2946,7 +2953,6 @@ public class OP {
         }
         return arrayMargs;
     }
-
 
 }
 

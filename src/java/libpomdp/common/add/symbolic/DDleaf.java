@@ -1,13 +1,13 @@
-package libpomdp.common.add.symbolic;
+package libpomdp.common.java.add.symbolic;
 
-import java.lang.ref.*;
-import java.io.*;
+import java.io.PrintStream;
+import java.lang.ref.WeakReference;
 
 public class DDleaf extends DD {
 		/**
 	 * 
 	 */
-	private static final long serialVersionUID = -6264399892916970015L;
+	private static final long serialVersionUID = 1L;
 		private double val;
 		private int[][] config;
 
@@ -29,7 +29,7 @@ public class DDleaf extends DD {
 				DDleaf leaf = new DDleaf(val);
 
 				// try to lookup leaf in leafHashtable 
-				WeakReference<DD> storedLeaf = (WeakReference<DD>)Global.leafHashtable.get(leaf); 
+				WeakReference storedLeaf = (WeakReference)Global.leafHashtable.get(leaf); 
 				if (storedLeaf != null) return (DDleaf)storedLeaf.get();
 
 				// store leaf in leafHashtable
@@ -43,7 +43,7 @@ public class DDleaf extends DD {
 				DDleaf leaf = new DDleaf(val,config);
 
 				// try to lookup leaf in leafHashtable
-				WeakReference<DD> storedLeaf = (WeakReference<DD>)Global.leafHashtable.get(leaf);
+				WeakReference storedLeaf = (WeakReference)Global.leafHashtable.get(leaf);
 				if (storedLeaf != null) return (DDleaf)storedLeaf.get();
 
 				// store leaf in leafHashtable

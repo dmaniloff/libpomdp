@@ -1,4 +1,4 @@
-package libpomdp.common.add.symbolic;
+package libpomdp.common.java.add.symbolic;
 
 class Pair {
 		private DD dd1;

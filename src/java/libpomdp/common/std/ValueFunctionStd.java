@@ -73,7 +73,7 @@ public class ValueFunctionStd implements ValueFunction, Serializable {
     }
 
     // return value of a belief state
-    public double value(BeliefState bel) {
+    public double V(BeliefState bel) {
     	//long start = System.currentTimeMillis();
     	double valmax=Double.NEGATIVE_INFINITY;
     	AlphaVector sel = null;

@@ -1,13 +1,13 @@
-package libpomdp.common.add.symbolic;
+package libpomdp.common.java.add.symbolic;
 
 import java.io.PrintStream;
 import java.lang.ref.WeakReference;
 
-class DDnode extends DD {
+public class DDnode extends DD {
 		/**
 	 * 
 	 */
-	private static final long serialVersionUID = 7022952445631484770L;
+	private static final long serialVersionUID = 1L;
 		//private SortedSet scope;
 		private int[] varSet;
 		private int numLeaves;
@@ -22,7 +22,7 @@ class DDnode extends DD {
                 this.sum = Double.NaN; // lazy temporary value
 		}
 
-    public static DD myNew(int var, DD[] children) {
+	public static DD myNew(int var, DD[] children) {
 
 				// try to aggregate children
 				boolean aggregate = true;
@@ -36,7 +36,7 @@ class DDnode extends DD {
 
 				// try look up node in nodeHashtable
 				DDnode node = new DDnode(var,children);
-				WeakReference<DD> storedNode = Global.nodeHashtable.get(node);
+				WeakReference storedNode = (WeakReference)Global.nodeHashtable.get(node);
 				if (storedNode != null) return (DDnode)storedNode.get();
 
 				// store node in nodeHashtable
