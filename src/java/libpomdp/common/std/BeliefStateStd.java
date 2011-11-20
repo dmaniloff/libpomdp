@@ -64,7 +64,7 @@ public class BeliefStateStd implements BeliefState, Serializable {
 
 
     @Override
-    public void setAlpha(int planid) {
+    public void setAlphaVectorIndex(int planid) {
 	this.planid = planid;
     }
 

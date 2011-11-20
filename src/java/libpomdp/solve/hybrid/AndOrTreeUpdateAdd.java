@@ -131,7 +131,7 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 		o.l = offlineLower.V(o.getBeliefState());
 		// save one valid plan id for this andNode
 		// may be saved multiple times, but it's ok
-		a.validPlanid = o.getBeliefState().getAlpha();
+		a.validPlanid = o.getBeliefState().getAlphaVectorIndex();
 		// H(b)
 		o.h_b = expH.h_b(o);
 		// H(b,a,o)	
@@ -143,7 +143,7 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 		// increase subtree size of en accordingly
 		en.setSubTreeSize(en.getSubTreeSize() + 1);
 		// add each of these to the support set sizes
-		treeSupportSetSize[o.getBeliefState().getAlpha()]++; 
+		treeSupportSetSize[o.getBeliefState().getAlphaVectorIndex()]++; 
 	    } // HybridValueIterationOrNode loop
 
 	    // L(b,a) = R(b,a) + \gamma \sum_o P(o|b,a)L(tao(b,a,o))
@@ -188,8 +188,8 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 	// we can now allocate the right amount of space for the bakheuristics
 	en.bakHeuristicStar = new double[offlineLower.size()]; // all zeros
 	en.bakCandidate     = new HybridValueIterationOrNode[offlineLower.size()]; // all nulls 
-	en.bakHeuristicStar[en.getBeliefState().getAlpha()] = en.bakHeuristic;
-	en.bakCandidate[en.getBeliefState().getAlpha()]     = en;
+	en.bakHeuristicStar[en.getBeliefState().getAlphaVectorIndex()] = en.bakHeuristic;
+	en.bakCandidate[en.getBeliefState().getAlphaVectorIndex()]     = en;
     } // (overridden) expand
 
 
@@ -307,7 +307,7 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 	    // compute g_{a,o}^{planid}
 	    // problem.gao(lowerBound[o.belief.getplanid()], bestA, o.getobs()).display();
 	    gab = OP.add(gab, problem.
-		    gao(lowerBound[o.getBeliefState().getAlpha()], bestA, o.getObs()));
+		    gao(lowerBound[o.getBeliefState().getAlphaVectorIndex()], bestA, o.getObs()));
 	}    
 	// multiply result by discount factor and add it to r_a
 	gab = OP.mult(gamma, gab);
@@ -349,7 +349,7 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 	    } else {
 		// compute g_{a,o}^{planid}
 		gab = OP.add(gab, problem.
-			gao(lowerBound[o.getBeliefState().getAlpha()], 
+			gao(lowerBound[o.getBeliefState().getAlphaVectorIndex()], 
 				on.oneStepBestAction, 
 				obs));
 	    }

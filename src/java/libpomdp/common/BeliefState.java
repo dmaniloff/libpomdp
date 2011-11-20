@@ -39,12 +39,11 @@ public interface BeliefState {
 
     /** Get index of the alpha vector that supports this point.
 	@return the index of the alpha vector that supports this point */
-    public int getAlphaIndex();
-
+    	public int getAlphaVectorIndex();
 
     /** Set index of the alpha vector that supports this point. 
 	@param planid the index of the alpha vector that supports this point */
-    public void setAlphaIndex(int planid);
+    public void setAlphaVectorIndex(int planid);
 
 	
     /** Compare with other belief-state.

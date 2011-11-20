@@ -66,7 +66,7 @@ public class BeliefStateAdd implements BeliefState {
 
 
     @Override
-    public void setAlpha(int planid) {
+    public void setAlphaVectorIndex(int planid) {
 	this.planid = planid;
     }
 

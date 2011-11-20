@@ -85,7 +85,7 @@ public class ValueFunctionStd implements ValueFunction, Serializable {
     			sel=alpha;
     		}
     	}
-		bel.setAlpha(set.indexOf(sel));;
+		bel.setAlphaVectorIndex(set.indexOf(sel));;
 		return valmax;
     }
 
