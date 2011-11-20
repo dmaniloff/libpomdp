@@ -6,7 +6,9 @@
  * Copyright (c) 2010 Mauricio Araya
  --------------------------------------------------------------------------- */
 
-package libpomdp.common.java;
+package libpomdp.common;
+
+import libpomdp.common.CustomVector;
 
 import java.io.Serializable;
 

@@ -7,13 +7,13 @@
  * Copyright (c) 2010 Mauricio Araya  
  --------------------------------------------------------------------------- */
 
-package libpomdp.common.java.std;
+package libpomdp.common.std;
 
 // imports
 import java.io.Serializable;
 
-import libpomdp.common.java.BeliefState;
-import libpomdp.common.java.CustomVector;
+import libpomdp.common.BeliefState;
+import libpomdp.common.CustomVector;
 
 public class BeliefStateStd implements BeliefState, Serializable {
 

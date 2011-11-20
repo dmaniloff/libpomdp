@@ -1,9 +1,9 @@
-package libpomdp.solve.java.vi;
+package libpomdp.solve.offline.vi;
 
 import java.util.ArrayList;
 
-import libpomdp.common.java.Pomdp;
-import libpomdp.solve.java.IterationStats;
+import libpomdp.common.Pomdp;
+import libpomdp.solve.offline.IterationStats;
 
 public class ValueIterationStats extends IterationStats {
 	

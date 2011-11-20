@@ -10,15 +10,15 @@
  * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
 
-package libpomdp.solve.java.vi.heuristic;
+package libpomdp.solve.offline.bounds;
 
 // imports
 
 import libpomdp.common.AlphaVector;
 import libpomdp.common.std.PomdpStd;
 import libpomdp.common.std.ValueFunctionStd;
-import libpomdp.solve.IterationStats;
-import libpomdp.solve.vi.ValueIterationStd;
+import libpomdp.solve.offline.IterationStats;
+import libpomdp.solve.offline.vi.ValueIterationStd;
 
 public class QmdpStd extends ValueIterationStd {
     

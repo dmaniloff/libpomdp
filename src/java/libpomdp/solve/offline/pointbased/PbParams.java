@@ -1,4 +1,4 @@
-package libpomdp.solve.vi.pointbased;
+package libpomdp.solve.offline.pointbased;
 
 public class PbParams {
 	protected int backupMethod;

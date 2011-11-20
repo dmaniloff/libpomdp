@@ -11,7 +11,7 @@
  * Copyright (c) 2009, 2010 Diego Maniloff 
  --------------------------------------------------------------------------- */
 
-package libpomdp.common.java.add;
+package libpomdp.common.add;
 
 // imports
 import java.util.ArrayList;
@@ -20,6 +20,7 @@ import libpomdp.common.BeliefState;
 import libpomdp.common.CustomMatrix;
 import libpomdp.common.CustomVector;
 import libpomdp.common.Pomdp;
+import libpomdp.common.Utils;
 import libpomdp.common.add.symbolic.DD;
 import libpomdp.common.add.symbolic.OP;
 import libpomdp.common.std.BeliefStateStd;

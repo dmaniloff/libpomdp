@@ -6,7 +6,7 @@
  * Copyright (c) 2009, 2010 Diego Maniloff
  --------------------------------------------------------------------------- */
 
-package libpomdp.hybrid.java;
+package libpomdp.solve.hybrid;
 
 // imports
 

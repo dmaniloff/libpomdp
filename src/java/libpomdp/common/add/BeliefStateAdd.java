@@ -14,10 +14,10 @@ import libpomdp.common.CustomVector;
 import libpomdp.common.add.symbolic.DD;
 import libpomdp.common.add.symbolic.OP;
 
-import libpomdp.common.java.BeliefState;
-import libpomdp.common.java.CustomVector;
-import libpomdp.common.java.add.symbolic.DD;
-import libpomdp.common.java.add.symbolic.OP;
+import libpomdp.common.BeliefState;
+import libpomdp.common.CustomVector;
+import libpomdp.common.add.symbolic.DD;
+import libpomdp.common.add.symbolic.OP;
  
 public class BeliefStateAdd implements BeliefState {
     

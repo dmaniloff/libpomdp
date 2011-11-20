@@ -24,11 +24,11 @@ javaaddpath '../../../../../dist/libpomdp.jar'
 
 % java imports
 import symPerseusJava.*;
-import libpomdp.common.java.*;
-import libpomdp.common.java.standard.*;
-import libpomdp.online.java.*;
-import libpomdp.offline.java.*;
-import libpomdp.hybrid.java.*;
+import libpomdp.common.*;
+import libpomdp.common.std.*;
+import libpomdp.solve.online.*;
+import libpomdp.solve.offline.*;
+import libpomdp.solve.hybrid.*;
 import libpomdp.problems.rocksample.java.*;
 
 %% load problem

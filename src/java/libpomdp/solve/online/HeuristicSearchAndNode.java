@@ -8,9 +8,9 @@
  * Copyright (c) 2009, 2010 Diego Maniloff  
  --------------------------------------------------------------------------- */
 
-package libpomdp.online.java;
+package libpomdp.solve.online;
 
-import libpomdp.common.java.CustomVector;
+import libpomdp.common.CustomVector;
 
 public class HeuristicSearchAndNode extends AndNode {
 

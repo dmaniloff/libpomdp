@@ -1,4 +1,4 @@
-package libpomdp.solve.vi.pointbased;
+package libpomdp.solve.offline.pointbased;
 
 import java.util.ArrayList;
 import java.util.Iterator;

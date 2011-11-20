@@ -6,11 +6,11 @@
  * Copyright (c) 2009, 2010 Diego Maniloff 
  --------------------------------------------------------------------------- */
 
-package libpomdp.hybrid.java;
+package libpomdp.solve.hybrid;
 
 // imports
-import libpomdp.common.java.Utils;
-import libpomdp.common.java.Pomdp;
+import libpomdp.common.Utils;
+import libpomdp.common.Pomdp;
 
 
 public class DOSI implements BackupHeuristic {

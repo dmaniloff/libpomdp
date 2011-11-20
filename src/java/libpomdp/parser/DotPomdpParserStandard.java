@@ -7,8 +7,7 @@
  * Copyright (c) 2010 Mauricio Araya
  --------------------------------------------------------------------------- */
 
-package libpomdp.parser.java;
-
+package libpomdp.parser;
 
 import org.antlr.runtime.ANTLRFileStream;
 import org.antlr.runtime.CommonTokenStream;

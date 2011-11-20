@@ -7,7 +7,7 @@
  * Copyright (c) 2010 Mauricio Araya
  --------------------------------------------------------------------------- */
 
-package libpomdp.common.java;
+package libpomdp.common;
 
 // imports
 import java.util.ArrayList;
@@ -16,7 +16,7 @@ import java.util.Random;
 import org.math.array.DoubleArray;
 import org.math.array.IntegerArray;
 
-import symPerseusJava.DD;
+import libpomdp.common.add.symbolic.DD;
 
 public class Utils {
 

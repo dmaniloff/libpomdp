@@ -2,9 +2,9 @@ package libpomdp.test;
 
 import libpomdp.common.std.PomdpStd;
 import libpomdp.parser.FileParser;
-import libpomdp.solve.MaxIterationsCriteria;
-import libpomdp.solve.vi.ValueIterationStats;
-import libpomdp.solve.vi.exact.OnePassStd;
+import libpomdp.solve.offline.MaxIterationsCriteria;
+import libpomdp.solve.offline.vi.ValueIterationStats;
+import libpomdp.solve.offline.exact.OnePassStd;
 
 public class OnePassTest {
 

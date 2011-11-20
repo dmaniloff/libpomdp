@@ -9,12 +9,12 @@
  * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
 
-package libpomdp.parser.java;
+package libpomdp.parser;
 
 // imports
-import libpomdp.common.java.CustomVector;
-import libpomdp.common.java.ValueFunction;
-import libpomdp.common.java.std.ValueFunctionStd;
+import libpomdp.common.CustomVector;
+import libpomdp.common.ValueFunction;
+import libpomdp.common.std.ValueFunctionStd;
 
 import org.antlr.runtime.ANTLRFileStream;
 import org.antlr.runtime.CommonTokenStream;

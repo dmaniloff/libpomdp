@@ -6,9 +6,9 @@
  * Copyright (c) 2009, 2010 Diego Maniloff  
  --------------------------------------------------------------------------- */
 
-package libpomdp.online.java;
+package libpomdp.solve.online;
 
-import libpomdp.common.java.BeliefState;
+import libpomdp.common.BeliefState;
 
 public abstract class OrNode {
 

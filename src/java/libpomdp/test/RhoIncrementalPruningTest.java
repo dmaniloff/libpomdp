@@ -4,13 +4,13 @@ import libpomdp.common.rho.RhoPomdp;
 import libpomdp.common.std.BeliefStateStd;
 import libpomdp.common.std.PomdpStd;
 import libpomdp.parser.FileParser;
-import libpomdp.solve.Criteria;
-import libpomdp.solve.MaxIterationsCriteria;
-import libpomdp.solve.vi.ValueConvergenceCriteria;
-import libpomdp.solve.vi.ValueIterationStats;
-import libpomdp.solve.vi.exact.IncrementalPruningStd;
-import libpomdp.solve.vi.pointbased.PointBasedStd;
-import libpomdp.solve.vi.pointbased.PointSet;
+import libpomdp.solve.offline.Criteria;
+import libpomdp.solve.offline.MaxIterationsCriteria;
+import libpomdp.solve.offline.vi.ValueConvergenceCriteria;
+import libpomdp.solve.offline.vi.ValueIterationStats;
+import libpomdp.solve.offline.exact.IncrementalPruningStd;
+import libpomdp.solve.offline.pointbased.PointBasedStd;
+import libpomdp.solve.offline.pointbased.PointSet;
 
 public class RhoIncrementalPruningTest {
 

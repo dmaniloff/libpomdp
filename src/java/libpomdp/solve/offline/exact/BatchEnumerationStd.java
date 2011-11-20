@@ -1,12 +1,12 @@
-package libpomdp.solve.vi.exact;
+package libpomdp.solve.offline.exact;
 
 import libpomdp.common.AlphaVector;
 import libpomdp.common.std.BeliefMdpStd;
 import libpomdp.common.std.PomdpStd;
 import libpomdp.common.std.ValueFunctionStd;
-import libpomdp.solve.IterationStats;
-import libpomdp.solve.vi.ValueIterationStats;
-import libpomdp.solve.vi.ValueIterationStd;
+import libpomdp.solve.offline.IterationStats;
+import libpomdp.solve.offline.vi.ValueIterationStats;
+import libpomdp.solve.offline.vi.ValueIterationStd;
 
 
 public class BatchEnumerationStd extends ValueIterationStd {

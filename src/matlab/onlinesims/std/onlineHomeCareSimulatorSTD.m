@@ -24,10 +24,10 @@ javaaddpath '../../../../../dist/libpomdp.jar'
 
 % java imports
 import symPerseusJava.*;
-import libpomdp.common.java.*;
-import libpomdp.common.java.standard.*;
-import libpomdp.online.java.*;
-import libpomdp.offline.java.*;
+import libpomdp.common.*;
+import libpomdp.common.std.*;
+import libpomdp.solve.online.*;
+import libpomdp.solve.offline.*;
 
 %% load problem
 standardProb = PomdpStandard  ('../../../problems/homecare/homecare.pomdp');

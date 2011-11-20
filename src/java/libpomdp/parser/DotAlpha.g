@@ -13,14 +13,14 @@ grammar DotAlpha;
  * LEXER INITIALIZATIONS
  *------------------------------------------------------------------*/
 @lexer::header {
-    package libpomdp.parser.java;
+    package libpomdp.parser;
 }
 
 /*------------------------------------------------------------------
  * PARSER INITIALIZATIONS
  *------------------------------------------------------------------*/
 @header {
-    package libpomdp.parser.java;
+    package libpomdp.parser;
 }
 
 @members {

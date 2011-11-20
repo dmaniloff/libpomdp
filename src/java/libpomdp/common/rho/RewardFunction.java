@@ -2,7 +2,7 @@ package libpomdp.common.rho;
 
 import libpomdp.common.BeliefState;
 import libpomdp.common.std.ValueFunctionStd;
-import libpomdp.solve.vi.pointbased.PointSet;
+import libpomdp.solve.offline.pointbased.PointSet;
 
 public abstract class RewardFunction {
 

@@ -7,14 +7,14 @@
  * Copyright (c) 2010 Mauricio Araya
  --------------------------------------------------------------------------- */
 
-package libpomdp.parser.java;
+package libpomdp.parser;
 
 // imports
 import java.io.Serializable;
 import java.util.ArrayList;
 
-import libpomdp.common.java.CustomMatrix;
-import libpomdp.common.java.CustomVector;
+import libpomdp.common.CustomMatrix;
+import libpomdp.common.CustomVector;
 
 public class PomdpSpecStd implements Serializable{
 

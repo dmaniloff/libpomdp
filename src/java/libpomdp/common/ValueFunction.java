@@ -7,7 +7,7 @@
  * Copyright (c) 2009, 2010 Diego Maniloff 
  --------------------------------------------------------------------------- */
 
-package libpomdp.common.java;
+package libpomdp.common;
 
 
 /** Representation of a set of alpha vectors and their associated actions for direct control (if possible)

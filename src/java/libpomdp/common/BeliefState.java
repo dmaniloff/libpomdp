@@ -8,7 +8,7 @@
  * Copyright (c) 2009, 2010 Diego Maniloff, Mauricio Araya 
  --------------------------------------------------------------------------- */
 
-package libpomdp.common.java;
+package libpomdp.common;
 
 
 public interface BeliefState {

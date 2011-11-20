@@ -9,7 +9,7 @@
  * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
 
-package libpomdp.parser.java;
+package libpomdp.parser;
 
 // imports
 import org.antlr.runtime.ANTLRFileStream;

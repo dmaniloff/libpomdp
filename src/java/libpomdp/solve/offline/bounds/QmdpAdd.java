@@ -8,14 +8,14 @@
  * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
 
-package libpomdp.solve.java.vi.heuristic;
+package libpomdp.solve.offline.bounds;
 
 // imports
-import libpomdp.common.java.add.PomdpAdd;
-import libpomdp.common.java.add.ValueFunctionAdd;
-import libpomdp.common.java.add.symbolic.DD;
-import libpomdp.common.java.add.symbolic.DDleaf;
-import libpomdp.common.java.add.symbolic.OP;
+import libpomdp.common.add.PomdpAdd;
+import libpomdp.common.add.ValueFunctionAdd;
+import libpomdp.common.add.symbolic.DD;
+import libpomdp.common.add.symbolic.DDleaf;
+import libpomdp.common.add.symbolic.OP;
 
 public class QmdpAdd {
 

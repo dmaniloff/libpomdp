@@ -10,7 +10,7 @@
  * Copyright (c) 2009, 2010 Diego Maniloff 
  --------------------------------------------------------------------------- */
 
-package libpomdp.common.java.add;
+package libpomdp.common.add;
 
 // imports
 import java.io.Serializable;

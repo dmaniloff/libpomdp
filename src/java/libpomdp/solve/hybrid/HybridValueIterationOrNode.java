@@ -8,11 +8,11 @@
  * Copyright (c) 2009, 2010 Diego Maniloff  
  --------------------------------------------------------------------------- */
 
-package libpomdp.hybrid.java;
+package libpomdp.solve.hybrid;
 
-import libpomdp.common.java.BeliefState;
-import libpomdp.online.java.AndNode;
-import libpomdp.online.java.HeuristicSearchOrNode;
+import libpomdp.common.BeliefState;
+import libpomdp.solve.online.AndNode;
+import libpomdp.solve.online.HeuristicSearchOrNode;
 
 public class HybridValueIterationOrNode extends HeuristicSearchOrNode {
 

@@ -1,13 +1,13 @@
 package libpomdp.test;
 
-import libpomdp.common.java.std.PomdpStd;
-import libpomdp.common.java.std.ValueFunctionStd;
-import libpomdp.parser.java.FileParser;
-import libpomdp.solve.java.Criteria;
-import libpomdp.solve.java.MaxIterationsCriteria;
-import libpomdp.solve.java.vi.ValueConvergenceCriteria;
-import libpomdp.solve.java.vi.ValueIterationStats;
-import libpomdp.solve.java.vi.heuristic.BpviStd;
+import libpomdp.common.std.PomdpStd;
+import libpomdp.common.std.ValueFunctionStd;
+import libpomdp.parser.FileParser;
+import libpomdp.solve.offline.Criteria;
+import libpomdp.solve.offline.MaxIterationsCriteria;
+import libpomdp.solve.offline.vi.ValueConvergenceCriteria;
+import libpomdp.solve.offline.vi.ValueIterationStats;
+import libpomdp.solve.offline.bounds.BpviStd;
 
 public class BPVItest {
 

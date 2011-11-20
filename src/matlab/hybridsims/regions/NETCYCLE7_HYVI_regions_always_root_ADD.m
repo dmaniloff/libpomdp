@@ -19,10 +19,10 @@ javaaddpath '../../../../../dist/libpomdp.jar'
  
 % java imports
 import symPerseusJava.*;
-import libpomdp.general.java.*;
-import libpomdp.online.java.*;
-import libpomdp.offline.java.*;
-import libpomdp.hybrid.java.*;
+import libpomdp.common.java.*;
+import libpomdp.solve.online.*;
+import libpomdp.solve.offline.*;
+import libpomdp.solve.hybrid.*;
 
 %% load problem 
 factoredProb  = pomdpAdd  ('../../../problems/network/cycle7.SPUDD');

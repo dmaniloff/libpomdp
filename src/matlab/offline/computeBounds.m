@@ -24,11 +24,11 @@ javaaddpath '../../../../dist/libpomdp.jar'
 
 % java imports
 import symPerseusJava.*;
-import libpomdp.common.java.*;
-import libpomdp.common.java.add.*;
-import libpomdp.online.java.*;
-import libpomdp.offline.java.*;
-import libpomdp.hybrid.java.*;
+import libpomdp.common.*;
+import libpomdp.common.add.*;
+import libpomdp.solve.online.*;
+import libpomdp.solve.offline.*;
+import libpomdp.solve.hybrid.*;
 import libpomdp.problems.rocksample.*;
 
 % add to the matlab path - only needed if we use Poupart's QMDP solver

@@ -8,15 +8,15 @@
  * Copyright (c) 2009, 2010 Diego Maniloff
  --------------------------------------------------------------------------- */
 
-package libpomdp.online.java;
+package libpomdp.solve.online;
 
 import java.io.PrintStream;
 
-import libpomdp.common.java.BeliefState;
-import libpomdp.common.java.CustomVector;
-import libpomdp.common.java.Pomdp;
-import libpomdp.common.java.Utils;
-import libpomdp.common.java.ValueFunction;
+import libpomdp.common.BeliefState;
+import libpomdp.common.CustomVector;
+import libpomdp.common.Pomdp;
+import libpomdp.common.Utils;
+import libpomdp.common.ValueFunction;
 
 import org.math.array.DoubleArray;
 

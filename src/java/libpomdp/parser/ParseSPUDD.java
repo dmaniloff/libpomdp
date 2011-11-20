@@ -1,4 +1,4 @@
-package libpomdp.parser.java;
+package libpomdp.parser;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -7,11 +7,11 @@ import java.io.StreamTokenizer;
 import java.util.HashMap;
 import java.util.Vector;
 
-import libpomdp.common.java.add.symbolic.DD;
-import libpomdp.common.java.add.symbolic.DDleaf;
-import libpomdp.common.java.add.symbolic.DDnode;
-import libpomdp.common.java.add.symbolic.Global;
-import libpomdp.common.java.add.symbolic.OP;
+import libpomdp.common.add.symbolic.DD;
+import libpomdp.common.add.symbolic.DDleaf;
+import libpomdp.common.add.symbolic.DDnode;
+import libpomdp.common.add.symbolic.Global;
+import libpomdp.common.add.symbolic.OP;
 
 public class ParseSPUDD {
     private HashMap existingDds;

@@ -1,8 +1,8 @@
-package libpomdp.solve.java;
+package libpomdp.solve.offline;
 
 import java.util.ArrayList;
 
-import libpomdp.common.java.Pomdp;
+import libpomdp.common.Pomdp;
 
 public abstract class IterationStats {
 

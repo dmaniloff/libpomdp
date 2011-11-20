@@ -7,7 +7,7 @@
  * Copyright (c) 2009, 2010 Diego Maniloff 
  --------------------------------------------------------------------------- */
 
-package libpomdp.common.java.add;
+package libpomdp.common.add;
 
 import libpomdp.common.BeliefState;
 import libpomdp.common.CustomVector;

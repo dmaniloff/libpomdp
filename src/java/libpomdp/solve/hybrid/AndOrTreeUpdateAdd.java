@@ -7,7 +7,7 @@
  * Copyright (c) 2009, 2010 Diego Maniloff 
  --------------------------------------------------------------------------- */
 
-package libpomdp.hybrid.java;
+package libpomdp.solve.hybrid;
 
 // imports
 import java.io.PrintStream;
@@ -22,9 +22,12 @@ import libpomdp.common.add.symbolic.DD;
 import libpomdp.common.add.symbolic.DDleaf;
 import libpomdp.common.add.symbolic.OP;
 import libpomdp.solve.online.AndNode;
+import libpomdp.solve.online.OrNode;
 import libpomdp.solve.online.AndOrTree;
 import libpomdp.solve.online.ExpandHeuristic;
-import libpomdp.solve.online.OrNode;
+import libpomdp.solve.online.HeuristicSearchAndNode;
+import libpomdp.solve.online.HeuristicSearchOrNode;
+import libpomdp.solve.hybrid.HybridValueIterationOrNode;
 
 import org.math.array.DoubleArray;
 import org.math.array.IntegerArray;

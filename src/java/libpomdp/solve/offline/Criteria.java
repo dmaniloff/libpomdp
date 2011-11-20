@@ -1,4 +1,4 @@
-package libpomdp.solve.java;
+package libpomdp.solve.offline;
 
 public abstract class Criteria {
 	public static final int CC_MAXEUCLID=1;

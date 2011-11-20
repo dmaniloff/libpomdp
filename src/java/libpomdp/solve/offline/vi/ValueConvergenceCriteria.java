@@ -1,10 +1,10 @@
-package libpomdp.solve.java.vi;
+package libpomdp.solve.offline.vi;
 
 import libpomdp.common.AlphaVector;
 import libpomdp.common.CustomVector;
 import libpomdp.common.ValueFunction;
-import libpomdp.solve.Criteria;
-import libpomdp.solve.Iteration;
+import libpomdp.solve.offline.Criteria;
+import libpomdp.solve.offline.Iteration;
 
 public class ValueConvergenceCriteria extends Criteria {
 

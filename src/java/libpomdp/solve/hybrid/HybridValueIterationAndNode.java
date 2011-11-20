@@ -6,11 +6,11 @@
  * Copyright (c) 2009, 2010 Diego Maniloff
  --------------------------------------------------------------------------- */
 
-package libpomdp.hybrid.java;
+package libpomdp.solve.hybrid;
 
-import libpomdp.common.java.CustomVector;
-import libpomdp.online.java.HeuristicSearchAndNode;
-import libpomdp.online.java.OrNode;
+import libpomdp.common.CustomVector;
+import libpomdp.solve.online.HeuristicSearchAndNode;
+import libpomdp.solve.online.OrNode;
 
 public class HybridValueIterationAndNode extends HeuristicSearchAndNode {
 

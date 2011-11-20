@@ -2,12 +2,12 @@ package libpomdp.test;
 
 import libpomdp.common.std.PomdpStd;
 import libpomdp.parser.FileParser;
-import libpomdp.solve.Criteria;
-import libpomdp.solve.MaxIterationsCriteria;
-import libpomdp.solve.vi.ValueConvergenceCriteria;
-import libpomdp.solve.vi.ValueIterationStats;
-import libpomdp.solve.vi.pointbased.PbParams;
-import libpomdp.solve.vi.pointbased.PointBasedStd;
+import libpomdp.solve.offline.Criteria;
+import libpomdp.solve.offline.MaxIterationsCriteria;
+import libpomdp.solve.offline.vi.ValueConvergenceCriteria;
+import libpomdp.solve.offline.vi.ValueIterationStats;
+import libpomdp.solve.offline.pointbased.PbParams;
+import libpomdp.solve.offline.pointbased.PointBasedStd;
 
 public class PbviTest {
 

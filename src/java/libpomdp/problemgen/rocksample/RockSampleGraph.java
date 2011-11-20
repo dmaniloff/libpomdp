@@ -6,7 +6,7 @@
  * Copyright (c) 2009, 2010 Diego Maniloff 
  --------------------------------------------------------------------------- */
 
-package libpomdp.problems.rocksample.java;
+package libpomdp.problemgen.rocksample;
 
 public class RockSampleGraph {
     

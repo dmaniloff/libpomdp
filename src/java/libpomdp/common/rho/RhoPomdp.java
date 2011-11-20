@@ -30,7 +30,7 @@ import libpomdp.common.AlphaVector;
 import libpomdp.common.BeliefState;
 import libpomdp.common.std.PomdpStd;
 import libpomdp.common.std.ValueFunctionStd;
-import libpomdp.solve.vi.pointbased.PointSet;
+import libpomdp.solve.offline.pointbased.PointSet;
 
 public class RhoPomdp extends PomdpStd {
 

@@ -6,7 +6,7 @@
  * Copyright (c) 2009, 2010 Diego Maniloff 
  --------------------------------------------------------------------------- */
 
-package libpomdp.common.java;
+package libpomdp.common;
 
 import libpomdp.common.std.BeliefStateStd;
 

@@ -7,7 +7,9 @@
  --------------------------------------------------------------------------- */
 
 
-package libpomdp.common.java;
+package libpomdp.common;
+
+import libpomdp.common.Utils;
 
 import java.io.Serializable;
 

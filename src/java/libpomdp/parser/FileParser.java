@@ -1,10 +1,10 @@
-package libpomdp.parser.java;
+package libpomdp.parser;
 
-import libpomdp.common.java.BeliefMdp;
-import libpomdp.common.java.Pomdp;
-import libpomdp.common.java.add.PomdpAdd;
-import libpomdp.common.java.std.BeliefMdpStd;
-import libpomdp.common.java.std.PomdpStd;
+import libpomdp.common.BeliefMdp;
+import libpomdp.common.Pomdp;
+import libpomdp.common.add.PomdpAdd;
+import libpomdp.common.std.BeliefMdpStd;
+import libpomdp.common.std.PomdpStd;
 
 public class FileParser {
 	

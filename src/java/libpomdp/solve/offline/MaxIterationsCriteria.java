@@ -1,4 +1,4 @@
-package libpomdp.solve.java;
+package libpomdp.solve.offline;
 
 public class MaxIterationsCriteria extends Criteria {
 

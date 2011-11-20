@@ -42,16 +42,16 @@ tokens {
  * LEXER INITIALIZATIONS
  *------------------------------------------------------------------*/
 @lexer::header {
-    package libpomdp.parser.java;
+    package libpomdp.parser;
 }
 
 /*------------------------------------------------------------------
  * PARSER INITIALIZATIONS
  *------------------------------------------------------------------*/
 @header {
-    package libpomdp.parser.java;
-    import libpomdp.common.java.CustomVector;
-    import libpomdp.common.java.CustomMatrix;  
+    package libpomdp.parser;
+    import libpomdp.common.CustomVector;
+    import libpomdp.common.CustomMatrix;  
   
 }
 
