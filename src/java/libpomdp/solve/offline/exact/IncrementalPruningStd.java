@@ -44,7 +44,7 @@ public class IncrementalPruningStd extends ValueIterationStd {
 				iterationStats.registerLp(proj.prune(delta));
 				psi.add(proj);
 			}
-			ValueFunctionStd rewFunc=bmdp.getReward(a);
+			ValueFunctionStd rewFunc=bmdp.getRewardValueFunction(a);
 			//rewFunc.scale(1.0/(double)bmdp.nrObservations());
 			psi.add(rewFunc);
 			//Now Cross sum...

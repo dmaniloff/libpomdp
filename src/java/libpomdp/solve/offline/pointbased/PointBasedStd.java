@@ -91,7 +91,7 @@ public class PointBasedStd extends ValueIterationStd {
 				}
 				alpha_sum.add(max_vect);
 			}
-			AlphaVector re=bmdp.getReward(a).getBestAlpha(bel);
+			AlphaVector re=bmdp.getRewardValueFunction(a).getBestAlpha(bel);
 			alpha_sum.add(re);
 			double alpha_val=alpha_sum.eval(bel);
 			if (alpha_val>alpha_max_val){

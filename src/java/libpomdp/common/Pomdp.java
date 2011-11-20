@@ -34,7 +34,7 @@ public interface Pomdp {
     public CustomMatrix getObservationTable(int a);
     
     /// R(s,a): 1 x s vector
-    public CustomVector getImmediateRewards(int a);
+    public CustomVector getRewardTable(int a);
 
     /// initial belief state
     public BeliefState getInitialBeliefState();

@@ -318,7 +318,7 @@ public class PomdpAdd implements Pomdp {
     
     /// R(s,a)
     @Override
-    public CustomVector getImmediateRewards(int a) {
+    public CustomVector getRewardTable(int a) {
     	DD R = 	OP.sub(problemAdd.reward, problemAdd.actCosts.get(a));
     	return new CustomVector(OP.convert2array(R, staIds));
     }

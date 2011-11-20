@@ -35,7 +35,7 @@ public class OnePassStd extends ValueIterationStd {
 				}	
 				current.push(alpha);
 			}
-			current.crossSum(bmdp.getReward(a));
+			current.crossSum(bmdp.getRewardValueFunction(a));
 		}
 		registerValueIterationStats();
     	return iterationStats;

@@ -190,7 +190,7 @@ public class PomdpStd implements Pomdp, Serializable {
     }
 
     
-    public CustomVector getImmediateRewards(int a) {
+    public CustomVector getRewardTable(int a) {
 	return R[a].copy();
     }
 

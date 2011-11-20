@@ -76,9 +76,9 @@ public class BeliefMdpStd implements BeliefMdp, Serializable {
     }
 
     
-    // / R(s,a): 1 x s vector
-    public CustomVector getImmediateRewards(int a) {
-	return pom.getImmediateRewards(a);
+    /// R(s,a): 1 x s vector
+    public CustomVector getRewardTable(int a) {
+	return pom.getRewardTable(a);
     }
 
     public ValueFunctionStd getRewardValueFunction(int a) {
