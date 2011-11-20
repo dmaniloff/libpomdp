@@ -1,4 +1,12 @@
-package libpomdp.common.java.add.symbolic;
+/**
+ * Author: Pascal Poupart (ppoupart@cs.uwaterloo.ca)
+ * Reference: Chapter 5 of Poupart's PhD thesis
+ * (http://www.cs.uwaterloo.ca/~ppoupart/publications/ut-thesis/ut-thesis.pdf)
+ * NOTE: Parts of this code might have been modified for use by libpomdp
+ *       - Diego Maniloff
+ */
+
+package libpomdp.common.add.symbolic;
 
 class Pair {
 		private DD dd1;
