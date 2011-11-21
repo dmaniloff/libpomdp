@@ -21,7 +21,7 @@ public class BPVItest {
 		algo.addStopCriteria(new MaxIterationsCriteria(50000));
 		algo.addStopCriteria(new ValueConvergenceCriteria(1e-3,Criteria.CC_MAXEUCLID));
 		algo.run();
-		ValueIterationStats stat=algo.getStats();
+		ValueIterationStats stat= (ValueIterationStats) algo.getStats();
 		ValueFunctionStd val=algo.getValueFunction();
 		System.out.println(stat);
 		//System.out.println(val);
