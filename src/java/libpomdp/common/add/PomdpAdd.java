@@ -375,6 +375,13 @@ public class PomdpAdd implements Pomdp {
 	return v;
     }
 
+
+    @Override
+    public String getStateString(int s) {
+	// TODO: similar logic to above method
+        return null;
+    }
+
     // ------------------------------------------------------------------------
     // utility methods particular to this representation
     // ------------------------------------------------------------------------

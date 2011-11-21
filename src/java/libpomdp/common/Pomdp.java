@@ -65,4 +65,9 @@ public interface Pomdp {
  	@return the name of the action*/
     public String getObservationString(int o);
 
+    /** Get the name of a state.
+	@param s the state
+ 	@return the name of the state*/
+    public String getStateString(int s);
+
 } // Pomdp
