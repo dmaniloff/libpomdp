@@ -178,7 +178,7 @@ public class PointBasedStd extends ValueIterationStd {
 		BeliefStateStd bnew=null;
 		for (int a=0;a<bmdp.nrActions();a++){		
 			int o = bmdp.getRandomObservation(b, a);
-			BeliefStateStd ba = (BeliefStateStd) bmdp.sampleNextBelief(b, a, o);
+			BeliefStateStd ba = (BeliefStateStd) bmdp.nextBeliefState(b, a, o);
 			double dist=distance(ba,fullBset);
 			if (dist > max_dist){
 				max_dist=dist;
@@ -200,7 +200,7 @@ public class PointBasedStd extends ValueIterationStd {
 				double sum_err=0;
 				for (int o=0;o<bmdp.nrObservations();o++){
 					double err=(bmdp.getTau(a, o).mult(b.getPoint())).norm(1.0);
-					err*=minError(bmdp.sampleNextBelief(b, a, o),testBset);
+					err*=minError(bmdp.nextBeliefState(b, a, o),testBset);
 					sum_err+=err;
 				}
 				
@@ -214,14 +214,14 @@ public class PointBasedStd extends ValueIterationStd {
 		max_val=Double.NEGATIVE_INFINITY;
 		for (int o=0;o<bmdp.nrObservations();o++){
 			double err=(bmdp.getTau(aprime, o).mult(bprime.getPoint())).norm(1.0);
-			err*=minError(bmdp.sampleNextBelief(bprime, aprime, o),testBset);
+			err*=minError(bmdp.nextBeliefState(bprime, aprime, o),testBset);
 			if (err>max_val){
 				max_val=err;
 				oprime=o;
 			}
 		}
 		testBset.remove(bprime);
-		return (BeliefStateStd) (bmdp.sampleNextBelief(bprime, aprime, oprime));
+		return (BeliefStateStd) (bmdp.nextBeliefState(bprime, aprime, oprime));
 	}
 
 	private double minError(BeliefState beliefState,PointSet bset){
