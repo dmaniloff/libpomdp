@@ -84,7 +84,7 @@ public class AlphaVector implements Comparable<AlphaVector> {
 		@return zero if (almost) equal, positive if is higher, and negative if is lower;
 	*/
 	public int compareTo(AlphaVector vec, double delta) {
-		return(v.compare(vec.v));
+		return(v.compareTo(vec.v));
 	}
 	
 
