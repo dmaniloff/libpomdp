@@ -224,12 +224,12 @@ public class PomdpStd implements Pomdp, Serializable {
 	return actStr[a];
     }
 
-    
-    public String getObservationString(int o) {
+    @Override
+    public String getObservationString(int o) {	
 	return obsStr[o];
     }
 
-    
+    @Override
     public String getStateString(int s) {
 	return staStr[s];
     }
