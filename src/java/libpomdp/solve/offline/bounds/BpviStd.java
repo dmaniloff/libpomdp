@@ -41,7 +41,7 @@ public class BpviStd extends ValueIterationStd {
 		startTimer();
 		old=current.copy();
     	for(int a=0; a<pomdp.nrActions(); a++) {
-    	    AlphaVector vec=current.getAlpha(a);
+    	    AlphaVector vec=current.getAlphaVector(a);
     	    AlphaVector res=pomdp.mdpValueUpdate(vec,a);
     	    vec.set(res);
     	}

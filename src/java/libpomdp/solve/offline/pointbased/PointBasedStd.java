@@ -81,7 +81,7 @@ public class PointBasedStd extends ValueIterationStd {
 				double max_val=Double.NEGATIVE_INFINITY;
 				AlphaVector max_vect=null;
 				for (int idx=0;idx<vf.size();idx++){
-					AlphaVector prev= vf.getAlpha(idx);
+					AlphaVector prev= vf.getAlphaVector(idx);
 					AlphaVector vect=bmdp.projection(prev, a, o);
 					double val=vect.eval(bel);
 					if (val>max_val){

@@ -25,8 +25,8 @@ public class ValueConvergenceCriteria extends Criteria {
 		oldv.sort();
 		double conv=0;
 		for(int j=0; j<newv.size(); j++){
-			AlphaVector newAlpha=newv.getAlpha(j);
-			AlphaVector oldAlpha=oldv.getAlpha(j);
+			AlphaVector newAlpha=newv.getAlphaVector(j);
+			AlphaVector oldAlpha=oldv.getAlphaVector(j);
 			if (newAlpha.getAction()!=oldAlpha.getAction()){
 				System.out.println("Eval(" + i.getStats().iterations + ") = Inf");
 				return false;

@@ -18,13 +18,11 @@ public interface ValueFunction {
     
     public double V(BeliefState b);
 
-    public CustomVector getVector(int idx);
-
     public int[] getActions();
 
     public int size();
     
-    public AlphaVector getAlpha(int idx);
+    public AlphaVector getAlphaVector(int idx);
 
     public CustomVector getAlphaValues(int idx);
     

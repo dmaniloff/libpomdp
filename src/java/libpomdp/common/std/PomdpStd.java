@@ -254,7 +254,7 @@ public class PomdpStd implements Pomdp, Serializable {
     public AlphaVector mdpValueUpdate(AlphaVector alpha, int a) {
 	CustomVector vec = getTransitionTable(a).mult(getGamma(),
 		alpha.getVectorRef());
-	vec.add(getRewardValueFunction(a).getAlpha(0).getVectorRef());
+	vec.add(getRewardValueFunction(a).getAlphaVector(0).getVectorRef());
 	return (new AlphaVector(vec, a));
     }
 

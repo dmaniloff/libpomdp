@@ -75,7 +75,6 @@ public class ValueFunctionAdd implements ValueFunction, Serializable {
     }
 
 
-    @Override
     public CustomVector getVector(int idx) {
         double[][] val=OP.convert2array(vAdd, staIds);
         return new CustomVector(val[idx]);
@@ -89,7 +88,7 @@ public class ValueFunctionAdd implements ValueFunction, Serializable {
     }
 
     
-    public AlphaVector getAlpha(int idx) {
+    public AlphaVector getAlphaVector(int idx) {
 	// TODO Auto-generated method stub
 	return null;
     }

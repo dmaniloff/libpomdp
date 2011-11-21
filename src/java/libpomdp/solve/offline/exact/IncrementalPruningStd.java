@@ -37,7 +37,7 @@ public class IncrementalPruningStd extends ValueIterationStd {
 			for (int o=0;o<bmdp.nrObservations();o++){
 				ValueFunctionStd proj = new ValueFunctionStd(bmdp.nrStates());
 				for (int idx=0;idx<old.size();idx++){
-					AlphaVector alpha=old.getAlpha(idx);
+					AlphaVector alpha=old.getAlphaVector(idx);
 					AlphaVector res=bmdp.projection(alpha, a, o);
 					proj.push(res);
 				}

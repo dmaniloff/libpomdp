@@ -101,7 +101,7 @@ public class ValueFunctionStd implements ValueFunction, Serializable {
 		return(set.add(ent));
 	}
 	
-	public AlphaVector getAlpha(int idx) {
+	public AlphaVector getAlphaVector(int idx) {
 		return set.get(idx);
 	} 
 	
@@ -117,9 +117,10 @@ public class ValueFunctionStd implements ValueFunction, Serializable {
 	}
 
 	public CustomVector getAlphaValues(int idx) {
-		return(getAlpha(idx).getVectorCopy());
+		return(getAlphaVector(idx).getVectorCopy());
 	}
 	
+
 	public int getAlphaAction(int idx) {
 		return(set.get(idx).getAction());
 	}
@@ -318,7 +319,7 @@ public class ValueFunctionStd implements ValueFunction, Serializable {
 
 	public void merge(ValueFunctionStd vfA) {
 		for (int i=0;i<vfA.size();i++){
-    		push(vfA.getAlpha(i).copy());
+    		push(vfA.getAlphaVector(i).copy());
     	}
 	}
 
