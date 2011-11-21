@@ -122,28 +122,4 @@ public class ValueFunctionAdd implements ValueFunction, Serializable {
 	return vAdd;
     }
 
-	public CustomVector getAlphaValues(int idx) {
-		double[][] val=OP.convert2array(vAdd, staIds);
-		return new CustomVector(val[idx]);
-	}
-
-	public int size() {
-		return a.length;
-	}
-
-	public CustomVector getVectorRef(int idx) {
-		System.out.println("Warning: getVectorRef is not implemented for ADD representation, passing a copy...");
-		return getAlphaValues(idx);
-	}
-
-	public void sort() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public AlphaVector getAlpha(int idx) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 } // valueFunctionAdd
