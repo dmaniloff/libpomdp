@@ -3,6 +3,7 @@ package libpomdp.solve.offline.vi;
 import libpomdp.common.AlphaVector;
 import libpomdp.common.CustomVector;
 import libpomdp.common.ValueFunction;
+import libpomdp.common.std.ValueFunctionStd;
 import libpomdp.solve.offline.Criteria;
 import libpomdp.solve.offline.Iteration;
 
@@ -21,8 +22,8 @@ public class ValueConvergenceCriteria extends Criteria {
 			System.out.println("Eval(" + i.getStats().iterations + ") = Inf");
 			return false;
 		}
-		newv.sort();
-		oldv.sort();
+		((ValueFunctionStd)newv).sort();
+		((ValueFunctionStd)oldv).sort();
 		double conv=0;
 		for(int j=0; j<newv.size(); j++){
 			AlphaVector newAlpha=newv.getAlphaVector(j);
