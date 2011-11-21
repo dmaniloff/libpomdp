@@ -55,7 +55,7 @@ public class QmdpAdd {
 		System.arraycopy(factoredProb.T[a], 0, adds, 1, factoredProb.T[a].length);
 		adds[adds.length-1] = Vmdp;	
 		// Vmdp = \max_a {R(s,a) + \gamma \sum_{s'} T(s,a,s') Vmdp(s')}		
-		Vqmdp[a]            = OP.addMultVarElim(adds, factoredProb.staIdsPr);
+		Vqmdp[a]            = OP.addMultVarElim(adds, factoredProb.getstaIdsPr());
 		Vqmdp[a]            = OP.add(factoredProb.R[a], Vqmdp[a]);
 	    }
 
@@ -73,7 +73,7 @@ public class QmdpAdd {
 	} // qmdp loop
 
 	// return
-	return new ValueFunctionAdd(Vqmdp, factoredProb.staIds, policy);
+	return new ValueFunctionAdd(Vqmdp, factoredProb.getstaIds(), policy);
 
     } // getqmdpAdd
 
