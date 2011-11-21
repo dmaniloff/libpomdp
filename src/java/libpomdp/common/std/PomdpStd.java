@@ -68,14 +68,14 @@ public class PomdpStd implements Pomdp, Serializable {
     private double gamma;
 
     // action names
-    private String actStr[];
+    private String[] actStr;
 
     // observation names
-    private String obsStr[];
+    private String[] obsStr;
 
     // state names
-    private String staStr[];
-
+    private String[] staStr;
+    
     // starting belief
     private BeliefStateStd initBelief;
 
