@@ -109,13 +109,13 @@ public class PointBasedStd extends ValueIterationStd {
 			BeliefState bel=testBset.getRandom();
 			bset.remove(bel);
 			AlphaVector alpha=backup(bel,old);
-			if (alpha.eval(bel) >= old.value(bel))
+			if (alpha.eval(bel) >= old.V(bel))
 				newv.push(alpha);
 			else
 				newv.push(old.getBestAlpha(bel));
 			PointSet tabu=new PointSet();
 			for (BeliefState beltest:testBset){
-				if (newv.value(beltest) >= old.value(beltest)){
+				if (newv.V(beltest) >= old.V(beltest)){
 					tabu.add(beltest);
 				}
 			}
