@@ -20,43 +20,34 @@ import libpomdp.common.ValueFunction;
 
 import org.math.array.DoubleArray;
 
-public class AndOrTree {
+public class AndOrTree extends AbstractAndOrTree {
 
     // ------------------------------------------------------------------------
     // properties
     // ------------------------------------------------------------------------
 
-    // Pomdp problem specification
-    protected Pomdp problem;
-
     // expansion heuristic 
     protected ExpandHeuristic expH;
-
-    // offline computed bounds
-    protected ValueFunction offlineLower;
-    protected ValueFunction offlineUpper;
-
-    // root of the tree
-    protected HeuristicSearchOrNode root;
 
     // ------------------------------------------------------------------------
     // methods
     // ------------------------------------------------------------------------
 
     /// constructor
-    public AndOrTree(Pomdp prob, ExpandHeuristic h, ValueFunction L, ValueFunction U) {
-	this.root         = new HeuristicSearchOrNode();
-	this.problem      = prob;
-	this.expH         = h;
-	this.offlineLower = L;
-	this.offlineUpper = U;
+    public AndOrTree(Pomdp prob, 
+		     HeuristicSearchOrNode root,
+		     ValueFunction L, 
+		     ValueFunction U,
+		     ExpandHeuristic h) {
+	super(prob, root, L, U);
+	this.expH = h;
     }
 
     /// initializer
-    public void init(BeliefState belief) {
-	this.root.init(belief, -1, null);
-	this.root.u = offlineUpper.V(this.root.getBeliefState());
-	this.root.l = offlineLower.V(this.root.getBeliefState());
+    public void init(BeliefState startingBelief) {
+	getRoot().init(startingBelief, -1, null);
+	getRoot().u = getUB().V(startingBelief);
+	getRoot().l = getLB().V(startingBelief);
 	// should have separate plan ids to avoid this!
     }
 
@@ -79,25 +70,25 @@ public class AndOrTree {
 	double old_l = en.l;
 	double old_u = en.u;	
 	// allocate space for the children AND nodes
-	en.initChildren(problem.nrActions());
+	en.initChildren(getProblem().nrActions());
 	// iterate through the AND nodes
-	for (int action = 0; action < problem.nrActions(); action++) {
+	for (int action = 0; action < getProblem().nrActions(); action++) {
 	    // type-cast, doon't yet know of a nicer way to do this
 	    a = en.getChild(action); 	
 	    // initialize this node, precompute Rba
-	    a.init(action, en, problem.expectedImmediateReward(en.getBeliefState(), action));
+	    a.init(action, en, getProblem().expectedImmediateReward(en.getBeliefState(), action));
 	    // pre-compute observation probabilities for the children of this node
-	    pOba = problem.observationProbabilities(en.getBeliefState(), action);
+	    pOba = getProblem().observationProbabilities(en.getBeliefState(), action);
 	    // allocate space for the children OR nodes, the ones with poba == 0 
 	    // are left null 
-	    //a.children = new HeuristicSearchOrNode[problem.getnrObs()];
-	    //for(int observation = 0; observation < problem.getnrObs(); observation++) {
+	    //a.children = new HeuristicSearchOrNode[getProblem().getnrObs()];
+	    //for(int observation = 0; observation < getProblem().getnrObs(); observation++) {
 	    //if(pOba[observation] != 0)
 	    //a.children[observation] = new HeuristicSearchOrNode();
 	    //}
-	    a.initChildren(problem.nrObservations(), pOba);
+	    a.initChildren(getProblem().nrObservations(), pOba);
 	    // iterate through new fringe OR nodes
-	    for (int observation = 0; observation < problem.nrObservations(); observation++) {
+	    for (int observation = 0; observation < getProblem().nrObservations(); observation++) {
 		// type-cast, doon't yet know of a nicer way to do this
 		o = a.getChild(observation);
 		// ZERO-PROB OBSERVATIONS:
@@ -109,11 +100,11 @@ public class AndOrTree {
 		    continue;
 		} 
 		// initialize this node, set its poba
-		o.init(problem.nextBeliefState(en.getBeliefState(), action, observation), observation, a);
+		o.init(getProblem().nextBeliefState(en.getBeliefState(), action, observation), observation, a);
 		o.getBeliefState().setPoba(pOba.get(observation));
 		// compute upper and lower bounds for this node
-		o.u = offlineUpper.V(o.getBeliefState());
-		o.l = offlineLower.V(o.getBeliefState());		
+		o.u = getUB().V(o.getBeliefState());
+		o.l = getLB().V(o.getBeliefState());		
 		// H(b)
 		o.h_b = expH.h_b(o);
 		// H(b,a,o)	
@@ -174,7 +165,7 @@ public class AndOrTree {
 	HeuristicSearchAndNode a;
 	HeuristicSearchOrNode  o;
 
-	while(n != root) { // reference comparison
+	while(n != getRoot()) { // reference comparison
 	    // get the AND parent node
 	    a = n.getParent();
 	    // update the andNode that is parent of n
@@ -214,7 +205,7 @@ public class AndOrTree {
 	    // o.belief.getpoba() == 0 for null HeuristicSearchOrNodes anyway
 	    if(o != null) Lba += o.getBeliefState().getPoba() * o.l;
 	}
-	return a.rba + problem.getGamma() * Lba;
+	return a.rba + getProblem().getGamma() * Lba;
     }
 
     /// U(b,a) = R(b,a) + \gamma \sum_o P(o|b,a) U(tao(b,a,o))
@@ -224,7 +215,7 @@ public class AndOrTree {
 	    // o.belief.getpoba() == 0 for null HeuristicSearchOrNodes anyway
 	    if(o != null) Uba += o.getBeliefState().getPoba() * o.u;
 	}
-	return a.rba + problem.getGamma() * Uba;
+	return a.rba + getProblem().getGamma() * Uba;
     }
 
     /// L(b) = max{max_a L(b,a),L(b)}
@@ -249,26 +240,28 @@ public class AndOrTree {
 	return Math.min(maxUba, o.u);
     }
 
+    
+    @Override
     public HeuristicSearchOrNode getRoot() {
-	return root;
+    	return (HeuristicSearchOrNode) super.getRoot();
     }
 
-    /// if I understood the gc's behaviour
-    /// correctly, moving the root of the tree
-    /// and setting the new root's parent to null
-    /// automagically deletes all the useless subtrees
-    public void moveTree(HeuristicSearchOrNode newroot) {
-	this.root = newroot;
-	this.root.disconnect();
-    }    
+    // /// if I understood the gc's behaviour
+    // /// correctly, moving the root of the tree
+    // /// and setting the new root's parent to null
+    // /// automagically deletes all the useless subtrees
+    // public void moveTree(HeuristicSearchOrNode newroot) {
+    // 	this.root = newroot;
+    // 	this.root.disconnect();
+    // }    
 
     /// return best action given the current state
     /// of expansion in the whole tree
     /// this function is randomized!!!!
     public int currentBestAction() {
 	// construct array with L(b,a)
-	double Lba[] = new double[problem.nrActions()];
-	for(HeuristicSearchAndNode a : root.getChildren())
+	double Lba[] = new double[getProblem().nrActions()];
+	for(HeuristicSearchAndNode a : getRoot().getChildren())
 	    Lba[a.getAct()] = a.l;
 	return Utils.argmax(Lba);
     }
@@ -280,11 +273,11 @@ public class AndOrTree {
     /// the best action for every belief node in the tree and updating it
     public boolean actionIsEpsOptimal(int act, double OPT_EPSILON) {
 	// first condition
-	if (Math.abs(root.u - root.l) < OPT_EPSILON) return true;
+	if (Math.abs(getRoot().u - getRoot().l) < OPT_EPSILON) return true;
 	// second condition
 	boolean opt1 = true;
-	for(HeuristicSearchAndNode a : root.getChildren()) {
-	    if ((a.getAct() != act) && (root.l < a.u)) {
+	for(HeuristicSearchAndNode a : getRoot().getChildren()) {
+	    if ((a.getAct() != act) && (getRoot().l < a.u)) {
 		opt1 = false;
 		break;
 	    }
@@ -298,13 +291,13 @@ public class AndOrTree {
     //	boolean opt1 = true;
     //	boolean opt2 = false;
     //	int bestA = currentBestAction();
-    //	for(andNode a : root.children) {
-    //	    if ((root.l < a.u) && (a.getAct() != bestA)) { // BUGG
+    //	for(andNode a : getRoot().children) {
+    //	    if ((getRoot().l < a.u) && (a.getAct() != bestA)) { // BUGG
     //		opt1 = false;
     //		break;
     //	    }
     //	}
-    //	if (Math.abs(root.u - root.l) < OPT_EPSILON)
+    //	if (Math.abs(getRoot().u - getRoot().l) < OPT_EPSILON)
     //	    opt2 = true;
     //	// either condition is enough
     //	return opt1 || opt2;
@@ -316,24 +309,24 @@ public class AndOrTree {
     /// this function is randomized!!!!
     //    public int currentBestActionAtNode(HeuristicSearchOrNode on) {
     //	// construct array with L(b,a)
-    //	double Lba[] = new double[problem.getnrAct()];
+    //	double Lba[] = new double[getProblem().getnrAct()];
     //	for(andNode a : on.children)
     //	    Lba[a.getAct()] = a.l;
     //	return Utils.argmax(Lba);
     //    }
 
-    public ValueFunction getLB() {
-	return offlineLower;
-    }
+    // public ValueFunction getLB() {
+    // 	return offlineLower;
+    // }
 
-    public ValueFunction getUB() {
-	return offlineUpper;
-    }
+    // public ValueFunction getUB() {
+    // 	return offlineUpper;
+    // }
 
     /// output a dot-formatted file to print the tree
     /// starting from a given HeuristicSearchOrNode
     public void printdot(String filename) {
-	HeuristicSearchOrNode root = this.root;
+	HeuristicSearchOrNode root = getRoot();
 	PrintStream out = null;
 	try {
 	    out = new 
@@ -385,7 +378,7 @@ public class AndOrTree {
     protected void andprint(HeuristicSearchAndNode  a, PrintStream out) {
 	// print this node
 	out.format(a.hashCode() + "[label=\"" + 
-		"a=" + problem.getActionString(a.getAct()) + "\\n" + 	
+		"a=" + getProblem().getActionString(a.getAct()) + "\\n" + 	
 		"U(b,a)= %.2f\\n" +
 		"L(b,a)= %.2f" +
 		"\"];\n", a.u, a.l);
@@ -394,7 +387,7 @@ public class AndOrTree {
 	    if (!(o==null))		
 		out.format(a.hashCode() + "->" + o.hashCode() + 
 			"[label=\"" +
-			"obs: " + problem.getObservationString(o.getObs()) + "\\n" +
+			"obs: " + getProblem().getObservationString(o.getObs()) + "\\n" +
 			"P(o|b,a)= %.2f\\n" + 
 			"H(b,a,o)= %.2f" +  
 			"\"];\n",
