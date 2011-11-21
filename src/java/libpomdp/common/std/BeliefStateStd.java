@@ -76,7 +76,7 @@ public class BeliefStateStd implements BeliefState, Serializable {
 
 
     public BeliefState copy() {
-	return (new BeliefStateStandard(bSparse,poba));
+	return (new BeliefStateStd(bSparse,poba));
     }
 
 

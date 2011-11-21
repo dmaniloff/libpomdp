@@ -17,7 +17,7 @@ public class DotPomdpParserStandard {
 
     //static PomdpSpecStandard dotpomdpSpec = null;
 
-    public static PomdpSpecStandard parse (String filename) throws Exception {
+    public static PomdpSpecStd parse (String filename) throws Exception {
 	DotPomdpLexer lex = new DotPomdpLexer(new ANTLRFileStream(filename));
        	CommonTokenStream tokens = new CommonTokenStream(lex);
         DotPomdpParser parser = new DotPomdpParser(tokens);
