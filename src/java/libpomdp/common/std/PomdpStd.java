@@ -239,7 +239,7 @@ public class PomdpStd implements Pomdp, Serializable {
     }
 
     /// ???
-    public int sampleObservation(BeliefStateStd bel, int a) {
+    public int getRandomObservation(BeliefStateStd bel, int a) {
 	double roulette = Utils.gen.nextDouble();
 	CustomVector vect = O[a].mult(bel.getPoint());
 	double sum = 0.0;

@@ -135,7 +135,7 @@ public class BeliefMdpStd implements BeliefMdp, Serializable {
     }
 
     public int getRandomObservation(BeliefStateStd bel, int a) {
-	return pom.sampleObservation(bel, a);
+	return pom.getRandomObservation(bel, a);
     }
 
     public AlphaVector projection(AlphaVector alpha, int a, int o) {
