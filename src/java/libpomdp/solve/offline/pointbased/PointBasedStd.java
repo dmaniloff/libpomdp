@@ -137,8 +137,8 @@ public class PointBasedStd extends ValueIterationStd {
 		newBset = new PointSet();
 		if (fullBset == null) {
 			fullBset = new PointSet();
-			fullBset.add(bmdp.getInitialBelief());
-			newBset.add(bmdp.getInitialBelief());
+			fullBset.add(bmdp.getInitialBeliefState());
+			newBset.add(bmdp.getInitialBeliefState());
 		}
 		if (fullBset.size() >= params.getMaxTotalPoints())
 			return;

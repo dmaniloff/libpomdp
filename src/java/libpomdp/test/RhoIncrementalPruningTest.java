@@ -36,7 +36,7 @@ public class RhoIncrementalPruningTest {
 
 	private static PointSet randomPoints(PomdpStd pomdp, int size) {
 		PointSet bset=new PointSet();
-		bset.add(pomdp.getInitialBelief());
+		bset.add(pomdp.getInitialBeliefState());
 		PointSet testBset=bset.copy();
 		while (bset.size() < size) {
 			BeliefStateStd point = null;
