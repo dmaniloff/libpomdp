@@ -91,12 +91,21 @@
 	</exec>
   	 <echo message="Running Sondik's One Pass Exact Algorithm"/>
     <java classname="libpomdp.test.OnePassTest" classpathref="classpath"/>
-  	 <echo message="Running Hauskretcht's Blind Policy Value Iteration Heuristic"/>
-    <java classname="libpomdp.test.BpviTest" classpathref="classpath"/>
-  	 <echo message="Running Littman's QMDP Value Iteration Heuristic"/>
-    <java classname="libpomdp.test.QmdpTest" classpathref="classpath"/>
   </target>
 
+  <target name="stdboundstest" depends="dist">
+    <echo message="Running STD Blind Policy Value Iteration..."/>
+    <java classname="libpomdp.test.BpviTestStd" classpathref="classpath"/>
+    <echo message="Running STD QMDP Value Iteration..."/>
+    <java classname="libpomdp.test.QmdpTestStd" classpathref="classpath"/>
+  </target>
+
+  <target name="addboundstest" depends="dist">
+    <echo message="Running ADD Blind Policy Value Iteration..."/>
+    <java classname="libpomdp.test.BpviTestAdd" classpathref="classpath"/>
+    <echo message="Running ADD QMDP Value Iteration..."/>
+    <java classname="libpomdp.test.QmdpTestAdd" classpathref="classpath"/>
+  </target>
 
   <target name="rhotest">
    <!-- <echo message="Running RHO PBVI Algorithm"/>
