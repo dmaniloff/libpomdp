@@ -23,8 +23,13 @@ public class BpviAdd {
     // parameters
     final int MAXITERATIONS = 500;
     final double EPSILON    = 1e-5;
+    PomdpAdd factoredProb;
+
+    public BpviAdd(PomdpAdd problem) {
+        this.factoredProb = problem;
+    }
     
-    public ValueFunctionAdd getBlindAdd(PomdpAdd factoredProb) {
+    public ValueFunctionAdd getBlindAdd() {
 
 	// decls
 	DD[] adds;

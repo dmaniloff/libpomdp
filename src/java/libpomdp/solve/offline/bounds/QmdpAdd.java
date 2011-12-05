@@ -22,8 +22,13 @@ public class QmdpAdd {
     // parameters
     final int MAXITERATIONS = 500;
     final double EPSILON    = 1e-5;
+    PomdpAdd factoredProb;
 
-    public ValueFunctionAdd getqmdpAdd(PomdpAdd factoredProb) {
+    public QmdpAdd(PomdpAdd problem) {
+        this.factoredProb = problem;
+    }
+
+    public ValueFunctionAdd getQmdpAdd() {
 
 	// decls
 	DD[] adds;
