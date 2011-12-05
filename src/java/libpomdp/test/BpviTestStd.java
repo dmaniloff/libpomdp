@@ -8,7 +8,7 @@ import libpomdp.solve.offline.vi.ValueConvergenceCriteria;
 import libpomdp.solve.offline.vi.ValueIterationStats;
 import libpomdp.solve.offline.bounds.BpviStd;
 
-public class BpviTest {
+public class BpviTestStd {
 
 	/**
 	 * @param args
