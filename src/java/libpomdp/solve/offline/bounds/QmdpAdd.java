@@ -28,7 +28,7 @@ public class QmdpAdd {
         this.factoredProb = problem;
     }
 
-    public ValueFunctionAdd getQmdpAdd() {
+    public ValueFunctionAdd getValueFunction() {
 
 	// decls
 	DD[] adds;

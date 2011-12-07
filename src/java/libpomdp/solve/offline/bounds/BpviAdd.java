@@ -28,8 +28,8 @@ public class BpviAdd {
     public BpviAdd(PomdpAdd problem) {
         this.factoredProb = problem;
     }
-    
-    public ValueFunctionAdd getBlindAdd() {
+
+    public ValueFunctionAdd getValueFunction() {
 
 	// decls
 	DD[] adds;
