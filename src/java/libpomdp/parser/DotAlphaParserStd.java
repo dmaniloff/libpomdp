@@ -20,13 +20,23 @@ import org.antlr.runtime.ANTLRFileStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.RecognitionException;
 
+import java.io.IOException;
+
 public class DotAlphaParserStd {    
 
     static Integer actions[];
     static Double  alphas[][];
     
-    public static void parse (String filename) throws Exception {
-	DotAlphaLexer lex = new DotAlphaLexer(new ANTLRFileStream(filename));
+    public static void parse (String filename) {
+        DotAlphaLexer lex = null;
+
+        try {
+            lex = new DotAlphaLexer(new ANTLRFileStream(filename));
+        } catch ( IOException ex ) {
+            ex.printStackTrace();
+            System.exit(1);
+        }
+
        	CommonTokenStream tokens = new CommonTokenStream(lex);
         DotAlphaParser parser = new DotAlphaParser(tokens);
 
@@ -34,6 +44,7 @@ public class DotAlphaParserStd {
             parser.dotAlpha();
         } catch (RecognitionException e)  {
             e.printStackTrace();
+            System.exit(1);
         }
 	
 	actions = parser.getActions();

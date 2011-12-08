@@ -15,11 +15,17 @@ public class FileParser {
 	public static final int PARSE_CASSANDRA_POMDP=0;
 	public static final int PARSE_SPUDD=1;
 	
-	public static Pomdp loadPomdp(String filename,int filetype) throws Exception{
-		Pomdp newPomdp;
+	public static Pomdp loadPomdp(String filename,int filetype) {
+		Pomdp newPomdp = null;
 		switch(filetype){
 		case PARSE_CASSANDRA_POMDP:
-			DotPomdpParserStd.parse(filename);
+			try {
+                DotPomdpParserStd.parse(filename);
+            } catch ( Exception e ) {
+                System.err.println("ERROR");
+                e.printStackTrace();
+                System.exit(1);
+            }
 			PomdpSpecStd data=DotPomdpParserStd.getSpec();
 			String actStr[]=null;
 			if (data.actList != null)
@@ -35,8 +41,9 @@ public class FileParser {
 		case PARSE_SPUDD:
 				newPomdp=new PomdpAdd(filename);
 			break;
-			default:
-				throw new Exception("No such filetype (Not Implemented Yet)\n");
+        default:
+				System.err.println("No such filetype (Not Implemented Yet)\n");
+                System.exit(1);
 		}
 		
 		return newPomdp;
