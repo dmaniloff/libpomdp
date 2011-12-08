@@ -3,7 +3,7 @@
  * ========
  * File: Utils.java
  * Description: useful general routines - everything in this class is static
- * Copyright (c) 2009, 2010 Diego Maniloff 
+ * Copyright (c) 2009, 2010 Diego Maniloff
  * Copyright (c) 2010 Mauricio Araya
  --------------------------------------------------------------------------- */
 
@@ -31,12 +31,12 @@ public class Utils {
 	double[] cumSum = DoubleArray.cumSum(d);
 	double   r      = gen.nextDouble();
 	for(int i=0; i<cumSum.length; i++)
-	    if(cumSum[i] > r) 
+	    if(cumSum[i] > r)
 		return i;
 	return d.length-1;
     }
 
-    
+
     public static Set<Integer> sampleSubset(double d[]) {
 	double[] cumSum = DoubleArray.cumSum(d);
 	double r = gen.nextDouble();
@@ -47,7 +47,7 @@ public class Utils {
 		return s;
 	    }
 	s.add(d.length - 1);
-	return s;	
+	return s;
     }
 
 
@@ -61,7 +61,7 @@ public class Utils {
 	    if (v[c] > maxv) {
 		maxv   = v[c];
 		argmax = c;
-	    } 
+	    }
 	    if (v[c] == maxv) {
 		// randomly decide to change index - this will no be uniform!
 		if (gen.nextInt(2) == 0)
@@ -74,7 +74,7 @@ public class Utils {
 
     // arternative, possibly slower, but more uniform
     public static int argmax2(double v[]) {
-	// declarations	
+	// declarations
 	ArrayList<Integer> repi = new ArrayList<Integer>();
 	int a,r;
 	double maxv;
@@ -82,7 +82,7 @@ public class Utils {
 	// compute maximum
 	maxv = DoubleArray.max(v);
 	// locate repeated values
-	for(a=0; a<v.length; a++) 
+	for(a=0; a<v.length; a++)
 	    if(v[a] == maxv) repi.add(new Integer(a));
 	// randomize among them if necessary
 	//if (repi.size() > 1) System.out.println("will rand, check!!");
@@ -101,7 +101,7 @@ public class Utils {
 	    if (v[c] < minv) {
 		minv   = v[c];
 		argmin = c;
-	    } 
+	    }
 	    if (v[c] == minv) {
 		// randomly decide to change index - this will no be uniform!
 		if (gen.nextInt(2) == 0)
@@ -111,10 +111,10 @@ public class Utils {
 	return argmin;
     }
 
-    
+
     /*
      * horzCat:
-     * 
+     *
      * Similar functionality to MATLAB's [A , B]
      */
     public static int[][] horzCat(int m1[][], int m2[][]) {
@@ -127,7 +127,7 @@ public class Utils {
 	    M[i] = horzCat(m1[i], m2[i]);
 	return M;
     }
-    
+
     public static int[] horzCat(int[] m1, int... m2) {
 	// allocate
 	int tcols = m1.length + m2.length;
@@ -137,11 +137,11 @@ public class Utils {
 	System.arraycopy(m2, 0, M, m1.length, m2.length);
 	return M;
     }
-    
+
     // / concatenate DD arrays
     public static DD[] concat(DD[] first, DD[]... rest) {
 	int totalLength = first.length;
-	for (DD[] array : rest) totalLength += array.length;	
+	for (DD[] array : rest) totalLength += array.length;
 	DD[] result = new DD[totalLength];
 	// copy fist array
 	System.arraycopy(first, 0, result, 0, first.length);
@@ -169,7 +169,7 @@ public class Utils {
 
     /**
      * sdecode:
-     * 
+     *
      * map an assignment id from
      * [0, IntegerArray.product(sizes)-1] to an array with
      * the corresponding joint assignment of each variable
@@ -197,11 +197,11 @@ public class Utils {
 
     /**
      * sencode:
-     * 
+     *
      * encode state, complement of sdecode
      * receives factored state starting from 1
      * and returns factored state in the same form
-     */ 
+     */
     public static int sencode(int fstate[], int n, int sizes[]) {
 	// make sure fstate is in the right range
 	// subtract 1 for format
@@ -231,13 +231,13 @@ public class Utils {
      * @param sampledChildren
      */
     public static CustomVector setZeroNonSampled(CustomVector v, Set<Integer> sampledChildren) {
-	for ( int i = 0; i < v.size(); ++i) 
+	for ( int i = 0; i < v.size(); ++i)
 	    if (!sampledChildren.contains(new Integer(i)))
 		v.set(i, 0.0);
 	return v;
     }
 
-    
+
     // this is not trivial , think about this!
 
 //    public static Object sampleSubset(CustomVector pOba, int n) {
