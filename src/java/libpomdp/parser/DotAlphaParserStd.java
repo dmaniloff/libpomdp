@@ -5,7 +5,7 @@
  * Description: Simple class to parse a .POMDP file and return
  *              an object of type pomdpSpecSparseMTJ with all the problem
  *              parameters
- * Copyright (c) 2009, 2010 Diego Maniloff 
+ * Copyright (c) 2009, 2010 Diego Maniloff
  * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
 
@@ -22,11 +22,11 @@ import org.antlr.runtime.RecognitionException;
 
 import java.io.IOException;
 
-public class DotAlphaParserStd {    
+public class DotAlphaParserStd {
 
     static Integer actions[];
     static Double  alphas[][];
-    
+
     public static void parse (String filename) {
         DotAlphaLexer lex = null;
 
@@ -46,7 +46,7 @@ public class DotAlphaParserStd {
             e.printStackTrace();
             System.exit(1);
         }
-	
+
 	actions = parser.getActions();
 	alphas  = parser.getAlphas();
     }
@@ -58,7 +58,7 @@ public class DotAlphaParserStd {
 	// convert from Integer to int and Double to double
 	for (int i=0; i<s; i++) {
 		CustomVector vec=new CustomVector(d);
-	    for (int j=0; j<d; j++) 
+	    for (int j=0; j<d; j++)
 	    	vec.set(j,alphas[i][j].doubleValue());
 	    v.push(vec,actions[i].intValue());
 	}

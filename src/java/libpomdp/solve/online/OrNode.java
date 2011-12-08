@@ -3,7 +3,7 @@
  * ========
  * File: OrNode.java
  * Description: class for an OR node in an AND-OR tree
- * Copyright (c) 2009, 2010 Diego Maniloff  
+ * Copyright (c) 2009, 2010 Diego Maniloff
  --------------------------------------------------------------------------- */
 
 package libpomdp.solve.online;
@@ -29,13 +29,13 @@ public abstract class OrNode {
     }
 
     public abstract void initChildren(int nrAct);
-    
+
     public abstract AndNode getParent();
 
-    public abstract AndNode getChild(int i); 
-    
+    public abstract AndNode getChild(int i);
+
     public abstract AndNode[] getChildren();
-    
+
     public BeliefState getBeliefState() {
 	return beliefState_;
     }
@@ -51,12 +51,12 @@ public abstract class OrNode {
     public int getSubTreeSize() {
 	return subTreeSize_;
     }
-    
+
     public void disconnect() {
 	parent_ = null;
 	obs_    = -1;
     }
 
-    
+
 
 }

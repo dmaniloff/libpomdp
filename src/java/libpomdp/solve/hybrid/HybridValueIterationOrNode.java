@@ -5,7 +5,7 @@
  * Description: all of the values associated with a heuristic are simple
  *              placeholders to be filled by a method that implements
  *              the heuristic interface
- * Copyright (c) 2009, 2010 Diego Maniloff  
+ * Copyright (c) 2009, 2010 Diego Maniloff
  --------------------------------------------------------------------------- */
 
 package libpomdp.solve.hybrid;
@@ -48,7 +48,7 @@ public class HybridValueIterationOrNode extends HeuristicSearchOrNode {
 	this.bakCandidate      = null;
 	this.bakHeuristic      = -1;
 	this.bakHeuristicStar  = null;
-	if (parent != null) 
+	if (parent != null)
 	    depth_ =  ((HybridValueIterationOrNode)parent.getParent()).getDepth() + 1;
 	else
 	    depth_ = 0;
@@ -58,7 +58,7 @@ public class HybridValueIterationOrNode extends HeuristicSearchOrNode {
     public void initChildren(int nrAct) {
 	// allocate space for the children AND nodes
 	children_ = new HybridValueIterationAndNode[nrAct];
-	for (int action=0; action<nrAct; action++) 
+	for (int action=0; action<nrAct; action++)
 	    children_[action] = new HybridValueIterationAndNode();
     }
 

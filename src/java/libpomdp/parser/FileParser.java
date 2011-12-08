@@ -11,10 +11,10 @@ import libpomdp.common.std.BeliefMdpStd;
 import libpomdp.common.std.PomdpStd;
 
 public class FileParser {
-	
+
 	public static final int PARSE_CASSANDRA_POMDP=0;
 	public static final int PARSE_SPUDD=1;
-	
+
 	public static Pomdp loadPomdp(String filename,int filetype) {
 		Pomdp newPomdp = null;
 		switch(filetype){
@@ -30,11 +30,11 @@ public class FileParser {
 			String actStr[]=null;
 			if (data.actList != null)
 				actStr= (String []) data.actList.toArray (new String [data.actList.size ()]);
-			String obsStr[]=null; 
-			if (data.obsList != null)   
+			String obsStr[]=null;
+			if (data.obsList != null)
 			    obsStr = (String []) data.obsList.toArray (new String [data.obsList.size ()]);
-			String staStr[]=null; 
-			if (data.staList != null)   
+			String staStr[]=null;
+			if (data.staList != null)
 			    obsStr = (String []) data.staList.toArray (new String [data.staList.size ()]);
 			newPomdp=new PomdpStd(data.O, data.T,data.R, data.nrSta, data.nrAct, data.nrObs, data.discount,staStr,actStr,obsStr,data.startState);
 			break;
@@ -45,9 +45,9 @@ public class FileParser {
 				System.err.println("No such filetype (Not Implemented Yet)\n");
                 System.exit(1);
 		}
-		
+
 		return newPomdp;
-		
+
 	}
 
     public static ValueFunction loadUpperBound(String pomdpFilename,

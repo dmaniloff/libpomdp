@@ -4,11 +4,11 @@
  * File: PomdpAdd.java
  * Description: class to represent pomdp problems in factored form using
  *              ADDs - problems are specified in the subset of SPUDD
- *              defined by Poupart and parsed using his code - 
+ *              defined by Poupart and parsed using his code -
  *              several routine methods here are inspired from Poupart's
  *              matlab code for manipulating ADDs
  *              see README reference [5]
- * Copyright (c) 2009, 2010 Diego Maniloff 
+ * Copyright (c) 2009, 2010 Diego Maniloff
  --------------------------------------------------------------------------- */
 
 package libpomdp.common.add;
@@ -31,11 +31,11 @@ import org.math.array.IntegerArray;
 
 
 public class PomdpAdd implements Pomdp {
-    	
+
     // ------------------------------------------------------------------------
     // properties
     // ------------------------------------------------------------------------
-	
+
     // number of state variables
     private int nrStaV;
 
@@ -44,7 +44,7 @@ public class PomdpAdd implements Pomdp {
 
     // id of prime state variables
     private int staIdsPr[];
-    
+
     // arity of state variables
     public int staArity[];
 
@@ -65,34 +65,34 @@ public class PomdpAdd implements Pomdp {
 
     // total number of observations
     private int totnrObs;
-	
+
     // total number of variables
     private int nrTotV;
 
     // number of actions
-    private int nrAct;        
-	
-    // transition model: a-dim ADD[] 
+    private int nrAct;
+
+    // transition model: a-dim ADD[]
     public DD T[][];
 
-    // observation model: a-dim ADD[] 
+    // observation model: a-dim ADD[]
     public DD O[][];
-	
+
     // reward model: a-dim ADD
     public DD R[];
-	
+
     // discount factor
     private double gamma;
-	
+
     // action names
     private String actStr[];
-	
+
     // starting belief
     private BeliefStateAdd initBelief;
 
     // ParseSPUDD parser - Poupart's parsing class
     public ParseSPUDD problemAdd;
-    
+
     // ------------------------------------------------------------------------
     // interface methods
     // ------------------------------------------------------------------------
@@ -125,7 +125,7 @@ public class PomdpAdd implements Pomdp {
 	    staIds[c]   = c + 1;
 	    staIdsPr[c] = c + 1 + nrTotV;
 	    staArity[c] = problemAdd.valNames.get(c).size();
-	}	
+	}
 	for(c=0; c<nrObsV; c++) {
 	    obsIds[c]   = nrStaV + c + 1;
 	    obsIdsPr[c] = nrStaV + c + 1 + nrTotV;
@@ -139,8 +139,8 @@ public class PomdpAdd implements Pomdp {
 	    // reward for a is reward for the state - the cost of a
 	    R[a] = OP.sub(problemAdd.reward, problemAdd.actCosts.get(a));
 	    // if we wanted to have a model for R(s,a,s'), then we need this:
-	    // actStruct.rewFn = 
-	    // 		OP.addMultVarElim([actStruct.rewFn,actStruct.transFn], 
+	    // actStruct.rewFn =
+	    // 		OP.addMultVarElim([actStruct.rewFn,actStruct.transFn],
 	    // 				  ddPOMDP.nVars+1:ddPOMDP.nVars+ddPOMDP.nStateVars);
 	    actStr[a] = problemAdd.actNames.get(a);
 	}
@@ -171,8 +171,8 @@ public class PomdpAdd implements Pomdp {
      * this function re-computes poba to normalize the belief,
      * need to think of a clever way to avoid this...
      */
-    public BeliefState regulartao(BeliefStateAdd bel, int a, int o) {	    
-        // obtain subclass and the dd for this belief 
+    public BeliefState regulartao(BeliefStateAdd bel, int a, int o) {
+        // obtain subclass and the dd for this belief
         DD b1 = bel.bAdd;
         DD b2;
         DD oProb;
@@ -182,11 +182,11 @@ public class PomdpAdd implements Pomdp {
         // restrict the prime observation variables to the ones that occurred
         oc  = IntegerArray.mergeRows(obsIdsPr, Utils.sdecode(o, nrObsV, obsArity));
         //System.out.println(IntegerArray.toString(oc));
-        O_o = OP.restrictN(O[a], oc); 
+        O_o = OP.restrictN(O[a], oc);
         DD[] vars = Utils.concat(b1, T[a], O_o);
     	// compute var elim on O * T * b
         b2 = OP.addMultVarElim(vars, staIds);
-        // prime the b2 DD 
+        // prime the b2 DD
         b2 = OP.primeVars(b2, -nrTotV);
         // compute P(o|b,a)
         oProb  = OP.addMultVarElim(b2, staIds);
@@ -196,7 +196,7 @@ public class PomdpAdd implements Pomdp {
             bPrime = initBelief;
         } else {
             // safe to normalize now
-            b2 = OP.div(b2, oProb);	    
+            b2 = OP.div(b2, oProb);
             bPrime = new BeliefStateAdd(b2, staIds, oProb.getVal());
         }
         // return
@@ -209,24 +209,24 @@ public class PomdpAdd implements Pomdp {
      *  uses DD representation and functions from Symbolic Perseus
      *  uses the product of marginals to approximate a belief
      */
-    public BeliefState factoredtao(BeliefStateFactoredAdd bel, int a, int o) {	    
+    public BeliefState factoredtao(BeliefStateFactoredAdd bel, int a, int o) {
         // declarations
-        DD       b1[] = bel.marginals;	
+        DD       b1[] = bel.marginals;
         DD       b2[];
         DD       b2u[] = new DD[nrStaV];
         BeliefState bPrime;
         DD       O_o[];
-        int      oc[][];	
+        int      oc[][];
         // restrict the prime observation variables to the ones that occurred
         oc  = IntegerArray.mergeRows(obsIdsPr, Utils.sdecode(o, nrObsV, obsArity));
-        O_o = OP.restrictN(O[a], oc); 
+        O_o = OP.restrictN(O[a], oc);
         // gather all necessary ADDs for variable elimination
         DD[] vars = Utils.concat(b1, T[a], O_o);
     	// compute var elim on O * T * b
         b2 = OP.marginals(vars, staIdsPr, staIds);
-        // unprime the b2 DD 
+        // unprime the b2 DD
         for(int i=0; i<nrStaV; i++) b2u[i] = OP.primeVars(b2[i], -nrTotV);
-        // no need to normalize, done inside OP.marginals()	    
+        // no need to normalize, done inside OP.marginals()
         bPrime = new BeliefStateFactoredAdd(b2u, staIds);
         // return
         return bPrime;
@@ -281,7 +281,7 @@ public class PomdpAdd implements Pomdp {
     /// to be used by mdp.java
     @Override
     public CustomMatrix getTransitionTable(int a) {
-	int vars[]     = IntegerArray.merge(staIds, staIdsPr);	
+	int vars[]     = IntegerArray.merge(staIds, staIdsPr);
 	double T_a_v[] = OP.convert2array(OP.multN(T[a]),vars);
 	//	double T_a[][] = new double[totnrSta][totnrSta];
 	double T_a[][] = DoubleArray.fill(totnrSta, totnrSta, 0.0);
@@ -301,7 +301,7 @@ public class PomdpAdd implements Pomdp {
     /// this will prob become part of the interface as well...
     @Override
     public CustomMatrix getObservationTable(int a) {
-	int vars[]     = IntegerArray.merge(staIdsPr, obsIdsPr);	
+	int vars[]     = IntegerArray.merge(staIdsPr, obsIdsPr);
 	double O_a_v[] = OP.convert2array(OP.multN(O[a]),vars);
 	//	double O_a[][] = new double[totnrSta][totnrSta];
 	double O_a[][] = DoubleArray.fill(totnrSta, totnrObs, 0.0);
@@ -315,7 +315,7 @@ public class PomdpAdd implements Pomdp {
 	// return
 	return new CustomMatrix(O_a);
     }
-    
+
     /// R(s,a)
     @Override
     public CustomVector getRewardTable(int a) {
@@ -360,7 +360,7 @@ public class PomdpAdd implements Pomdp {
     public String getActionString(int a) {
         return actStr[a];
     }
-    
+
     /// string describing the values each obs var took
     /// the observation starts from 0
     @Override
@@ -392,7 +392,7 @@ public class PomdpAdd implements Pomdp {
 	// we receive the factored representation of the state
 	// whereby each element of the array contains the value of each of
 	// the state variables - there are no var ids here
-	int factoredS[][]  = IntegerArray.mergeRows(staIds, state); 
+	int factoredS[][]  = IntegerArray.mergeRows(staIds, state);
 	DD[]  restrictedT  = OP.restrictN(T[action], factoredS);
 	int factoredS1[][] = OP.sampleMultinomial(restrictedT, staIdsPr);
 	System.out.println(IntegerArray.toString(factoredS1));
@@ -422,7 +422,7 @@ public class PomdpAdd implements Pomdp {
 	ArrayList<Integer> states = new ArrayList<Integer>();
 	int factoredS[][];
 	for (int r=0; r<totnrSta; r++) {
-	    factoredS = IntegerArray.mergeRows(staIds, 
+	    factoredS = IntegerArray.mergeRows(staIds,
 					       Utils.sdecode(r,
 						       nrStaV,
 						       staArity));
@@ -449,11 +449,11 @@ public class PomdpAdd implements Pomdp {
     public int [] getobsIdsPr() {
 	return obsIdsPr;
     }
-    
+
     public int[] getstaIds() {
 	return staIds;
     }
-    
+
     public int[] getstaIdsPr() {
 	return staIdsPr;
     }
@@ -461,7 +461,7 @@ public class PomdpAdd implements Pomdp {
     public int[] getstaArity() {
 	return staArity;
     }
-    
+
     public int[] getobsArity() {
 	return obsArity;
     }
@@ -479,7 +479,7 @@ public class PomdpAdd implements Pomdp {
 	primedAlpha = OP.primeVars(alpha, nrTotV);
 	// restrict the O model to o
 	oc = IntegerArray.mergeRows(obsIdsPr, Utils.sdecode(o, nrObsV, obsArity));
-	O_o = OP.restrictN(O[a], oc); 
+	O_o = OP.restrictN(O[a], oc);
 	vars = Utils.concat(primedAlpha, T[a], O_o);
     	// compute var elim on O * T * \alpha(s')
 	gao = OP.addMultVarElim(vars, staIdsPr);

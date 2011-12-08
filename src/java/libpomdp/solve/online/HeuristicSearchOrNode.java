@@ -5,7 +5,7 @@
  * Description: all of the values associated with a heuristic are simple
  *              placeholders to be filled by a method that implements
  *              the heuristic interface
- * Copyright (c) 2009, 2010 Diego Maniloff  
+ * Copyright (c) 2009, 2010 Diego Maniloff
  --------------------------------------------------------------------------- */
 
 package libpomdp.solve.online;
@@ -29,7 +29,7 @@ public class HeuristicSearchOrNode extends OrNode {
     @Override
     public void init(BeliefState belief, int obs, AndNode parent) {
 	super.init(belief, obs, parent);
-	// initialize one-step improvement 
+	// initialize one-step improvement
         this.oneStepDeltaLower = -1;
         this.oneStepDeltaUpper = -1;
 	// best reference upon creation is to itself
@@ -40,7 +40,7 @@ public class HeuristicSearchOrNode extends OrNode {
     public void initChildren(int nrAct) {
 	// allocate space for the children AND nodes
 	children_ = new HeuristicSearchAndNode[nrAct];
-	for (int action=0; action<nrAct; action++) 
+	for (int action=0; action<nrAct; action++)
 	    children_[action] = new HeuristicSearchAndNode();
     }
 

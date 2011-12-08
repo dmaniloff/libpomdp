@@ -1,13 +1,13 @@
 /** ------------------------------------------------------------------------- *
  * libpomdp
  * ========
- * File: 
+ * File:
  * Description: Represent a POMDP model using a flat representation and
  *              sparse matrices and vectors. This class can be constructed
  *              from a pomdpSpecSparseMTJ object after parsing a .pomdp file.
- *              Sparse matrices by matrix-toolkits-java, 
+ *              Sparse matrices by matrix-toolkits-java,
  *              every matrix will be CustomMatrix:
- *              
+ *
  * S =
  *  (3,1)        1
  *  (2,2)        2
@@ -75,7 +75,7 @@ public class PomdpStd implements Pomdp, Serializable {
 
     // state names
     private String[] staStr;
-    
+
     // starting belief
     private BeliefStateStd initBelief;
 
@@ -126,7 +126,7 @@ public class PomdpStd implements Pomdp, Serializable {
     }
 
     // / tao(b,a,o)
-    
+
     public BeliefState nextBeliefState(BeliefState b, int a, int o) {
 	// long start = System.currentTimeMillis();
 	// System.out.println("made it to tao");
@@ -162,7 +162,7 @@ public class PomdpStd implements Pomdp, Serializable {
     }
 
     /// R(b,a)
-    
+
     public double expectedImmediateReward(BeliefState bel, int a) {
 	CustomVector b = ((BeliefStateStd) bel).bSparse;
 	return b.dot(R[a]);
@@ -179,53 +179,53 @@ public class PomdpStd implements Pomdp, Serializable {
 	return Poba;
     }
 
-    
+
     public CustomMatrix getTransitionTable(int a) {
 	return T[a].copy();
     }
 
-    
+
     public CustomMatrix getObservationTable(int a) {
 	return O[a].copy();
     }
 
-    
+
     public CustomVector getRewardTable(int a) {
 	return R[a].copy();
     }
 
-    
+
     public BeliefState getInitialBeliefState() {
 	return initBelief.copy();
     }
 
-    
+
     public int nrStates() {
 	return nrSta;
     }
 
-    
+
     public int nrActions() {
 	return nrAct;
     }
 
-    
+
     public int nrObservations() {
 	return nrObs;
     }
 
-    
+
     public double getGamma() {
 	return gamma;
     }
 
-    
+
     public String getActionString(int a) {
 	return actStr[a];
     }
 
     @Override
-    public String getObservationString(int o) {	
+    public String getObservationString(int o) {
 	return obsStr[o];
     }
 
