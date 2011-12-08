@@ -29,7 +29,7 @@ class HybridSimulatorAdd {
 	// declarations
 	AndOrTreeUpdateAdd aoTree;
 	HybridValueIterationOrNode rootNode;
-	
+
 	int expC = 0;
 	int bakC = 0;
 	int fndO = 0;
@@ -55,7 +55,7 @@ class HybridSimulatorAdd {
 	// figure out all possible initial states of the pomdp
 	List<Integer> states = new ArrayList<Integer>();
 	int factoredS[][];
-	
+
 	for (int r = 1; r <= factoredProb.nrStates(); ++r) {
 	    factoredS = new int [][] { factoredProb.getstaIds() ,
 		    Utils.sdecode(r - 1, factoredProb.getnrStaV(), factoredProb.getstaArity()) };
@@ -65,21 +65,21 @@ class HybridSimulatorAdd {
 	    }
 	}
 
-	
+
 	//  play the pomdp
 	//logFilename = sprintf("simulation-logs/rocksample/RS78-HYVI-regions-ADD-%s.log", datestr(now, "yyyy-mmm-dd-HHMMSS"));
 	//diary(logFilename);
 
 	// rocksample parameters for the grapher
 	int GRID_SIZE                = 7;
-	int ROCK_POSITIONS[][]       = new int[][] {{2, 0}, {0, 1}, {3, 1}, {6, 3}, {2, 4}, {3, 4}, {5, 5}, {1, 6}}; 
+	int ROCK_POSITIONS[][]       = new int[][] {{2, 0}, {0, 1}, {3, 1}, {6, 3}, {2, 4}, {3, 4}, {5, 5}, {1, 6}};
 	int SARTING_POS[]            = new int[]    {0, 3};
 
 	//drawer            = rocksampleGraph;
 	int NUM_ROCKS                = ROCK_POSITIONS.length;
 
 	// general parameters
-	int EXPANSION_RATE           = 79; // calculated from the online simulator, avg 
+	int EXPANSION_RATE           = 79; // calculated from the online simulator, avg
 	int AVG_EP_LIFETIME          = 26; // calculated from the online simulator, avg
 	double EPSILON_ACT_TH        = 1e-3;
 	int EPISODECOUNT             = 10;
@@ -87,7 +87,7 @@ class HybridSimulatorAdd {
 	double TOTALRUNS             = Math.pow(2, NUM_ROCKS);
 	long EXPANSIONTIME           = 900L;
 	long BACKUPTIME              = 100L;
-	long TOTALPLANNINGTIME       = 1000L;  
+	long TOTALPLANNINGTIME       = 1000L;
 	boolean USE_FACTORED_BELIEFS = true;
 	long P                       = EXPANSION_RATE * TOTALPLANNINGTIME;
 	long K                       = EXPANSION_RATE * BACKUPTIME;
@@ -136,17 +136,17 @@ class HybridSimulatorAdd {
 
 			display("********************** EPISODE " + ep + " of " + EPISODECOUNT + "*********************");
 
-			
-			
+
+
 			// are we approximating beliefs with the product of marginals?
 			BeliefState b_init;
 			if (USE_FACTORED_BELIEFS) {
-			    DD dd_init[] = new DD[1];           
+			    DD dd_init[] = new DD[1];
 			    dd_init[0] = ((BeliefStateAdd)factoredProb.getInitialBeliefState()).bAdd;
 			    b_init = new BeliefStateFactoredAdd(
-				    OP.marginals(dd_init, 
+				    OP.marginals(dd_init,
 					    factoredProb.getstaIds(),
-					    factoredProb.getstaIdsPr()), 
+					    factoredProb.getstaIdsPr()),
 					    factoredProb.getstaIds());
 			} else {
 			    b_init    = factoredProb.getInitialBeliefState();
@@ -183,11 +183,11 @@ class HybridSimulatorAdd {
 			    display("Current world state is:       " + factoredProb.printS(factoredS));
 			    // drawer.drawState(GRID_SIZE, ROCK_POSITIONS, factoredS);
 			    if (rootNode.getBeliefState() instanceof BeliefStateFactoredAdd) {
-				display("Current belief agree prob: ");                        
-				display(OP.evalN(((BeliefStateFactoredAdd)rootNode.getBeliefState()).marginals, 
+				display("Current belief agree prob: ");
+				display(OP.evalN(((BeliefStateFactoredAdd)rootNode.getBeliefState()).marginals,
 					factoredS).toString());
 			    } else {
-				display("Current belief agree prob: " +  
+				display("Current belief agree prob: " +
 					OP.eval(((BeliefStateAdd)rootNode.getBeliefState()).bAdd, factoredS));
 			    }
 
@@ -220,8 +220,8 @@ class HybridSimulatorAdd {
 			    //                % node supported by that alpha-vec i whose bakheuristic > 0
 			    //                % we will also assume that such improvement will be forever from
 			    //                % this time-step on, that is for all t > t_c
-			    //                % with this, the comparison we make is 
-			    //                % p n_b?c >  ?H ?(tc) k 
+			    //                % with this, the comparison we make is
+			    //                % p n_b?c >  ?H ?(tc) k
 			    //                % of k = exp_rate * t_bak
 			    //                %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -234,18 +234,18 @@ class HybridSimulatorAdd {
 			    //                % enough, since |support(index(b))| / (p - k) is invariant for every
 			    //                % b in the same support set:
 			    //                % f(b) = ?^{d^b_T} I(b) |support(index(b))| / (p - k), b ? I(T).
-			    CustomVector n_star  = aoTree.treeSupportSetSize.scale(1.0 / rootNode.getSubTreeSize()); // fraction of nodes 
+			    CustomVector n_star  = aoTree.treeSupportSetSize.scale(1.0 / rootNode.getSubTreeSize()); // fraction of nodes
 			    CustomVector f       = rootNode.bakHeuristicStar.elementMult(n_star);                    // affect this fraction by (discounted I(b) * entropy)
 			    int i_star           = Utils.argmax(f.getArray());                                                   // get f* and the associated index
 
 			    // before continuing, make sure there is a feasible candidate
 			    if (rootNode.bakHeuristicStar.get(i_star) > 0) {
 				// get p * n_b*_c, estimate of nodes that will improve
-				double imp_n = P * n_star.get(i_star) * rootNode.bakCandidate[i_star].getBeliefState().getEntropy() / Math.log(factoredProb.nrStates()); 
+				double imp_n = P * n_star.get(i_star) * rootNode.bakCandidate[i_star].getBeliefState().getEntropy() / Math.log(factoredProb.nrStates());
 				// compute \gamma_H(t_c)
-				double gamma_tc = (1 - factoredProb.getGamma()) / 
-					(factoredProb.getGamma() - Math.pow(factoredProb.getGamma(), 
-						(Math.max(AVG_EP_LIFETIME,iter) - iter + 1))); 
+				double gamma_tc = (1 - factoredProb.getGamma()) /
+					(factoredProb.getGamma() - Math.pow(factoredProb.getGamma(),
+						(Math.max(AVG_EP_LIFETIME,iter) - iter + 1)));
 				// gamma_tc * K
 				// if there exists a candidate, with I(b) > 0, and it fulfills the
 				// decision rule, back it up
@@ -265,7 +265,7 @@ class HybridSimulatorAdd {
 			    //                % EXTRA expansions may happen here for t_bak
 			    //                %
 			    //                % if not, continue expanding for the remaining 0.1 secs
-			    //                %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
+			    //                %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 			    if (!backedup) {
 				tic = System.currentTimeMillis();
@@ -281,7 +281,7 @@ class HybridSimulatorAdd {
 
 			    //                %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 			    //                % at this point, TOTALPLANNINGTIME has elapsed
-			    //                %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
+			    //                %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 			    //                % get the support list for the action we are about to output
 			    //                % obtain the best action for the root
 			    //                % remember that a"s and o"s in matlab should start from 1
@@ -331,9 +331,9 @@ class HybridSimulatorAdd {
 
 			    // move the tree"s root node - RE_INIT INSTEAD FOR NOW
 			    int o = Utils.sencode(factoredO[2],
-				    factoredProb.getnrObsV(), 
+				    factoredProb.getnrObsV(),
 				    factoredProb.getobsArity());
-			    // aoTree.moveTree(rootNode.children(a).children(o)); 
+			    // aoTree.moveTree(rootNode.children(a).children(o));
 			    // create new tree, but keep new bounds
 			    aoTree = new AndOrTreeUpdateAdd(factoredProb,
                                                 new HybridValueIterationOrNode(),
@@ -379,7 +379,7 @@ class HybridSimulatorAdd {
 	} // runs loop
 
 	// save statistics before quitting
-	//statsFilename = 
+	//statsFilename =
 	 //   sprintf("simulation-logs/rocksample/RS78-ALLSTATS-HYVI-regions-ADD-%s.mat", datestr(now, "yyyy-mmm-dd-HHMMSS"));
 	//save(statsFilename, "all");
 
