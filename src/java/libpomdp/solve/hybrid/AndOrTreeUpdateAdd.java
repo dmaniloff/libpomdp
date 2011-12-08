@@ -57,7 +57,7 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 	super(prob, root, L, U, exph);
 
 	this.bakH = bakh;
-	this.treeSupportSetSize = new CustomVector(offlineLower.size());
+	this.treeSupportSetSize = new CustomVector(getLB().size());
 	this.treeSupportSetSize.zero(); // not sure if this is necessary
     }
 
@@ -187,9 +187,9 @@ public class AndOrTreeUpdateAdd extends AndOrTree {
 	en.bakHeuristic = bakH.h_b(en); 
 	// the backup candidate is still itself and it has its own value as best
 	// we can now allocate the right amount of space for the bakheuristics
-	en.bakHeuristicStar = new CustomVector(offlineLower.size()); 
+	en.bakHeuristicStar = new CustomVector(getLB().size()); 
 	en.bakHeuristicStar.zero(); // all zeros
-	en.bakCandidate = new HybridValueIterationOrNode[offlineLower.size()]; // all
+	en.bakCandidate = new HybridValueIterationOrNode[getLB().size()]; // all
 									       // nulls
 	en.bakHeuristicStar.set(en.getBeliefState().getAlphaVectorIndex(),
 		en.bakHeuristic);
