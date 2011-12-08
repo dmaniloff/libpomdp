@@ -133,8 +133,8 @@ public class Utils {
 	int tcols = m1.length + m2.length;
 	int M[] = new int[tcols];
 	// first row of M
-	System.arraycopy(m1[0], 0, M[0], 0, m1.length);
-	System.arraycopy(m2[0], 0, M[0], m1.length, m2.length);
+	System.arraycopy(m1, 0, M, 0, m1.length);
+	System.arraycopy(m2, 0, M, m1.length, m2.length);
 	return M;
     }
     
