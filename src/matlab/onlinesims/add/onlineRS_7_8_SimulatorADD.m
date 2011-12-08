@@ -9,55 +9,45 @@
 % Copyright (c) 2009, 2010 Diego Maniloff
 % W3: http://www.cs.uic.edu/~dmanilof
 % --------------------------------------------------------------------------- %
+
 %% preparation
 % clear
 clear java
 clear all
+
 % add dynamic classpath
-javaaddpath '../../external/jmatharray.jar'
-javaaddpath '../../external/symPerseusJava'
-javaaddpath '../../general/java'
-javaaddpath '../../problems/rocksample'
-javaaddpath '../../offline/java'
-javaaddpath '../../online/java'
+javaaddpath '../../../../external/jmatharray.jar'
+javaaddpath '../../../../dist/libpomdp.jar'
+javaaddpath '../../../../external/mtj-0.9.12.jar'
+% directories
+probs_dir = '../../../../data/problems/';
 
-% add to the matlab path
-% addpath     '../../../external/symPerseusMatlab' -end
-% addpath     '../../offline/matlab' -end
+% java imports
+import java.io.FileInputStream;
+import java.io.ObjectInputStream;
 
-%% load problem parameters - factored representation
-factoredProb = pomdpAdd  ('../../problems/rocksample/7-8/RockSample_7_8.SPUDD');
-% symDD        = parsePOMDP('../../problems/rocksample/7-8/RockSample_7_8.SPUDD');
+import libpomdp.common.*;
+import libpomdp.common.add.*;
+import libpomdp.common.add.symbolic.*;
+import libpomdp.solve.online.*;
+import libpomdp.solve.offline.*;
+import libpomdp.solve.hybrid.*;
+import libpomdp.problemgen.rocksample.*;
 
-%% compute offline lower and upper bounds
-% blindCalc = blindAdd;
-% lBound    = blindCalc.getBlindAdd(factoredProb);
-% 
-% % qmdpCalc  = qmdpAdd;
-% % uBound    = qmdpCalc.getqmdpAdd(factoredProb);
-% 
-% % use Poupart's QMDP solver
-% [Vqmdp qmdpP] = solveQMDP(symDD);
-% % uBound        = valueFunction(OP.convert2array(Vqmdp, factoredProb.staIds), qmdpP);
-% uBound        = valueFunctionAdd(Vqmdp, factoredProb.staIds, qmdpP);
+%% load problem
+factoredProb = PomdpAdd( [probs_dir, 'rocksample/RockSample_7_8.SPUDD'] );
 
-%% load them in case we have them saved
-load 'saved-data/rocksample/blindAdd_RockSample_7_8.mat';
-% load 'saved-data/qmdpAdd_RockSample_7_8.mat';
-load 'saved-data/rocksample/qmdpSymPerseus_RockSample_7_8.mat';
-
-%% create heuristic search AND-OR tree
 % instantiate an aems2 heuristic object
-aems2h  = aems2(factoredProb);
+aems2h  = AEMS2(factoredProb);
 
 %% play the pomdp
-diary(['simulation-logs/rocksample/marginals/7-8-online-run-AEMS2-',date,'.log']);
+% diary(['simulation-logs/rocksample/marginals/7-8-online-run-AEMS2-',date,'.log']);
 
 % rocksample parameters for the grapher
 GRID_SIZE         = 7;
 ROCK_POSITIONS    = [2 0; 0 1; 3 1; 6 3; 2 4; 3 4; 5 5; 1 6];
 SARTING_POS       = [0 3];
-drawer            = rocksampleGraph;
+drawer            = RockSampleGraph;
 NUM_ROCKS         = size(ROCK_POSITIONS,1);
 
 % parameters
@@ -95,12 +85,14 @@ for run = 1:TOTALRUNS
         
         % re - initialize tree at starting belief
         aoTree = [];
-        aoTree = AndOrTree(factoredProb, aems2h, lBound, uBound);
-        aoTree.init(factoredProb.getInit());
+        aoTree = AndOrTree( [probs_dir, 'rocksample/RockSample_7_8.SPUDD'], ...
+                            HeuristicSearchOrNode(), ...
+                            aems2h);
+        aoTree.init(factoredProb.getInitialBeliefState());
         rootNode = aoTree.getRoot();
 
         % starting state for this set of EPISODECOUNT episodes
-        factoredS = [factoredProb.staIds' ; 1 + SARTING_POS, 1 + bitget((run-1), NUM_ROCKS:-1:1)];
+        factoredS = [factoredProb.getstaIds()' ; 1 + SARTING_POS, 1 + bitget((run-1), NUM_ROCKS:-1:1)];
         
         % stats
         cumR = 0;
@@ -116,14 +108,14 @@ for run = 1:TOTALRUNS
             tc = cell(factoredProb.printS(factoredS));
             fprintf(1, 'Current world state is:         %s\n', tc{1});
             drawer.drawState(GRID_SIZE, ROCK_POSITIONS,factoredS);
-            if rootNode.belief.getClass.toString == 'class BelStateFactoredADD'
+            if rootNode.getBeliefState().getClass.toString == 'class BelStateFactoredADD'
               fprintf(1, 'Current belief agree prob:      %d\n', ...                       
-                      OP.evalN(rootNode.belief.marginals, factoredS));
+                      OP.evalN(rootNode.getBeliefState().marginals, factoredS));
             else
               fprintf(1, 'Current belief agree prob:      %d\n', ... 
-                      OP.eval(rootNode.belief.bAdd, factoredS));
+                      OP.eval(rootNode.getBeliefState().bAdd, factoredS));
             end            
-            fprintf(1, 'Current |T| is:                 %d\n', rootNode.subTreeSize);
+            fprintf(1, 'Current |T| is:                 %d\n', rootNode.getSubTreeSize());
 
             % reset expand counter
             expC = 0;
