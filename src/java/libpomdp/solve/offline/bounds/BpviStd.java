@@ -28,7 +28,7 @@ public class BpviStd extends ValueIterationStd {
 		current = new ValueFunctionStd(pomdp.nrStates());
 		for(int a=0; a<pomdp.nrActions(); a++) {
 			double factor=1.0/(1.0-pomdp.getGamma());
-			double val=pomdp.getRewardMin();
+			double val=pomdp.getRewardMin( a );
 			val*=factor;
 		    current.push(CustomVector.getHomogene(pomdp.nrStates(),val),a);
 		}
