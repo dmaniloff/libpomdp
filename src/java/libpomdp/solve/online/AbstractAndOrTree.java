@@ -17,27 +17,27 @@ public abstract class AbstractAndOrTree {
         this.problem = problem;
         this.offlineLower = l;
         this.offlineUpper = u;
-        this.root = r;        
+        this.root = r;
     }
-    
+
     /**
      * expand(HeuristicSearchOrNode en): one-step expansion of |A||O|
      * HeuristicSearchOrNodes
      * @param <T>
      */
-    //public abstract <T extends OrNode> void expand(T en); 
+    //public abstract <T extends OrNode> void expand(T en);
 
     /**
      * updateAncestors(HeuristicSearchOrNode n): update the ancestors of a given
      * HeuristicSearchOrNode
      * @param <T>
      */
-    //public abstract <T extends OrNode> void updateAncestors(T n); 
+    //public abstract <T extends OrNode> void updateAncestors(T n);
 
     public Pomdp getProblem() {
         return problem;
     }
-    
+
     public OrNode getRoot() {
         return root;
     }
@@ -45,7 +45,7 @@ public abstract class AbstractAndOrTree {
     public void setRoot(OrNode newRoot) {
         root = newRoot;
     }
-    
+
     public void moveTree(OrNode newroot) {
         setRoot(newroot);
         root.disconnect();
@@ -54,7 +54,7 @@ public abstract class AbstractAndOrTree {
     public ValueFunction getLB() {
         return offlineLower;
     }
-    
+
     public void setLB(ValueFunction lb) {
         offlineLower = lb;
     }

@@ -3,22 +3,22 @@
  * ========
  * File: rocksampleGraph.java
  * Description: simple class to graph the state of a rocksample problem
- * Copyright (c) 2009, 2010 Diego Maniloff 
+ * Copyright (c) 2009, 2010 Diego Maniloff
  --------------------------------------------------------------------------- */
 
 package libpomdp.problemgen.rocksample;
 
 public class RockSampleGraph {
-    
+
     // draw the world
-    public void drawState(int n, int k[][], int factoredS[][]) {
+    public static void drawState(int n, int k[][], int factoredS[][]) {
 	int c, d, r;
 	boolean fr;
 	// start with a line
 	for(int f=0; f<n; f++) System.out.print("-----");
 	System.out.println("------");
 
-	for(d=n-1; d>=0; d--) {	    
+	for(d=n-1; d>=0; d--) {
 	    for(c=0; c<n+1; c++) {
 		System.out.print("|");
 		if (c==factoredS[1][0] - 1 &&
@@ -38,7 +38,7 @@ public class RockSampleGraph {
 		}
 		    if(!fr)
 			System.out.print("  ");
-					
+
 		    //System.out.print(" |");
 	    }
 	    System.out.println(" |");

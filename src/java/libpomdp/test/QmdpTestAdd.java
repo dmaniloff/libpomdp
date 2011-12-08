@@ -17,7 +17,7 @@ public class QmdpTestAdd {
 	public static void main(String[] args) throws Exception {
 		PomdpAdd pomdp=(PomdpAdd)FileParser.loadPomdp("data/problems/tiger/tiger.95.SPUDD", FileParser.PARSE_SPUDD);
 		QmdpAdd algo= new QmdpAdd(pomdp);
-        algo.getQmdpAdd();
+        algo.getValueFunction();
 		// algo.addStopCriteria(new MaxIterationsCriteria(50000));
 		// algo.addStopCriteria(new ValueConvergenceCriteria(1e-3,Criteria.CC_MAXEUCLID));
 		// algo.run();

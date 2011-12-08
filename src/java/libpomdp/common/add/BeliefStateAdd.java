@@ -4,7 +4,7 @@
  * File: belStateAdd.java
  * Description: implements belState via an ADD
  *              uses Popuart's implementation from Symbolic Perseus
- * Copyright (c) 2009, 2010 Diego Maniloff 
+ * Copyright (c) 2009, 2010 Diego Maniloff
  --------------------------------------------------------------------------- */
 
 package libpomdp.common.add;
@@ -18,9 +18,9 @@ import libpomdp.common.BeliefState;
 import libpomdp.common.CustomVector;
 import libpomdp.common.add.symbolic.DD;
 import libpomdp.common.add.symbolic.OP;
- 
+
 public class BeliefStateAdd implements BeliefState {
-    
+
     // main property is the DD itself
     public DD bAdd;
 
@@ -77,7 +77,7 @@ public class BeliefStateAdd implements BeliefState {
 	return 0;
     }
 
-  
+
     public boolean compare(BeliefState bel) {
 	// TODO Auto-generated method stub
 	return false;

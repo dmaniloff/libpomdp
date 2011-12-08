@@ -12,10 +12,10 @@ import libpomdp.solve.offline.vi.ValueIterationStd;
 
 
 public class IncrementalPruningStd extends ValueIterationStd {
-	
+
 	BeliefMdpStd bmdp;
 	private double delta;
-	
+
 	public IncrementalPruningStd(PomdpStd pomdp, double delta){
 		startTimer();
 		initValueIteration(pomdp);
@@ -25,7 +25,7 @@ public class IncrementalPruningStd extends ValueIterationStd {
 		current.push(new AlphaVector(bmdp.nrStates()));
 		registerInitTime();
 	}
-	
+
 	public IterationStats iterate() {
 		startTimer();
 		old=current;
@@ -55,7 +55,7 @@ public class IncrementalPruningStd extends ValueIterationStd {
 				iterationStats.registerLp(vfA.prune(delta));
 				psi.add(vfA);
 			}
-			ValueFunctionStd vfA=psi.remove(0);	
+			ValueFunctionStd vfA=psi.remove(0);
 			current.merge(vfA);
 		}
 		iterationStats.registerLp(current.prune(delta));

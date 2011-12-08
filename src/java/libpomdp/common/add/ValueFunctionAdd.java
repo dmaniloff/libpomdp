@@ -7,7 +7,7 @@
  *              see README reference [5]
  *              implements Serializable so we can use the save command
  *              in Matlab
- * Copyright (c) 2009, 2010 Diego Maniloff 
+ * Copyright (c) 2009, 2010 Diego Maniloff
  --------------------------------------------------------------------------- */
 
 package libpomdp.common.add;
@@ -43,7 +43,7 @@ public class ValueFunctionAdd implements ValueFunction, Serializable {
 
     // constructor
     public ValueFunctionAdd(DD vAdd[], int staIds[], int a[]) {
-	this.vAdd   = vAdd; 
+	this.vAdd   = vAdd;
 	this.a      = a;
 	this.staIds = staIds;
     }
@@ -61,7 +61,7 @@ public class ValueFunctionAdd implements ValueFunction, Serializable {
         double dotProds[];
         // compute dot products
         if (bel instanceof BeliefStateAdd) {
-            b = ((BeliefStateAdd)bel).bAdd; 
+            b = ((BeliefStateAdd)bel).bAdd;
             dotProds = OP.dotProductNoMem(b, vAdd, staIds);
         } else {
             m = ((BeliefStateFactoredAdd)bel).marginals;
@@ -82,29 +82,29 @@ public class ValueFunctionAdd implements ValueFunction, Serializable {
 
 
     // list of actions associated with each alpha
-    
+
     public int[] getActions() {
 	return a;
     }
 
-    
+
     public AlphaVector getAlphaVector(int idx) {
 	// TODO Auto-generated method stub
 	return null;
     }
 
-    
+
     public CustomVector getAlphaValues(int idx) {
 	double[][] val = OP.convert2array(vAdd, staIds);
 	return new CustomVector(val[idx]);
     }
 
-    
+
     public int size() {
 	return a.length;
     }
 
-    
+
     public void sort() {
 	// TODO Auto-generated method stub
     }
@@ -114,7 +114,7 @@ public class ValueFunctionAdd implements ValueFunction, Serializable {
     // return flat value function
     public double[][] getvFlat() {
 	return OP.convert2array(vAdd, staIds);
-    }    
+    }
 
     // return Add representation of this value function
     public DD[] getvAdd() {

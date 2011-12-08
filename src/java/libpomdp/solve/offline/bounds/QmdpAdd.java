@@ -4,7 +4,7 @@
  * File: qmdpAdd.java
  * Description: compute offline qmdp upper bound using Adds as representation
  *              see README reference [6]
- * Copyright (c) 2009, 2010 Diego Maniloff 
+ * Copyright (c) 2009, 2010 Diego Maniloff
  * W3: http://www.cs.uic.edu/~dmanilof
  --------------------------------------------------------------------------- */
 
@@ -40,12 +40,12 @@ public class QmdpAdd {
 	DD old_Vmdp = DD.zero;
 
 	// allocate policy - one vec per action
-	int policy[]    = new int [factoredProb.nrActions()]; 
+	int policy[]    = new int [factoredProb.nrActions()];
 	for (int a=0; a<factoredProb.nrActions(); a++) policy[a] = a;
 
 	DD ddDiscFact   = DDleaf.myNew(factoredProb.getGamma());
 
-	for(int iter=0; iter<MAXITERATIONS; iter++) {	
+	for(int iter=0; iter<MAXITERATIONS; iter++) {
 
 	    // copy Vmdp
 	    old_Vmdp = Vmdp;	//  why does this work?
@@ -54,12 +54,12 @@ public class QmdpAdd {
 	    Vmdp = OP.primeVars(Vmdp, factoredProb.getnrTotV());
 
 	    for(int a=0; a<factoredProb.nrActions(); a++) {
-		// concat all ADDs into one array        
+		// concat all ADDs into one array
 		adds                = new DD[1+factoredProb.T[a].length+1];
 		adds[0]             = ddDiscFact;
 		System.arraycopy(factoredProb.T[a], 0, adds, 1, factoredProb.T[a].length);
-		adds[adds.length-1] = Vmdp;	
-		// Vmdp = \max_a {R(s,a) + \gamma \sum_{s'} T(s,a,s') Vmdp(s')}		
+		adds[adds.length-1] = Vmdp;
+		// Vmdp = \max_a {R(s,a) + \gamma \sum_{s'} T(s,a,s') Vmdp(s')}
 		Vqmdp[a]            = OP.addMultVarElim(adds, factoredProb.getstaIdsPr());
 		Vqmdp[a]            = OP.add(factoredProb.R[a], Vqmdp[a]);
 	    }
@@ -68,7 +68,7 @@ public class QmdpAdd {
 	    Vmdp = OP.maxN(Vqmdp);
 
 	    // convergence check
-	    maxdelta = OP.maxAll(OP.abs(OP.sub(Vmdp, old_Vmdp)));	    
+	    maxdelta = OP.maxAll(OP.abs(OP.sub(Vmdp, old_Vmdp)));
 	    System.out.println("Max delta at iteration " +  iter + " is: "+maxdelta);
 
 	    if (maxdelta <= EPSILON){
