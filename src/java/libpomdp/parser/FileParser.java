@@ -1,7 +1,11 @@
 package libpomdp.parser;
 
+import java.io.ObjectInputStream;
+import java.io.FileInputStream;
+
 import libpomdp.common.BeliefMdp;
 import libpomdp.common.Pomdp;
+import libpomdp.common.ValueFunction;
 import libpomdp.common.add.PomdpAdd;
 import libpomdp.common.std.BeliefMdpStd;
 import libpomdp.common.std.PomdpStd;
@@ -38,6 +42,47 @@ public class FileParser {
 		return newPomdp;
 		
 	}
+
+    public static ValueFunction loadUpperBound(String pomdpFilename,
+                                               int filetype) {
+        // figure out bound filename
+        String boundSuffix = ( filetype == PARSE_SPUDD ) ?
+            ".QMDP_ADD.ser" : ".QMDP_STD.ser";
+        String boundFileName = pomdpFilename + boundSuffix;
+
+        // load bound
+        return loadValueFunction(boundFileName);
+
+    }
+
+    public static ValueFunction loadLowerBound(String pomdpFilename,
+                                               int filetype) {
+        // figure out bound filename
+        String boundSuffix = ( filetype == PARSE_SPUDD ) ?
+            ".BLIND_ADD.ser" : ".BLIND_STD.ser";
+        String boundFileName = pomdpFilename + boundSuffix;
+
+        // load bound
+        return loadValueFunction(boundFileName);
+
+    }
+
+
+    public static ValueFunction loadValueFunction(String fileName) {
+        // load serialized bound
+        ValueFunction vf = null;
+        try {
+            FileInputStream fis = new FileInputStream(fileName);
+            ObjectInputStream in = new ObjectInputStream(fis);
+            vf = (ValueFunction) in.readObject();
+            in.close();
+        } catch ( Exception e ) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+
+        return vf;
+    }
 
 	public static BeliefMdp loadBeliefMdp(String filename,int filetype) throws Exception{
 		if (filetype==PARSE_SPUDD)
