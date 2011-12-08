@@ -11,7 +11,7 @@ package libpomdp.problemgen.rocksample;
 public class RockSampleGraph {
     
     // draw the world
-    public void drawState(int n, int k[][], int factoredS[][]) {
+    public static void drawState(int n, int k[][], int factoredS[][]) {
 	int c, d, r;
 	boolean fr;
 	// start with a line
