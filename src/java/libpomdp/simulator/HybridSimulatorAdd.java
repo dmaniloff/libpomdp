@@ -6,6 +6,7 @@ import java.util.List;
 import libpomdp.common.BeliefState;
 import libpomdp.common.CustomVector;
 import libpomdp.common.Utils;
+import libpomdp.common.ValueFunction;
 import libpomdp.common.add.BeliefStateAdd;
 import libpomdp.common.add.BeliefStateFactoredAdd;
 import libpomdp.common.add.PomdpAdd;
@@ -17,8 +18,8 @@ import libpomdp.parser.FileParser;
 import libpomdp.solve.hybrid.AndOrTreeUpdateAdd;
 import libpomdp.solve.hybrid.DOSI;
 import libpomdp.solve.hybrid.HybridValueIterationOrNode;
-import libpomdp.solve.offline.heuristic.BlindPolicyAdd;
-import libpomdp.solve.offline.heuristic.QmdpPolicyAdd;
+import libpomdp.solve.offline.bounds.BpviAdd;
+import libpomdp.solve.offline.bounds.QmdpAdd;
 import libpomdp.solve.online.AEMS2;
 
 class HybridSimulatorAdd {
@@ -33,25 +34,19 @@ class HybridSimulatorAdd {
 	int bakC = 0;
 	int fndO = 0;
 	double cumR = 0;
-	
+
+    // problem name
+    String probFilename = "/Users/diego/Documents/workspace/libpomdp/data/problems/rocksample/RockSample_7_8.SPUDD";
+
 	// load problem
-	PomdpAdd factoredProb = null;
-	
-	try {
-	    factoredProb = (PomdpAdd) 
-	    	FileParser.loadPomdp("/Users/diego/Documents/workspace/libpomdp/data/problems/rocksample/RockSample_7_8.SPUDD", 1);
-	} catch (Exception e) {	    
-	    e.printStackTrace();
-	    System.exit(1);
-	}
+	PomdpAdd factoredProb = (PomdpAdd)
+        FileParser.loadPomdp(probFilename, FileParser.PARSE_SPUDD);
 
-	// compute offline bounds - upper
-	QmdpPolicyAdd qmdpCalc = new QmdpPolicyAdd();
-	ValueFunctionAdd uBound = qmdpCalc.getqmdpAdd(factoredProb);
-
-	// compute offline bounds - lower
-	BlindPolicyAdd blindCalc = new BlindPolicyAdd();
-	ValueFunctionAdd lBound = blindCalc.getBlindAdd(factoredProb);
+    // load bounds
+	ValueFunction uBound = FileParser.loadUpperBound(probFilename,
+                                                     FileParser.PARSE_SPUDD);
+    ValueFunction lBound = FileParser.loadLowerBound(probFilename,
+                                                     FileParser.PARSE_SPUDD);
 
 	// create heuristics
 	AEMS2 aems2h = new AEMS2(factoredProb);
@@ -158,7 +153,12 @@ class HybridSimulatorAdd {
 			}
 
 			// re - initialize tree at starting belief with original bounds
-			aoTree = new AndOrTreeUpdateAdd(factoredProb, aems2h, dosih, lBound, uBound);
+			aoTree = new AndOrTreeUpdateAdd(factoredProb,
+                                            new HybridValueIterationOrNode(),
+                                            lBound,
+                                            uBound,
+                                            aems2h,
+                                            dosih);
 			aoTree.init(b_init);
 			rootNode = aoTree.getRoot();
 
@@ -335,10 +335,12 @@ class HybridSimulatorAdd {
 				    factoredProb.getobsArity());
 			    // aoTree.moveTree(rootNode.children(a).children(o)); 
 			    // create new tree, but keep new bounds
-			    aoTree = new AndOrTreeUpdateAdd(factoredProb, 
-				    aems2h, 
-				    dosih, 
-				    aoTree.getLB(), aoTree.getUB());
+			    aoTree = new AndOrTreeUpdateAdd(factoredProb,
+                                                new HybridValueIterationOrNode(),
+                                                aoTree.getLB(),
+                                                aoTree.getUB(),
+                                                aems2h,
+                                                dosih);
 			    // initialize at the new belief
 			    aoTree.init(rootNode.getChild(a - 1).getChild(o - 1).getBeliefState());
 			    // update reference to rootNode
