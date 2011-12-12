@@ -112,7 +112,7 @@ class SimulatorStatistics {
         String ret = "";
         ret += String.format("Stats for %d runs and %d episodes in each run\n",
                              TOTALRUNS, EPISODECOUNT);
-        ret += String.format("(Completed %d runs thus far).",
+        ret += String.format("(Completed %d runs thus far).\n",
                              avgCumReward.size());
         ret += String.format("AVG cumulative rewards: %.6f\n",
                              Utils.mean(avgCumReward));
