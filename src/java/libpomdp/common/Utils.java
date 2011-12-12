@@ -250,4 +250,24 @@ public class Utils {
     //	for (int i : data) l
     //    }
 
+
+    // compute the mean of an arraylist of doubles
+    public static  <T extends Number> double mean(ArrayList<T> a) {
+        return sum(a) / a.size();
+    }
+
+    public static <T extends Number> double sum(ArrayList<T> a) {
+        double sum = 0;
+        for(int i=0; i<a.size(); i++) sum += a.get(i).doubleValue();
+        return sum;
+    }
+
+    public static double discountedSum(ArrayList<Double> a, double gamma) {
+        double discountedSum = 0;
+        for(int i=0; i<a.size(); i++) {
+            discountedSum += Math.pow(gamma,i) * a.get(i).doubleValue();
+        }
+        return discountedSum;
+    }
+
 } // Utils
