@@ -35,7 +35,7 @@ class OnlineSimulatorAdd {
         double cumR = 0;
 
         // problem name
-        String probFilename = "/Users/diego/Documents/workspace/libpomdp/data/problems/rocksample/RockSample_7_8.SPUDD";
+        String probFilename = "../../../../data/problems/rocksample/RockSample_7_8.SPUDD";
 
         // load problem
         PomdpAdd factoredProb = (PomdpAdd)
