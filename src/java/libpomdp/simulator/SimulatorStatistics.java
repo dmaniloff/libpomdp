@@ -3,11 +3,17 @@ package libpomdp.simulator;
 import libpomdp.common.Utils;
 
 import java.util.ArrayList;
+import java.io.Serializable;
 
-class SimulatorStatistics {
+public class SimulatorStatistics implements Serializable {
+
+    static final long serialVersionUID = 458706968091419113L;
 
     // instance classes
-    class EpisodeStats {
+    class EpisodeStats implements Serializable {
+
+        static final long serialVersionUID = 78525150454370794L;
+
         ArrayList<Double>  receivedReward;
         ArrayList<Integer> treeSize;
         ArrayList<Integer> reusedTreeSize;
@@ -28,7 +34,10 @@ class SimulatorStatistics {
 
     }
 
-    class RunStats {
+    class RunStats implements Serializable {
+
+        static final long serialVersionUID = 8798077655848789237L;
+
         EpisodeStats episode[];
         // stats to summarize each episode in episode
         ArrayList<Double> discountedReward;
@@ -73,8 +82,8 @@ class SimulatorStatistics {
     // instance variables
     RunStats run[];
 
-    final int TOTALRUNS;
-    final int EPISODECOUNT;
+    int TOTALRUNS;
+    int EPISODECOUNT;
 
     // stats to summarize each run in run
     ArrayList<Double> avgCumReward;
@@ -84,7 +93,7 @@ class SimulatorStatistics {
     ArrayList<Double> avgFoundEpsilonOptimal;
 
     // constructor
-    SimulatorStatistics(final int TOTALRUNS, final int EPISODECOUNT) {
+    public SimulatorStatistics(final int TOTALRUNS, final int EPISODECOUNT) {
         this.TOTALRUNS = TOTALRUNS;
         this.EPISODECOUNT = EPISODECOUNT;
 
@@ -97,6 +106,9 @@ class SimulatorStatistics {
         avgNodeExpansions = new ArrayList<Double>();
         avgFoundEpsilonOptimal = new ArrayList<Double>();
     }
+
+    // zero-arg constructor for serialization only
+    public SimulatorStatistics( ) { }
 
     public void summmarizeRun(int runNumber) {
         avgCumReward.add( Utils.mean( run[runNumber].discountedReward ) );
