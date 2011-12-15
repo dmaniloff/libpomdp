@@ -2,6 +2,8 @@ package libpomdp.simulator;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.io.File;
+import java.io.PrintStream;
 
 import libpomdp.common.BeliefState;
 import libpomdp.common.CustomVector;
@@ -20,11 +22,42 @@ import libpomdp.solve.online.AEMS2;
 import libpomdp.solve.offline.bounds.BpviAdd;
 import libpomdp.solve.offline.bounds.QmdpAdd;
 import libpomdp.parser.FileParser;
-import libpomdp.problemgen.rocksample.RockSampleGraph;
+import libpomdp.problemgen.StateDrawer;
+
 
 class OnlineSimulatorAdd {
 
-    public static void main(String args[]) {
+    final PrintStream out;
+    final String pomdpFilename;
+    final String statsFilename;
+
+    static class TerminalStateEvaluator {
+        boolean isTerminalState(int factoredS[][]) {
+            return false;
+        }
+    }
+
+    TerminalStateEvaluator ev = new TerminalStateEvaluator();
+    StateDrawer drawer = null;
+
+    // constructor
+    OnlineSimulatorAdd(String pomdpFilename, String statsFilename,
+                       PrintStream out) {
+        this.out = out;
+        this.pomdpFilename = pomdpFilename;
+        this.statsFilename = statsFilename;
+    }
+
+    // methods to overwrite defaults
+    void setTerminalEvaluator(TerminalStateEvaluator ev) {
+        this.ev = ev;
+    }
+
+    void setDrawer(StateDrawer drawer) {
+        this.drawer = drawer;
+    }
+
+    public void run() {
 
         // declarations
         AndOrTree aoTree;
@@ -32,21 +65,17 @@ class OnlineSimulatorAdd {
 
         int expC = 0;
         int foundOptimalAction = 0;
-        double cumR = 0;
-
-        // problem name
-        String probFilename = "data/problems/rocksample/RockSample_7_8.SPUDD";
 
         // load problem
         PomdpAdd factoredProb = (PomdpAdd)
-            FileParser.loadPomdp(probFilename, FileParser.PARSE_SPUDD);
+            FileParser.loadPomdp(pomdpFilename, FileParser.PARSE_SPUDD);
 
         // load bounds
         ValueFunction uBound =
-            FileParser.loadUpperBound(probFilename,
+            FileParser.loadUpperBound(pomdpFilename,
                                       FileParser.PARSE_SPUDD);
         ValueFunction lBound =
-            FileParser.loadLowerBound(probFilename,
+            FileParser.loadLowerBound(pomdpFilename,
                                       FileParser.PARSE_SPUDD);
 
         // create heuristics
@@ -71,23 +100,11 @@ class OnlineSimulatorAdd {
         }
 
 
-        //  play the pomdp
-        //logFilename = sprintf("simulation-logs/rocksample/RS78-HYVI-regions-ADD-%s.log", datestr(now, "yyyy-mmm-dd-HHMMSS"));
-        //diary(logFilename);
-
-        // rocksample parameters for the grapher
-        int GRID_SIZE                = 7;
-        int ROCK_POSITIONS[][]       = new int[][] {{2, 0}, {0, 1}, {3, 1}, {6, 3}, {2, 4}, {3, 4}, {5, 5}, {1, 6}};
-        int SARTING_POS[]            = new int[]    {0, 3};
-
-
-        int NUM_ROCKS                = ROCK_POSITIONS.length;
-
         // general parameters
         final double EPSILON_ACT_TH        = 1e-3;
-        final int EPISODECOUNT             = 10;
+        final int EPISODECOUNT             = 2;
         final int MAXEPISODELENGTH         = 100;
-        final int TOTALRUNS                = (int) Math.pow(2, NUM_ROCKS);
+        final int TOTALRUNS                = states.size();
         final long EXPANSIONTIME           = 1000L;
         final long TOTALPLANNINGTIME       = 1000L;
         final boolean USE_FACTORED_BELIEFS = true;
@@ -96,62 +113,44 @@ class OnlineSimulatorAdd {
         SimulatorStatistics stats = new SimulatorStatistics(TOTALRUNS,
                                                             EPISODECOUNT);
 
-        //    cumR              = [];
-        //    all.avcumrews     = [];
-        //    all.avTs          = [];
-        //    all.avreusedTs    = [];
-        //    all.avbackuptimes = [];
-        //    all.avexps        = [];
-        //    all.avbackups     = [];
-        //    all.avfoundeopt   = [];
-
-
         // print general config problem parameters
-        display("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+        displaySep("+");
         display("libpomdp log - config parameters");
-        display("--------------------------------");
+        displaySep("-");
         display("TOTALRUNS            = " + TOTALRUNS);
         display("EPISODECOUNT         = " + EPISODECOUNT);
         display("MAXEPISODELENGTH     = " + MAXEPISODELENGTH);
         display("EXPANSIONTIME        = " + EXPANSIONTIME);
         display("EPSILON_ACT_TH       = " + EPSILON_ACT_TH);
         display("USE_FACTORED_BELIEFS = " + USE_FACTORED_BELIEFS);
-        display("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+        displaySep("+");
 
         // main loop - each run represents a different starting state
         for (int runNumber = 0; runNumber < TOTALRUNS; ++runNumber) {
 
-            display("====================== UPDATE RUN " + runNumber + " of " + TOTALRUNS + "==============================");
-
-		    //        % stats
-		    //        all.stats{run}.cumrews        = [];
-		    //        all.stats{run}.backups        = [];
-		    //        all.stats{run}.foundeopt      = [];
-		    //        all.stats{run}.meanT          = [];
-		    //        all.stats{run}.meanreusedT    = [];
-		    //        all.stats{run}.meanbackuptime = [];
-		    //        all.stats{run}.meanexps       = [];
-
+            display("RUN " + runNumber + " of " + TOTALRUNS);
+            displaySep("=");
 
 		    // repeat this run's startingt state EPISODECOUNT times
 		    for (int episodeNumber = 0; episodeNumber < EPISODECOUNT; ++episodeNumber) {
 
-                display("********************** EPISODE " + episodeNumber + " of " + EPISODECOUNT + "*********************");
-
-
+                display("EPISODE " + episodeNumber + " of " + EPISODECOUNT);
+                displaySep("*");
 
                 // are we approximating beliefs with the product of marginals?
                 BeliefState b_init;
                 if (USE_FACTORED_BELIEFS) {
                     DD dd_init[] = new DD[1];
-                    dd_init[0] = ((BeliefStateAdd)factoredProb.getInitialBeliefState()).bAdd;
-                    b_init = new BeliefStateFactoredAdd(
-                                                        OP.marginals(dd_init,
-                                                                     factoredProb.getstaIds(),
-                                                                     factoredProb.getstaIdsPr()),
-                                                        factoredProb.getstaIds());
+                    dd_init[0] = ((BeliefStateAdd)
+                                  factoredProb.getInitialBeliefState()).bAdd;
+                    b_init =
+                        new BeliefStateFactoredAdd(
+                                                   OP.marginals(dd_init,
+                                                                factoredProb.getstaIds(),
+                                                                factoredProb.getstaIdsPr()),
+                                                   factoredProb.getstaIds());
                 } else {
-                    b_init    = factoredProb.getInitialBeliefState();
+                    b_init = factoredProb.getInitialBeliefState();
                 }
 
                 // re - initialize tree at starting belief with original bounds
@@ -171,22 +170,15 @@ class OnlineSimulatorAdd {
                                   factoredProb.getstaArity())
                 };
 
-                // stats
-                cumR = 0;
-                //			all.stats{run}.ep{ep}.R          = [];
-                //			all.stats{run}.ep{ep}.exps       = [];
-                //			all.stats{run}.ep{ep}.T          = [];
-                //			all.stats{run}.ep{ep}.reusedT    = [];
-                //			all.stats{run}.ep{ep}.backuptime = [];
-
                 // action - sensing - thinking loop
                 for (int iter = 0; iter < MAXEPISODELENGTH; ++iter) {
 
                     display("INSTANCE " + iter);
                     displaySep("*");
 
-                    display("Current world state is:       " + factoredProb.printS(factoredS));
-                    RockSampleGraph.drawState(GRID_SIZE, ROCK_POSITIONS, factoredS);
+                    display("Current world state is:       " +
+                            factoredProb.printS(factoredS));
+                    if(null != drawer) drawer.drawState(factoredS);
 
                     if (rootNode.getBeliefState() instanceof BeliefStateFactoredAdd) {
                         display("Current belief agree prob: ");
@@ -195,7 +187,8 @@ class OnlineSimulatorAdd {
                                           factoredS) );
                     } else {
                         display("Current belief agree prob: " +
-                                OP.eval(((BeliefStateAdd)rootNode.getBeliefState()).bAdd, factoredS));
+                                OP.eval(((BeliefStateAdd)
+                                         rootNode.getBeliefState()).bAdd, factoredS));
                     }
 
                     display("Current |T| is:                 " +
@@ -291,14 +284,11 @@ class OnlineSimulatorAdd {
                             stats.run[runNumber].episode[episodeNumber].
                             receivedReward.get( iter ));
 
-                    display("Cumulative reward:              " +
-                            cumR);
 
                     // check whether this episode ended (terminal state)
-                    if(factoredS1[1][0] == GRID_SIZE+1) {
+                    if(ev.isTerminalState(factoredS1)) {
                         display("Episode ended at instance " + iter);
-                        RockSampleGraph.drawState(GRID_SIZE, ROCK_POSITIONS,
-                                                  factoredS1);
+                        if(null != drawer) drawer.drawState(factoredS1);
                         break;
                     }
 
@@ -326,8 +316,9 @@ class OnlineSimulatorAdd {
                 } // time-steps loop
 
                 // conclude episode stats
-                stats.run[runNumber].summarizeEpisode( episodeNumber,
-                                                       factoredProb.getGamma() );
+                stats.run[runNumber].
+                    summarizeEpisode( episodeNumber,
+                                      factoredProb.getGamma() );
 
 		    } // episodes loop
 
@@ -335,29 +326,37 @@ class OnlineSimulatorAdd {
             stats.summmarizeRun( runNumber );
 
             // print out what we have so far
-            System.out.println( stats.toString() );
+            display(stats.toString());
+
         } // runs loop
 
         // save statistics before quitting
-        //statsFilename =
-        //   sprintf("simulation-logs/rocksample/RS78-ALLSTATS-HYVI-regions-ADD-%s.mat", datestr(now, "yyyy-mmm-dd-HHMMSS"));
-        //save(statsFilename, "all");
+        display("Saving stats object to file...");
+        Utils.serializeObject( stats, statsFilename );
 
 
     }
 
-    static void display(String m) { System.out.println(m); }
 
-    static void display(double m[]) {
+    // helper methods
+    void display(int c) {
+        display ("" + c);
+    }
+
+    void display(String m) {
+        out.println(m);
+    }
+
+    void display(double m[]) {
         String pretty = "[ ";
         for( double d : m ) pretty += String.format("%.4f ", d);
         pretty += "]";
-        System.out.println( pretty );
+        out.println( pretty );
     }
 
-    static void displaySep(String s) {
+    void displaySep(String s) {
         for (int i=0; i<80; ++i) System.out.print(s);
-        System.out.println();
+        out.println();
     }
 
 }
