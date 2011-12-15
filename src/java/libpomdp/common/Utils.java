@@ -15,6 +15,11 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
+import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
+import java.io.IOException;
+import java.io.Serializable;
+
 import org.math.array.DoubleArray;
 import org.math.array.IntegerArray;
 
@@ -269,5 +274,18 @@ public class Utils {
         }
         return discountedSum;
     }
+
+    public static void serializeObject(Serializable obj, String filename) {
+        try {
+            FileOutputStream fos = new FileOutputStream(filename);
+            ObjectOutputStream os = new ObjectOutputStream(fos);
+            os.writeObject(obj);
+            os.close();
+        } catch ( IOException e ) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+    }
+
 
 } // Utils
