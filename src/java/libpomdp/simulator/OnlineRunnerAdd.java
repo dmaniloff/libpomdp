@@ -99,7 +99,7 @@ class OnlineRunnerAdd {
             // state drawer
             drawer = new RockSampleGraph(GRID_SIZE,
                                          ROCK_POSITIONS);
-        } else if (args[0] == "RS1011") {
+        } else if (args[0].equals("RS1011")) {
             // config
             pomdpFilename = "data/problems/rocksample/RockSample_10_11.SPUDD";
             statsFilename = pomdpFilename + ".ONLINE.STATS.ser";
