@@ -8,10 +8,20 @@
 
 package libpomdp.problemgen.rocksample;
 
-public class RockSampleGraph {
+import libpomdp.problemgen.StateDrawer;
+
+public class RockSampleGraph implements StateDrawer {
+
+    final int n;
+    final int k[][];
+
+    public RockSampleGraph(final int n, final int k[][]) {
+        this.n = n;
+        this.k = k;
+    }
 
     // draw the world
-    public static void drawState(int n, int k[][], int factoredS[][]) {
+    public void drawState(int factoredS[][]) {
 	int c, d, r;
 	boolean fr;
 	// start with a line
