@@ -102,7 +102,7 @@ class OnlineSimulatorAdd {
 
         // general parameters
         final double EPSILON_ACT_TH        = 1e-3;
-        final int EPISODECOUNT             = 2;
+        final int EPISODECOUNT             = 5;
         final int MAXEPISODELENGTH         = 100;
         final int TOTALRUNS                = states.size();
         final long EXPANSIONTIME           = 1000L;
