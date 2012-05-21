@@ -32,7 +32,7 @@ public class DotPomdpParserStd {
 
 	dotpomdpSpec = parser.getSpec();
 
-	
+
     }
 
     public static PomdpSpecStd getSpec() {
