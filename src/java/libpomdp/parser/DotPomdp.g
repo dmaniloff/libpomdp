@@ -338,19 +338,17 @@ trans_spec_tail
                         for(int s2 : $s_2.l)
                             dotPomdpSpec.T[a].set(s1, s2, $prob.p);
         }
-    | paction COLONTOK state u_matrix 
+    | paction {matrixContext=MC_TRANSITION_ROW;} COLONTOK state u_matrix
         {
-        	matrixContext=MC_TRANSITION_ROW;
         	for(int a : $paction.l)	
         		for (int s : $state.l)
         			for (int i=0;i<dotPomdpSpec.nrSta;i++)
         				dotPomdpSpec.T[a].set(s,i,$u_matrix.m.get(i,0));
         }
-    | paction ui_matrix
+    | paction {matrixContext=MC_TRANSITION;} ui_matrix
         // full matrix specification, set if for each action 
         {
-        matrixContext=MC_TRANSITION;
-        for(int a : $paction.l) dotPomdpSpec.T[a] = $ui_matrix.m;
+            for(int a : $paction.l) dotPomdpSpec.T[a] = $ui_matrix.m;
         }
     ;
 
@@ -368,18 +366,16 @@ obs_spec_tail
                     for(int o : $obs.l)
                         dotPomdpSpec.O[a].set(s2, o, $prob.p);
         }
-    | paction COLONTOK state u_matrix
-        	{
-        	matrixContext=MC_OBSERVATION_ROW;
+    | paction {matrixContext=MC_OBSERVATION_ROW;} COLONTOK state u_matrix
+        {
         	for(int a : $paction.l)	
         		for (int s : $state.l)
         			for (int i=0;i<dotPomdpSpec.nrObs;i++)
         				dotPomdpSpec.O[a].set(s,i,$u_matrix.m.get(i,0));
-        	}
-    | paction u_matrix
+        }
+    | paction {matrixContext=MC_OBSERVATION;} u_matrix
         // full matrix specification, set if for each action 
         {
-        	matrixContext=MC_OBSERVATION;
         	for(int a : $paction.l) dotPomdpSpec.O[a] = $u_matrix.m;
         }
     ;
