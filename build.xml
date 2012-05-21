@@ -36,7 +36,7 @@
     <mkdir dir="${build}"/>
   </target>
 
-  <target name="parser">
+  <target name="parser" depends ="init">
     <!-- ANTRL is called with a java task, this should be changed to use antlr  -->
     <java classname="org.antlr.Tool" classpathref="classpath">
 	<arg value="${src}/libpomdp/parser/DotPomdp.g"/>
@@ -139,7 +139,7 @@
   </target>
 
 
-  <target name="compile" depends="init"
+  <target name="compile" depends="parser"
 	  description="compile the source " >
     <!-- Compile the java code from ${src} into ${build} -->
     <javac srcdir="${src}" destdir="${build}" classpathref="classpath" includeantruntime="false" debug="on" debuglevel="lines,vars,source"/>
