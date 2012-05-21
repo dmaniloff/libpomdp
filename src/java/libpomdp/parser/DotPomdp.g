@@ -501,8 +501,8 @@ prob_matrix returns [CustomMatrix m]
      int i_max,j_max;
      	switch (matrixContext){
     	case MC_OBSERVATION:
-    	 	i_max = dotPomdpSpec.nrObs;
-    	 	j_max = dotPomdpSpec.nrSta;
+    	 	i_max = dotPomdpSpec.nrSta;
+    	 	j_max = dotPomdpSpec.nrObs;
    			break;
     	case MC_TRANSITION:
     	 	i_max = dotPomdpSpec.nrSta;
