@@ -312,5 +312,21 @@ public class PomdpStd implements Pomdp, Serializable {
         return (new AlphaVector(R[a].copy(), a));
     }
 
+    public String toString() {
+        String rep = "";
+
+        rep += "|S|: " + nrSta + ", ";
+        rep += "|A|: " + nrAct + ", ";
+        rep += "|O|: " + nrObs + "\n";
+        rep += "T: \n";
+        for (int a=0; a<nrAct; a++) rep += T[a].toString();
+        rep += "O: \n";
+        for (int a=0; a<nrAct; a++) rep += O[a].toString();
+        rep += "R: \n";
+        for (int a=0; a<nrAct; a++) rep += R[a].toString();
+
+        return rep;
+    }
+
 } // PomdpStd.java
 
