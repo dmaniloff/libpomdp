@@ -1,2 +1,6 @@
 *.class
-*.bak-200*
+*.bak-20*
+*.log
+*.ser
+*~
+*.mat
