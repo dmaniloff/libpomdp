@@ -19,7 +19,7 @@ public class DotPomdpParserStd {
     static PomdpSpecStd dotpomdpSpec = null;
 
     public static void parse (String filename) throws Exception {
-	DotPomdpLexer lex = new DotPomdpLexer(new ANTLRFileStream(filename));
+        DotPomdpLexer lex = new DotPomdpLexer(new ANTLRFileStream(filename));
        	CommonTokenStream tokens = new CommonTokenStream(lex);
         DotPomdpParser parser = new DotPomdpParser(tokens);
         try {
@@ -28,12 +28,12 @@ public class DotPomdpParserStd {
             e.printStackTrace();
         }
 
-	dotpomdpSpec = parser.getSpec();
+        dotpomdpSpec = parser.getSpec();
 
 
     }
 
     public static PomdpSpecStd getSpec() {
-	return dotpomdpSpec;
+        return dotpomdpSpec;
     }
 }
