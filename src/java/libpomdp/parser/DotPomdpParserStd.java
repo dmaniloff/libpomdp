@@ -1,12 +1,10 @@
 /** ------------------------------------------------------------------------- *
  * libpomdp
  * ========
- * File: dotpomdpParserSparseMTJ.java
- * Description: Simple class to parse a .POMDP file and return
- *              an object of type pomdpSpecSparseMTJ with all the problem
- *              parameters
- * Copyright (c) 2009, 2010 Diego Maniloff 
- * W3: http://www.cs.uic.edu/~dmanilof
+ * File: DotPomdpParserStd.java
+ * Description: Simple class to parse a .POMDP file
+ * Copyright (c) 2009, 2010 Diego Maniloff
+ * Copyright (c) 2010 Mauricio Araya
  --------------------------------------------------------------------------- */
 
 package libpomdp.parser;
