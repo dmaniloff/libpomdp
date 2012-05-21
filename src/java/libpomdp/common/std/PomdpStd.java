@@ -84,9 +84,17 @@ public class PomdpStd implements Pomdp, Serializable {
     // ------------------------------------------------------------------------
 
     /// constructor
-    public PomdpStd(CustomMatrix[] O, CustomMatrix[] T, CustomVector[] R,
-                    int nrSta, int nrAct, int nrObs, double gamma, String staStr[],
-                    String actStr[], String obsStr[], CustomVector init) {
+    public PomdpStd(CustomMatrix[] T,
+                    CustomMatrix[] O,
+                    CustomVector[] R,
+                    int nrSta,
+                    int nrAct,
+                    int nrObs,
+                    double gamma,
+                    String staStr[],
+                    String actStr[],
+                    String obsStr[],
+                    CustomVector init) {
 
         // allocate space for the pomdp models
         this.nrSta = nrSta;

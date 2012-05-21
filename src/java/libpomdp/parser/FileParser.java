@@ -36,7 +36,17 @@ public class FileParser {
 			String staStr[]=null;
 			if (data.staList != null)
 			    obsStr = (String []) data.staList.toArray (new String [data.staList.size ()]);
-			newPomdp=new PomdpStd(data.O, data.T,data.R, data.nrSta, data.nrAct, data.nrObs, data.discount,staStr,actStr,obsStr,data.startState);
+			newPomdp=new PomdpStd(data.T,
+                                  data.O,
+                                  data.R,
+                                  data.nrSta,
+                                  data.nrAct,
+                                  data.nrObs,
+                                  data.discount,
+                                  staStr,
+                                  actStr,
+                                  obsStr,
+                                  data.startState);
 			break;
 		case PARSE_SPUDD:
 				newPomdp=new PomdpAdd(filename);
