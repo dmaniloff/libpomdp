@@ -83,155 +83,153 @@ public class PomdpStd implements Pomdp, Serializable {
     // methods
     // ------------------------------------------------------------------------
 
-    // / constructor
+    /// constructor
     public PomdpStd(CustomMatrix[] O, CustomMatrix[] T, CustomVector[] R,
-	    int nrSta, int nrAct, int nrObs, double gamma, String staStr[],
-	    String actStr[], String obsStr[], CustomVector init) {
+                    int nrSta, int nrAct, int nrObs, double gamma, String staStr[],
+                    String actStr[], String obsStr[], CustomVector init) {
 
-	// allocate space for the pomdp models
-	this.nrSta = nrSta;
-	this.nrAct = nrAct;
-	this.nrObs = nrObs;
-	this.T = new CustomMatrix[nrAct];
-	this.O = new CustomMatrix[nrAct];
-	this.R = new CustomVector[nrAct];
-	this.gamma = gamma;
-	this.actStr = actStr;
-	this.obsStr = obsStr;
+        // allocate space for the pomdp models
+        this.nrSta = nrSta;
+        this.nrAct = nrAct;
+        this.nrObs = nrObs;
+        this.T = new CustomMatrix[nrAct];
+        this.O = new CustomMatrix[nrAct];
+        this.R = new CustomVector[nrAct];
+        this.gamma = gamma;
+        this.actStr = actStr;
+        this.obsStr = obsStr;
 
-	// set initial belief state
-	this.initBelief = new BeliefStateStd(init, 0.0);
+        // set initial belief state
+        this.initBelief = new BeliefStateStd(init, 0.0);
 
-	// copy the model matrices - transform from dense to comprow
-	// do we really need this? dense is in sparse form already...
-	for (int a = 0; a < nrAct; a++) {
-	    this.O[a] = new CustomMatrix(T[a]);
-	    this.T[a] = new CustomMatrix(O[a]);
-	    this.R[a] = new CustomVector(R[a]);
-	}
+        // copy the model matrices - transform from dense to comprow
+        // do we really need this? dense is in sparse form already...
+        for (int a = 0; a < nrAct; a++) {
+            this.O[a] = new CustomMatrix(T[a]);
+            this.T[a] = new CustomMatrix(O[a]);
+            this.R[a] = new CustomVector(R[a]);
+        }
     } // constructor
 
     public PomdpStd(PomdpStd pomdp) {
-	this.nrSta = pomdp.nrSta;
-	this.nrAct = pomdp.nrAct;
-	this.nrObs = pomdp.nrObs;
-	this.T = pomdp.T;
-	this.O = pomdp.O;
-	this.R = pomdp.R;
-	this.gamma = pomdp.gamma;
-	this.staStr = pomdp.staStr;
-	this.actStr = pomdp.actStr;
-	this.obsStr = pomdp.obsStr;
-	this.initBelief = pomdp.initBelief;
+        this.nrSta = pomdp.nrSta;
+        this.nrAct = pomdp.nrAct;
+        this.nrObs = pomdp.nrObs;
+        this.T = pomdp.T;
+        this.O = pomdp.O;
+        this.R = pomdp.R;
+        this.gamma = pomdp.gamma;
+        this.staStr = pomdp.staStr;
+        this.actStr = pomdp.actStr;
+        this.obsStr = pomdp.obsStr;
+        this.initBelief = pomdp.initBelief;
     }
 
-    // / tao(b,a,o)
-
+    /// tao(b,a,o)
     public BeliefState nextBeliefState(BeliefState b, int a, int o) {
-	// long start = System.currentTimeMillis();
-	// System.out.println("made it to tao");
-	BeliefState bPrime;
-	// compute T[a]' * b1
-	CustomVector b1 = b.getPoint();
-	CustomVector b2 = new CustomVector(nrSta);
-	b2 = T[a].transMult(b1);
-	// System.out.println("Elapsed in tao - T[a] * b1" +
-	// (System.currentTimeMillis() - start));
+        // long start = System.currentTimeMillis();
+        // System.out.println("made it to tao");
+        BeliefState bPrime;
+        // compute T[a]' * b1
+        CustomVector b1 = b.getPoint();
+        CustomVector b2 = new CustomVector(nrSta);
+        b2 = T[a].transMult(b1);
+        // System.out.println("Elapsed in tao - T[a] * b1" +
+        // (System.currentTimeMillis() - start));
 
-	// element-wise product with O[a](:,o)
-	b2.elementMult(O[a].getColumn(o));
-	// System.out.println("Elapsed in tao - O[a] .* b2" +
-	// (System.currentTimeMillis() - start));
+        // element-wise product with O[a](:,o)
+        b2.elementMult(O[a].getColumn(o));
+        // System.out.println("Elapsed in tao - O[a] .* b2" +
+        // (System.currentTimeMillis() - start));
 
-	// compute P(o|b,a) - norm1 is the sum of the absolute values
-	double poba = b2.norm(1.0);
-	// make sure we can normalize
-	if (poba < 0.00001) {
-	    // System.err.println("Zero prob observation - resetting to init");
-	    // this branch will have poba = 0.0
-	    bPrime = initBelief;
-	} else {
-	    // safe to normalize now
-	    b2 = b2.scale(1.0 / poba);
-	    bPrime = new BeliefStateStd(b2, poba);
-	}
-	// System.out.println("Elapsed in tao" + (System.currentTimeMillis() -
-	// start));
-	// return
-	return bPrime;
+        // compute P(o|b,a) - norm1 is the sum of the absolute values
+        double poba = b2.norm(1.0);
+        // make sure we can normalize
+        if (poba < 0.00001) {
+            // System.err.println("Zero prob observation - resetting to init");
+            // this branch will have poba = 0.0
+            bPrime = initBelief;
+        } else {
+            // safe to normalize now
+            b2 = b2.scale(1.0 / poba);
+            bPrime = new BeliefStateStd(b2, poba);
+        }
+        // System.out.println("Elapsed in tao" + (System.currentTimeMillis() -
+        // start));
+        // return
+        return bPrime;
     }
 
     /// R(b,a)
-
     public double expectedImmediateReward(BeliefState bel, int a) {
-	CustomVector b = ((BeliefStateStd) bel).bSparse;
-	return b.dot(R[a]);
+        CustomVector b = ((BeliefStateStd) bel).bSparse;
+        return b.dot(R[a]);
     }
 
     // P(o|b,a) in vector form for all o's
 
     public CustomVector observationProbabilities(BeliefState b, int a) {
-	CustomVector b1 = b.getPoint();
-	CustomVector Tb = new CustomVector(nrSta);
-	Tb = T[a].mult(b1);
-	CustomVector Poba = new CustomVector(nrObs);
-	Poba = O[a].transMult(Tb);
-	return Poba;
+        CustomVector b1 = b.getPoint();
+        CustomVector Tb = new CustomVector(nrSta);
+        Tb = T[a].mult(b1);
+        CustomVector Poba = new CustomVector(nrObs);
+        Poba = O[a].transMult(Tb);
+        return Poba;
     }
 
 
     public CustomMatrix getTransitionTable(int a) {
-	return T[a].copy();
+        return T[a].copy();
     }
 
 
     public CustomMatrix getObservationTable(int a) {
-	return O[a].copy();
+        return O[a].copy();
     }
 
 
     public CustomVector getRewardTable(int a) {
-	return R[a].copy();
+        return R[a].copy();
     }
 
 
     public BeliefState getInitialBeliefState() {
-	return initBelief.copy();
+        return initBelief.copy();
     }
 
 
     public int nrStates() {
-	return nrSta;
+        return nrSta;
     }
 
 
     public int nrActions() {
-	return nrAct;
+        return nrAct;
     }
 
 
     public int nrObservations() {
-	return nrObs;
+        return nrObs;
     }
 
 
     public double getGamma() {
-	return gamma;
+        return gamma;
     }
 
 
     public String getActionString(int a) {
-	return actStr[a];
+        return actStr[a];
     }
 
     @Override
-    public String getObservationString(int o) {
-	return obsStr[o];
+        public String getObservationString(int o) {
+        return obsStr[o];
     }
 
     @Override
-    public String getStateString(int s) {
-	return staStr[s];
+        public String getStateString(int s) {
+        return staStr[s];
     }
 
     public int getRandomAction() {
@@ -240,70 +238,70 @@ public class PomdpStd implements Pomdp, Serializable {
 
     /// ???
     public int getRandomObservation(BeliefStateStd bel, int a) {
-	double roulette = Utils.gen.nextDouble();
-	CustomVector vect = O[a].mult(bel.getPoint());
-	double sum = 0.0;
-	for (int o = 0; o < nrObs; o++) {
-	    sum += vect.get(o);
-	    if (roulette < sum)
-		return o;
-	}
-	return (-1);
+        double roulette = Utils.gen.nextDouble();
+        CustomVector vect = O[a].mult(bel.getPoint());
+        double sum = 0.0;
+        for (int o = 0; o < nrObs; o++) {
+            sum += vect.get(o);
+            if (roulette < sum)
+                return o;
+        }
+        return (-1);
     }
 
     public AlphaVector mdpValueUpdate(AlphaVector alpha, int a) {
-	CustomVector vec = getTransitionTable(a).mult(getGamma(),
-		alpha.getVectorRef());
-	vec.add(getRewardValueFunction(a).getAlphaVector(0).getVectorRef());
-	return (new AlphaVector(vec, a));
+        CustomVector vec = getTransitionTable(a).mult(getGamma(),
+                                                      alpha.getVectorRef());
+        vec.add(getRewardValueFunction(a).getAlphaVector(0).getVectorRef());
+        return (new AlphaVector(vec, a));
     }
 
     public ValueFunctionStd getRewardValueFunction(int a) {
-	ValueFunctionStd vf = new ValueFunctionStd(nrSta);
-	vf.push(R[a].copy(), a);
-	return vf;
+        ValueFunctionStd vf = new ValueFunctionStd(nrSta);
+        vf.push(R[a].copy(), a);
+        return vf;
     }
 
     public double getRewardMax() {
-	double max_val = Double.NEGATIVE_INFINITY;
-	for (int a = 0; a < nrActions(); a++) {
-	    double test_val = getRewardMax(a);
-	    if (test_val > max_val)
-		max_val = test_val;
-	}
-	return max_val;
+        double max_val = Double.NEGATIVE_INFINITY;
+        for (int a = 0; a < nrActions(); a++) {
+            double test_val = getRewardMax(a);
+            if (test_val > max_val)
+                max_val = test_val;
+        }
+        return max_val;
     }
 
     public double getRewardMin() {
-	double min_val = Double.POSITIVE_INFINITY;
-	for (int a = 0; a < nrActions(); a++) {
-	    double test_val = getRewardMin(a);
-	    if (test_val < min_val)
-		min_val = test_val;
-	}
-	return min_val;
+        double min_val = Double.POSITIVE_INFINITY;
+        for (int a = 0; a < nrActions(); a++) {
+            double test_val = getRewardMin(a);
+            if (test_val < min_val)
+                min_val = test_val;
+        }
+        return min_val;
     }
 
     public double getRewardMaxMin() {
-	double max_val = Double.NEGATIVE_INFINITY;
-	for (int a = 0; a < nrActions(); a++) {
-	    double test_val = getRewardMin(a);
-	    if (test_val > max_val)
-		max_val = test_val;
-	}
-	return max_val;
+        double max_val = Double.NEGATIVE_INFINITY;
+        for (int a = 0; a < nrActions(); a++) {
+            double test_val = getRewardMin(a);
+            if (test_val > max_val)
+                max_val = test_val;
+        }
+        return max_val;
     }
 
     public double getRewardMin(int a) {
-	return (R[a].min());
+        return (R[a].min());
     }
 
     public double getRewardMax(int a) {
-	return (R[a].max());
+        return (R[a].max());
     }
 
     public AlphaVector getRewardVec(int a, BeliefState bel) {
-	return (new AlphaVector(R[a].copy(), a));
+        return (new AlphaVector(R[a].copy(), a));
     }
 
 } // PomdpStd.java
