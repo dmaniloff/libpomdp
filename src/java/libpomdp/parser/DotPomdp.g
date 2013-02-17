@@ -200,7 +200,6 @@ dotPomdp
                     System.out.println("PARSER: Compressing R(s,a,s',o') rewards...");
                     /* R(s,a) = \sum_{s',o'} R(s,a,s',o') T(s,a,s') O(o',a,s') */
                     for (int a=0;a<dotPomdpSpec.nrAct;a++){
-                        //R[a]=new CustomVector(dotPomdpSpec.nrSta);
                         for (int s=0;s<dotPomdpSpec.nrSta;s++){
                             CustomMatrix prod=new CustomMatrix(dotPomdpSpec.nrSta,dotPomdpSpec.nrSta);
                             prod=dotPomdpSpec.O[a].transBmult(dotPomdpSpec.fullR[a][s]);
