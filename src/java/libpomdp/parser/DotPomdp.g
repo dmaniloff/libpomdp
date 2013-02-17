@@ -526,7 +526,7 @@ prob_matrix returns [CustomMatrix m]
      } 
         (prob 
         {
-        	if ($prob.p > 0.0) $m.set(index \% i_max,index / i_max,$prob.p);
+        	if ($prob.p > 0.0) $m.set(index / j_max, index \% j_max, $prob.p);
             index++;
         }
         )+
