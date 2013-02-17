@@ -183,7 +183,7 @@ dotPomdp
             double value;
             switch(dotPomdpSpec.rewardType) {                
                 case R_s_a_sp:
-                    /* R(s,a) = \sum_sp R(s,a,s') T(s,a,s') */
+                    /* R(s,a) = \sum_s' R(s,a,s') T(s,a,s') */
                     System.out.println("PARSER: Compressing R(s,a,s') rewards...");
                     for (int a=0;a<dotPomdpSpec.nrAct;a++) {
                         for (int s=0;s<dotPomdpSpec.nrSta;s++) {
@@ -198,7 +198,7 @@ dotPomdp
                     break;
                 case R_s_a_sp_op:
                     System.out.println("PARSER: Compressing R(s,a,s',o') rewards...");
-                    //Create the R(a,s) type of reward (not very efficient, but only one time)
+                    /* R(s,a) = \sum_{s',o'} R(s,a,s',o') T(s,a,s') O(o',a,s') */
                     for (int a=0;a<dotPomdpSpec.nrAct;a++){
                         //R[a]=new CustomVector(dotPomdpSpec.nrSta);
                         for (int s=0;s<dotPomdpSpec.nrSta;s++){
@@ -411,7 +411,7 @@ reward_spec_tail
                 /* R(s,a,s',o') */
                 System.out.println("PARSER: R(s,a,s',o') reward representation detected, you'll probably run out of memory."); 
                 dotPomdpSpec.rewardType = PomdpSpecStd.RewardType.R_s_a_sp_op;
-                // Creating Huge Reward Matrix (4D)
+                /* create |A|x|S| matrices (4D) */
                 dotPomdpSpec.fullR = new CustomMatrix[dotPomdpSpec.nrAct][dotPomdpSpec.nrSta];    
             	for(int a=0; a<dotPomdpSpec.nrAct; a++) 
             		for(int s=0; s<dotPomdpSpec.nrSta; s++){ 
