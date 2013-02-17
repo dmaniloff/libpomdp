@@ -201,13 +201,13 @@ dotPomdp
                     /* R(s,a) = \sum_{s',o'} R(s,a,s',o') T(s,a,s') O(o',a,s') */
                     for (int a=0;a<dotPomdpSpec.nrAct;a++){
                         for (int s=0;s<dotPomdpSpec.nrSta;s++){
-                            CustomMatrix prod=new CustomMatrix(dotPomdpSpec.nrSta,dotPomdpSpec.nrSta);
-                            prod=dotPomdpSpec.O[a].transBmult(dotPomdpSpec.fullR[a][s]);
+                            CustomMatrix prod=new CustomMatrix(dotPomdpSpec.nrSta, dotPomdpSpec.nrSta);
+                            prod = dotPomdpSpec.O[a].transBmult(dotPomdpSpec.fullR[a][s]);
                             value = 0;
                             for (int sp=0;sp<dotPomdpSpec.nrSta;sp++){
-                                value+=prod.get(sp,sp) * dotPomdpSpec.T[a].get(s, sp); // bug here?
+                                value += prod.get(sp, sp) * dotPomdpSpec.T[a].get(s, sp);
                             }
-                            dotPomdpSpec.R[a].set(s,value);
+                            dotPomdpSpec.R[a].set(s, value);
                         }
                     }
                     break;
@@ -439,7 +439,7 @@ reward_spec_tail
                         for(int a : $paction.l)
                             for(int s1 : $s_1.l)
                                 for(int s2 : $s_2.l)
-                                    for(int o : $obs.l) 
+                                    for(int o : $obs.l)
                                         dotPomdpSpec.fullR[a][s1].set(s2, o, $number.n);
                     break;
         	}
@@ -515,7 +515,7 @@ prob_matrix returns [CustomMatrix m]
     		i_max=0;
     		break;
     	}  
-     $m = new CustomMatrix(i_max,j_max);
+     $m = new CustomMatrix(i_max, j_max);
      } 
         (prob 
         {
