@@ -18,8 +18,7 @@
   <property name="dist"    location="dist"/>
   <property name="lib"     location="external"/>
 
-<!-- external libraries classpath
--->
+<!-- external libraries classpath -->
   <path id="classpath">
     <fileset dir="${lib}" />
     <fileset dir="."      />
