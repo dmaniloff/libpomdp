@@ -313,17 +313,17 @@ public class PomdpStd implements Pomdp, Serializable {
     }
 
     public String toString() {
-        String rep = "";
+        String rep = "Dimensions:\n";
 
         rep += "|S|: " + nrSta + ", ";
         rep += "|A|: " + nrAct + ", ";
         rep += "|O|: " + nrObs + "\n";
-        rep += "T: \n";
-        for (int a=0; a<nrAct; a++) rep += T[a].toString();
-        rep += "O: \n";
-        for (int a=0; a<nrAct; a++) rep += O[a].toString();
-        rep += "R: \n";
-        for (int a=0; a<nrAct; a++) rep += R[a].toString();
+        rep += "Transition table: \n";
+        for (int a=0; a<nrAct; a++) rep += "T["+a+"]\n" + T[a].toString();
+        rep += "Oservation table: \n";
+        for (int a=0; a<nrAct; a++) rep += "O["+a+"]\n" + O[a].toString();
+        rep += "Rewards table: \n";
+        for (int a=0; a<nrAct; a++) rep += "R["+a+"]\n" + R[a].toString();
 
         return rep;
     }
