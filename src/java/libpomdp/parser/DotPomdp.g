@@ -416,13 +416,6 @@ reward_spec_tail
             	for(int a=0; a<dotPomdpSpec.nrAct; a++) {
             		for(int s=0; s<dotPomdpSpec.nrSta; s++){ 
                 		dotPomdpSpec.fullR[a][s] = new CustomMatrix(dotPomdpSpec.nrSta,dotPomdpSpec.nrObs);
-                		// Now we have to copy the date from R to fullR
-                		CustomVector colV=CustomVector.getHomogene(dotPomdpSpec.nrSta,dotPomdpSpec.R[a].get(s));
-                		//new CustomVector(dotPomdpSpec.nrSta);
-                		//for (int sp=0;sp<dotPomdpSpec.nrSta;sp++)
-                		//	colV.set(sp,dotPomdpSpec.R[a].get(s));	
-                		for (int o=0;o<dotPomdpSpec.nrObs;o++)
-                			dotPomdpSpec.fullR[a][s].setColumn(o,colV);
                 	}
                 }
             }
