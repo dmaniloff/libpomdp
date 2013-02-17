@@ -413,7 +413,7 @@ reward_spec_tail
                 dotPomdpSpec.rewardType = PomdpSpecStd.RewardType.R_s_a_sp_op;
                 /* create |A|x|S| matrices (4D) */
                 dotPomdpSpec.fullR = new CustomMatrix[dotPomdpSpec.nrAct][dotPomdpSpec.nrSta];    
-            	for(int a=0; a<dotPomdpSpec.nrAct; a++) 
+            	for(int a=0; a<dotPomdpSpec.nrAct; a++) {
             		for(int s=0; s<dotPomdpSpec.nrSta; s++){ 
                 		dotPomdpSpec.fullR[a][s] = new CustomMatrix(dotPomdpSpec.nrSta,dotPomdpSpec.nrObs);
                 		// Now we have to copy the date from R to fullR
@@ -424,6 +424,7 @@ reward_spec_tail
                 		for (int o=0;o<dotPomdpSpec.nrObs;o++)
                 			dotPomdpSpec.fullR[a][s].setColumn(o,colV);
                 	}
+                }
             }
 
             /* now fill in values accordingly */
