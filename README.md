@@ -1,7 +1,7 @@
 libpomdp
 --------
 
-libpomdp (or libPOMDP) is an implementation of different offline and
+libpomdpis an implementation of different offline and
 online Partially Observable Markov Decision Process (POMDP)
 approximation algorithms. The code is a combination of Java,
 Matlab, and some Jython.
@@ -25,21 +25,18 @@ Copyright (c) 2010, 2011 Mauricio Araya.
 Contents
 --------
 
-- Directories and files
+- Getting Started
 - Implemented algorithms
 - Documentation
 - References
 
-Directories and files
----------------------
-
-README		       - this file
-external/    	       - dependencies
-src/libpomdp/common/   - general POMDP interfaces 
-src/libpomdp/hybrid/   - implementation of hybrid POMDP algorithms
-src/libpomdp/offline/  - implementation of offline POMDP algorithms
-src/libpomdp/online/   - implementation of online POMDP algorithms
-src/libpomdp/problems/ - POMDP problems 
+Getting Started
+---------------
+```
+$ git clone git@github.com:dmaniloff/libpomdp.git
+$ cd libpomdp
+$ ant dist
+```
 
 Implemented algorithms
 ----------------------
